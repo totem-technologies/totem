@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "35349008308",
+    "project_id": "totem-26659",
+    "storage_bucket": "totem-26659.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:35349008308:android:8be76d38d68eed40206ce1",
+        "android_client_info": {
+          "package_name": "io.kbl.totem"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "35349008308-41k0qobtvfcu71qngvsk5ndb26thc05n.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.kbl.totem",
+            "certificate_hash": "cd0691f6a7c94fdc3d1b53285595fc93f2ca33cd"
+          }
+        },
+        {
+          "client_id": "35349008308-soekr4auhqdon7phen1036i1peqjhq0s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCvqPYfwmzlGbZj6V0HzymJzeIA2unRPv8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "35349008308-soekr4auhqdon7phen1036i1peqjhq0s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
