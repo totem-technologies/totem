@@ -38,8 +38,10 @@ class _UserInformationState extends State<UserInformation> {
         return new ListView(
           children: users.map((DocumentSnapshot document) {
             return new ListTile(
-              title: new Text(document.data()!['full_name']),
-              subtitle: new Text(document.data()!['company']),
+              // title: new Text(document.data()!['full_name']),
+              // subtitle: new Text(document.data()!['company']),
+              title: new Text('hi'),
+              subtitle: new Text('sub'),
             );
           }).toList(),
         );
