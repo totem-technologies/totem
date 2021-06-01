@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(App());
 }
 
-/// We are using a StatefulWidget such that we only create the [Future] once,
-/// no matter how many times our widget rebuild.
-/// If we used a [StatelessWidget], in the event where [App] is rebuilt, that
-/// would re-initialize FlutterFire and make our application re-enter loading state,
-/// which is undesired.
 class App extends StatefulWidget {
   // Create the initialization Future outside of `build`:
   @override
@@ -97,6 +93,10 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       _counter++;
     });
+    FirebaseFirestore.instance
+        .collection('counts')
+        .doc('bobo')
+        .set({'count': _counter});
   }
 
   @override
