@@ -35,7 +35,6 @@ class _AppBuilderState extends State<AppBuilder> {
         auth.authStateChanges().listen((User? user) {
           setState(() {
             _user = user;
-            print(user);
           });
         });
         return _initialization;
@@ -124,11 +123,7 @@ class App extends StatelessWidget {
       ),
       home: home,
       initialRoute: '/',
-      routes: {
-        // When navigating to the "/" route, build the FirstScreen widget.
-        ...routes,
-        ...globalRoutes
-      },
+      routes: {...routes, ...globalRoutes},
     );
   }
 }
