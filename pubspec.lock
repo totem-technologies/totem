@@ -149,6 +149,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.17.0"
+  intl_phone_field:
+    dependency: "direct main"
+    description:
+      name: intl_phone_field
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.0"
   js:
     dependency: transitive
     description:
@@ -177,6 +184,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.8.0"
+  pedantic:
+    dependency: "direct dev"
+    description:
+      name: pedantic
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.11.0"
   plugin_platform_interface:
     dependency: transitive
     description:

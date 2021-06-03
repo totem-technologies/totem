@@ -25,23 +25,20 @@ class _UserInformationState extends State<UserInformation> {
         }
 
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Text("Loading");
+          return Text('Loading');
         }
 
-        List<QueryDocumentSnapshot<User?>> users =
-            snapshot.data?.docs as List<QueryDocumentSnapshot<User?>>;
+        var users = snapshot.data?.docs as List<QueryDocumentSnapshot<User?>>;
 
-        if (users == null) {
-          users = [];
-        }
+        users ??= [];
 
-        return new ListView(
+        return ListView(
           children: users.map((DocumentSnapshot document) {
-            return new ListTile(
+            return ListTile(
               // title: new Text(document.data()!['full_name']),
               // subtitle: new Text(document.data()!['company']),
-              title: new Text('hi'),
-              subtitle: new Text('sub'),
+              title: Text('hi'),
+              subtitle: Text('sub'),
             );
           }).toList(),
         );

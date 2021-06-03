@@ -9,7 +9,7 @@ class FrostedPanelWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var borderRadius = 30.0;
-    var _heightRatio = this.full ? 0.9 : 0.3;
+    var _heightRatio = full ? 0.9 : 0.3;
     return Positioned(
         width: MediaQuery.of(context).size.width,
         bottom: 0,
@@ -25,7 +25,7 @@ class FrostedPanelWidget extends StatelessWidget {
                   filter: ImageFilter.blur(sigmaX: 40.0, sigmaY: 40.0),
                   child: Container(
                     color: Colors.black.withOpacity(0.50),
-                    child: this.child,
+                    child: child,
                   ),
                 ))));
   }
