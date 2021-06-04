@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'dart:async';
 
 class TotemButton extends StatefulWidget {
   TotemButton(
@@ -51,6 +52,10 @@ class _TotemButtonState extends State<TotemButton> {
             }
             start();
             widget.onPressed(stop);
+            Timer(Duration(seconds: 10), () {
+              // Re-enable after a timeout incase stop is never called.
+              stop();
+            });
           },
           shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(10.0))),

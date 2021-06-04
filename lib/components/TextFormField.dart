@@ -14,6 +14,7 @@ class TotemTextFormField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+        enableInteractiveSelection: true,
         decoration:
             InputDecoration(border: OutlineInputBorder(), hintText: hintText),
         controller: controller,
