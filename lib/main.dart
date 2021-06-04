@@ -79,7 +79,7 @@ class Loading extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-          color: Colors.amber, child: Center(child: Text('loading...'))),
+          color: Colors.amber[200], child: Center(child: Text('loading...'))),
     );
   }
 }
@@ -119,7 +119,7 @@ class App extends StatelessWidget {
     return MaterialApp(
       title: 'totem',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        brightness: Brightness.dark,
       ),
       home: home,
       initialRoute: '/',

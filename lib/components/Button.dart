@@ -1,0 +1,73 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+
+class TotemButton extends StatefulWidget {
+  TotemButton(
+      {required this.onPressed,
+      required this.text,
+      this.icon = Icons.arrow_forward});
+  final Function(Function stop) onPressed;
+  final String text;
+  final IconData icon;
+
+  @override
+  _TotemButtonState createState() => _TotemButtonState();
+}
+
+class _TotemButtonState extends State<TotemButton> {
+  bool enabled = true;
+
+  void start() {
+    setState(() {
+      enabled = false;
+    });
+  }
+
+  void stop() {
+    setState(() {
+      enabled = true;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var iconWidget = enabled
+        ? Icon(
+            widget.icon,
+            color: Colors.black,
+          )
+        : SpinKitPulse(
+            color: Colors.black,
+            size: 23.0,
+          );
+    return Container(
+        width: MediaQuery.of(context).size.width * .5,
+        child: RawMaterialButton(
+          fillColor: enabled ? Colors.amber[200] : Colors.grey[700],
+          splashColor: Colors.amberAccent,
+          onPressed: () {
+            if (!enabled) {
+              return;
+            }
+            start();
+            widget.onPressed(stop);
+          },
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(10.0))),
+          child: Padding(
+            padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text(
+                  widget.text,
+                  maxLines: 1,
+                  style: TextStyle(color: Colors.black),
+                ),
+                iconWidget
+              ],
+            ),
+          ),
+        ));
+  }
+}

@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 
+import 'components/TextFormField.dart';
+import 'components/Button.dart';
+
 // Create a Form widget.
 class PhoneForm extends StatefulWidget {
   @override
@@ -39,51 +42,67 @@ class PhoneFormState extends State<PhoneForm> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Container(
-              color: Colors.white,
-              child: TextFormField(
-                controller: phoneController,
-                // The validator receives the text that the user has entered.
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a phone number';
-                  }
-                  return null;
-                },
-              )),
+          Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Container(
+                child: TotemTextFormField(
+              hintText: '+1 555-555-5555',
+              controller: phoneController,
+              // The validator receives the text that the user has entered.
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter a phone number';
+                }
+                return null;
+              },
+            )),
+          ),
           Text(error, style: TextStyle(color: Colors.red)),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 16.0),
-            child: ElevatedButton(
-              onPressed: () async {
-                setState(() => error = '');
-                // Validate returns true if the form is valid, or false otherwise.
-                if (_formKey.currentState!.validate()) {
-                  await auth.verifyPhoneNumber(
-                    phoneNumber: phoneController.text,
-                    // phoneNumber: '+1 805 453 3502',
-                    verificationCompleted:
-                        (PhoneAuthCredential credential) async {
-                      // Android only
-                      await auth.signInWithCredential(credential);
-                      print('verificationCompleted');
-                    },
-                    verificationFailed: (FirebaseAuthException e) {
-                      setState(() => error = e.message ?? '');
-                      print('verificationFailed');
-                    },
-                    codeSent: (String verificationId, int? resendToken) {
-                      print('codeSent');
-                      Navigator.pushNamed(context, '/login/phone/code',
-                          arguments: {'verificationId': verificationId});
-                    },
-                    codeAutoRetrievalTimeout: (String verificationId) {
-                      print('codeAutoRetrievalTimeout');
-                    },
-                  );
-                }
-              },
-              child: Text('Submit'),
+            child: Center(
+              child: TotemButton(
+                onPressed: (stop) async {
+                  setState(() => error = '');
+                  // Validate returns true if the form is valid, or false otherwise.
+                  if (_formKey.currentState!.validate()) {
+                    var number = phoneController.text;
+                    if (!number.startsWith('+')) {
+                      number = '+' + number;
+                    }
+                    print(number);
+                    await auth.verifyPhoneNumber(
+                      phoneNumber: number,
+                      verificationCompleted:
+                          (PhoneAuthCredential credential) async {
+                        stop();
+                        // Android only
+                        await auth.signInWithCredential(credential);
+                        print('verificationCompleted');
+                        await Navigator.pushReplacementNamed(context, '/');
+                      },
+                      verificationFailed: (FirebaseAuthException e) {
+                        stop();
+                        setState(() => error = e.message ?? '');
+                        print('verificationFailed');
+                      },
+                      codeSent: (String verificationId, int? resendToken) {
+                        stop();
+                        print('codeSent');
+                        Navigator.pushNamed(context, '/login/phone/code',
+                            arguments: {'verificationId': verificationId});
+                      },
+                      codeAutoRetrievalTimeout: (String verificationId) {
+                        stop();
+                        print('codeAutoRetrievalTimeout');
+                      },
+                    );
+                  } else {
+                    stop();
+                  }
+                },
+                text: 'Submit',
+              ),
             ),
           ),
         ],
@@ -106,9 +125,9 @@ class _RegisterPageState extends State<RegisterPage> {
             child: Center(
                 child: Column(children: [
               Padding(
-                  padding: EdgeInsets.only(top: 50, bottom: 40),
+                  padding: EdgeInsets.only(top: 100, bottom: 40),
                   child: Text(
-                    'Enter number',
+                    'Enter phone number',
                     style: TextStyle(
                       fontSize: 40,
                       color: Colors.white,
@@ -156,38 +175,40 @@ class CodeFormState extends State<CodeForm> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Container(
-              color: Colors.white,
-              child: TextFormField(
-                controller: codeController,
-                // The validator receives the text that the user has entered.
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a code';
-                  }
-                  return null;
-                },
-              )),
+              child: TotemTextFormField(
+            hintText: '132456',
+            controller: codeController,
+            // The validator receives the text that the user has entered.
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter a code';
+              }
+              return null;
+            },
+          )),
           Text(error, style: TextStyle(color: Colors.red)),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 16.0),
-            child: ElevatedButton(
-              onPressed: () async {
-                setState(() => error = '');
-                // Validate returns true if the form is valid, or false otherwise.
-                if (_formKey.currentState!.validate()) {
-                  final args = ModalRoute.of(context)!.settings.arguments
-                      as Map<String, String>;
+            child: Center(
+              child: TotemButton(
+                onPressed: (stop) async {
+                  setState(() => error = '');
+                  // Validate returns true if the form is valid, or false otherwise.
+                  if (_formKey.currentState!.validate()) {
+                    final args = ModalRoute.of(context)!.settings.arguments
+                        as Map<String, String>;
 
-                  // Create a PhoneAuthCredential with the code
-                  var credential = PhoneAuthProvider.credential(
-                      verificationId: args['verificationId'] ?? '',
-                      smsCode: codeController.text);
-                  // Sign the user in (or link) with the credential
-                  await auth.signInWithCredential(credential);
-                  await Navigator.pushNamed(context, '/');
-                }
-              },
-              child: Text('Submit'),
+                    // Create a PhoneAuthCredential with the code
+                    var credential = PhoneAuthProvider.credential(
+                        verificationId: args['verificationId'] ?? '',
+                        smsCode: codeController.text);
+                    // Sign the user in (or link) with the credential
+                    await auth.signInWithCredential(credential);
+                    await Navigator.pushNamed(context, '/');
+                  }
+                },
+                text: 'Submit',
+              ),
             ),
           ),
         ],
@@ -210,7 +231,7 @@ class _CodeRegisterPageState extends State<CodeRegisterPage> {
             child: Center(
                 child: Column(children: [
               Padding(
-                  padding: EdgeInsets.only(top: 50, bottom: 40),
+                  padding: EdgeInsets.only(top: 100, bottom: 40),
                   child: Text(
                     'Enter code',
                     style: TextStyle(
