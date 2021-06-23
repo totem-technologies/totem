@@ -7,7 +7,7 @@ class TotemHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-        padding: EdgeInsets.only(top: 100, bottom: 40),
+        padding: EdgeInsets.only(top: 10, bottom: 40),
         child: Text(
           text,
           style: TextStyle(

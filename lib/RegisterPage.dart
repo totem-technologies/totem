@@ -185,7 +185,7 @@ class CodeFormState extends State<CodeForm> {
                         verificationId: args['verificationId'] ?? '',
                         smsCode: codeController.text);
                     await auth.signInWithCredential(credential);
-                    await Navigator.pushNamed(context, '/');
+                    await Navigator.pushReplacementNamed(context, '/');
                   }
                 },
                 text: 'Submit',

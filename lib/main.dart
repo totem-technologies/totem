@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:totem/LoginPage.dart';
+import 'LoginPage.dart';
+import 'SettingsPage.dart';
 import 'HomePage.dart';
 import 'RegisterPage.dart';
 
@@ -109,7 +110,7 @@ class App extends StatelessWidget {
     Widget home = LoginPage();
     if (loggedIn) {
       home = HomePage();
-      var loggedInRoutes = {'/protected': (context) => LoginPage()};
+      var loggedInRoutes = {'/settings': (context) => SettingsPage()};
       routes.addAll(loggedInRoutes);
     }
     var globalRoutes = {
@@ -117,6 +118,7 @@ class App extends StatelessWidget {
       '/loading': (context) => Loading(),
     };
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'totem',
       theme: ThemeData(
         brightness: Brightness.dark,
