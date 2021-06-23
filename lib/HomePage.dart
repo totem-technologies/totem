@@ -50,9 +50,7 @@ class _TopicsListState extends State<TopicsList> {
               clipBehavior: Clip.none,
               shrinkWrap: true,
               itemCount: data.size,
-              itemBuilder: (context, index) {
-                return _TopicItem(topic: data.docs[index].data());
-              },
+              itemBuilder: (c, i) => _TopicItem(topic: data.docs[i].data()),
             );
           }),
     );

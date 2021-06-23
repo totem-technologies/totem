@@ -16,7 +16,7 @@ enum TopicQuery {
   title,
 }
 
-extension on Query<Topic> {
+extension TopicQueryExt<Topic> on Query<Topic> {
   /// Create a firebase query from a [TopicQuery]
   Query<Topic> queryBy(TopicQuery query) {
     switch (query) {
