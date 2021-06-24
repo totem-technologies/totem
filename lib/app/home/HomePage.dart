@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'components/Header.dart';
-import 'models/Topics.dart';
-import 'services/topics.dart';
+import 'package:totem/components/Header.dart';
+import 'package:totem/models/Topics.dart';
+import 'package:totem/services/topics.dart';
 
 class TopicsList extends StatefulWidget {
   const TopicsList({Key? key}) : super(key: key);
@@ -95,7 +95,8 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
+        body: SafeArea(
+      child: Container(
         color: Colors.black,
         child: Center(
             child: Column(children: [
@@ -117,6 +118,6 @@ class HomePage extends StatelessWidget {
           TopicsList()
         ])),
       ),
-    );
+    ));
   }
 }

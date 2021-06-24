@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 
-import 'components/TextFormField.dart';
-import 'components/Button.dart';
+import '../../components/TextFormField.dart';
+import '../../components/Button.dart';
 
 class PhoneForm extends StatefulWidget {
   @override
@@ -128,7 +128,10 @@ class _RegisterPageState extends State<RegisterPage> {
                       color: Colors.white,
                     ),
                   )),
-              PhoneForm()
+              PhoneForm(),
+              TextButton(
+                  onPressed: () => Navigator.pushNamed(context, '/home'),
+                  child: Text('hj'))
             ]))));
   }
 }

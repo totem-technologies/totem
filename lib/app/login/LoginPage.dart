@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'components/FrostedPanelWidget.dart';
-import 'components/Button.dart';
+import '../../components/FrostedPanelWidget.dart';
+import '../../components/Button.dart';
 
 class _LoginPanel extends StatelessWidget {
   const _LoginPanel({Key? key}) : super(key: key);
