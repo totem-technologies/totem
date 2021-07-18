@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-
-import '../../components/FrostedPanelWidget.dart';
 import '../../components/Button.dart';
+import '../../components/Header.dart';
 
 class _LoginPanel extends StatelessWidget {
   const _LoginPanel({Key? key}) : super(key: key);
@@ -11,15 +10,19 @@ class _LoginPanel extends StatelessWidget {
     return Container(
         child: Center(
             child: Column(children: [
+      TotemHeader(
+        text: 'Welcome to Totem',
+      ),
       Padding(
-          padding: EdgeInsets.only(top: 50, bottom: 40),
+        padding: const EdgeInsets.only(bottom: 40),
+        child: Container(
+          width: 290,
           child: Text(
-            'Welcome to Totem',
-            style: TextStyle(
-              fontSize: 40,
-              color: Colors.white,
-            ),
-          )),
+              'We are a Community, made to let you share and participate with others, by communicating your thoughts on a topic of your interest.',
+              textAlign: TextAlign.center,
+              style: TextStyle(height: 1.5)),
+        ),
+      ),
       TotemButton(
           text: 'Login',
           icon: Icons.arrow_forward,
@@ -31,30 +34,22 @@ class _LoginPanel extends StatelessWidget {
   }
 }
 
-class LoginPage extends StatefulWidget {
+class LoginPage extends StatelessWidget {
   LoginPage({Key? key}) : super(key: key);
 
   @override
-  _LoginPageState createState() => _LoginPageState();
-}
-
-class _LoginPageState extends State<LoginPage> {
-  final _full = false;
-  @override
   Widget build(BuildContext context) {
-    var content = _LoginPanel();
-    var panel = FrostedPanelWidget(full: _full, child: content);
     return Scaffold(
-        body: Stack(
-      children: [
-        Positioned.fill(
-          child: Image(
-            image: AssetImage('assets/background.jpg'),
-            fit: BoxFit.cover,
+        body: Container(
+      color: Colors.black,
+      child: Padding(
+        padding: const EdgeInsets.only(top: 100),
+        child: Center(
+          child: Column(
+            children: [_LoginPanel()],
           ),
         ),
-        Container(child: panel),
-      ],
+      ),
     ));
   }
 }

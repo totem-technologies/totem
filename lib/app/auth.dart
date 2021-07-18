@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:totem/app/providers.dart';
+import 'package:totem/components/Button.dart';
 
 class AuthWidget extends ConsumerWidget {
   const AuthWidget({
@@ -66,7 +67,7 @@ class LoggedinGuard extends ConsumerWidget {
     if (user != null && !user.isAnonymous) {
       return builder(context);
     }
-    return EmptyContent();
+    return EmptyContent(title: 'You are now logged out', message: '');
   }
 }
 
@@ -74,27 +75,37 @@ class EmptyContent extends StatelessWidget {
   const EmptyContent({
     Key? key,
     this.title = 'Nothing here',
-    this.message = 'Add a new item to get started',
+    this.message = '',
   }) : super(key: key);
   final String title;
   final String message;
 
   @override
   Widget build(BuildContext context) {
-    return Center(
+    return Scaffold(
+        body: Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Text(
             title,
-            style: const TextStyle(fontSize: 32.0, color: Colors.black54),
+            style: const TextStyle(fontSize: 32.0, color: Colors.white),
           ),
           Text(
             message,
-            style: const TextStyle(fontSize: 16.0, color: Colors.black54),
+            style: const TextStyle(fontSize: 16.0, color: Colors.white),
           ),
+          Padding(
+            padding: EdgeInsets.only(top: 50, bottom: 40),
+          ),
+          TotemButton(
+              onPressed: (stop) {
+                Navigator.pushReplacementNamed(context, '/');
+                stop();
+              },
+              text: 'Go Home')
         ],
       ),
-    );
+    ));
   }
 }

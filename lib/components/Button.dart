@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'dart:async';
 
+import './colors.dart';
+
 class TotemButton extends StatefulWidget {
   TotemButton(
       {required this.onPressed,
@@ -25,9 +27,11 @@ class _TotemButtonState extends State<TotemButton> {
   }
 
   void stop() {
-    setState(() {
-      enabled = true;
-    });
+    if (mounted) {
+      setState(() {
+        enabled = true;
+      });
+    }
   }
 
   @override
@@ -44,7 +48,7 @@ class _TotemButtonState extends State<TotemButton> {
     return Container(
         width: MediaQuery.of(context).size.width * .5,
         child: RawMaterialButton(
-          fillColor: enabled ? Colors.amber[200] : Colors.grey[700],
+          fillColor: enabled ? TotemColors.amber : Colors.grey[700],
           splashColor: Colors.amberAccent,
           onPressed: () {
             if (!enabled) {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:totem/components/Header.dart';
 
 import '../../components/TextFormField.dart';
 import '../../components/Button.dart';
@@ -42,7 +43,7 @@ class PhoneFormState extends State<PhoneForm> {
               // The validator receives the text that the user has entered.
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'Please enter a phone number';
+                  return 'Please enter a phone number in the form of +1 555-555-5555';
                 }
                 return null;
               },
@@ -120,18 +121,11 @@ class _RegisterPageState extends State<RegisterPage> {
             child: Center(
                 child: Column(children: [
               Padding(
-                  padding: EdgeInsets.only(top: 100, bottom: 40),
-                  child: Text(
-                    'Enter phone number',
-                    style: TextStyle(
-                      fontSize: 40,
-                      color: Colors.white,
-                    ),
+                  padding: EdgeInsets.only(top: 100),
+                  child: TotemHeader(
+                    text: 'Enter phone number',
                   )),
-              PhoneForm(),
-              TextButton(
-                  onPressed: () => Navigator.pushNamed(context, '/home'),
-                  child: Text('hj'))
+              PhoneForm()
             ]))));
   }
 }
@@ -187,7 +181,17 @@ class CodeFormState extends State<CodeForm> {
                     var credential = PhoneAuthProvider.credential(
                         verificationId: args['verificationId'] ?? '',
                         smsCode: codeController.text);
-                    await auth.signInWithCredential(credential);
+                    try {
+                      await auth.signInWithCredential(credential);
+                    } on FirebaseAuthException catch (e) {
+                      if (e.code == 'invalid-verification-code') {
+                        setState(() => error =
+                            'The code entered was invalid. Please try again.');
+                      }
+                      stop();
+                      return;
+                    }
+                    stop();
                     await Navigator.pushReplacementNamed(context, '/');
                   }
                 },

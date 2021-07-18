@@ -6,7 +6,6 @@ import 'app/home/HomePage.dart';
 import 'app/login/RegisterPage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'app/auth.dart';
-import 'package:totem/app/providers.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -36,7 +35,6 @@ class App extends StatelessWidget {
         nonSignedInBuilder: (_) => LoginPage(),
         signedInBuilder: (_) => HomePage(),
       ),
-      initialRoute: '/',
       routes: routes,
     );
   }

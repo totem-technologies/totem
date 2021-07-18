@@ -10,8 +10,9 @@ class SettingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     var auth = FirebaseAuth.instance;
     return Scaffold(
-      body: Container(
-        color: Colors.black,
+        body: Container(
+      color: Colors.black,
+      child: SafeArea(
         child: Center(
           child: Column(
             children: [
@@ -44,6 +45,6 @@ class SettingsPage extends StatelessWidget {
           ),
         ),
       ),
-    );
+    ));
   }
 }
