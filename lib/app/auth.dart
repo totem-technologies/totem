@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:totem/app/providers.dart';
-import 'package:totem/components/Button.dart';
+import 'package:totem/components/widgets/Button.dart';
 
 class AuthWidget extends ConsumerWidget {
   const AuthWidget({
@@ -99,11 +99,11 @@ class EmptyContent extends StatelessWidget {
             padding: EdgeInsets.only(top: 50, bottom: 40),
           ),
           TotemButton(
-              onPressed: (stop) {
+              onButtonPressed: (stop) {
                 Navigator.pushReplacementNamed(context, '/');
                 stop();
               },
-              text: 'Go Home')
+              buttonText: 'Go Home', showArrow: true, icon: null,)
         ],
       ),
     ));

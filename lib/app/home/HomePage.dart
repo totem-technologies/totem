@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:totem/components/Header.dart';
+import 'package:totem/components/widgets/Header.dart';
 import 'package:totem/models/Topics.dart';
 import 'package:totem/services/topics.dart';
 

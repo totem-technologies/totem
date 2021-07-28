@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../components/Button.dart';
-import '../../components/Header.dart';
+import 'package:totem/components/widgets/Button.dart';
+import '../../components/widgets/Header.dart';
 
 class _LoginPanel extends StatelessWidget {
   const _LoginPanel({Key? key}) : super(key: key);
@@ -24,12 +24,11 @@ class _LoginPanel extends StatelessWidget {
         ),
       ),
       TotemButton(
-          text: 'Login',
-          icon: Icons.arrow_forward,
-          onPressed: (stop) {
+          buttonText: 'Login',
+          onButtonPressed: (stop) {
             stop();
             Navigator.pushNamed(context, '/login/phone');
-          }),
+          }, showArrow: true,),
     ])));
   }
 }
