@@ -8,23 +8,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:totem/main.dart';
+import 'package:totem/components/Header.dart';
+
+class WidgetTestHarness extends StatelessWidget {
+  const WidgetTestHarness({Key? key, required this.child}) : super(key: key);
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Flutter Demo',
+      home: Scaffold(body: child),
+    );
+  }
+}
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(MyApp());
-
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
-
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
-
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+  testWidgets('Test header widget shows text', (WidgetTester tester) async {
+    await tester
+        .pumpWidget(WidgetTestHarness(child: TotemHeader(text: 'Welcome')));
+    // Verify text
+    expect(find.text('Welcome'), findsOneWidget);
   });
 }
