@@ -12,4 +12,5 @@ jobs:
         with:
           flutter-version: '2.2.3'
       - run: flutter pub get
+      - run: flutter analyze
       - run: flutter test
