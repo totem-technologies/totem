@@ -3,7 +3,7 @@ on: [push]
 jobs:
   server-test:
     runs-on: ubuntu-latest
-    working-directory: ./server/functions
+      working-directory: ./server/functions
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
