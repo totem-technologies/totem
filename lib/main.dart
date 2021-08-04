@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -18,7 +19,29 @@ Future<void> main() async {
   ));
 }
 
-class App extends StatelessWidget {
+class App extends StatefulWidget {
+  @override
+  State<App> createState() => _AppState();
+}
+
+class _AppState extends State<App> {
+
+  @override
+  void initState() {
+    //isUserExist();
+    super.initState();
+  }
+
+  Future<void> isUserExist() async {
+    var firebaseUser = FirebaseAuth.instance.currentUser;
+    await firebaseUser!.reload();
+
+// This should print `true` if the user is deleted in the Firebase Console.
+    print(FirebaseAuth.instance.currentUser == null);
+    await Navigator.pushNamed(context, '/login');
+
+  }
+
   @override
   Widget build(BuildContext context) {
     var routes = <String, Widget Function(dynamic)>{
@@ -30,7 +53,7 @@ class App extends StatelessWidget {
     };
     return ScreenUtilInit(
       designSize: Size(360, 776),
-      builder:()=> MaterialApp(
+      builder: () => MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'totem',
         theme: ThemeData(

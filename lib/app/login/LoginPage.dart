@@ -20,7 +20,7 @@ class _LoginPanel extends StatelessWidget {
           child: Text(
               'We are a Community, made to let you share and participate with others, by communicating your thoughts on a topic of your interest.',
               textAlign: TextAlign.center,
-              style: TextStyle(height: 1.5)),
+              style: TextStyle(height: 1.5),),
         ),
       ),
       TotemButton(

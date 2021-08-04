@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:totem/components/widgets/Header.dart';
@@ -90,8 +91,44 @@ class _TopicItem extends StatelessWidget {
   }
 }
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+
+  @override
+  void initState() {
+    FirebaseAuth.instance
+        .authStateChanges()
+        .listen((User? user) {
+      if (user! == null) {
+        print('User is signed in!');
+        user.reload();
+      } else {
+        user.reload();
+        Navigator.pushNamed(context, '/login');
+      }
+    });
+    super.initState();
+  }
+
+
+  Future<void> isUserExist() async {
+    var firebaseUser = FirebaseAuth.instance.currentUser!;
+    await firebaseUser.reload();
+
+// This should print `true` if the user is deleted in the Firebase Console.
+    print(FirebaseAuth.instance.currentUser == null);
+    if(FirebaseAuth.instance.currentUser == null) {
+      await Navigator.pushNamed(context, '/login');
+    }
+
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

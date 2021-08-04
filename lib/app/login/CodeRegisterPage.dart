@@ -142,6 +142,7 @@ class _CodeRegisterPage2State extends State<CodeRegisterPage2> {
   @override
   void initState() {
     super.initState();
+
     pin2FocusNode = FocusNode();
     pin3FocusNode = FocusNode();
     pin4FocusNode = FocusNode();
