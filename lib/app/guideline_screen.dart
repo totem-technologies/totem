@@ -1,12 +1,11 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:totem/components/constance.dart';
+import 'package:totem/components/constants.dart';
 import 'package:totem/components/widgets/Button.dart';
 
 class GuidelineScreen extends StatefulWidget {
-  GuidelineScreen(this.uid, {Key? key}) : super(key: key);
-  String uid;
+  GuidelineScreen({Key? key}) : super(key: key);
 
   @override
   _GuidelineScreenState createState() => _GuidelineScreenState();
@@ -29,7 +28,7 @@ class _GuidelineScreenState extends State<GuidelineScreen> {
                       height: 40.h,
                     ),
                     Text(
-                      "Totem Community Guidelines",
+                      'Totem Community Guidelines',
                       style: white32BoldTextStyle,
                       textAlign: TextAlign.center,
                     ),
@@ -47,27 +46,27 @@ class _GuidelineScreenState extends State<GuidelineScreen> {
                         alignment: Alignment.centerLeft,
                         child: Column(
                           children: [
-                            Text("Last Time Updated: May 12,2021",
+                            Text('Last Time Updated: May 12,2021',
                                 style: white16BoldTextStyle),
-                            Text(widget.uid,  ///showing uID as user logged-in
-                                style: white16BoldTextStyle),
+                            /*Text(widget.uid,  ///showing uID as user logged-in
+                                style: white16BoldTextStyle),*/
                           ],
                         )),
                     SizedBox(
                       height: 15.h,
                     ),
                     Text(
-                      "We are a Community, made to let you share  and participate with others, by communicating your thoughts on a topic of your "
-                      "interests."
-                      "We are a Community, made to let you share  and participate with others, by communicating your thoughts on a topic of your interests."
-                      "We are a Community, made to let you share  and participate with others, by communicating your thoughts on a topic of your interests."
-                      "We are a Community, made to let you share  and participate with others, by communicating your thoughts on a topic of your interests."
-                      "We are a Community, made to let you share  and participate with others, by communicating your thoughts on a topic of your interests."
-                      "We are a Community, made to let you share  and participate with others, by communicating your thoughts on a topic of your interests."
-                      "We are a Community, made to let you share  and participate with others, by communicating your thoughts on a topic of your interests."
-                      "We are a Community, made to let you share  and participate with others, by communicating your thoughts on a topic of your interests."
-                      "We are a Community, made to let you share  and participate with others, by communicating your thoughts on a topic of your interests."
-                      "We are a Community, made to let you share  and participate with others, by communicating your thoughts on a topic of your interests.",
+                      'We are a Community, made to let you share  and participate with others, by communicating your thoughts on a topic of your '
+                      'interests.'
+                      'We are a Community, made to let you share  and participate with others, by communicating your thoughts on a topic of your interests.'
+                      'We are a Community, made to let you share  and participate with others, by communicating your thoughts on a topic of your interests.'
+                      'We are a Community, made to let you share  and participate with others, by communicating your thoughts on a topic of your interests.'
+                      'We are a Community, made to let you share  and participate with others, by communicating your thoughts on a topic of your interests.'
+                      'We are a Community, made to let you share  and participate with others, by communicating your thoughts on a topic of your interests.'
+                      'We are a Community, made to let you share  and participate with others, by communicating your thoughts on a topic of your interests.'
+                      'We are a Community, made to let you share  and participate with others, by communicating your thoughts on a topic of your interests.'
+                      'We are a Community, made to let you share  and participate with others, by communicating your thoughts on a topic of your interests.'
+                      'We are a Community, made to let you share  and participate with others, by communicating your thoughts on a topic of your interests.',
                       style: white16NormalTextStyle,
                       textAlign: TextAlign.start,
                     ),
@@ -97,9 +96,10 @@ class _GuidelineScreenState extends State<GuidelineScreen> {
                     child: Column(
                       children: [
                         TotemButton(
-                          buttonText: "Accept Guidelines",
-                          onButtonPressed:(stop) {navigateToGroupScreen();},
-                          showArrow: false,
+                          buttonText: 'Accept Guidelines',
+                          onButtonPressed:(stop) {
+                                Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+                          },
                         ),
                         TextButton(
                             onPressed: () => Navigator.pop(context),
@@ -115,7 +115,7 @@ class _GuidelineScreenState extends State<GuidelineScreen> {
                                   width: 9.w,
                                 ),
                                 Text(
-                                  "Back",
+                                  'Back',
                                   style: white16BoldTextStyle,
                                 )
                               ],
@@ -132,10 +132,4 @@ class _GuidelineScreenState extends State<GuidelineScreen> {
     );
   }
 
-  navigateToGroupScreen() {
-    /*Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (context) => GroupScreen()),(Route<dynamic> route) => false
-    );*/
-  }
 }

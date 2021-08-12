@@ -2,17 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'dart:async';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../constance.dart';
+import 'package:totem/components/constants.dart';
+
 
 class TotemButton extends StatefulWidget {
   TotemButton(
       {required this.onButtonPressed,
-      required this.buttonText,
-      required this.showArrow, this.icon = null});
+      required this.buttonText, this.icon = null});
 
   final Function(Function stop) onButtonPressed;
   final String buttonText;
-  final bool showArrow;
   final IconData? icon;
 
   @override
@@ -68,51 +67,80 @@ class _TotemButtonState extends State<TotemButton> {
             color: enabled ? yellowColor : Colors.grey[700],
             borderRadius: BorderRadius.circular(20)),
         child: Row(
-          mainAxisAlignment: widget.showArrow
-              ? MainAxisAlignment.spaceBetween
-              : MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
               widget.buttonText,
               style: darkBlue16NormalTextStyle,
             ),
-            widget.showArrow ? iconWidget : SizedBox(),
+            iconWidget ,
           ],
         ),
       ),
     );
-    /*Container(
-        width: MediaQuery.of(context).size.width * .5,
-        child: RawMaterialButton(
-          fillColor: enabled ? TotemColors.amber : Colors.grey[700],
-          splashColor: Colors.amberAccent,
-          onPressed: () {
-            if (!enabled) {
-              return;
-            }
-            start();
-            widget.onButtonPressed(stop);
-            Timer(Duration(seconds: 10), () {
-              // Re-enable after a timeout incase stop is never called.
-              stop();
-            });
-          },
-          shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(10.0))),
-          child: Padding(
-            padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Text(
-                  widget.text,
-                  maxLines: 1,
-                  style: TextStyle(color: Colors.black),
-                ),
-                iconWidget
-              ],
-            ),
-          ),
-        ))*/
+
+  }
+}
+
+
+class TotemContinueButton extends StatefulWidget {
+  TotemContinueButton(
+      {required this.onButtonPressed,
+        required this.buttonText,
+        });
+
+  final Function(Function stop) onButtonPressed;
+  final String buttonText;
+
+
+  @override
+  _TotemContinueButtonState createState() => _TotemContinueButtonState();
+}
+
+class _TotemContinueButtonState extends State<TotemContinueButton> {
+  bool enabled = true;
+
+  void start() {
+    setState(() {
+      enabled = false;
+    });
+  }
+
+  void stop() {
+    if (mounted) {
+      setState(() {
+        enabled = true;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+
+    return InkWell(
+      onTap: () {
+        if (!enabled) {
+          return;
+        }
+        start();
+        widget.onButtonPressed(stop);
+        Timer(Duration(seconds: 10), () {
+          // Re-enable after a timeout incase stop is never called.
+          stop();
+        });
+      },
+      child: Container(
+        height: 60.h,
+        width: 230.w,
+        padding: EdgeInsets.only(left: 20.w, right: 20.w),
+        decoration: BoxDecoration(
+            color: enabled ? yellowColor : Colors.grey[700],
+            borderRadius: BorderRadius.circular(20)),
+        child:   Text(
+          widget.buttonText,
+          style: darkBlue16NormalTextStyle,
+        ),
+      ),
+    );
   }
 }

@@ -116,19 +116,6 @@ class _HomePageState extends State<HomePage> {
     super.initState();
   }
 
-
-  Future<void> isUserExist() async {
-    var firebaseUser = FirebaseAuth.instance.currentUser!;
-    await firebaseUser.reload();
-
-// This should print `true` if the user is deleted in the Firebase Console.
-    print(FirebaseAuth.instance.currentUser == null);
-    if(FirebaseAuth.instance.currentUser == null) {
-      await Navigator.pushNamed(context, '/login');
-    }
-
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -1,26 +1,25 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:hexcolor/hexcolor.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
-//import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:totem/components/constance.dart';
+import 'package:totem/components/constants.dart';
 import 'package:totem/components/widgets/Button.dart';
 
-class RegisterPage2 extends StatefulWidget {
-  const RegisterPage2({Key? key}) : super(key: key);
+class RegisterPage extends StatefulWidget {
+  const RegisterPage({Key? key}) : super(key: key);
 
   @override
-  _RegisterPage2State createState() => _RegisterPage2State();
+  _RegisterPageState createState() => _RegisterPageState();
 }
 
-class _RegisterPage2State extends State<RegisterPage2> {
+class _RegisterPageState extends State<RegisterPage> {
   final formKey = GlobalKey<FormState>();
   final TextEditingController _phoneNumberController = TextEditingController();
   String initialCountry = 'US';
   PhoneNumber numberController = PhoneNumber(isoCode: 'US');
   String error = '';
   var auth = FirebaseAuth.instance;
+
   late String _verificationId;
 
   @override
@@ -37,7 +36,7 @@ class _RegisterPage2State extends State<RegisterPage2> {
                   height: 40.h,
                 ),
                 Text(
-                  "Signup",
+                  'Signup',
                   style: white32BoldTextStyle,
                 ),
                 Padding(
@@ -93,11 +92,11 @@ class _RegisterPage2State extends State<RegisterPage2> {
                           textFieldController: _phoneNumberController,
                           formatInput: false,
                           textStyle: white16NormalTextStyle,
-                          hintText: "Phone Number",
+                          hintText: 'Phone Number',
                           cursorColor: Colors.white,
                           inputDecoration: InputDecoration(
                             hintStyle: white16NormalTextStyle,
-                            hintText: "Phone Number",
+                            hintText: 'Phone Number',
                             enabledBorder: UnderlineInputBorder(
                               borderSide: BorderSide(color: Colors.white),
                             ),
@@ -166,7 +165,7 @@ class _RegisterPage2State extends State<RegisterPage2> {
                               stop();
                             }
                           },
-                          buttonText: 'Submit', showArrow: true,
+                          buttonText: 'Submit',
                         )
                       ],
                     ),
@@ -184,7 +183,7 @@ class _RegisterPage2State extends State<RegisterPage2> {
   void verifyPhoneNumber(Function stop, String number) async {
     PhoneVerificationCompleted verificationCompleted =
         (PhoneAuthCredential phoneAuthCredential) async {
-          stop();
+      stop();
       await auth.signInWithCredential(phoneAuthCredential);
       print(
           'Phone number automatically verified and user signed in: ${auth.currentUser!.uid}');
@@ -193,19 +192,19 @@ class _RegisterPage2State extends State<RegisterPage2> {
 
     var verificationFailed =
         (FirebaseAuthException authException) {
-          stop();
-          setState(() => error = authException.message ?? '');
+      stop();
+      setState(() => error = authException.message ?? '');
       print(
           'Phone number verification failed. Code: ${authException.code}. Message: ${authException.message}');
     };
     //Callback for when the code is sent
     PhoneCodeSent codeSent =
         (String verificationId, [int? forceResendingToken]) async {
-          stop();
+      stop();
       _verificationId = verificationId;
       print('Please check your phone for the verification code.');
-          await Navigator.pushNamed(context, '/login/phone/code',
-              arguments: {'verificationId': verificationId});
+      await Navigator.pushNamed(context, '/login/phone/code',
+          arguments: {'verificationId': verificationId});
     };
 
     var codeAutoRetrievalTimeout =
@@ -223,7 +222,7 @@ class _RegisterPage2State extends State<RegisterPage2> {
           codeSent: codeSent,
           codeAutoRetrievalTimeout: codeAutoRetrievalTimeout);
     } catch (e) {
-      print("Failed to Verify Phone Number: ${e}");
+      print('Failed to Verify Phone Number: $e');
     }
   }
 

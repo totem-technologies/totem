@@ -1,20 +1,18 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:totem/components/constance.dart';
+import 'package:totem/components/constants.dart';
 import 'package:totem/components/widgets/Button.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../guideline_screen.dart';
+class CodeRegisterPage extends StatefulWidget {
+  const CodeRegisterPage({Key? key}) : super(key: key);
 
-
-class CodeRegisterPage2 extends StatefulWidget {
   @override
-  _CodeRegisterPage2State createState() => _CodeRegisterPage2State();
+  _CodeRegisterPageState createState() => _CodeRegisterPageState();
 }
 
-class _CodeRegisterPage2State extends State<CodeRegisterPage2> {
+class _CodeRegisterPageState extends State<CodeRegisterPage> {
   final _formKey = GlobalKey<FormState>();
   final AutovalidateMode _autoValidate = AutovalidateMode.disabled;
 
@@ -38,7 +36,6 @@ class _CodeRegisterPage2State extends State<CodeRegisterPage2> {
   final TextEditingController _smsController6 = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   late User user;
-  late SharedPreferences prefs;
   String error = '';
   bool isLoggedIn = false;
   String name = '';
@@ -47,7 +44,7 @@ class _CodeRegisterPage2State extends State<CodeRegisterPage2> {
   ///Getting SMS
 
   ///Validates OTP code
-  void signInWithPhoneNumber2(Function stop) async {
+  void signInWithPhoneNumber(Function stop) async {
     try {
       otpValue = _smsController1.text +
           _smsController2.text +
@@ -66,78 +63,16 @@ class _CodeRegisterPage2State extends State<CodeRegisterPage2> {
 
       print(user.uid);
 
-      prefs = await SharedPreferences.getInstance();
-      await prefs.setString('uid', user.uid);
-
-      await Fluttertoast.showToast(
-          msg: "You're logged-in with ${user.uid}",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          textColor: Colors.white,
-          fontSize: 16.0
-      );
-
       stop();
       ///New screen after successful validation
-      await Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => GuidelineScreen(user.uid)), (Route<dynamic> route) => false
-      );
+      await Navigator.pushNamedAndRemoveUntil(context, '/login/guideline', (Route<dynamic> route) => false);
     } catch (e) {
       stop();
+      setState(() => error = '$e');
       print('Error:$e');
     }
   }
 
-/*  ///Validates OTP code
-  void signInWithPhoneNumber(Function stop) async {
-    try {
-      var otpValue = _smsController1.text +
-          _smsController2.text +
-          _smsController3.text +
-          _smsController4.text +
-          _smsController5.text +
-          _smsController6.text;
-      final args = ModalRoute.of(context)!.settings.arguments
-      as Map<String, String>;
-
-      final AuthCredential credential = PhoneAuthProvider.credential(
-        verificationId: args['verificationId'] ?? '',
-        smsCode: otpValue,
-      );
-        await _auth.signInWithCredential(credential);
-        user = (await _auth.signInWithCredential(credential)).user!;
-        print(user.uid);
-
-        prefs = await SharedPreferences.getInstance();
-        await prefs.setString('uid', user.uid);
-      await Fluttertoast.showToast(
-          msg: "You're logged-in",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          textColor: Colors.white,
-          fontSize: 16.0
-      );
-
-      ///New screen after successful validation
-      await Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => GuidelineScreen(user.uid)), (Route<dynamic> route) => false
-      );
-      stop();
-
-
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'invalid-verification-code') {
-        setState(() => error =
-        'The code entered was invalid. Please try again.');
-      }
-      stop();
-      return;
-    }
-  }*/
 
   @override
   void initState() {
@@ -149,7 +84,6 @@ class _CodeRegisterPage2State extends State<CodeRegisterPage2> {
     pin5FocusNode = FocusNode();
     pin6FocusNode = FocusNode();
   }
-
 
   @override
   void dispose() {
@@ -181,7 +115,7 @@ class _CodeRegisterPage2State extends State<CodeRegisterPage2> {
                   height: 40.h,
                 ),
                 Text(
-                  "Signup",
+                  'Signup',
                   style: white32BoldTextStyle,
                 ),
                 Padding(
@@ -198,14 +132,14 @@ class _CodeRegisterPage2State extends State<CodeRegisterPage2> {
                   height: 20.h,
                 ),
                 Text(
-                  "Enter your Code",
+                  'Enter your Code',
                   style: white16BoldTextStyle,
                 ),
                 SizedBox(
                   height: 10.h,
                 ),
                 Text(
-                  "Enter the 4 digit code",
+                  'Enter the 4 digit code',
                   style: white16NormalTextStyle,
                 ),
                 SizedBox(
@@ -341,10 +275,10 @@ class _CodeRegisterPage2State extends State<CodeRegisterPage2> {
                       'Please enter a code');
                     }
                     else if (_formKey.currentState!.validate()) {
-                      signInWithPhoneNumber2(stop);
+                      signInWithPhoneNumber(stop);
                     }
                   },
-                  buttonText: 'Submit', showArrow: true,
+                  buttonText: 'Submit',
                 ),
               ],
             ),

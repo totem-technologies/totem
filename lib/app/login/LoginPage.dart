@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:totem/components/widgets/Button.dart';
-import '../../components/widgets/Header.dart';
+import 'package:totem/components/widgets/Header.dart';
 
 class _LoginPanel extends StatelessWidget {
   const _LoginPanel({Key? key}) : super(key: key);
@@ -18,17 +18,19 @@ class _LoginPanel extends StatelessWidget {
         child: Container(
           width: 290,
           child: Text(
-              'We are a Community, made to let you share and participate with others, by communicating your thoughts on a topic of your interest.',
-              textAlign: TextAlign.center,
-              style: TextStyle(height: 1.5),),
+            'We are a Community, made to let you share and participate with others, by communicating your thoughts on a topic of your interest.',
+            textAlign: TextAlign.center,
+            style: TextStyle(height: 1.5),
+          ),
         ),
       ),
       TotemButton(
-          buttonText: 'Login',
-          onButtonPressed: (stop) {
-            stop();
-            Navigator.pushNamed(context, '/login/phone');
-          }, showArrow: true,),
+        buttonText: 'Login',
+        onButtonPressed: (stop) {
+          stop();
+          Navigator.pushNamed(context, '/login/phone');
+        },
+      ),
     ])));
   }
 }

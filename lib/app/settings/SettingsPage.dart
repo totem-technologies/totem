@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:totem/components/widgets/Button.dart';
-import '../../components/widgets/Header.dart';
+import 'package:totem/components/widgets/Header.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -38,7 +38,7 @@ class SettingsPage extends StatelessWidget {
                   buttonText: 'Sign Out',
                   onButtonPressed: (stop) async {
                     await auth.signOut();
-                  }, showArrow: true,
+                  },
                 ),
               )
             ],

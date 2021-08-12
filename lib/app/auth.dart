@@ -103,7 +103,7 @@ class EmptyContent extends StatelessWidget {
                 Navigator.pushReplacementNamed(context, '/');
                 stop();
               },
-              buttonText: 'Go Home', showArrow: true, icon: null,)
+              buttonText: 'Go Home', icon: null,)
         ],
       ),
     ));
