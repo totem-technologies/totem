@@ -100,7 +100,8 @@ class EmptyContent extends StatelessWidget {
           ),
           TotemContinueButton(
               onButtonPressed: (stop) {
-                Navigator.pushReplacementNamed(context, '/');
+                Navigator.pushNamedAndRemoveUntil(
+                    context, '/', (Route<dynamic> route) => false);
                 stop();
               },
               buttonText: 'Go Home')

@@ -42,7 +42,8 @@ class _RegisterPageState extends State<RegisterPage> {
           // Android only
           print('verificationCompleted');
           await auth.signInWithCredential(credential);
-          await Navigator.pushReplacementNamed(context, '/');
+          await Navigator.pushNamedAndRemoveUntil(
+              context, '/login/guideline', (Route<dynamic> route) => false);
         },
         verificationFailed: (FirebaseAuthException e) {
           stop();
@@ -159,21 +160,22 @@ class _RegisterPageState extends State<RegisterPage> {
                           ),
                           keyboardType: TextInputType.numberWithOptions(
                               signed: true, decimal: true),
-                          //inputBorder: OutlineInputBorder(),
-
                           onSaved: (PhoneNumber number) {
                             print('On Saved: $number');
                             numberController = number;
                           },
                         ),
-                        Container(
-                            child: Text(
-                          error,
-                          style: TextStyle(color: Colors.red),
-                          maxLines: 2,
-                        )),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10.0),
+                          child: Container(
+                              child: Text(
+                            error,
+                            style: TextStyle(color: Colors.red),
+                            maxLines: 2,
+                          )),
+                        ),
                         SizedBox(
-                          height: 50.h,
+                          height: 30.h,
                         ),
                         TotemContinueButton(
                           onButtonPressed: onSubmit,
