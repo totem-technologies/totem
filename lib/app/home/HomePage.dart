@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:totem/components/widgets/Header.dart';
@@ -70,7 +69,6 @@ class _TopicItem extends StatelessWidget {
         decoration: BoxDecoration(
             color: Colors.grey[700],
             borderRadius: BorderRadius.all(Radius.circular(10))),
-        // height: 100,
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(
@@ -91,14 +89,7 @@ class _TopicItem extends StatelessWidget {
   }
 }
 
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
-
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
+class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
