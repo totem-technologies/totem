@@ -33,8 +33,7 @@ dependencies:
   state_notifier: ^0.7.0
   logger: ^1.0.0-nullsafety.0
   flutter_screenutil: ^5.0.0+2
-  hexcolor:
-  fluttertoast: ^8.0.7
+  hexcolor: ^2.0.4
 
 dev_dependencies:
   flutter_test:

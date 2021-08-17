@@ -98,12 +98,12 @@ class EmptyContent extends StatelessWidget {
           Padding(
             padding: EdgeInsets.only(top: 50, bottom: 40),
           ),
-          TotemButton(
+          TotemContinueButton(
               onButtonPressed: (stop) {
                 Navigator.pushReplacementNamed(context, '/');
                 stop();
               },
-              buttonText: 'Go Home', icon: null,)
+              buttonText: 'Go Home')
         ],
       ),
     ));

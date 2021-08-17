@@ -1,8 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:totem/components/constants.dart';
 import 'package:totem/components/widgets/Button.dart';
+import 'package:totem/app/providers.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CodeRegisterPage extends StatefulWidget {
@@ -34,14 +35,11 @@ class _CodeRegisterPageState extends State<CodeRegisterPage> {
   final TextEditingController _smsController4 = TextEditingController();
   final TextEditingController _smsController5 = TextEditingController();
   final TextEditingController _smsController6 = TextEditingController();
-  final FirebaseAuth _auth = FirebaseAuth.instance;
   late User user;
   String error = '';
   bool isLoggedIn = false;
   String name = '';
   late String otpValue;
-
-  ///Getting SMS
 
   ///Validates OTP code
   void signInWithPhoneNumber(Function stop) async {
@@ -52,27 +50,31 @@ class _CodeRegisterPageState extends State<CodeRegisterPage> {
           _smsController4.text +
           _smsController5.text +
           _smsController6.text;
-      final args = ModalRoute.of(context)!.settings.arguments
-      as Map<String, String>;
+      final args =
+          ModalRoute.of(context)!.settings.arguments as Map<String, String>;
       final AuthCredential credential = PhoneAuthProvider.credential(
         verificationId: args['verificationId'] ?? '',
         smsCode: otpValue,
       );
 
-      user = (await _auth.signInWithCredential(credential)).user!;
+      user = (await context
+              .read(firebaseAuthProvider)
+              .signInWithCredential(credential))
+          .user!;
 
       print(user.uid);
 
       stop();
+
       ///New screen after successful validation
-      await Navigator.pushNamedAndRemoveUntil(context, '/login/guideline', (Route<dynamic> route) => false);
+      await Navigator.pushNamedAndRemoveUntil(
+          context, '/login/guideline', (Route<dynamic> route) => false);
     } catch (e) {
       stop();
       setState(() => error = '$e');
       print('Error:$e');
     }
   }
-
 
   @override
   void initState() {
@@ -145,19 +147,17 @@ class _CodeRegisterPageState extends State<CodeRegisterPage> {
                 SizedBox(
                   height: 90.h,
                 ),
+
                 ///OTP textFields
                 Form(
                   key: _formKey,
                   autovalidateMode: _autoValidate,
                   child: Column(
                     children: [
-                      //SizedBox(height: SizeConfig.screenHeight * 0.15),
                       Wrap(
-                        //crossAxisAlignment: WrapCrossAlignment.center,
                         alignment: WrapAlignment.center,
                         runSpacing: 20.h,
                         spacing: 20.w,
-                        //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           SizedBox(
                             width: 50.w,
@@ -262,19 +262,17 @@ class _CodeRegisterPageState extends State<CodeRegisterPage> {
                 SizedBox(
                   height: 100.h,
                 ),
-                TotemButton(
+                TotemContinueButton(
                   onButtonPressed: (stop) async {
                     setState(() => error = '');
-                    if(_smsController1.text.isEmpty ||
+                    if (_smsController1.text.isEmpty ||
                         _smsController2.text.isEmpty ||
                         _smsController3.text.isEmpty ||
                         _smsController4.text.isEmpty ||
                         _smsController5.text.isEmpty ||
-                        _smsController6.text.isEmpty){
-                      setState(() => error =
-                      'Please enter a code');
-                    }
-                    else if (_formKey.currentState!.validate()) {
+                        _smsController6.text.isEmpty) {
+                      setState(() => error = 'Please enter a code');
+                    } else if (_formKey.currentState!.validate()) {
                       signInWithPhoneNumber(stop);
                     }
                   },

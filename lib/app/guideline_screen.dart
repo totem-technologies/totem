@@ -71,7 +71,7 @@ class _GuidelineScreenState extends State<GuidelineScreen> {
                       textAlign: TextAlign.start,
                     ),
                     SizedBox(
-                      height: 150.h,
+                      height: 190.h,
                     ),
                   ],
                 ),
@@ -90,15 +90,15 @@ class _GuidelineScreenState extends State<GuidelineScreen> {
                         color: Colors.grey.withOpacity(0.1),
                         borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(30.w),
-                            topRight: Radius.circular(30.w)),
-                        border: Border.all(color: Colors.white)),
+                            topRight: Radius.circular(30.w))),
                     alignment: Alignment.center,
                     child: Column(
                       children: [
                         TotemButton(
                           buttonText: 'Accept Guidelines',
-                          onButtonPressed:(stop) {
-                                Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+                          onButtonPressed: (stop) {
+                            Navigator.pushNamedAndRemoveUntil(
+                                context, '/home', (route) => false);
                           },
                         ),
                         TextButton(
@@ -131,5 +131,4 @@ class _GuidelineScreenState extends State<GuidelineScreen> {
       ),
     );
   }
-
 }

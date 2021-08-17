@@ -99,23 +99,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
-  @override
-  void initState() {
-    FirebaseAuth.instance
-        .authStateChanges()
-        .listen((User? user) {
-      if (user! == null) {
-        print('User is signed in!');
-        user.reload();
-      } else {
-        user.reload();
-        Navigator.pushNamed(context, '/login');
-      }
-    });
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

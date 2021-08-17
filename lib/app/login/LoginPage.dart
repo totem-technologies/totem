@@ -24,7 +24,7 @@ class _LoginPanel extends StatelessWidget {
           ),
         ),
       ),
-      TotemButton(
+      TotemContinueButton(
         buttonText: 'Login',
         onButtonPressed: (stop) {
           stop();
