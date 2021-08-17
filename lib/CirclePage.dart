@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'components/Header.dart';
+import 'components/widgets/Header.dart';
 
 class CircelPage extends StatelessWidget {
   const CircelPage({Key? key, required this.circleID}) : super(key: key);

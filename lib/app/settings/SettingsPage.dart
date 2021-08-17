@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import '../../components/Header.dart';
-import '../../components/Button.dart';
+import 'package:totem/components/widgets/Button.dart';
+import 'package:totem/components/widgets/Header.dart';
+import 'package:totem/app/providers.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    var auth = FirebaseAuth.instance;
     return Scaffold(
         body: Container(
       color: Colors.black,
@@ -35,9 +35,9 @@ class SettingsPage extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 10.0),
                 child: TotemButton(
                   icon: Icons.logout,
-                  text: 'Sign Out',
-                  onPressed: (stop) async {
-                    await auth.signOut();
+                  buttonText: 'Sign Out',
+                  onButtonPressed: (stop) async {
+                    await context.read(firebaseAuthProvider).signOut();
                   },
                 ),
               )

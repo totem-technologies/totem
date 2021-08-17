@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:totem/components/Header.dart';
+import 'package:totem/components/widgets/Header.dart';
 import 'package:totem/models/Topics.dart';
 import 'package:totem/services/topics.dart';
 
@@ -69,7 +69,6 @@ class _TopicItem extends StatelessWidget {
         decoration: BoxDecoration(
             color: Colors.grey[700],
             borderRadius: BorderRadius.all(Radius.circular(10))),
-        // height: 100,
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(
@@ -91,7 +90,6 @@ class _TopicItem extends StatelessWidget {
 }
 
 class HomePage extends StatelessWidget {
-  const HomePage({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Scaffold(

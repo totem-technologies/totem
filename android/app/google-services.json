@@ -30,6 +30,14 @@
           }
         },
         {
+          "client_id": "35349008308-b9tqsdftjjijum2bl2pq8c2nkvgctpbo.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.kbl.totem",
+            "certificate_hash": "606c971ca46634abf200331d519040f6af50af7d"
+          }
+        },
+        {
           "client_id": "35349008308-soekr4auhqdon7phen1036i1peqjhq0s.apps.googleusercontent.com",
           "client_type": 3
         }

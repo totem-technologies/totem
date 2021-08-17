@@ -27,11 +27,13 @@ dependencies:
   firebase_core: ^1.2.0
   cloud_firestore: ^2.2.0
   firebase_auth: ^3.0.0
-  intl_phone_field: ^2.0.0
+  intl_phone_number_input: ^0.7.0+2
   flutter_spinkit: ^5.0.0
   flutter_riverpod: ^0.14.0+3
   state_notifier: ^0.7.0
   logger: ^1.0.0-nullsafety.0
+  flutter_screenutil: ^5.0.0+2
+  hexcolor: ^2.0.4
 
 dev_dependencies:
   flutter_test:
