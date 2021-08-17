@@ -141,7 +141,7 @@ class _CodeRegisterPageState extends State<CodeRegisterPage> {
                   height: 10.h,
                 ),
                 Text(
-                  'Enter the 4 digit code',
+                  'Enter the code',
                   style: white16NormalTextStyle,
                 ),
                 SizedBox(

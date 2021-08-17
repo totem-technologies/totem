@@ -35,14 +35,13 @@ class _RegisterPageState extends State<RegisterPage> {
         number = '+' + number;
       }
       print(number);
-      verifyPhoneNumber(stop, number);
       await auth.verifyPhoneNumber(
         phoneNumber: number,
         verificationCompleted: (PhoneAuthCredential credential) async {
           stop();
           // Android only
-          await auth.signInWithCredential(credential);
           print('verificationCompleted');
+          await auth.signInWithCredential(credential);
           await Navigator.pushReplacementNamed(context, '/');
         },
         verificationFailed: (FirebaseAuthException e) {
@@ -63,49 +62,6 @@ class _RegisterPageState extends State<RegisterPage> {
       );
     } else {
       stop();
-    }
-  }
-
-  void verifyPhoneNumber(Function stop, String number) async {
-    var auth = context.read(firebaseAuthProvider);
-    PhoneVerificationCompleted verificationCompleted =
-        (PhoneAuthCredential phoneAuthCredential) async {
-      stop();
-      await auth.signInWithCredential(phoneAuthCredential);
-      print(
-          'Phone number automatically verified and user signed in: ${auth.currentUser!.uid}');
-      await Navigator.pushReplacementNamed(context, '/');
-    };
-
-    var verificationFailed = (FirebaseAuthException authException) {
-      stop();
-      setState(() => error = authException.message ?? '');
-      print(
-          'Phone number verification failed. Code: ${authException.code}. Message: ${authException.message}');
-    };
-    //Callback for when the code is sent
-    PhoneCodeSent codeSent =
-        (String verificationId, [int? forceResendingToken]) async {
-      stop();
-      print('Please check your phone for the verification code.');
-      await Navigator.pushNamed(context, '/login/phone/code',
-          arguments: {'verificationId': verificationId});
-    };
-
-    var codeAutoRetrievalTimeout = (String verificationId) {
-      print('verification code: ' + verificationId);
-    };
-
-    try {
-      await auth.verifyPhoneNumber(
-          phoneNumber: number,
-          timeout: const Duration(minutes: 1),
-          verificationCompleted: verificationCompleted,
-          verificationFailed: verificationFailed,
-          codeSent: codeSent,
-          codeAutoRetrievalTimeout: codeAutoRetrievalTimeout);
-    } catch (e) {
-      print('Failed to Verify Phone Number: $e');
     }
   }
 
@@ -153,7 +109,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   height: 10.h,
                 ),
                 Text(
-                  'We will send you a 4 digit code  to login',
+                  'We will send you a code to login',
                   style: white16NormalTextStyle,
                 ),
                 SizedBox(
