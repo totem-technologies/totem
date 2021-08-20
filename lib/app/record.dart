@@ -6,8 +6,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:record_mp3/record_mp3.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-
-
 class RecordPage extends StatefulWidget {
   @override
   _RecordPageState createState() => _RecordPageState();
@@ -18,6 +16,8 @@ class _RecordPageState extends State<RecordPage> {
   bool isComplete = false;
   String timeString = '00:00';
   Stopwatch stopwatch = Stopwatch();
+  late AudioPlayer audioPlayer;
+
   late Timer timer;
 
   @override
@@ -108,11 +108,11 @@ class _RecordPageState extends State<RecordPage> {
               alignment: AlignmentDirectional.center,
               width: 100,
               height: 50,
-              child: isComplete && recordFilePath != null
+              child: isComplete
                   ? Text(
-                'play',
-                style: TextStyle(color: Colors.red, fontSize: 20),
-              )
+                      'play',
+                      style: TextStyle(color: Colors.red, fontSize: 20),
+                    )
                   : Container(),
             ),
           ),
@@ -120,38 +120,36 @@ class _RecordPageState extends State<RecordPage> {
       ),
     );
   }
+
   ///Timer
-  void start(){
+  void start() {
     stopwatch.start();
     timer = Timer.periodic(Duration(seconds: 1), update);
   }
 
-  void update(Timer t){
-    if(stopwatch.isRunning){
+  void update(Timer t) {
+    if (stopwatch.isRunning) {
       setState(() {
         timeString =
-            (stopwatch.elapsed.inMinutes % 60).toString().padLeft(2, '0') + ':' +
+            (stopwatch.elapsed.inMinutes % 60).toString().padLeft(2, '0') +
+                ':' +
                 (stopwatch.elapsed.inSeconds % 60).toString().padLeft(2, '0');
       });
-
     }
   }
 
-  void stop(){
+  void stop() {
     setState(() {
       timer.cancel();
       stopwatch.stop();
     });
-
   }
 
-
-  void reset(){
+  void reset() {
     timer.cancel();
     stopwatch.reset();
-    setState((){
+    setState(() {
       timeString = '00:00:00';
-
     });
     stopwatch.stop();
   }
@@ -170,7 +168,7 @@ class _RecordPageState extends State<RecordPage> {
   void startRecord() async {
     bool hasPermission = await checkPermission();
     if (hasPermission) {
-      start();  //timer start
+      start(); //timer start
       statusText = 'Recording...';
       recordFilePath = await getFilePath();
       isComplete = false;
@@ -223,8 +221,8 @@ class _RecordPageState extends State<RecordPage> {
   late String recordFilePath;
 
   void play() {
-    if (recordFilePath != null && File(recordFilePath).existsSync()) {
-      AudioPlayer audioPlayer = AudioPlayer();
+    if (File(recordFilePath).existsSync()) {
+      audioPlayer = AudioPlayer();
       audioPlayer.play(recordFilePath, isLocal: true);
     }
   }
@@ -232,8 +230,8 @@ class _RecordPageState extends State<RecordPage> {
   int i = 0;
 
   Future<String> getFilePath() async {
-    Directory storageDirectory = await getApplicationDocumentsDirectory();
-    String sdPath = storageDirectory.path + '/record';
+    var storageDirectory = await getApplicationDocumentsDirectory();
+    var sdPath = storageDirectory.path + '/record';
     var d = Directory(sdPath);
     if (!d.existsSync()) {
       d.createSync(recursive: true);
