@@ -33,6 +33,9 @@ class _RecordPageState extends State<RecordPage> {
             children: <Widget>[
               Expanded(
                 child: GestureDetector(
+                  onTap: () async {
+                    startRecord();
+                  },
                   child: Container(
                     height: 48.0,
                     decoration: BoxDecoration(color: Colors.red.shade300),
@@ -43,13 +46,13 @@ class _RecordPageState extends State<RecordPage> {
                       ),
                     ),
                   ),
-                  onTap: () async {
-                    startRecord();
-                  },
                 ),
               ),
               Expanded(
                 child: GestureDetector(
+                  onTap: () {
+                    pauseRecord();
+                  },
                   child: Container(
                     height: 48.0,
                     decoration: BoxDecoration(color: Colors.blue.shade300),
@@ -62,13 +65,13 @@ class _RecordPageState extends State<RecordPage> {
                       ),
                     ),
                   ),
-                  onTap: () {
-                    pauseRecord();
-                  },
                 ),
               ),
               Expanded(
                 child: GestureDetector(
+                  onTap: () {
+                    stopRecord();
+                  },
                   child: Container(
                     height: 48.0,
                     decoration: BoxDecoration(color: Colors.green.shade300),
@@ -79,9 +82,6 @@ class _RecordPageState extends State<RecordPage> {
                       ),
                     ),
                   ),
-                  onTap: () {
-                    stopRecord();
-                  },
                 ),
               ),
             ],
