@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:totem/components/widgets/Button.dart';
 import 'package:totem/components/widgets/Header.dart';
 import 'package:totem/models/Topics.dart';
 import 'package:totem/services/topics.dart';
@@ -113,7 +114,8 @@ class HomePage extends StatelessWidget {
             ],
           ),
           TotemHeader(text: 'Circles'),
-          TopicsList()
+          TopicsList(),
+              TotemButton(onButtonPressed:(stop){Navigator.pushNamed(context,'/audio');} , buttonText: 'Record')
         ])),
       ),
     ));

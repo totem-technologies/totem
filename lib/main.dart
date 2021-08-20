@@ -5,6 +5,7 @@ import 'package:totem/app/guideline_screen.dart';
 import 'package:totem/app/login/CodeRegisterPage.dart';
 import 'app/login/LoginPage.dart';
 import 'app/login/PhoneRegisterPage.dart';
+import 'app/record.dart';
 import 'app/settings/SettingsPage.dart';
 import 'app/home/HomePage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -27,7 +28,8 @@ class App extends StatelessWidget {
       '/login/phone/code': (_) => CodeRegisterPage(),
       '/login/guideline': (_) => GuidelineScreen(),
       '/settings': (_) => LoggedinGuard(builder: (_) => SettingsPage()),
-      '/home': (_) => LoggedinGuard(builder: (_) => HomePage())
+      '/home': (_) => LoggedinGuard(builder: (_) => HomePage()),
+      '/audio':(_) => LoggedinGuard(builder: (_) => RecordPage())
     };
     return ScreenUtilInit(
       designSize: Size(360, 776),

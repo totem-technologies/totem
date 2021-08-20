@@ -35,6 +35,10 @@ dependencies:
   flutter_screenutil: ^5.0.0+2
   hexcolor: ^2.0.4
   pin_code_fields: ^7.3.0
+  record_mp3: ^3.0.0
+  permission_handler: ^8.1.4+2
+  audioplayers: ^0.18.0
+  path_provider: ^2.0.2
 
 dev_dependencies:
   flutter_test:
