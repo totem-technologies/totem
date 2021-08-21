@@ -157,7 +157,7 @@ class _RecordPageState extends State<RecordPage> {
   ///Audio Record
   Future<bool> checkPermission() async {
     if (!await Permission.microphone.isGranted) {
-      PermissionStatus status = await Permission.microphone.request();
+      var status = await Permission.microphone.request();
       if (status != PermissionStatus.granted) {
         return false;
       }
@@ -166,7 +166,7 @@ class _RecordPageState extends State<RecordPage> {
   }
 
   void startRecord() async {
-    bool hasPermission = await checkPermission();
+    var hasPermission = await checkPermission();
     if (hasPermission) {
       start(); //timer start
       statusText = 'Recording...';
@@ -184,14 +184,14 @@ class _RecordPageState extends State<RecordPage> {
 
   void pauseRecord() {
     if (RecordMp3.instance.status == RecordStatus.PAUSE) {
-      bool s = RecordMp3.instance.resume();
+      var s = RecordMp3.instance.resume();
       if (s) {
         statusText = 'Recording...';
         start();
         setState(() {});
       }
     } else {
-      bool s = RecordMp3.instance.pause();
+      var s = RecordMp3.instance.pause();
       if (s) {
         statusText = 'Recording pause...';
         stop();
@@ -201,7 +201,7 @@ class _RecordPageState extends State<RecordPage> {
   }
 
   void stopRecord() {
-    bool s = RecordMp3.instance.stop();
+    var s = RecordMp3.instance.stop();
     if (s) {
       statusText = 'Record complete';
       isComplete = true;
@@ -211,7 +211,7 @@ class _RecordPageState extends State<RecordPage> {
   }
 
   void resumeRecord() {
-    bool s = RecordMp3.instance.resume();
+    var s = RecordMp3.instance.resume();
     if (s) {
       statusText = 'Recording...';
       setState(() {});
