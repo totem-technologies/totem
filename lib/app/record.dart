@@ -163,13 +163,9 @@ class _RecordPageState extends State<RecordPage> {
 
   ///Audio Record
   Future<bool> checkPermission() async {
-    if (!await Permission.microphone.isGranted) {
-      var status = await Permission.microphone.request();
-      if (status != PermissionStatus.granted) {
-        return false;
-      }
-    }
-    return true;
+    var status = await Permission.microphone.request();
+
+    return status == PermissionStatus.granted;
   }
 
   void startRecord() async {
