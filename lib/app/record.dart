@@ -17,8 +17,9 @@ class _RecordPageState extends State<RecordPage> {
   String timeString = '00:00';
   Stopwatch stopwatch = Stopwatch();
   late AudioPlayer audioPlayer;
-
+  int i = 0;
   late Timer timer;
+  late String recordFilePath;
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +52,7 @@ class _RecordPageState extends State<RecordPage> {
               Expanded(
                 child: GestureDetector(
                   onTap: () {
-                    pauseRecord();
+                    toggleRecord();
                   },
                   child: Container(
                     height: 48.0,
@@ -149,7 +150,7 @@ class _RecordPageState extends State<RecordPage> {
     timer.cancel();
     stopwatch.reset();
     setState(() {
-      timeString = '00:00:00';
+      timeString = '00:00';
     });
     stopwatch.stop();
   }
@@ -182,7 +183,7 @@ class _RecordPageState extends State<RecordPage> {
     setState(() {});
   }
 
-  void pauseRecord() {
+  void toggleRecord() {
     if (RecordMp3.instance.status == RecordStatus.PAUSE) {
       var s = RecordMp3.instance.resume();
       if (s) {
@@ -210,24 +211,12 @@ class _RecordPageState extends State<RecordPage> {
     }
   }
 
-  void resumeRecord() {
-    var s = RecordMp3.instance.resume();
-    if (s) {
-      statusText = 'Recording...';
-      setState(() {});
-    }
-  }
-
-  late String recordFilePath;
-
   void play() {
     if (File(recordFilePath).existsSync()) {
       audioPlayer = AudioPlayer();
       audioPlayer.play(recordFilePath, isLocal: true);
     }
   }
-
-  int i = 0;
 
   Future<String> getFilePath() async {
     var storageDirectory = await getApplicationDocumentsDirectory();

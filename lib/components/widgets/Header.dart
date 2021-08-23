@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hexcolor/hexcolor.dart';
 
 class TotemHeader extends StatelessWidget {
   const TotemHeader({Key? key, required this.text}) : super(key: key);
@@ -15,7 +17,8 @@ class TotemHeader extends StatelessWidget {
                 text,
                 style: TextStyle(
                   fontSize: 40,
-                  color: Colors.white,
+                  color: HexColor('#16182A'),
+                  fontWeight: FontWeight.w700
                 ),
               ),
               Padding(
@@ -25,7 +28,6 @@ class TotemHeader extends StatelessWidget {
                   height: 6,
                   decoration: BoxDecoration(
                       color: Color(0xffffcc59),
-                      border: Border.all(),
                       borderRadius: BorderRadius.all(Radius.circular(20))),
                 ),
               )

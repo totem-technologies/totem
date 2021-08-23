@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:totem/app/guideline_screen.dart';
 import 'package:totem/app/login/CodeRegisterPage.dart';
+import 'package:totem/appUI/login_page.dart';
 import 'app/login/LoginPage.dart';
 import 'app/login/PhoneRegisterPage.dart';
 import 'app/record.dart';
@@ -23,7 +24,7 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var routes = <String, Widget Function(dynamic)>{
-      '/login': (_) => LoginPage(),
+      '/login': (_) => LoginPage2(),
       '/login/phone': (_) => RegisterPage(),
       '/login/phone/code': (_) => CodeRegisterPage(),
       '/login/guideline': (_) => GuidelineScreen(),
@@ -40,7 +41,7 @@ class App extends StatelessWidget {
           brightness: Brightness.dark,
         ),
         home: AuthWidget(
-          nonSignedInBuilder: (_) => LoginPage(),
+          nonSignedInBuilder: (_) => LoginPage2(),
           signedInBuilder: (_) => HomePage(),
         ),
         routes: routes,
