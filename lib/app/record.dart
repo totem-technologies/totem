@@ -140,15 +140,15 @@ class _RecordPageState extends State<RecordPage> {
   }
 
   void stop() {
-    setState(() {
+
       timer.cancel();
       stopwatch.stop();
-    });
+
   }
 
   @override
   void dispose() {
-    timer.cancel();
+    stop();
     super.dispose();
   }
 
