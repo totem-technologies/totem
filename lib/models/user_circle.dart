@@ -5,7 +5,7 @@ class UserCircle {
   final String circle;
   final String user;
 
-  UserCircle({required this.circle, required this.user});
+  const UserCircle({required this.circle, required this.user});
 
   UserCircle.fromJson(Map<String, Object?> json)
       : circle = json['circle']! as String,

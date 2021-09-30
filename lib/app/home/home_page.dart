@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:totem/components/widgets/Header.dart';
-import 'package:totem/models/Topics.dart';
+import 'package:totem/components/widgets/headers.dart';
+import 'package:totem/models/topic.dart';
 import 'package:totem/services/topics.dart';
 
 class TopicsList extends StatefulWidget {
@@ -30,30 +30,28 @@ class _TopicsListState extends State<TopicsList> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: StreamBuilder<QuerySnapshot<Topic>>(
-          stream: _topics,
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return Center(
-                child: Text(snapshot.error.toString()),
-              );
-            }
-
-            if (!snapshot.hasData) {
-              return const Center(child: CircularProgressIndicator());
-            }
-
-            final data = snapshot.requireData;
-
-            return ListView.builder(
-              clipBehavior: Clip.none,
-              shrinkWrap: true,
-              itemCount: data.size,
-              itemBuilder: (c, i) => _TopicItem(topic: data.docs[i].data()),
+    return StreamBuilder<QuerySnapshot<Topic>>(
+        stream: _topics,
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Center(
+              child: Text(snapshot.error.toString()),
             );
-          }),
-    );
+          }
+
+          if (!snapshot.hasData) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          final data = snapshot.requireData;
+
+          return ListView.builder(
+            clipBehavior: Clip.none,
+            shrinkWrap: true,
+            itemCount: data.size,
+            itemBuilder: (c, i) => _TopicItem(topic: data.docs[i].data()),
+          );
+        });
   }
 }
 
@@ -68,7 +66,7 @@ class _TopicItem extends StatelessWidget {
         width: 200,
         decoration: BoxDecoration(
             color: Colors.grey[700],
-            borderRadius: BorderRadius.all(Radius.circular(10))),
+            borderRadius: const BorderRadius.all(Radius.circular(10))),
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(
@@ -78,7 +76,7 @@ class _TopicItem extends StatelessWidget {
                   padding: const EdgeInsets.only(bottom: 20.0),
                   child: Text(
                     topic.title,
-                    style: TextStyle(fontSize: 20),
+                    style: const TextStyle(fontSize: 20),
                   )),
               Text(topic.description)
             ],
@@ -90,6 +88,8 @@ class _TopicItem extends StatelessWidget {
 }
 
 class HomePage extends StatelessWidget {
+  const HomePage({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -112,8 +112,8 @@ class HomePage extends StatelessWidget {
               )
             ],
           ),
-          TotemHeader(text: 'Circles'),
-          TopicsList()
+          const TotemHeader(text: 'Circles'),
+          const TopicsList()
         ])),
       ),
     ));

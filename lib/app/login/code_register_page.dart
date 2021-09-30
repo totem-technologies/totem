@@ -1,9 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:totem/components/constants.dart';
-import 'package:totem/components/widgets/Button.dart';
+import 'package:totem/components/widgets/buttons.dart';
 import 'package:totem/app/providers.dart';
-import 'package:totem/app/login/PinCodeWidget.dart';
+import 'package:totem/app/login/pin_code_widget.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -43,7 +43,7 @@ class _CodeRegisterPageState extends State<CodeRegisterPage> {
       } else {
         setState(() => error = e.message!);
       }
-      print('Error:$e');
+      debugPrint('Error:$e');
     } finally {
       stop();
     }
@@ -102,12 +102,11 @@ class _CodeRegisterPageState extends State<CodeRegisterPage> {
                     )),
                 Padding(
                   padding: const EdgeInsets.only(top: 10.0),
-                  child: Container(
-                      child: Text(
+                  child: Text(
                     error,
-                    style: TextStyle(color: Colors.red),
+                    style: const TextStyle(color: Colors.red),
                     maxLines: 2,
-                  )),
+                  ),
                 ),
                 SizedBox(
                   height: 80.h,

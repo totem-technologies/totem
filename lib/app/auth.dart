@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:totem/app/providers.dart';
-import 'package:totem/components/widgets/Button.dart';
+import 'package:totem/components/widgets/buttons.dart';
 
 class AuthWidget extends ConsumerWidget {
   const AuthWidget({
@@ -67,7 +67,7 @@ class LoggedinGuard extends ConsumerWidget {
     if (user != null && !user.isAnonymous) {
       return builder(context);
     }
-    return EmptyContent(title: 'You are now logged out', message: '');
+    return const EmptyContent(title: 'You are now logged out', message: '');
   }
 }
 
@@ -95,7 +95,7 @@ class EmptyContent extends StatelessWidget {
             message,
             style: const TextStyle(fontSize: 16.0, color: Colors.white),
           ),
-          Padding(
+          const Padding(
             padding: EdgeInsets.only(top: 50, bottom: 40),
           ),
           TotemContinueButton(

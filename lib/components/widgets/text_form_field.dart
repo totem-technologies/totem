@@ -15,8 +15,8 @@ class TotemTextFormField extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFormField(
         enableInteractiveSelection: true,
-        decoration:
-            InputDecoration(border: OutlineInputBorder(), hintText: hintText),
+        decoration: InputDecoration(
+            border: const OutlineInputBorder(), hintText: hintText),
         controller: controller,
         // The validator receives the text that the user has entered.
         validator: validator);

@@ -2,17 +2,10 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:totem/components/constants.dart';
-import 'package:totem/components/widgets/Button.dart';
+import 'package:totem/components/widgets/buttons.dart';
 
-class GuidelineScreen extends StatefulWidget {
-  GuidelineScreen({Key? key}) : super(key: key);
-
-  @override
-  _GuidelineScreenState createState() => _GuidelineScreenState();
-}
-
-class _GuidelineScreenState extends State<GuidelineScreen> {
-  bool isAccepted = false;
+class GuidelineScreen extends StatelessWidget {
+  const GuidelineScreen({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Scaffold(

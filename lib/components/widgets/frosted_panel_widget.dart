@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'dart:ui';
 
 class FrostedPanelWidget extends StatelessWidget {
-  final full;
+  final bool full;
   final Widget child;
-  FrostedPanelWidget({required this.child, this.full = true});
+  const FrostedPanelWidget({required this.child, this.full = true, Key? key})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +17,7 @@ class FrostedPanelWidget extends StatelessWidget {
         child: AnimatedContainer(
             curve: Curves.easeInOut,
             height: MediaQuery.of(context).size.height * _heightRatio,
-            duration: Duration(milliseconds: 500),
+            duration: const Duration(milliseconds: 500),
             child: ClipRRect(
                 borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(borderRadius),

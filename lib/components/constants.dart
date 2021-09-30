@@ -40,13 +40,13 @@ TextStyle darkBlue16NormalTextStyle = TextStyle(
 
 final otpInputDecoration = InputDecoration(
   contentPadding: EdgeInsets.symmetric(vertical: 15.h),
-  enabledBorder: UnderlineInputBorder(
+  enabledBorder: const UnderlineInputBorder(
     borderSide: BorderSide(color: Colors.white),
   ),
-  focusedBorder: UnderlineInputBorder(
+  focusedBorder: const UnderlineInputBorder(
     borderSide: BorderSide(color: Colors.white),
   ),
-  border: UnderlineInputBorder(
+  border: const UnderlineInputBorder(
     borderSide: BorderSide(color: Colors.white),
   ),
 );

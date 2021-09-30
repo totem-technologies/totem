@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../models/Topics.dart';
+import '../models/topic.dart';
 
 /// A reference to the list of movies.
 /// We are using `withConverter` to ensure that interactions with the collection

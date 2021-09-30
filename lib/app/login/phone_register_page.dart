@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:totem/components/constants.dart';
-import 'package:totem/components/widgets/Button.dart';
+import 'package:totem/components/widgets/buttons.dart';
 import 'package:totem/app/providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -34,13 +34,13 @@ class _RegisterPageState extends State<RegisterPage> {
         }
         number = '+' + number;
       }
-      print(number);
+      debugPrint(number);
       await auth.verifyPhoneNumber(
         phoneNumber: number,
         verificationCompleted: (PhoneAuthCredential credential) async {
           stop();
           // Android only
-          print('verificationCompleted');
+          debugPrint('verificationCompleted');
           await auth.signInWithCredential(credential);
           await Navigator.pushNamedAndRemoveUntil(
               context, '/login/guideline', (Route<dynamic> route) => false);
@@ -48,17 +48,17 @@ class _RegisterPageState extends State<RegisterPage> {
         verificationFailed: (FirebaseAuthException e) {
           stop();
           setState(() => error = e.message ?? '');
-          print('verificationFailed');
+          debugPrint('verificationFailed');
         },
         codeSent: (String verificationId, int? resendToken) {
           stop();
-          print('codeSent');
+          debugPrint('codeSent');
           Navigator.pushNamed(context, '/login/phone/code',
               arguments: {'verificationId': verificationId});
         },
         codeAutoRetrievalTimeout: (String verificationId) {
           stop();
-          print('codeAutoRetrievalTimeout');
+          debugPrint('codeAutoRetrievalTimeout');
         },
       );
     } else {
@@ -120,69 +120,66 @@ class _RegisterPageState extends State<RegisterPage> {
                 ///Country Picker and textField
                 Form(
                   key: formKey,
-                  child: Container(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        InternationalPhoneNumberInput(
-                          onInputChanged: (PhoneNumber number) {
-                            print(number.phoneNumber);
-                          },
-                          onInputValidated: (bool value) {
-                            print(value);
-                          },
-                          selectorConfig: SelectorConfig(
-                            selectorType: PhoneInputSelectorType.BOTTOM_SHEET,
-                            showFlags: true,
-                            trailingSpace: false,
-                          ),
-                          ignoreBlank: false,
-                          autoValidateMode: AutovalidateMode.disabled,
-                          selectorTextStyle: white16NormalTextStyle,
-                          initialValue: numberController,
-                          textFieldController: _phoneNumberController,
-                          formatInput: false,
-                          textStyle: white16NormalTextStyle,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      InternationalPhoneNumberInput(
+                        onInputChanged: (PhoneNumber number) {
+                          debugPrint(number.phoneNumber);
+                        },
+                        onInputValidated: (bool value) {
+                          debugPrint("$value");
+                        },
+                        selectorConfig: const SelectorConfig(
+                          selectorType: PhoneInputSelectorType.BOTTOM_SHEET,
+                          showFlags: true,
+                          trailingSpace: false,
+                        ),
+                        ignoreBlank: false,
+                        autoValidateMode: AutovalidateMode.disabled,
+                        selectorTextStyle: white16NormalTextStyle,
+                        initialValue: numberController,
+                        textFieldController: _phoneNumberController,
+                        formatInput: false,
+                        textStyle: white16NormalTextStyle,
+                        hintText: 'Phone Number',
+                        cursorColor: Colors.white,
+                        inputDecoration: InputDecoration(
+                          hintStyle: white16NormalTextStyle,
                           hintText: 'Phone Number',
-                          cursorColor: Colors.white,
-                          inputDecoration: InputDecoration(
-                            hintStyle: white16NormalTextStyle,
-                            hintText: 'Phone Number',
-                            enabledBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors.white),
-                            ),
-                            focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors.white),
-                            ),
-                            border: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors.white),
-                            ),
+                          enabledBorder: const UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white),
                           ),
-                          keyboardType: TextInputType.numberWithOptions(
-                              signed: true, decimal: true),
-                          onSaved: (PhoneNumber number) {
-                            print('On Saved: $number');
-                            numberController = number;
-                          },
+                          focusedBorder: const UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white),
+                          ),
+                          border: const UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white),
+                          ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 10.0),
-                          child: Container(
-                              child: Text(
-                            error,
-                            style: TextStyle(color: Colors.red),
-                            maxLines: 2,
-                          )),
+                        keyboardType: const TextInputType.numberWithOptions(
+                            signed: true, decimal: true),
+                        onSaved: (PhoneNumber number) {
+                          debugPrint('On Saved: $number');
+                          numberController = number;
+                        },
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10.0),
+                        child: Text(
+                          error,
+                          style: const TextStyle(color: Colors.red),
+                          maxLines: 2,
                         ),
-                        SizedBox(
-                          height: 30.h,
-                        ),
-                        TotemContinueButton(
-                          onButtonPressed: onSubmit,
-                          buttonText: 'Submit',
-                        )
-                      ],
-                    ),
+                      ),
+                      SizedBox(
+                        height: 30.h,
+                      ),
+                      TotemContinueButton(
+                        onButtonPressed: onSubmit,
+                        buttonText: 'Submit',
+                      )
+                    ],
                   ),
                 ),
               ],

@@ -5,8 +5,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:totem/components/constants.dart';
 
 class TotemButton extends StatefulWidget {
-  TotemButton(
-      {required this.onButtonPressed, required this.buttonText, this.icon});
+  const TotemButton(
+      {required this.onButtonPressed,
+      required this.buttonText,
+      this.icon,
+      Key? key})
+      : super(key: key);
 
   final Function(Function stop) onButtonPressed;
   final String buttonText;
@@ -50,7 +54,7 @@ class _TotemButtonState extends State<TotemButton> {
               size: 30,
               color: Colors.black,
             )
-          : SpinKitPulse(
+          : const SpinKitPulse(
               color: Colors.black,
               size: 23.0,
             );
@@ -63,7 +67,7 @@ class _TotemButtonState extends State<TotemButton> {
         }
         start();
         widget.onButtonPressed(stop);
-        Timer(Duration(seconds: 10), () {
+        Timer(const Duration(seconds: 10), () {
           // Re-enable after a timeout incase stop is never called.
           stop();
         });

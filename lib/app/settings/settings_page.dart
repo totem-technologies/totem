@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:totem/components/widgets/Button.dart';
-import 'package:totem/components/widgets/Header.dart';
+import 'package:totem/components/widgets/buttons.dart';
+import 'package:totem/components/widgets/headers.dart';
 import 'package:totem/app/providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -30,7 +30,7 @@ class SettingsPage extends StatelessWidget {
                   )
                 ],
               ),
-              TotemHeader(text: 'Settings'),
+              const TotemHeader(text: 'Settings'),
               Padding(
                 padding: const EdgeInsets.only(top: 10.0),
                 child: TotemButton(
