@@ -11,7 +11,6 @@ class SettingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         body: Container(
-      color: Colors.black,
       child: SafeArea(
         child: Center(
           child: Column(
@@ -37,7 +36,8 @@ class SettingsPage extends StatelessWidget {
                   icon: Icons.logout,
                   buttonText: 'Sign Out',
                   onButtonPressed: (stop) async {
-                    await context.read(firebaseAuthProvider).signOut();
+                    await context.read(authServiceProvider).signOut();
+                    Navigator.of(context).pop();
                   },
                 ),
               )

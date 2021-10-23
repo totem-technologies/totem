@@ -3,68 +3,45 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:totem/components/constants.dart';
 import 'package:totem/components/widgets/buttons.dart';
+import 'package:totem/components/widgets/content_divider.dart';
+import 'package:totem/components/widgets/gradient_background.dart';
+import 'package:totem/services/index.dart';
+import 'package:totem/theme/index.dart';
 
 class GuidelineScreen extends StatelessWidget {
   const GuidelineScreen({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    final t = Localized.of(context).t;
+    final textStyles = Theme.of(context).textTheme;
+    return GradientBackground(
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
       body: SafeArea(
+        bottom: false,
         child: Stack(
           children: [
             SingleChildScrollView(
               child: Padding(
-                padding: EdgeInsets.only(left: 35.w, right: 35.w),
+                padding: EdgeInsets.only(left: 35.w, right: 35.w, top: 40.h, bottom: 150.h),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    SizedBox(
-                      height: 40.h,
-                    ),
                     Text(
-                      'Totem Community Guidelines',
-                      style: white32BoldTextStyle,
+                      t('guidelinesHeader'),
+                      style: textStyles.headline1,
                       textAlign: TextAlign.center,
                     ),
-                    Padding(
-                      padding: EdgeInsets.only(top: 5.h, bottom: 20.h),
-                      child: Container(
-                        height: 5.h,
-                        width: 90.w,
-                        decoration: BoxDecoration(
-                            color: yellowColor,
-                            borderRadius: BorderRadius.circular(10.w)),
-                      ),
+                    const Center(child: ContentDivider()),
+                    SizedBox(height: 24.h),
+                    Text('Last Time Updated: May 12,2021',
+                           style: textStyles.bodyText1!.merge(const TextStyle(fontWeight: FontWeight.bold)),
                     ),
-                    Container(
-                        alignment: Alignment.centerLeft,
-                        child: Column(
-                          children: [
-                            Text('Last Time Updated: May 12,2021',
-                                style: white16BoldTextStyle),
-                            /*Text(widget.uid,  ///showing uID as user logged-in
-                                style: white16BoldTextStyle),*/
-                          ],
-                        )),
                     SizedBox(
                       height: 15.h,
                     ),
-                    Text(
-                      'We are a Community, made to let you share  and participate with others, by communicating your thoughts on a topic of your '
-                      'interests.'
-                      'We are a Community, made to let you share  and participate with others, by communicating your thoughts on a topic of your interests.'
-                      'We are a Community, made to let you share  and participate with others, by communicating your thoughts on a topic of your interests.'
-                      'We are a Community, made to let you share  and participate with others, by communicating your thoughts on a topic of your interests.'
-                      'We are a Community, made to let you share  and participate with others, by communicating your thoughts on a topic of your interests.'
-                      'We are a Community, made to let you share  and participate with others, by communicating your thoughts on a topic of your interests.'
-                      'We are a Community, made to let you share  and participate with others, by communicating your thoughts on a topic of your interests.'
-                      'We are a Community, made to let you share  and participate with others, by communicating your thoughts on a topic of your interests.'
-                      'We are a Community, made to let you share  and participate with others, by communicating your thoughts on a topic of your interests.'
-                      'We are a Community, made to let you share  and participate with others, by communicating your thoughts on a topic of your interests.',
-                      style: white16NormalTextStyle,
-                      textAlign: TextAlign.start,
-                    ),
-                    SizedBox(
-                      height: 190.h,
+                    Text( t('guidelines'),
+                      style: textStyles.bodyText1,
                     ),
                   ],
                 ),
@@ -121,6 +98,7 @@ class GuidelineScreen extends StatelessWidget {
             )
           ],
         ),
+      ),
       ),
     );
   }

@@ -15,7 +15,6 @@ class TotemHeader extends StatelessWidget {
                 text,
                 style: const TextStyle(
                   fontSize: 40,
-                  color: Colors.white,
                 ),
               ),
               Padding(
