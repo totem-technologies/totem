@@ -1,12 +1,11 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:totem/components/constants.dart';
-import 'package:totem/components/widgets/buttons.dart';
-import 'package:totem/components/widgets/content_divider.dart';
-import 'package:totem/components/widgets/gradient_background.dart';
+import 'package:totem/components/widgets/index.dart';
 import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
+import 'package:totem/app/providers.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class GuidelineScreen extends StatelessWidget {
   const GuidelineScreen({Key? key}) : super(key: key);
@@ -49,57 +48,67 @@ class GuidelineScreen extends StatelessWidget {
             ),
             Align(
               alignment: Alignment.bottomCenter,
-              child: ClipRRect(
-                // Clip it cleanly.
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                  child: Container(
-                    height: 150.h,
-                    padding: EdgeInsets.only(top: 20.h, bottom: 20.h),
-                    decoration: BoxDecoration(
-                        color: Colors.grey.withOpacity(0.1),
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(30.w),
-                            topRight: Radius.circular(30.w))),
-                    alignment: Alignment.center,
-                    child: Column(
-                      children: [
-                        TotemButton(
-                          buttonText: 'Accept Guidelines',
-                          onButtonPressed: (stop) {
-                            Navigator.pushNamedAndRemoveUntil(
-                                context, '/home', (route) => false);
-                          },
-                        ),
-                        TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.arrow_back,
-                                  size: 30.w,
-                                  color: Colors.white,
-                                ),
-                                SizedBox(
-                                  width: 9.w,
-                                ),
-                                Text(
-                                  'Back',
-                                  style: white16BoldTextStyle,
-                                )
-                              ],
-                            ))
-                      ],
-                    ),
-                  ),
-                ),
+              child: _bottomControls(context),
               ),
-            )
           ],
         ),
       ),
       ),
     );
+  }
+
+  Widget _bottomControls(BuildContext context) {
+    final t = Localized.of(context).t;
+    final textStyles = Theme.of(context).textTheme;
+    final themeColors = Theme.of(context).themeColors;
+    return Wrap(
+        children:[
+          Container(
+            padding: EdgeInsets.only(top: 20.h, bottom: 5.h),
+            decoration: BoxDecoration(
+                color: themeColors.trayBackground,
+                boxShadow: [
+                  BoxShadow(
+                      color: themeColors.shadow, offset: const Offset(0, -8), blurRadius: 24),
+                ],
+                border: Border.all(
+                    color: themeColors.trayBorder,
+                    width: 1.0
+                ),
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(30.w),
+                    topRight: Radius.circular(30.w))),
+            alignment: Alignment.center,
+            child: SafeArea(
+              top: false,
+              bottom: true,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  TextButton(onPressed: () => _signOut(context),
+                      child: Row(
+                        children: [
+                          Icon(Icons.arrow_back, color: themeColors.primaryText,),
+                          SizedBox(width: 5.w,),
+                          Text(t('back'), style: textStyles.button,),
+                        ],
+                      )
+                  ),
+                  TotemButton(
+                    buttonText: t('acceptGuidelines'),
+                    onButtonPressed: (stop) {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ),
+            ),
+          )],
+    );
+  }
+
+  Future<void> _signOut(BuildContext context) async {
+    await context.read(authServiceProvider).signOut();
+    Navigator.of(context).pop();
   }
 }

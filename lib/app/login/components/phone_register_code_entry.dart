@@ -41,6 +41,7 @@ class _PhoneRegisterCodeEntryState extends State<PhoneRegisterCodeEntry> {
   @override
   Widget build(BuildContext context) {
     final t = Localized.of(context).t;
+    final textStyles = Theme.of(context).textTheme;
     return Padding(
       padding: EdgeInsets.only(left: 35.w, right: 35.w),
       child: Column(
@@ -48,17 +49,8 @@ class _PhoneRegisterCodeEntryState extends State<PhoneRegisterCodeEntry> {
           SizedBox(
             height: 40.h,
           ),
-          Text(t('signup'),),
-          Padding(
-            padding: EdgeInsets.only(top: 5.w),
-            child: Container(
-              height: 5.h,
-              width: 90.w,
-              decoration: BoxDecoration(
-                  color: yellowColor,
-                  borderRadius: BorderRadius.circular(10.w)),
-            ),
-          ),
+          Text(t('signup'), style: textStyles.headline1),
+          const ContentDivider(),
           SizedBox(
             height: 20.h,
           ),

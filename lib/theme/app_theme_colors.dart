@@ -9,6 +9,9 @@ class AppThemeColors {
     required this.dialogBackground,
     required this.primaryGradient,
     required this.secondaryGradient,
+    required this.trayBackground,
+    required this.trayBorder,
+    required this.shadow,
   });
 
   final Color screenBackground;
@@ -16,6 +19,9 @@ class AppThemeColors {
   final Color reversedText;
   final Color primary;
   final Color dialogBackground;
+  final Color trayBackground;
+  final Color trayBorder;
+  final Color shadow;
   final List<Color> primaryGradient;
   final List<Color> secondaryGradient;
 }
