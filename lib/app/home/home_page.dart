@@ -68,7 +68,7 @@ class HomePage extends StatelessWidget {
                               t('createCircle'),
                             ),
                             SizedBox(width: 12.w,),
-                            Icon(Icons.add)
+                            const Icon(Icons.add)
                           ],
                         )
                       )

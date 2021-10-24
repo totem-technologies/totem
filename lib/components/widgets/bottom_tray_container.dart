@@ -7,7 +7,6 @@ class BottomTrayContainer extends StatelessWidget {
   final Widget child;
   @override
   Widget build(BuildContext context) {
-    final textStyles = Theme.of(context).textTheme;
     final themeColors = Theme.of(context).themeColors;
     return Wrap(
       children:[
