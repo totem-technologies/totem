@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:totem/components/constants.dart';
-import 'package:totem/components/widgets/buttons.dart';
+import 'package:totem/components/widgets/index.dart';
+import 'package:totem/theme/index.dart';
 import 'package:totem/app/providers.dart';
-import 'package:totem/app/login/pin_code_widget.dart';
+import 'package:totem/app/login/components/pin_code_widget.dart';
+import 'package:totem/services/index.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:totem/components/widgets/index.dart';
-import 'package:totem/services/auth/index.dart';
-import 'package:totem/services/index.dart';
 
 class PhoneRegisterCodeEntry extends StatefulWidget {
   const PhoneRegisterCodeEntry({Key? key}) : super(key: key);
@@ -24,17 +22,21 @@ class _PhoneRegisterCodeEntryState extends State<PhoneRegisterCodeEntry> {
 
   String pinValue = '';
   String error = '';
+  bool _busy = false;
 
   ///Validates OTP code
-  void signInWithPhoneNumber(Function stop) async {
+  void signInWithPhoneNumber() async {
+    setState(() => _busy = true);
     try {
       await context.read(authServiceProvider).verifyCode(pinValue);
+      setState(() => _busy = false);
       await Navigator.pushReplacementNamed(context, '/login/guideline',);
     } on AuthException catch (e) {
-      setState(() => error = e.message!);
+      setState(() {
+        error = e.message!;
+        _busy = false;
+      });
       debugPrint('Error:$e');
-    } finally {
-      stop();
     }
   }
 
@@ -42,6 +44,7 @@ class _PhoneRegisterCodeEntryState extends State<PhoneRegisterCodeEntry> {
   Widget build(BuildContext context) {
     final t = Localized.of(context).t;
     final textStyles = Theme.of(context).textTheme;
+    final themeColors = Theme.of(context).themeColors;
     return Padding(
       padding: EdgeInsets.only(left: 35.w, right: 35.w),
       child: Column(
@@ -55,8 +58,13 @@ class _PhoneRegisterCodeEntryState extends State<PhoneRegisterCodeEntry> {
             height: 20.h,
           ),
           Text(
-            'Enter your Code',
-            style: white16BoldTextStyle,
+            t('enterCode'),
+            style: textStyles.bodyText1!.merge(const TextStyle(fontWeight: FontWeight.w600)),
+          ),
+          SizedBox( height: 8.h),
+          Text(
+            t('enterTheCodeDetail'),
+            style: textStyles.bodyText1!,
           ),
           SizedBox(
             height: 90.h,
@@ -64,41 +72,36 @@ class _PhoneRegisterCodeEntryState extends State<PhoneRegisterCodeEntry> {
 
           ///OTP textFields
           Form(
-              key: _formKey,
-              autovalidateMode: _autoValidate,
-              child: PinCodeWidget(
-                onChanged: (v) {
-                  setState(() => error = '');
-                  pinValue = v;
-                },
-                onComplete: (v) {
-                  pinValue = v;
-                },
-              )),
+            key: _formKey,
+            autovalidateMode: _autoValidate,
+            child: PinCodeWidget(
+              onChanged: (v) {
+                setState(() => error = '');
+                pinValue = v;
+              },
+              onComplete: (v) {
+                pinValue = v;
+              },
+            ),
+          ),
           Padding(
             padding: const EdgeInsets.only(top: 10.0),
             child: Text(
               error,
-              style: const TextStyle(color: Colors.red),
+              style: TextStyle(color: themeColors.error),
               maxLines: 2,
             ),
           ),
           SizedBox(
             height: 80.h,
           ),
-          TotemContinueButton(
-            onButtonPressed: (stop) async {
-              setState(() => error = '');
-              var isSixDigits =
-                  pinValue.length == 6 && int.tryParse(pinValue) != null;
-              if (!isSixDigits) {
-                setState(() => error = 'Please enter a 6 digit code');
-                stop();
-              } else if (_formKey.currentState!.validate()) {
-                signInWithPhoneNumber(stop);
-              }
-            },
-            buttonText: 'Submit',
+          ThemedRaisedButton(
+            label: t('getStarted'),
+            busy: _busy,
+            width: 294.w,
+            onPressed: pinValue.length == 6 && int.tryParse(pinValue) != null ? () {
+              signInWithPhoneNumber();
+            } : null,
           ),
         ],
       ),

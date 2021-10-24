@@ -64,7 +64,7 @@ class GuidelineScreen extends StatelessWidget {
     return Wrap(
         children:[
           Container(
-            padding: EdgeInsets.only(top: 20.h, bottom: 5.h),
+            padding: EdgeInsets.only(top: 20.h, bottom: 15.h),
             decoration: BoxDecoration(
                 color: themeColors.trayBackground,
                 boxShadow: [
@@ -94,9 +94,9 @@ class GuidelineScreen extends StatelessWidget {
                         ],
                       )
                   ),
-                  TotemButton(
-                    buttonText: t('acceptGuidelines'),
-                    onButtonPressed: (stop) {
+                  ThemedRaisedButton(
+                    label: t('acceptGuidelines'),
+                    onPressed: () {
                       Navigator.of(context).pop();
                     },
                   ),

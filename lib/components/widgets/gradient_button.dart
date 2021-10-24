@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class GradientButton extends StatefulWidget {
+  const GradientButton({Key? key}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() => _GradientButtonState();
 }
@@ -12,14 +14,14 @@ class _GradientButtonState extends State<GradientButton> {
       padding: const EdgeInsets.all(10.0),
       child: Container(
         decoration: BoxDecoration(
-          boxShadow: [
+          boxShadow: const [
             BoxShadow(
                 color: Colors.black26, offset: Offset(0, 4), blurRadius: 5.0)
           ],
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            stops: [0.0, 1.0],
+            stops: const [0.0, 1.0],
             colors: [
               Colors.deepPurple.shade400,
               Colors.deepPurple.shade200,
@@ -35,7 +37,7 @@ class _GradientButtonState extends State<GradientButton> {
                 borderRadius: BorderRadius.circular(20.0),
               ),
             ),
-            minimumSize: MaterialStateProperty.all(Size(80, 50)),
+            minimumSize: MaterialStateProperty.all(const Size(80, 50)),
             backgroundColor:
             MaterialStateProperty.all(Colors.transparent),
             // elevation: MaterialStateProperty.all(3),
@@ -45,8 +47,8 @@ class _GradientButtonState extends State<GradientButton> {
           onPressed: () {
             //onpressed();
           },
-          child: Padding(
-            padding: const EdgeInsets.only(
+          child: const Padding(
+            padding: EdgeInsets.only(
               top: 10,
               bottom: 10,
             ),

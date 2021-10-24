@@ -40,6 +40,7 @@ dependencies:
   pin_code_fields: ^7.3.0
   flutter_svg: ^0.22.0
   rxdart: ^0.27.2
+  auto_size_text: ^3.0.0-nullsafety.0
 
 dev_dependencies:
   flutter_test:

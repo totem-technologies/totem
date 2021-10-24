@@ -35,25 +35,32 @@ class _RegisterPageState extends State<RegisterPage> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         resizeToAvoidBottomInset: false,
-        body: SafeArea(
-          child: Center(
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 300),
-              child: StreamBuilder<AuthRequestState>(
-                stream: _requestStateStream,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    switch (snapshot.data!) {
-                      case AuthRequestState.pending:
-                        return PhoneRegisterCodeEntry();
-                      case AuthRequestState.entry:
-                      default:
-                        return PhoneRegisterNumberEntry();
+        body: GestureDetector(
+          behavior: HitTestBehavior.translucent,
+          onTap: () {
+            // call this method here to hide soft keyboard
+            FocusScope.of(context).unfocus();
+          },
+          child: SafeArea(
+            child: Center(
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 300),
+                child: StreamBuilder<AuthRequestState>(
+                    stream: _requestStateStream,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        switch (snapshot.data!) {
+                          case AuthRequestState.pending:
+                            return const PhoneRegisterCodeEntry();
+                          case AuthRequestState.entry:
+                          default:
+                            return const PhoneRegisterNumberEntry();
+                        }
+                      }
+                      // nothing available yet
+                      return Container();
                     }
-                  }
-                  // nothing available yet
-                  return Container();
-                }
+                ),
               ),
             ),
           ),

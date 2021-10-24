@@ -5,6 +5,7 @@ import 'package:totem/components/widgets/index.dart';
 import 'package:totem/services/index.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:totem/app/providers.dart';
+import 'package:totem/theme/index.dart';
 
 class PhoneRegisterNumberEntry extends StatefulWidget {
   const PhoneRegisterNumberEntry({Key? key}) : super(key: key);
@@ -20,6 +21,7 @@ class _PhoneRegisterNumberEntryState extends State<PhoneRegisterNumberEntry> {
   String initialCountry = 'US';
   PhoneNumber numberController = PhoneNumber(isoCode: 'US');
   String error = '';
+  bool _busy = false;
 
   @override
   void dispose() {
@@ -30,6 +32,7 @@ class _PhoneRegisterNumberEntryState extends State<PhoneRegisterNumberEntry> {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final themeColors = Theme.of(context).themeColors;
     final t = Localized.of(context).t;
     return Padding(
       padding: EdgeInsets.only(left: 35.w, right: 35.w),
@@ -65,6 +68,7 @@ class _PhoneRegisterNumberEntryState extends State<PhoneRegisterNumberEntry> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 InternationalPhoneNumberInput(
+                  autoFocus: true,
                   onInputChanged: (PhoneNumber number) {
                     debugPrint(number.phoneNumber);
                   },
@@ -72,30 +76,27 @@ class _PhoneRegisterNumberEntryState extends State<PhoneRegisterNumberEntry> {
                     debugPrint("$value");
                   },
                   selectorConfig: const SelectorConfig(
+                    setSelectorButtonAsPrefixIcon: true,
                     selectorType: PhoneInputSelectorType.BOTTOM_SHEET,
                     showFlags: true,
                     trailingSpace: false,
                   ),
                   ignoreBlank: false,
-                  autoValidateMode: AutovalidateMode.disabled,
-                  //selectorTextStyle: white16NormalTextStyle,
                   initialValue: numberController,
                   textFieldController: _phoneNumberController,
-                  formatInput: false,
-                  //textStyle: white16NormalTextStyle,
-                  hintText: 'Phone Number',
-                  //cursorColor: themeColors.,
+                  //formatInput: true,
+                  hintText: t('phoneNumber'),
+                  errorMessage: t('errorInvalidPhoneNumber'),
                   inputDecoration: InputDecoration(
-                    //hintStyle: white16NormalTextStyle,
                     hintText: t('phoneNumber'),
-                    enabledBorder: const UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: themeColors.primaryText),
                     ),
-                    focusedBorder: const UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: themeColors.primaryText),
                     ),
-                    border: const UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white),
+                    border: UnderlineInputBorder(
+                      borderSide: BorderSide(color: themeColors.primaryText),
                     ),
                   ),
                   keyboardType: const TextInputType.numberWithOptions(
@@ -116,10 +117,12 @@ class _PhoneRegisterNumberEntryState extends State<PhoneRegisterNumberEntry> {
                 SizedBox(
                   height: 30.h,
                 ),
-                TotemContinueButton(
-                  onButtonPressed: onSubmit,
-                  buttonText: 'Submit',
-                )
+                ThemedRaisedButton(
+                  label: t('sendCode'),
+                  busy: _busy,
+                  onPressed: onSubmit,
+                  width: 294.w,
+                ),
               ],
             ),
           ),
@@ -128,12 +131,15 @@ class _PhoneRegisterNumberEntryState extends State<PhoneRegisterNumberEntry> {
     );
   }
 
-  void onSubmit(Function stop) async {
+  void onSubmit() async {
+    setState(() {
+      error = '';
+    });
     var auth = context.read(authServiceProvider);
-    setState(() => error = '');
     // Validate returns true if the form is valid, or false otherwise.
     if (formKey.currentState!.validate()) {
-      var number = _phoneNumberController.text;
+      setState(() => _busy = true);
+      var number = _phoneNumberController.text.replaceAll(RegExp(r'[^0-9]'), "");
       if (!number.startsWith('+')) {
         if (number.length == 10) {
           // US user only input 10 digits
@@ -144,25 +150,15 @@ class _PhoneRegisterNumberEntryState extends State<PhoneRegisterNumberEntry> {
       debugPrint(number);
       try {
         await auth.signInWithPhoneNumber(number);
-        stop();
-/*        if (result == AuthRequestState.complete) {
-          // trigger done, navigate to
-          debugPrint('Auth completed successfully');
-          await Navigator.pushNamedAndRemoveUntil(
-              context, '/login/guideline', (Route<dynamic> route) => false);
-        } else if (result == AuthRequestState.pending) {
-          // switch to the display of the code
-          // FIXME - this should change to be a state in this view rather
-          // than another route
-          Navigator.pushNamed(context, '/login/phone/code');
-        } */
       } on AuthException catch (e) {
-        stop();
         debugPrint(e.message?? "unknown error");
-        setState(() => error = e.message ?? '');
+        setState(() {
+          error = e.message ?? "unknown error";
+          _busy = false;
+        });
       }
     } else {
-      stop();
+      setState(() => _busy = false);
     }
   }
 
