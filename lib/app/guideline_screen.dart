@@ -61,49 +61,27 @@ class GuidelineScreen extends StatelessWidget {
     final t = Localized.of(context).t;
     final textStyles = Theme.of(context).textTheme;
     final themeColors = Theme.of(context).themeColors;
-    return Wrap(
-        children:[
-          Container(
-            padding: EdgeInsets.only(top: 20.h, bottom: 15.h),
-            decoration: BoxDecoration(
-                color: themeColors.trayBackground,
-                boxShadow: [
-                  BoxShadow(
-                      color: themeColors.shadow, offset: const Offset(0, -8), blurRadius: 24),
-                ],
-                border: Border.all(
-                    color: themeColors.trayBorder,
-                    width: 1.0
-                ),
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(30.w),
-                    topRight: Radius.circular(30.w))),
-            alignment: Alignment.center,
-            child: SafeArea(
-              top: false,
-              bottom: true,
+    return BottomTrayContainer(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          TextButton(onPressed: () => _signOut(context),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  TextButton(onPressed: () => _signOut(context),
-                      child: Row(
-                        children: [
-                          Icon(Icons.arrow_back, color: themeColors.primaryText,),
-                          SizedBox(width: 5.w,),
-                          Text(t('back'), style: textStyles.button,),
-                        ],
-                      )
-                  ),
-                  ThemedRaisedButton(
-                    label: t('acceptGuidelines'),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  ),
+                  Icon(Icons.arrow_back, color: themeColors.primaryText,),
+                  SizedBox(width: 5.w,),
+                  Text(t('back'), style: textStyles.button,),
                 ],
-              ),
-            ),
-          )],
+              )
+          ),
+          ThemedRaisedButton(
+            label: t('acceptGuidelines'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      ),
     );
   }
 

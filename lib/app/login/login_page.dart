@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/services/index.dart';
@@ -34,10 +35,10 @@ class _LoginPanel extends StatelessWidget {
         ),
         Expanded(
           child: Center(
-            child:TotemContinueButton(
-              buttonText: t('login'),
-              onButtonPressed: (stop) {
-                stop();
+            child: ThemedRaisedButton(
+              label: t('login'),
+              width: 270.w,
+              onPressed: () {
                 Navigator.pushNamed(context, '/login/phone');
               },
             ),
@@ -45,31 +46,6 @@ class _LoginPanel extends StatelessWidget {
         ),
       ],
     );
-/*
-    Center(
-        child: Column(children: [
-      TotemHeader(
-        text: t('welcome'),
-      ),
-      Padding(
-        padding: EdgeInsets.only(bottom: 40),
-        child: SizedBox(
-          width: 290,
-          child: Text(
-            t('welcomeDetail'),
-            textAlign: TextAlign.center,
-            style: TextStyle(height: 1.5),
-          ),
-        ),
-      ),
-      TotemContinueButton(
-        buttonText: t('login'),
-        onButtonPressed: (stop) {
-          stop();
-          Navigator.pushNamed(context, '/login/phone');
-        },
-      ),
-    ])); */
   }
 }
 
@@ -80,7 +56,7 @@ class LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeColors = Theme.of(context).themeColors;
     return GradientBackground(
-      gradient: themeColors.secondaryGradient,
+      gradient: themeColors.welcomeGradient,
       child:Scaffold(
         backgroundColor: Colors.transparent,
         body: Stack(

@@ -86,7 +86,10 @@ class App extends StatelessWidget {
     AppTextStyles textStyles = StdAppTextStyles(themeColors);
     AppThemeStyles.setStyles(colors: themeColors, textStyles: textStyles);
     return ThemeData(
-      appBarTheme: const AppBarTheme(centerTitle: true, systemOverlayStyle: SystemUiOverlayStyle.dark),
+      appBarTheme: AppBarTheme(centerTitle: true,
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
+        iconTheme: IconThemeData(color: themeColors.primaryText),
+      ),
       brightness: Brightness.light,
       primaryColor: themeColors.primary,
       scaffoldBackgroundColor: themeColors.screenBackground,

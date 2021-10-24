@@ -1,3 +1,4 @@
+export 'bottom_tray_container.dart';
 export 'buttons.dart';
 export 'content_divider.dart';
 export 'frosted_panel_widget.dart';

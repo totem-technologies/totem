@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:totem/components/widgets/content_divider.dart';
 
 class TotemHeader extends StatelessWidget {
   const TotemHeader({Key? key, required this.text}) : super(key: key);
@@ -6,31 +8,19 @@ class TotemHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textStyles = Theme.of(context).textTheme;
     return Padding(
-        padding: const EdgeInsets.only(top: 10, bottom: 40),
-        child: Center(
-          child: Column(
-            children: [
-              Text(
-                text,
-                style: const TextStyle(
-                  fontSize: 40,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child: Container(
-                  width: 100,
-                  height: 6,
-                  decoration: BoxDecoration(
-                      color: const Color(0xffffcc59),
-                      border: Border.all(),
-                      borderRadius:
-                          const BorderRadius.all(Radius.circular(20))),
-                ),
-              )
-            ],
+      padding: EdgeInsets.only(bottom: 40.h, left: 24.w),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            text,
+            style: textStyles.headline1,
           ),
-        ));
+          const ContentDivider(),
+        ],
+      ),
+    );
   }
 }

@@ -7,3 +7,5 @@ final authServiceProvider =
 
 final authStateChangesProvider = StreamProvider.autoDispose<AuthUser?>(
     (ref) => ref.watch(authServiceProvider).onAuthStateChanged);
+
+final repositoryProvider = Provider<TotemRepository>((_) => TotemRepository());
