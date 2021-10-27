@@ -1,11 +1,11 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:intl_phone_number_input/intl_phone_number_input.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:totem/components/constants.dart';
-import 'package:totem/components/widgets/buttons.dart';
-import 'package:totem/app/providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:totem/app/login/components/phone_register_code_entry.dart';
+import 'package:totem/app/login/components/phone_register_number_entry.dart';
+import 'package:totem/app/login/components/phone_register_number_error.dart';
+import 'package:totem/components/widgets/index.dart';
+import 'package:totem/services/index.dart';
+import 'package:totem/app/providers.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({Key? key}) : super(key: key);
@@ -15,178 +15,61 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  final formKey = GlobalKey<FormState>();
-  final TextEditingController _phoneNumberController = TextEditingController();
-  String initialCountry = 'US';
-  PhoneNumber numberController = PhoneNumber(isoCode: 'US');
-  String error = '';
 
-  void onSubmit(Function stop) async {
-    var auth = context.read(firebaseAuthProvider);
-    setState(() => error = '');
-    // Validate returns true if the form is valid, or false otherwise.
-    if (formKey.currentState!.validate()) {
-      var number = _phoneNumberController.text;
-      if (!number.startsWith('+')) {
-        if (number.length == 10) {
-          // US user only input 10 digits
-          number = '1' + number;
-        }
-        number = '+' + number;
-      }
-      debugPrint(number);
-      await auth.verifyPhoneNumber(
-        phoneNumber: number,
-        verificationCompleted: (PhoneAuthCredential credential) async {
-          stop();
-          // Android only
-          debugPrint('verificationCompleted');
-          await auth.signInWithCredential(credential);
-          await Navigator.pushNamedAndRemoveUntil(
-              context, '/login/guideline', (Route<dynamic> route) => false);
-        },
-        verificationFailed: (FirebaseAuthException e) {
-          stop();
-          setState(() => error = e.message ?? '');
-          debugPrint('verificationFailed');
-        },
-        codeSent: (String verificationId, int? resendToken) {
-          stop();
-          debugPrint('codeSent');
-          Navigator.pushNamed(context, '/login/phone/code',
-              arguments: {'verificationId': verificationId});
-        },
-        codeAutoRetrievalTimeout: (String verificationId) {
-          stop();
-          debugPrint('codeAutoRetrievalTimeout');
-        },
-      );
-    } else {
-      stop();
-    }
+  late Stream<AuthRequestState> _requestStateStream;
+
+  @override
+  void initState() {
+    final auth = context.read(authServiceProvider);
+    _requestStateStream = auth.onAuthRequestStateChanged;
+    super.initState();
   }
 
   @override
   void dispose() {
-    _phoneNumberController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: SafeArea(
-        child: Center(
-          child: Padding(
-            padding: EdgeInsets.only(left: 35.w, right: 35.w),
-            child: Column(
-              children: [
-                SizedBox(
-                  height: 40.h,
+    return GradientBackground(
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        resizeToAvoidBottomInset: false,
+        body: GestureDetector(
+          behavior: HitTestBehavior.translucent,
+          onTap: () {
+            // call this method here to hide soft keyboard
+            FocusScope.of(context).unfocus();
+          },
+          child: SafeArea(
+            child: Center(
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 300),
+                child: StreamBuilder<AuthRequestState>(
+                    stream: _requestStateStream,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        switch (snapshot.data!) {
+                          case AuthRequestState.failed:
+                            return const PhoneRegisterNumberError();
+                          case AuthRequestState.pending:
+                            return const PhoneRegisterCodeEntry();
+                          case AuthRequestState.entry:
+                          default:
+                            return const PhoneRegisterNumberEntry();
+                        }
+                      }
+                      // nothing available yet
+                      return Container();
+                    }
                 ),
-                Text(
-                  'Signup',
-                  style: white32BoldTextStyle,
-                ),
-                Padding(
-                  padding: EdgeInsets.only(top: 5.h),
-                  child: Container(
-                    height: 5.h,
-                    width: 90.w,
-                    decoration: BoxDecoration(
-                        color: yellowColor,
-                        borderRadius: BorderRadius.circular(10.w)),
-                  ),
-                ),
-                SizedBox(
-                  height: 20.h,
-                ),
-                Text(
-                  'Enter your Phone Number',
-                  style: white16BoldTextStyle,
-                ),
-                SizedBox(
-                  height: 10.h,
-                ),
-                Text(
-                  'We will send you a code to login',
-                  style: white16NormalTextStyle,
-                ),
-                SizedBox(
-                  height: 90.h,
-                ),
-
-                ///Country Picker and textField
-                Form(
-                  key: formKey,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      InternationalPhoneNumberInput(
-                        onInputChanged: (PhoneNumber number) {
-                          debugPrint(number.phoneNumber);
-                        },
-                        onInputValidated: (bool value) {
-                          debugPrint("$value");
-                        },
-                        selectorConfig: const SelectorConfig(
-                          selectorType: PhoneInputSelectorType.BOTTOM_SHEET,
-                          showFlags: true,
-                          trailingSpace: false,
-                        ),
-                        ignoreBlank: false,
-                        autoValidateMode: AutovalidateMode.disabled,
-                        selectorTextStyle: white16NormalTextStyle,
-                        initialValue: numberController,
-                        textFieldController: _phoneNumberController,
-                        formatInput: false,
-                        textStyle: white16NormalTextStyle,
-                        hintText: 'Phone Number',
-                        cursorColor: Colors.white,
-                        inputDecoration: InputDecoration(
-                          hintStyle: white16NormalTextStyle,
-                          hintText: 'Phone Number',
-                          enabledBorder: const UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white),
-                          ),
-                          focusedBorder: const UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white),
-                          ),
-                          border: const UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white),
-                          ),
-                        ),
-                        keyboardType: const TextInputType.numberWithOptions(
-                            signed: true, decimal: true),
-                        onSaved: (PhoneNumber number) {
-                          debugPrint('On Saved: $number');
-                          numberController = number;
-                        },
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 10.0),
-                        child: Text(
-                          error,
-                          style: const TextStyle(color: Colors.red),
-                          maxLines: 2,
-                        ),
-                      ),
-                      SizedBox(
-                        height: 30.h,
-                      ),
-                      TotemContinueButton(
-                        onButtonPressed: onSubmit,
-                        buttonText: 'Submit',
-                      )
-                    ],
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
         ),
       ),
     );
   }
+
 }

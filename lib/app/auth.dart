@@ -1,8 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:totem/app/providers.dart';
-import 'package:totem/components/widgets/buttons.dart';
+import 'package:totem/components/widgets/index.dart';
+import 'package:totem/models/index.dart';
 
 class AuthWidget extends ConsumerWidget {
   const AuthWidget({
@@ -32,7 +32,7 @@ class AuthWidget extends ConsumerWidget {
     );
   }
 
-  Widget _data(BuildContext context, User? user) {
+  Widget _data(BuildContext context, AuthUser? user) {
     if (user != null && !user.isAnonymous) {
       return signedInBuilder(context);
     }
@@ -63,7 +63,7 @@ class LoggedinGuard extends ConsumerWidget {
     );
   }
 
-  Widget _data(BuildContext context, User? user) {
+  Widget _data(BuildContext context, AuthUser? user) {
     if (user != null && !user.isAnonymous) {
       return builder(context);
     }

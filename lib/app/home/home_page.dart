@@ -1,121 +1,84 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:totem/components/widgets/headers.dart';
-import 'package:totem/models/topic.dart';
-import 'package:totem/services/topics.dart';
-
-class TopicsList extends StatefulWidget {
-  const TopicsList({Key? key}) : super(key: key);
-
-  @override
-  _TopicsListState createState() => _TopicsListState();
-}
-
-class _TopicsListState extends State<TopicsList> {
-  late Query<Topic> _topicsQuery;
-  late Stream<QuerySnapshot<Topic>> _topics;
-
-  @override
-  void initState() {
-    super.initState();
-    _updateTopicsQuery(TopicQuery.title);
-  }
-
-  void _updateTopicsQuery(TopicQuery query) {
-    setState(() {
-      _topicsQuery = topicsRef.queryBy(query);
-      _topics = _topicsQuery.snapshots();
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return StreamBuilder<QuerySnapshot<Topic>>(
-        stream: _topics,
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return Center(
-              child: Text(snapshot.error.toString()),
-            );
-          }
-
-          if (!snapshot.hasData) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          final data = snapshot.requireData;
-
-          return ListView.builder(
-            clipBehavior: Clip.none,
-            shrinkWrap: true,
-            itemCount: data.size,
-            itemBuilder: (c, i) => _TopicItem(topic: data.docs[i].data()),
-          );
-        });
-  }
-}
-
-class _TopicItem extends StatelessWidget {
-  const _TopicItem({Key? key, required this.topic}) : super(key: key);
-  final Topic topic;
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Container(
-        width: 200,
-        decoration: BoxDecoration(
-            color: Colors.grey[700],
-            borderRadius: const BorderRadius.all(Radius.circular(10))),
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                  padding: const EdgeInsets.only(bottom: 20.0),
-                  child: Text(
-                    topic.title,
-                    style: const TextStyle(fontSize: 20),
-                  )),
-              Text(topic.description)
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:totem/components/widgets/index.dart';
+import 'package:totem/services/index.dart';
+import 'package:totem/theme/index.dart';
+import 'package:totem/app/home/components/index.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: SafeArea(
-      child: Container(
-        color: Colors.black,
-        child: Center(
-            child: Column(children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              IconButton(
-                icon: Icon(
-                  Icons.settings,
-                  color: Colors.grey[700],
+    final t = Localized.of(context).t;
+    final themeColors = Theme.of(context).themeColors;
+    final textStyles = Theme.of(context).textTheme;
+    return GradientBackground(
+      gradient: themeColors.secondaryGradient,
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+          body: SafeArea(
+            top: true,
+            bottom: false,
+            child: Stack(
+              children: [
+                SvgPicture.asset('assets/home_background.svg', fit: BoxFit.fill,),
+                Positioned.fill(
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(child: TotemHeader(text: t('home')),),
+                              InkWell(
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                                  child: SvgPicture.asset('assets/profile.svg'),
+                                ),
+                                onTap: () {
+                                  Navigator.pushNamed(context, '/settings');
+                                },
+                              )
+                            ],
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(left: 24.w, top: 8.h, bottom: 24.h),
+                            child: Text(t('circles'), style: textStyles.headline2,),
+                          ),
+                          const Expanded(child: TopicsList()),
+                        ],
+                    ),
                 ),
-                onPressed: () {
-                  Navigator.pushNamed(context, '/settings');
-                },
-              )
-            ],
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: BottomTrayContainer(
+                    child: Center(
+                      child: ThemedRaisedButton(
+                        height: 52.h,
+                        onPressed: () {
+                          // build new circle
+                        },
+                        padding: EdgeInsets.symmetric(horizontal: 42.w),
+                        child: Wrap(
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          children: [
+                            Text(
+                              t('createCircle'),
+                            ),
+                            SizedBox(width: 12.w,),
+                            const Icon(Icons.add)
+                          ],
+                        )
+                      )
+                    )
+                  )
+                )
+              ],
+            )
           ),
-          const TotemHeader(text: 'Circles'),
-          const TopicsList()
-        ])),
       ),
-    ));
+    );
   }
 }
