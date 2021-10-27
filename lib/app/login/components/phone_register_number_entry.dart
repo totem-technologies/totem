@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
+import 'package:totem/app/login/components/phone_register_number_header.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/services/index.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -38,29 +39,7 @@ class _PhoneRegisterNumberEntryState extends State<PhoneRegisterNumberEntry> {
       padding: EdgeInsets.only(left: 35.w, right: 35.w),
       child: Column(
         children: [
-          SizedBox(
-            height: 40.h,
-          ),
-          Text(
-            'Signup',
-            style: textTheme.headline1,
-          ),
-          SizedBox(height: 8.h),
-          const Center(
-            child: ContentDivider(),
-          ),
-          SizedBox(height: 20.h,),
-          Text(
-              t('enterPhonePrompt'),
-              style: textTheme.bodyText1!.merge(const TextStyle(fontWeight: FontWeight.w600))
-          ),
-          SizedBox(
-            height: 10.h,
-          ),
-          Text(t('enterPhonePromptDetail'),),
-          SizedBox(
-            height: 90.h,
-          ),
+          const PhoneRegisterNumberHeader(),
           ///Country Picker and textField
           Form(
             key: formKey,

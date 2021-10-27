@@ -19,5 +19,7 @@ abstract class AuthService {
   Future<void> verifyCode(String code);
   Stream<AuthUser?> get onAuthStateChanged;
   Stream<AuthRequestState> get onAuthRequestStateChanged;
+  String? get lastRegisterError;
+  void resetAuthError();
   void dispose();
 }

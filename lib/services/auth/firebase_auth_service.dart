@@ -15,6 +15,7 @@ class FirebaseAuthService implements AuthService {
   BehaviorSubject<AuthUser?>? streamController;
   AuthUser? _currentUser;
   String? _pendingVerificationId;
+  String? _lastRegisterError;
   BehaviorSubject<AuthRequestState>? _authRequestStateStreamController;
 
   AuthUser? _userFromFirebase(User? user, {bool isNewUser = false}) {
@@ -99,6 +100,7 @@ class FirebaseAuthService implements AuthService {
   Future<void> signInWithPhoneNumber(String phoneNumber) async {
     _assertRequestStateStream();
     _pendingVerificationId = null;
+    _lastRegisterError = null;
     await _firebaseAuth.verifyPhoneNumber(
       phoneNumber: phoneNumber,
       verificationCompleted: (PhoneAuthCredential credential) async {
@@ -110,8 +112,8 @@ class FirebaseAuthService implements AuthService {
       },
       verificationFailed: (FirebaseAuthException e) {
         debugPrint('verificationFailed');
+        _lastRegisterError = "code: " + e.code; //e.message;
         _authRequestStateStreamController!.add(AuthRequestState.failed);
-//        throw AuthException(code: e.code, context: phoneNumber, message: e.message);
       },
       codeSent: (String verificationId, int? resendToken) {
         debugPrint('codeSent');
@@ -120,7 +122,6 @@ class FirebaseAuthService implements AuthService {
       },
       codeAutoRetrievalTimeout: (String verificationId) {
         debugPrint('codeAutoRetrievalTimeout');
-//        throw AuthException(code: AuthException.errorCodeRetrievalTimeout, context: phoneNumber);
       },
     );
   }
@@ -128,6 +129,19 @@ class FirebaseAuthService implements AuthService {
   @override
   Future<void> initialize() async {
   }
+
+  @override
+  String? get lastRegisterError {
+    return _lastRegisterError;
+  }
+
+  @override
+  void resetAuthError() {
+    _assertRequestStateStream();
+    _lastRegisterError = null;
+    _authRequestStateStreamController!.add(AuthRequestState.entry);
+  }
+
 
   void _assertRequestStateStream() {
     if (_authRequestStateStreamController == null) {

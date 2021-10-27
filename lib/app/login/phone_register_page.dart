@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:totem/app/login/components/phone_register_code_entry.dart';
 import 'package:totem/app/login/components/phone_register_number_entry.dart';
+import 'package:totem/app/login/components/phone_register_number_error.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/services/index.dart';
 import 'package:totem/app/providers.dart';
@@ -19,7 +20,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   void initState() {
-    var auth = context.read(authServiceProvider);
+    final auth = context.read(authServiceProvider);
     _requestStateStream = auth.onAuthRequestStateChanged;
     super.initState();
   }
@@ -50,6 +51,8 @@ class _RegisterPageState extends State<RegisterPage> {
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
                         switch (snapshot.data!) {
+                          case AuthRequestState.failed:
+                            return const PhoneRegisterNumberError();
                           case AuthRequestState.pending:
                             return const PhoneRegisterCodeEntry();
                           case AuthRequestState.entry:
