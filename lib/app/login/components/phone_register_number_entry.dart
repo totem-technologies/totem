@@ -32,7 +32,6 @@ class _PhoneRegisterNumberEntryState extends State<PhoneRegisterNumberEntry> {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
     final themeColors = Theme.of(context).themeColors;
     final t = Localized.of(context).t;
     return Padding(
