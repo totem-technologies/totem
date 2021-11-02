@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 import 'package:totem/models/index.dart';
+import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
 
-class TopicItem extends StatelessWidget {
-  const TopicItem({Key? key, required this.topic, required this.onPressed}) : super(key: key);
-  final Topic topic;
+class CircleItem extends StatelessWidget {
+  const CircleItem({Key? key, required this.circle, required this.onPressed}) : super(key: key);
+  final Circle circle;
   final Function onPressed;
 
   @override
@@ -17,7 +19,7 @@ class TopicItem extends StatelessWidget {
       padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: themeData.pageHorizontalPadding),
       child: InkWell(
         onTap: () {
-          onPressed(topic);
+          onPressed(circle);
         },
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 16),
@@ -47,9 +49,9 @@ class TopicItem extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const SizedBox(height: 2),
-                          Text(topic.title, style: textStyles.headline3),
-                          const SizedBox(height: 12),
-                          Text(topic.description, style: textStyles.headline4,)
+                          Text(circle.name, style: textStyles.headline3),
+                          const SizedBox(height: 8),
+                          _sessionInfo(context),
                         ],
                       ),
                     ),
@@ -63,5 +65,27 @@ class TopicItem extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget _sessionInfo(BuildContext context) {
+    final dateFormat = DateFormat("MMM d, yyyy @ h:mm a");
+    final t = Localized.of(context).t;
+    Session? session = circle.nextSession;
+    switch(circle.status) {
+      case CircleStatus.active:
+        return Text(t('sessionInProgress'), style: const TextStyle(fontWeight: FontWeight.bold),);
+      case CircleStatus.idle:
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(dateFormat.format(session!.scheduledDate), style: const TextStyle(fontSize: 14)),
+            const SizedBox(height: 4,),
+            Text(t("nextSession"), style: const TextStyle(fontSize: 12)),
+          ],
+        );
+      case CircleStatus.complete:
+      default:
+        return Text(t('sessionsCompleted'));
+    }
   }
 }

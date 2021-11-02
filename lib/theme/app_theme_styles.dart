@@ -10,4 +10,5 @@ extension AppThemeStyles on ThemeData {
   }
   AppThemeColors get themeColors => _themeColors!;
   AppTextStyles get textStyles => _textStyles!;
+  double get pageHorizontalPadding => 24.0;
 }

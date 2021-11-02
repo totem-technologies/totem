@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/services/index.dart';
 
@@ -12,29 +11,20 @@ class PhoneRegisterNumberHeader extends StatelessWidget {
     final t = Localized.of(context).t;
     return Column(
       children: [
-        SizedBox(
-          height: 40.h,
-        ),
-        Text(
-          'Signup',
-          style: textTheme.headline1,
-        ),
-        SizedBox(height: 8.h),
+        const SizedBox(height: 40),
+        Text(t('signup'), style: textTheme.headline1,),
+        const SizedBox(height: 8),
         const Center(
           child: ContentDivider(),
         ),
-        SizedBox(height: 20.h,),
+        const SizedBox(height: 20),
         Text(
             t('enterPhonePrompt'),
             style: textTheme.bodyText1!.merge(const TextStyle(fontWeight: FontWeight.w600))
         ),
-        SizedBox(
-          height: 10.h,
-        ),
+        const SizedBox(height: 10),
         Text(t('enterPhonePromptDetail'),),
-        SizedBox(
-          height: 90.h,
-        ),
+        const SizedBox(height: 90),
       ],
     );
   }

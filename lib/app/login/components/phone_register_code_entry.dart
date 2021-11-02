@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/theme/index.dart';
-import 'package:totem/app/providers.dart';
 import 'package:totem/app/login/components/pin_code_widget.dart';
 import 'package:totem/services/index.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class PhoneRegisterCodeEntry extends StatefulWidget {
   const PhoneRegisterCodeEntry({Key? key}) : super(key: key);
@@ -46,31 +44,23 @@ class _PhoneRegisterCodeEntryState extends State<PhoneRegisterCodeEntry> {
     final textStyles = Theme.of(context).textTheme;
     final themeColors = Theme.of(context).themeColors;
     return Padding(
-      padding: EdgeInsets.only(left: 35.w, right: 35.w),
+      padding: const EdgeInsets.only(left: 35, right: 35),
       child: Column(
         children: [
-          SizedBox(
-            height: 40.h,
-          ),
+          const SizedBox(height: 40),
           Text(t('signup'), style: textStyles.headline1),
           const ContentDivider(),
-          SizedBox(
-            height: 20.h,
-          ),
+          const SizedBox(height: 20),
           Text(
             t('enterCode'),
             style: textStyles.bodyText1!.merge(const TextStyle(fontWeight: FontWeight.w600)),
           ),
-          SizedBox( height: 8.h),
+          const SizedBox( height: 8),
           Text(
             t('enterTheCodeDetail'),
             style: textStyles.bodyText1!,
           ),
-          SizedBox(
-            height: 90.h,
-          ),
-
-          ///OTP textFields
+          const SizedBox(height: 90,),
           Form(
             key: _formKey,
             autovalidateMode: _autoValidate,
@@ -92,13 +82,11 @@ class _PhoneRegisterCodeEntryState extends State<PhoneRegisterCodeEntry> {
               maxLines: 2,
             ),
           ),
-          SizedBox(
-            height: 80.h,
-          ),
+          const SizedBox(height: 80,),
           ThemedRaisedButton(
             label: t('getStarted'),
             busy: _busy,
-            width: 294.w,
+            width: 294,
             onPressed: pinValue.length == 6 && int.tryParse(pinValue) != null ? () {
               signInWithPhoneNumber();
             } : null,

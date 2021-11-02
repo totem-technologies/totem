@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:totem/app/circle/circle_page.dart';
 import 'package:totem/app/home/components/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:totem/app/providers.dart';
 
 class TopicsList extends StatefulWidget {
   const TopicsList({Key? key}) : super(key: key);
@@ -57,8 +55,5 @@ class _TopicsListState extends State<TopicsList> {
   }
 
   void _handleShowTopic(BuildContext context, Topic topic) {
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => CirclePage(topic: topic))
-    );
   }
 }

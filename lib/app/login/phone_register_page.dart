@@ -5,7 +5,6 @@ import 'package:totem/app/login/components/phone_register_number_entry.dart';
 import 'package:totem/app/login/components/phone_register_number_error.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/services/index.dart';
-import 'package:totem/app/providers.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({Key? key}) : super(key: key);

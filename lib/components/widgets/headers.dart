@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:totem/components/widgets/content_divider.dart';
 
 class TotemHeader extends StatelessWidget {
@@ -10,7 +9,7 @@ class TotemHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final textStyles = Theme.of(context).textTheme;
     return Padding(
-      padding: EdgeInsets.only(bottom: 40.h, left: 24.w),
+      padding: const EdgeInsets.only(bottom: 40, left: 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
