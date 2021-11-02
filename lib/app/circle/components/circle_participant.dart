@@ -19,7 +19,7 @@ class CircleParticipant extends StatelessWidget {
       borderRadius: BorderRadius.circular(24),
       child: Stack(
         children: [
-          Container(
+          if (!userProfile.hasImage) Container(
             color: themeColors.primary,
           ),
           Positioned.fill(
@@ -95,7 +95,7 @@ class CircleParticipant extends StatelessWidget {
   }
 
   Widget _genericUserImage(BuildContext context) {
-    return Icon(Icons.account_circle_rounded, size: 30, color: Theme.of(context).themeColors.primaryText,);
+    return Icon(Icons.account_circle_rounded, size: 80, color: Theme.of(context).themeColors.primaryText,);
   }
 
   Widget _gradientLayer(BuildContext context) {
