@@ -42,6 +42,7 @@
     "retrySignin": "Retry",
     "save": "Save",
     "sendCode": "Send Code",
+    "sessions": "Sessions",
     "sessionInProgress": "Session in progress",
     "sessionsCompleted": "All session completed",
     "signup": "Signup",

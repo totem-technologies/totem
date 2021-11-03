@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
+import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:totem/theme/index.dart';
@@ -14,7 +15,6 @@ class CircleItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeData = Theme.of(context);
-    final themeColors = themeData.themeColors;
     final textStyles = themeData.textTheme;
     return Padding(
       padding: EdgeInsets.symmetric(
@@ -23,18 +23,7 @@ class CircleItem extends StatelessWidget {
         onTap: () {
           onPressed(circle);
         },
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 16),
-          decoration: BoxDecoration(
-              color: themeColors.itemBackground,
-              boxShadow: [
-                BoxShadow(
-                    color: themeColors.shadow,
-                    offset: const Offset(0, -8),
-                    blurRadius: 24),
-              ],
-              border: Border.all(color: themeColors.itemBorder, width: 1.0),
-              borderRadius: const BorderRadius.all(Radius.circular(16))),
+        child: ListItemContainer(
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -75,7 +64,7 @@ class CircleItem extends StatelessWidget {
   }
 
   Widget _sessionInfo(BuildContext context) {
-    final dateFormat = DateFormat("MMM d, yyyy @ h:mm a");
+    final timeFormat = DateFormat(" @ h:mm a");
     final t = AppLocalizations.of(context)!;
     Session? session = circle.nextSession;
     switch (circle.status) {
@@ -88,7 +77,9 @@ class CircleItem extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(dateFormat.format(session!.scheduledDate),
+            Text(
+                DateFormat.yMMMd().format(session!.scheduledDate) +
+                    timeFormat.format(session.scheduledDate),
                 style: const TextStyle(fontSize: 14)),
             const SizedBox(
               height: 4,

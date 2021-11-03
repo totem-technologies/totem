@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:totem/app/circle/components/circle_participant.dart';
+import 'package:totem/app/circle/components/session_item.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/components/widgets/sub_page_header.dart';
 import 'package:totem/models/index.dart';
@@ -73,6 +74,27 @@ class CirclePage extends StatelessWidget {
                           );
                         },
                         itemCount: 5,
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Text(
+                        t.sessions,
+                        style: textStyles.headline3,
+                      ),
+                      const SizedBox(
+                        height: 8,
+                      ),
+                      ListView.separated(
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemBuilder: (context, index) {
+                          return SessionItem(session: circle.sessions[index]);
+                        },
+                        separatorBuilder: (context, index) {
+                          return const SizedBox(height: 8);
+                        },
+                        itemCount: circle.sessions.length,
                       ),
                     ],
                   ),

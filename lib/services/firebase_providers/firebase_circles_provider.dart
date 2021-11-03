@@ -193,8 +193,8 @@ class FirebaseCirclesProvider extends CirclesProvider {
     daysOfTheWeek.sort((a, b) => a.compareTo(b));
     int nextDay = 0;
     List<DocumentReference> sessions = [];
-    DateTime nextTime = DateTime(startsOn.year, startsOn.month, startsOn.day,
-        startTime.hour, startTime.minute, 0);
+    DateTime nextTime =
+        DateTime(startsOn.year, startsOn.month, startsOn.day, 12, 0, 0);
     for (int i = 0; i < numSessions; i++) {
       try {
         int dayOfWeek = daysOfTheWeek[nextDay];
@@ -209,9 +209,10 @@ class FirebaseCirclesProvider extends CirclesProvider {
           nextTime =
               nextTime.add(Duration(days: 7 - (nextTime.weekday - dayOfWeek)));
         }
-
+        // rebuild with time value as DST can change the time using duration addition of days
         Map<String, dynamic> session = {
-          "scheduledDate": nextTime,
+          "scheduledDate": DateTime(nextTime.year, nextTime.month, nextTime.day,
+              startTime.hour, startTime.minute),
         };
         DocumentReference ref =
             await circleRef.collection(Paths.scheduledSessions).add(session);
