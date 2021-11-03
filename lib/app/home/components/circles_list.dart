@@ -6,6 +6,7 @@ import 'package:totem/components/widgets/busy_indicator.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CirclesList extends StatefulWidget {
   const CirclesList({Key? key}) : super(key: key);
@@ -44,7 +45,7 @@ class _CirclesListState extends State<CirclesList> {
 
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
-              child:  Padding(
+              child: Padding(
                 padding: EdgeInsets.only(bottom: bottomPadding),
                 child: const BusyIndicator(),
               ),
@@ -56,11 +57,10 @@ class _CirclesListState extends State<CirclesList> {
           if (list.isNotEmpty) {
             return ListView.builder(
               itemCount: list.length,
-              itemBuilder: (c, i) =>
-                  CircleItem(
-                    circle: list[i],
-                    onPressed: (circle) => _handleShowCircle(context, circle),
-                  ),
+              itemBuilder: (c, i) => CircleItem(
+                circle: list[i],
+                onPressed: (circle) => _handleShowCircle(context, circle),
+              ),
             );
           }
           return _noCircles(context);
@@ -69,22 +69,28 @@ class _CirclesListState extends State<CirclesList> {
 
   Widget _noCircles(BuildContext context) {
     final themeData = Theme.of(context);
-    final t = Localized.of(context).t;
+    final t = AppLocalizations.of(context)!;
     return Padding(
-      padding: EdgeInsets.only(left: themeData.pageHorizontalPadding, right: themeData.pageHorizontalPadding, bottom: bottomPadding),
+      padding: EdgeInsets.only(
+          left: themeData.pageHorizontalPadding,
+          right: themeData.pageHorizontalPadding,
+          bottom: bottomPadding),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(t('noCirclesMessage'), style: const TextStyle(fontWeight: FontWeight.bold), textAlign: TextAlign.center,),
+          Text(
+            t.noCirclesMessage,
+            style: const TextStyle(fontWeight: FontWeight.bold),
+            textAlign: TextAlign.center,
+          ),
         ],
       ),
     );
   }
 
   void _handleShowCircle(BuildContext context, Circle circle) {
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => CirclePage(circle: circle))
-    );
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (_) => CirclePage(circle: circle)));
   }
 }

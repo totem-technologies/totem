@@ -4,6 +4,7 @@ import 'package:totem/app/login/components/phone_register_number_header.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/services/index.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:totem/theme/index.dart';
 
 class PhoneRegisterNumberEntry extends StatefulWidget {
@@ -14,7 +15,6 @@ class PhoneRegisterNumberEntry extends StatefulWidget {
 }
 
 class _PhoneRegisterNumberEntryState extends State<PhoneRegisterNumberEntry> {
-
   final formKey = GlobalKey<FormState>();
   final TextEditingController _phoneNumberController = TextEditingController();
   String initialCountry = 'US';
@@ -30,12 +30,13 @@ class _PhoneRegisterNumberEntryState extends State<PhoneRegisterNumberEntry> {
   @override
   Widget build(BuildContext context) {
     final themeColors = Theme.of(context).themeColors;
-    final t = Localized.of(context).t;
+    final t = AppLocalizations.of(context)!;
     return Padding(
       padding: const EdgeInsets.only(left: 35, right: 35),
       child: Column(
         children: [
           const PhoneRegisterNumberHeader(),
+
           ///Country Picker and textField
           Form(
             key: formKey,
@@ -60,10 +61,10 @@ class _PhoneRegisterNumberEntryState extends State<PhoneRegisterNumberEntry> {
                   initialValue: numberController,
                   textFieldController: _phoneNumberController,
                   //formatInput: true,
-                  hintText: t('phoneNumber'),
-                  errorMessage: t('errorInvalidPhoneNumber'),
+                  hintText: t.phoneNumber,
+                  errorMessage: t.errorInvalidPhoneNumber,
                   inputDecoration: InputDecoration(
-                    hintText: t('phoneNumber'),
+                    hintText: t.phoneNumber,
                     enabledBorder: UnderlineInputBorder(
                       borderSide: BorderSide(color: themeColors.primaryText),
                     ),
@@ -83,7 +84,7 @@ class _PhoneRegisterNumberEntryState extends State<PhoneRegisterNumberEntry> {
                 ),
                 const SizedBox(height: 30),
                 ThemedRaisedButton(
-                  label: t('sendCode'),
+                  label: t.sendCode,
                   busy: _busy,
                   onPressed: onSubmit,
                   width: 294,
@@ -101,7 +102,8 @@ class _PhoneRegisterNumberEntryState extends State<PhoneRegisterNumberEntry> {
     // Validate returns true if the form is valid, or false otherwise.
     if (formKey.currentState!.validate()) {
       setState(() => _busy = true);
-      var number = _phoneNumberController.text.replaceAll(RegExp(r'[^0-9]'), "");
+      var number =
+          _phoneNumberController.text.replaceAll(RegExp(r'[^0-9]'), "");
       if (!number.startsWith('+')) {
         if (number.length == 10) {
           // US user only input 10 digits
@@ -113,12 +115,11 @@ class _PhoneRegisterNumberEntryState extends State<PhoneRegisterNumberEntry> {
       try {
         await auth.signInWithPhoneNumber(number);
       } on AuthException catch (e) {
-        debugPrint(e.message?? "unknown error");
+        debugPrint(e.message ?? "unknown error");
         setState(() => _busy = false);
       }
     } else {
       setState(() => _busy = false);
     }
   }
-
 }

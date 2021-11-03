@@ -1,5 +1,4 @@
 export 'auth/index.dart';
-export 'localized.dart';
 export 'providers.dart';
 export 'totem_repository.dart';
 export 'topics_provider.dart';

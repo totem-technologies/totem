@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:totem/components/widgets/index.dart';
-import 'package:totem/services/index.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:totem/theme/index.dart';
 
 class _LoginPanel extends StatelessWidget {
@@ -9,8 +9,8 @@ class _LoginPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final t = Localized.of(context).t;
-    return  Column(
+    final t = AppLocalizations.of(context)!;
+    return Column(
       children: [
         Expanded(
           child: Padding(
@@ -20,8 +20,11 @@ class _LoginPanel extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  t('welcome'),
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 32, ),
+                  t.welcome,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 32,
+                  ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 8),
@@ -35,7 +38,7 @@ class _LoginPanel extends StatelessWidget {
         Expanded(
           child: Center(
             child: ThemedRaisedButton(
-              label: t('login'),
+              label: t.login,
               width: 294,
               onPressed: () {
                 Navigator.pushNamed(context, '/login/phone');
@@ -56,28 +59,33 @@ class LoginPage extends StatelessWidget {
     final themeColors = Theme.of(context).themeColors;
     return GradientBackground(
       gradient: themeColors.welcomeGradient,
-      child:Scaffold(
-        backgroundColor: Colors.transparent,
-        body: Stack(
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Expanded(child: Container()),
-                SvgPicture.asset('assets/background_shape_2.svg', fit: BoxFit.fill,),
-              ],
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Expanded(child: Container()),
-                SvgPicture.asset('assets/background_shape.svg', fit: BoxFit.fill,)
-              ],
-            ),
-            const _LoginPanel(),
-          ],
-        )
-      ),
+      child: Scaffold(
+          backgroundColor: Colors.transparent,
+          body: Stack(
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Expanded(child: Container()),
+                  SvgPicture.asset(
+                    'assets/background_shape_2.svg',
+                    fit: BoxFit.fill,
+                  ),
+                ],
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Expanded(child: Container()),
+                  SvgPicture.asset(
+                    'assets/background_shape.svg',
+                    fit: BoxFit.fill,
+                  )
+                ],
+              ),
+              const _LoginPanel(),
+            ],
+          )),
     );
   }
 }

@@ -3,6 +3,7 @@ import 'package:totem/components/widgets/index.dart';
 import 'package:totem/theme/index.dart';
 import 'package:totem/app/login/components/pin_code_widget.dart';
 import 'package:totem/services/index.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class PhoneRegisterCodeEntry extends StatefulWidget {
@@ -28,7 +29,10 @@ class _PhoneRegisterCodeEntryState extends State<PhoneRegisterCodeEntry> {
     try {
       await context.read(authServiceProvider).verifyCode(pinValue);
       setState(() => _busy = false);
-      await Navigator.pushReplacementNamed(context, '/login/guideline',);
+      await Navigator.pushReplacementNamed(
+        context,
+        '/login/guideline',
+      );
     } on AuthException catch (e) {
       setState(() {
         error = e.message!;
@@ -40,7 +44,7 @@ class _PhoneRegisterCodeEntryState extends State<PhoneRegisterCodeEntry> {
 
   @override
   Widget build(BuildContext context) {
-    final t = Localized.of(context).t;
+    final t = AppLocalizations.of(context)!;
     final textStyles = Theme.of(context).textTheme;
     final themeColors = Theme.of(context).themeColors;
     return Padding(
@@ -48,19 +52,22 @@ class _PhoneRegisterCodeEntryState extends State<PhoneRegisterCodeEntry> {
       child: Column(
         children: [
           const SizedBox(height: 40),
-          Text(t('signup'), style: textStyles.headline1),
+          Text(t.signup, style: textStyles.headline1),
           const ContentDivider(),
           const SizedBox(height: 20),
           Text(
-            t('enterCode'),
-            style: textStyles.bodyText1!.merge(const TextStyle(fontWeight: FontWeight.w600)),
+            t.enterCode,
+            style: textStyles.bodyText1!
+                .merge(const TextStyle(fontWeight: FontWeight.w600)),
           ),
-          const SizedBox( height: 8),
+          const SizedBox(height: 8),
           Text(
-            t('enterTheCodeDetail'),
+            t.enterTheCodeDetail,
             style: textStyles.bodyText1!,
           ),
-          const SizedBox(height: 90,),
+          const SizedBox(
+            height: 90,
+          ),
           Form(
             key: _formKey,
             autovalidateMode: _autoValidate,
@@ -82,14 +89,18 @@ class _PhoneRegisterCodeEntryState extends State<PhoneRegisterCodeEntry> {
               maxLines: 2,
             ),
           ),
-          const SizedBox(height: 80,),
+          const SizedBox(
+            height: 80,
+          ),
           ThemedRaisedButton(
-            label: t('getStarted'),
+            label: t.getStarted,
             busy: _busy,
             width: 294,
-            onPressed: pinValue.length == 6 && int.tryParse(pinValue) != null ? () {
-              signInWithPhoneNumber();
-            } : null,
+            onPressed: pinValue.length == 6 && int.tryParse(pinValue) != null
+                ? () {
+                    signInWithPhoneNumber();
+                  }
+                : null,
           ),
         ],
       ),
