@@ -5,6 +5,7 @@ import 'package:totem/components/widgets/index.dart';
 import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
 import 'package:totem/models/index.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class UserProfilePage extends StatefulWidget {
   const UserProfilePage({Key? key}) : super(key: key);
@@ -34,7 +35,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    final t = Localized.of(context).t;
+    final t = AppLocalizations.of(context)!;
     final themeData = Theme.of(context);
     final textStyles = themeData.textStyles;
     return GradientBackground(
@@ -64,37 +65,63 @@ class _UserProfilePageState extends State<UserProfilePage> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            const SizedBox(width: 8,),
+                            const SizedBox(
+                              width: 8,
+                            ),
                             const BackButton(),
                             Expanded(child: Container()),
                             TextButton(
-                                onPressed: !_busy ? () {
-                                  _saveForm(context);
-                                } : null,
-                                child: Text(t('done'))
+                                onPressed: !_busy
+                                    ? () {
+                                        _saveForm(context);
+                                      }
+                                    : null,
+                                child: Text(t.done)),
+                            const SizedBox(
+                              width: 8,
                             ),
-                            const SizedBox(width: 8,),
                           ],
                         ),
                         SingleChildScrollView(
-                          padding: EdgeInsets.only(left: themeData.pageHorizontalPadding, right: themeData.pageHorizontalPadding, top: 8, bottom: 20),
+                          padding: EdgeInsets.only(
+                              left: themeData.pageHorizontalPadding,
+                              right: themeData.pageHorizontalPadding,
+                              top: 8,
+                              bottom: 20),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                              Text(t('editProfile'), style: textStyles.headline2, textAlign: TextAlign.center,),
+                              Text(
+                                t.editProfile,
+                                style: textStyles.headline2,
+                                textAlign: TextAlign.center,
+                              ),
                               const SizedBox(height: 8),
-                              Text(t('profilePicture'), style: textStyles.headline3, textAlign: TextAlign.center,),
-                              const SizedBox(height: 16,),
+                              Text(
+                                t.profilePicture,
+                                style: textStyles.headline3,
+                                textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(
+                                height: 16,
+                              ),
                               InkWell(
                                 onTap: () {
                                   // edit
                                 },
                                 child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
                                   children: [
                                     const ProfileImage(),
-                                    const SizedBox(height: 16,),
-                                    Text(t('editProfilePicture'), style: textStyles.headline3, textAlign: TextAlign.center,),
+                                    const SizedBox(
+                                      height: 16,
+                                    ),
+                                    Text(
+                                      t.editProfilePicture,
+                                      style: textStyles.headline3,
+                                      textAlign: TextAlign.center,
+                                    ),
                                   ],
                                 ),
                               ),
@@ -106,12 +133,12 @@ class _UserProfilePageState extends State<UserProfilePage> {
                       ],
                     ),
                   ),
-                  if (_busy) const Center(
-                    child: BusyIndicator(),
-                  )
+                  if (_busy)
+                    const Center(
+                      child: BusyIndicator(),
+                    )
                 ],
-              )
-          ),
+              )),
         ),
       ),
     );
@@ -122,8 +149,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
       return;
     }
     if (_userProfile!.name != _nameController.text ||
-      _userProfile!.email != _emailController.text
-    ) {
+        _userProfile!.email != _emailController.text) {
       setState(() => _busy = true);
       _formKey.currentState!.save();
       _userProfile!.name = _nameController.text;
@@ -135,7 +161,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
   }
 
   Widget _profileEditForm(BuildContext context) {
-    final t = Localized.of(context).t;
+    final t = AppLocalizations.of(context)!;
     final themeData = Theme.of(context);
     final textStyles = themeData.textStyles;
     return FutureBuilder<UserProfile?>(
@@ -150,7 +176,10 @@ class _UserProfilePageState extends State<UserProfilePage> {
           return Center(
             child: Column(
               children: [
-                Text(t('errorNoProfile'), style: textStyles.headline3,)
+                Text(
+                  t.errorNoProfile,
+                  style: textStyles.headline3,
+                )
               ],
             ),
           );
@@ -160,7 +189,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
           _nameController.text = _userProfile!.name;
           _emailController.text = _userProfile!.email ?? "";
         }
-        return  Form(
+        return Form(
           key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -170,27 +199,30 @@ class _UserProfilePageState extends State<UserProfilePage> {
                 children: [
                   Expanded(
                     child: ThemedTextFormField(
-                      labelText: t('name'),
+                      labelText: t.name,
                       controller: _nameController,
                       textCapitalization: TextCapitalization.sentences,
                       textInputAction: TextInputAction.done,
                       autovalidateMode: AutovalidateMode.onUserInteraction,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return t('errorEnterName');
+                          return t.errorEnterName;
                         }
                         return null;
                       },
                     ),
                   ),
-                  const SizedBox(width: 8,),
+                  const SizedBox(
+                    width: 8,
+                  ),
                   InkWell(
-                    onTap: () {
-
-                    },
+                    onTap: () {},
                     child: Padding(
-                      padding: const EdgeInsets.only(bottom: 5, top: 5, left: 4),
-                      child: SizedBox(width: 24, height: 24,
+                      padding:
+                          const EdgeInsets.only(bottom: 5, top: 5, left: 4),
+                      child: SizedBox(
+                        width: 24,
+                        height: 24,
                         child: SvgPicture.asset('assets/more_info.svg'),
                       ),
                     ),
@@ -203,28 +235,30 @@ class _UserProfilePageState extends State<UserProfilePage> {
                 children: [
                   Expanded(
                     child: ThemedTextFormField(
-                      labelText: t('email'),
+                      labelText: t.email,
                       controller: _emailController,
                       textCapitalization: TextCapitalization.sentences,
                       textInputAction: TextInputAction.done,
                       autovalidateMode: AutovalidateMode.onUserInteraction,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return t('errorEnterName');
+                          return t.errorEnterName;
                         }
                         return null;
                       },
-
                     ),
                   ),
-                  const SizedBox(width: 8,),
+                  const SizedBox(
+                    width: 8,
+                  ),
                   InkWell(
-                    onTap: () {
-
-                    },
+                    onTap: () {},
                     child: Padding(
-                      padding: const EdgeInsets.only(bottom: 5, top: 5, left: 4),
-                      child: SizedBox(width: 24, height: 24,
+                      padding:
+                          const EdgeInsets.only(bottom: 5, top: 5, left: 4),
+                      child: SizedBox(
+                        width: 24,
+                        height: 24,
                         child: SvgPicture.asset('assets/more_info.svg'),
                       ),
                     ),
@@ -241,30 +275,30 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
   Future<bool> _savePrompt(BuildContext context) async {
     FocusScope.of(context).unfocus();
-
+    final t = AppLocalizations.of(context)!;
     // set up the buttons
     Widget cancelButton = TextButton(
-      child: Text(Localized.of(context).t("cancel")),
+      child: Text(t.cancel),
       onPressed: () {
         Navigator.of(context).pop(0);
       },
     );
     Widget saveButton = TextButton(
-      child: Text(Localized.of(context).t("save")),
+      child: Text(t.save),
       onPressed: () {
         Navigator.of(context).pop(2);
       },
     );
     Widget continueButton = TextButton(
-      child: Text(Localized.of(context).t("leaveWithoutSaving")),
-      onPressed:  () {
+      child: Text(t.leaveWithoutSaving),
+      onPressed: () {
         Navigator.of(context).pop(1);
       },
     );
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
-      title: Text(Localized.of(context).t('changesTitle')),
-      content: Text(Localized.of(context).t('changesProfilePrompt')),
+      title: Text(t.changesTitle),
+      content: Text(t.changesProfilePrompt),
       actions: [
         saveButton,
         continueButton,
@@ -285,5 +319,4 @@ class _UserProfilePageState extends State<UserProfilePage> {
     }
     return result == 1;
   }
-
 }

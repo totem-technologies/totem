@@ -13,7 +13,7 @@ import 'app/settings/settings_page.dart';
 import 'app/home/home_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'app/auth.dart';
-import 'package:totem/services/index.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,7 +38,7 @@ class App extends StatelessWidget {
     ));
     return MaterialApp(
       localizationsDelegates: const [
-        Localized.delegate,
+        AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
@@ -54,7 +54,7 @@ class App extends StatelessWidget {
         signedInBuilder: (_) => const HomePage(),
       ),
       onGenerateRoute: (settings) {
-        switch(settings.name) {
+        switch (settings.name) {
           case '/login':
             return MaterialPageRoute(builder: (_) => const LoginPage());
           case '/login/phone':
@@ -64,10 +64,14 @@ class App extends StatelessWidget {
           case '/circle/create':
             return MaterialPageRoute(builder: (_) => const CircleCreatePage());
           case '/settings':
-            return MaterialPageRoute(builder: (_) => LoggedinGuard(builder: (_) => const SettingsPage()));
+            return MaterialPageRoute(
+                builder: (_) =>
+                    LoggedinGuard(builder: (_) => const SettingsPage()));
           case '/profile':
-            return MaterialPageRoute(builder: (_) => LoggedinGuard(builder: (_) => const UserProfilePage()));
-        default:
+            return MaterialPageRoute(
+                builder: (_) =>
+                    LoggedinGuard(builder: (_) => const UserProfilePage()));
+          default:
             return null;
         }
       },
@@ -79,7 +83,8 @@ class App extends StatelessWidget {
     AppTextStyles textStyles = StdAppTextStyles(themeColors);
     AppThemeStyles.setStyles(colors: themeColors, textStyles: textStyles);
     return ThemeData(
-      appBarTheme: AppBarTheme(centerTitle: true,
+      appBarTheme: AppBarTheme(
+        centerTitle: true,
         systemOverlayStyle: SystemUiOverlayStyle.dark,
         iconTheme: IconThemeData(color: themeColors.primaryText),
       ),
@@ -93,7 +98,9 @@ class App extends StatelessWidget {
       ),
       textTheme: textStyles,
       textButtonTheme: TextButtonThemeData(
-          style:TextButton.styleFrom(primary: themeColors.linkText, textStyle: textStyles.textLinkButton),
+        style: TextButton.styleFrom(
+            primary: themeColors.linkText,
+            textStyle: textStyles.textLinkButton),
       ),
       //,
     );

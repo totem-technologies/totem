@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:totem/models/index.dart';
-import 'package:totem/services/index.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:totem/theme/index.dart';
 
 class CircleItem extends StatelessWidget {
-  const CircleItem({Key? key, required this.circle, required this.onPressed}) : super(key: key);
+  const CircleItem({Key? key, required this.circle, required this.onPressed})
+      : super(key: key);
   final Circle circle;
   final Function onPressed;
 
@@ -16,7 +17,8 @@ class CircleItem extends StatelessWidget {
     final themeColors = themeData.themeColors;
     final textStyles = themeData.textTheme;
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: themeData.pageHorizontalPadding),
+      padding: EdgeInsets.symmetric(
+          vertical: 8.0, horizontal: themeData.pageHorizontalPadding),
       child: InkWell(
         onTap: () {
           onPressed(circle);
@@ -27,14 +29,12 @@ class CircleItem extends StatelessWidget {
               color: themeColors.itemBackground,
               boxShadow: [
                 BoxShadow(
-                    color: themeColors.shadow, offset: const Offset(0, -8), blurRadius: 24),
+                    color: themeColors.shadow,
+                    offset: const Offset(0, -8),
+                    blurRadius: 24),
               ],
-              border: Border.all(
-                  color: themeColors.itemBorder,
-                  width: 1.0
-              ),
-              borderRadius: const BorderRadius.all( Radius.circular(16))
-          ),
+              border: Border.all(color: themeColors.itemBorder, width: 1.0),
+              borderRadius: const BorderRadius.all(Radius.circular(16))),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -42,8 +42,13 @@ class CircleItem extends StatelessWidget {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(width: 24, child: SvgPicture.asset('assets/alert.svg')), // FIXME - this is some indicator icon
-                    const SizedBox(width: 4,),
+                    SizedBox(
+                        width: 24,
+                        child: SvgPicture.asset(
+                            'assets/alert.svg')), // FIXME - this is some indicator icon
+                    const SizedBox(
+                      width: 4,
+                    ),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -58,7 +63,9 @@ class CircleItem extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(width: 8,),
+              const SizedBox(
+                width: 8,
+              ),
               SvgPicture.asset('assets/arrow_next.svg'),
             ],
           ),
@@ -69,23 +76,29 @@ class CircleItem extends StatelessWidget {
 
   Widget _sessionInfo(BuildContext context) {
     final dateFormat = DateFormat("MMM d, yyyy @ h:mm a");
-    final t = Localized.of(context).t;
+    final t = AppLocalizations.of(context)!;
     Session? session = circle.nextSession;
-    switch(circle.status) {
+    switch (circle.status) {
       case CircleStatus.active:
-        return Text(t('sessionInProgress'), style: const TextStyle(fontWeight: FontWeight.bold),);
+        return Text(
+          t.sessionInProgress,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        );
       case CircleStatus.idle:
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(dateFormat.format(session!.scheduledDate), style: const TextStyle(fontSize: 14)),
-            const SizedBox(height: 4,),
-            Text(t("nextSession"), style: const TextStyle(fontSize: 12)),
+            Text(dateFormat.format(session!.scheduledDate),
+                style: const TextStyle(fontSize: 14)),
+            const SizedBox(
+              height: 4,
+            ),
+            Text(t.nextSession, style: const TextStyle(fontSize: 12)),
           ],
         );
       case CircleStatus.complete:
       default:
-        return Text(t('sessionsCompleted'));
+        return Text(t.sessionsCompleted);
     }
   }
 }

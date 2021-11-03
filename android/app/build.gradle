@@ -46,7 +46,7 @@ android {
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }
-    
+
     signingConfigs {
         release {
             keyAlias keystoreProperties['keyAlias']
@@ -69,5 +69,5 @@ flutter {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-
+    implementation "io.grpc:grpc-okhttp:1.41.0"
 }
