@@ -35,12 +35,16 @@ dependencies:
   flutter_riverpod: ^0.14.0+3
   state_notifier: ^0.7.0
   logger: ^1.0.0-nullsafety.0
-  flutter_screenutil: ^5.0.0+2
   hexcolor: ^2.0.4
   pin_code_fields: ^7.3.0
   flutter_svg: ^0.22.0
   rxdart: ^0.27.2
   auto_size_text: ^3.0.0-nullsafety.0
+  flutter_spinbox: ^0.6.0
+  datetime_picker_formfield: ^2.0.0
+  keyboard_actions: ^3.4.4
+  modal_bottom_sheet: ^2.0.0
+  cached_network_image: ^3.1.0
 
 dev_dependencies:
   flutter_test:
@@ -66,7 +70,9 @@ flutter:
     - assets/background_shape.svg
     - assets/background_shape_2.svg
     - assets/home_background.svg
+    - assets/more_info.svg
     - assets/profile.svg
+    - assets/dude.jpg
 
   fonts:
     - family: Raleway

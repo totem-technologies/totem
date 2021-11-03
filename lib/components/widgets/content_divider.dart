@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:totem/theme/index.dart';
 
 class ContentDivider extends StatelessWidget {
@@ -9,17 +8,15 @@ class ContentDivider extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeColors = Theme.of(context).themeColors;
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 8.h),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       child: Container(
-        width: 80.w,
-        height: 4.h,
+        width: 80,
+        height: 4,
         decoration: BoxDecoration(
-          borderRadius:
-          BorderRadius.all(Radius.circular(2.h)),
+          borderRadius: const BorderRadius.all(Radius.circular(2)),
           color: themeColors.primary,
         ),
       ),
     );
   }
-
 }

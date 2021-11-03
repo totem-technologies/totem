@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:totem/app/providers.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
+import 'package:totem/services/index.dart';
 
 class AuthWidget extends ConsumerWidget {
   const AuthWidget({
@@ -33,9 +33,12 @@ class AuthWidget extends ConsumerWidget {
   }
 
   Widget _data(BuildContext context, AuthUser? user) {
+    var repo = context.read(repositoryProvider);
     if (user != null && !user.isAnonymous) {
+      repo.user = user;
       return signedInBuilder(context);
     }
+    repo.user = null;
     return nonSignedInBuilder(context);
   }
 }
@@ -83,30 +86,30 @@ class EmptyContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Text(
-            title,
-            style: const TextStyle(fontSize: 32.0, color: Colors.white),
-          ),
-          Text(
-            message,
-            style: const TextStyle(fontSize: 16.0, color: Colors.white),
-          ),
-          const Padding(
-            padding: EdgeInsets.only(top: 50, bottom: 40),
-          ),
-          TotemContinueButton(
-              onButtonPressed: (stop) {
-                Navigator.pushNamedAndRemoveUntil(
-                    context, '/', (Route<dynamic> route) => false);
-                stop();
-              },
-              buttonText: 'Go Home')
-        ],
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              title,
+              style: const TextStyle(fontSize: 32.0, color: Colors.white),
+            ),
+            Text(
+              message,
+              style: const TextStyle(fontSize: 16.0, color: Colors.white),
+            ),
+            const Padding(
+              padding: EdgeInsets.only(top: 50, bottom: 40),
+            ),
+            ThemedRaisedButton(
+                onPressed: () {
+                  Navigator.pushNamedAndRemoveUntil(
+                      context, '/', (Route<dynamic> route) => false);
+                },
+                label: 'Go Home')
+          ],
+        ),
       ),
-    ));
+    );
   }
 }

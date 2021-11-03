@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:totem/app/login/components/phone_register_number_header.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/services/index.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:totem/app/providers.dart';
 import 'package:totem/theme/index.dart';
 
 class PhoneRegisterNumberEntry extends StatefulWidget {
@@ -21,7 +19,6 @@ class _PhoneRegisterNumberEntryState extends State<PhoneRegisterNumberEntry> {
   final TextEditingController _phoneNumberController = TextEditingController();
   String initialCountry = 'US';
   PhoneNumber numberController = PhoneNumber(isoCode: 'US');
-  String error = '';
   bool _busy = false;
 
   @override
@@ -35,7 +32,7 @@ class _PhoneRegisterNumberEntryState extends State<PhoneRegisterNumberEntry> {
     final themeColors = Theme.of(context).themeColors;
     final t = Localized.of(context).t;
     return Padding(
-      padding: EdgeInsets.only(left: 35.w, right: 35.w),
+      padding: const EdgeInsets.only(left: 35, right: 35),
       child: Column(
         children: [
           const PhoneRegisterNumberHeader(),
@@ -84,22 +81,12 @@ class _PhoneRegisterNumberEntryState extends State<PhoneRegisterNumberEntry> {
                     numberController = number;
                   },
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 10.0),
-                  child: Text(
-                    error,
-                    style: const TextStyle(color: Colors.red),
-                    maxLines: 2,
-                  ),
-                ),
-                SizedBox(
-                  height: 30.h,
-                ),
+                const SizedBox(height: 30),
                 ThemedRaisedButton(
                   label: t('sendCode'),
                   busy: _busy,
                   onPressed: onSubmit,
-                  width: 294.w,
+                  width: 294,
                 ),
               ],
             ),
@@ -110,9 +97,6 @@ class _PhoneRegisterNumberEntryState extends State<PhoneRegisterNumberEntry> {
   }
 
   void onSubmit() async {
-    setState(() {
-      error = '';
-    });
     var auth = context.read(authServiceProvider);
     // Validate returns true if the form is valid, or false otherwise.
     if (formKey.currentState!.validate()) {
@@ -130,10 +114,7 @@ class _PhoneRegisterNumberEntryState extends State<PhoneRegisterNumberEntry> {
         await auth.signInWithPhoneNumber(number);
       } on AuthException catch (e) {
         debugPrint(e.message?? "unknown error");
-        setState(() {
-          error = e.message ?? "unknown error";
-          _busy = false;
-        });
+        setState(() => _busy = false);
       }
     } else {
       setState(() => _busy = false);

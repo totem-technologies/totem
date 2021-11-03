@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:totem/app/home/components/circles_list.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
 import 'package:totem/app/home/components/index.dart';
+
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final themeData = Theme.of(context);
     final t = Localized.of(context).t;
-    final themeColors = Theme.of(context).themeColors;
-    final textStyles = Theme.of(context).textTheme;
+    final themeColors = themeData.themeColors;
+    final textStyles = themeData.textTheme;
     return GradientBackground(
       gradient: themeColors.secondaryGradient,
       child: Scaffold(
@@ -23,11 +25,18 @@ class HomePage extends StatelessWidget {
             bottom: false,
             child: Stack(
               children: [
-                SvgPicture.asset('assets/home_background.svg', fit: BoxFit.fill,),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const SizedBox(height: 20),
+                    Expanded( child: SvgPicture.asset('assets/home_background.svg', fit: BoxFit.fill,)),
+                  ],
+                ),
                 Positioned.fill(
                     child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
+                          const SizedBox(height: 10),
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -38,16 +47,18 @@ class HomePage extends StatelessWidget {
                                   child: SvgPicture.asset('assets/profile.svg'),
                                 ),
                                 onTap: () {
-                                  Navigator.pushNamed(context, '/settings');
+                                  _showProfile(context);
                                 },
                               )
                             ],
                           ),
                           Padding(
-                            padding: EdgeInsets.only(left: 24.w, top: 8.h, bottom: 24.h),
+                            padding: EdgeInsets.only(left: themeData.pageHorizontalPadding, top: 8, bottom: 24),
                             child: Text(t('circles'), style: textStyles.headline2,),
                           ),
-                          const Expanded(child: TopicsList()),
+                          const Expanded(
+                            child: CirclesList(),
+                          ),
                         ],
                     ),
                 ),
@@ -56,29 +67,33 @@ class HomePage extends StatelessWidget {
                   child: BottomTrayContainer(
                     child: Center(
                       child: ThemedRaisedButton(
-                        height: 52.h,
+                        elevation: 0,
+                        height: 52,
                         onPressed: () {
                           // build new circle
+                          Navigator.of(context).pushNamed('/circle/create');
                         },
-                        padding: EdgeInsets.symmetric(horizontal: 42.w),
+                        padding: const EdgeInsets.symmetric(horizontal: 42),
                         child: Wrap(
                           crossAxisAlignment: WrapCrossAlignment.center,
                           children: [
-                            Text(
-                              t('createCircle'),
-                            ),
-                            SizedBox(width: 12.w,),
+                            Text(t('createCircle')),
+                            const SizedBox(width: 12,),
                             const Icon(Icons.add)
                           ],
-                        )
-                      )
-                    )
-                  )
-                )
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
               ],
             )
           ),
       ),
     );
+  }
+
+  void _showProfile(BuildContext context) {
+    Navigator.of(context).pushNamed('/profile');
   }
 }

@@ -1,10 +1,8 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
-import 'package:totem/app/providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class GuidelineScreen extends StatelessWidget {
@@ -22,7 +20,7 @@ class GuidelineScreen extends StatelessWidget {
           children: [
             SingleChildScrollView(
               child: Padding(
-                padding: EdgeInsets.only(left: 35.w, right: 35.w, top: 40.h, bottom: 150.h),
+                padding: const EdgeInsets.only(left: 35, right: 35, top: 40, bottom: 150),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
@@ -32,13 +30,11 @@ class GuidelineScreen extends StatelessWidget {
                       textAlign: TextAlign.center,
                     ),
                     const Center(child: ContentDivider()),
-                    SizedBox(height: 24.h),
+                    const SizedBox(height: 24),
                     Text('Last Time Updated: May 12,2021',
                            style: textStyles.bodyText1!.merge(const TextStyle(fontWeight: FontWeight.bold)),
                     ),
-                    SizedBox(
-                      height: 15.h,
-                    ),
+                    const SizedBox(height: 15,),
                     Text( t('guidelines'),
                       style: textStyles.bodyText1,
                     ),
@@ -69,7 +65,7 @@ class GuidelineScreen extends StatelessWidget {
               child: Row(
                 children: [
                   Icon(Icons.arrow_back, color: themeColors.primaryText,),
-                  SizedBox(width: 5.w,),
+                  const SizedBox(width: 5,),
                   Text(t('back'), style: textStyles.button,),
                 ],
               )

@@ -6,6 +6,6 @@ final authServiceProvider =
     Provider<AuthService>((ref) => FirebaseAuthService());
 
 final authStateChangesProvider = StreamProvider.autoDispose<AuthUser?>(
-    (ref) => ref.watch(authServiceProvider).onAuthStateChanged);
+    (ref) => ref.read(authServiceProvider).onAuthStateChanged);
 
 final repositoryProvider = Provider<TotemRepository>((_) => TotemRepository());

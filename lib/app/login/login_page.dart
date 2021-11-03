@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/services/index.dart';
@@ -37,7 +36,7 @@ class _LoginPanel extends StatelessWidget {
           child: Center(
             child: ThemedRaisedButton(
               label: t('login'),
-              width: 270.w,
+              width: 294,
               onPressed: () {
                 Navigator.pushNamed(context, '/login/phone');
               },

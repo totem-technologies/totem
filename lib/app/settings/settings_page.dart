@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:totem/components/widgets/buttons.dart';
-import 'package:totem/components/widgets/headers.dart';
-import 'package:totem/app/providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:totem/components/widgets/index.dart';
+import 'package:totem/services/index.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    final t = Localized.of(context).t;
+    return GradientBackground(
+      child:Scaffold(
+        backgroundColor: Colors.transparent,
         body: SafeArea(
           bottom: false,
           child: Center(
@@ -19,9 +21,8 @@ class SettingsPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     IconButton(
-                      icon: Icon(
-                        Icons.cancel,
-                        color: Colors.grey[700],
+                      icon: const Icon(
+                        Icons.close,
                       ),
                       onPressed: () {
                         Navigator.pop(context);
@@ -29,13 +30,11 @@ class SettingsPage extends StatelessWidget {
                     )
                   ],
                 ),
-                const TotemHeader(text: 'Settings'),
                 Padding(
                   padding: const EdgeInsets.only(top: 10.0),
-                  child: TotemButton(
-                    icon: Icons.logout,
-                    buttonText: 'Sign Out',
-                    onButtonPressed: (stop) async {
+                  child: ThemedRaisedButton(
+                    label: t('signOut'),
+                    onPressed: () async {
                       await context.read(authServiceProvider).signOut();
                       Navigator.of(context).pop();
                     },
@@ -45,6 +44,7 @@ class SettingsPage extends StatelessWidget {
             ),
           ),
         ),
+      ),
     );
   }
 }

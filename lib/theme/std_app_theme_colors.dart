@@ -13,11 +13,15 @@ class StdThemePalette {
   static const mainGradient = [Color(0xfffffdf9), Color(0xfffeeecc)];
   static const homeGradient = [Color(0xfffffdf9), Color(0xfffef7e8)];
   static const red = Color(0xffdf0000);
+  static const brown = Color(0xffa47817);
   static const grey = Color(0xff696b76);
+  static const lightGrey = Color(0xffc9c9cd);
+  static const profileGradient = [Color.fromRGBO(49,53,84,0), Color.fromRGBO(28,30,51,0.78), Color(0xff16182a)];
 }
 
 class StdAppThemeColors extends AppThemeColors {
   StdAppThemeColors() : super(
+    busyIndicator: StdThemePalette.baseBlack,
     primary: StdThemePalette.yellow,
     primaryButtonBackground: StdThemePalette.yellow,
     primaryText: StdThemePalette.baseBlack,
@@ -34,5 +38,8 @@ class StdAppThemeColors extends AppThemeColors {
     shadow: const Color.fromRGBO(115, 115, 115, 0.16),
     error: StdThemePalette.red,
     welcomeGradient: StdThemePalette.welcomeGradient,
+    linkText: StdThemePalette.brown,
+    divider: StdThemePalette.lightGrey,
+    profileGradient: StdThemePalette.profileGradient,
   );
 }
