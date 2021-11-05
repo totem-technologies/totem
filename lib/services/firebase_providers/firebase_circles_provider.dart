@@ -240,7 +240,7 @@ class FirebaseCirclesProvider extends CirclesProvider {
         debugPrint("unable to create session: " + ex.toString());
       }
     }
-    batch.commit();
+    await batch.commit();
     return sessions;
   }
 }
