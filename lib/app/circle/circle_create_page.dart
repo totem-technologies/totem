@@ -113,6 +113,17 @@ class _CircleCreatePageState extends State<CircleCreatePage> {
                                       if (value == null || value.isEmpty) {
                                         return t.errorEnterNumSessions;
                                       }
+                                      try {
+                                        var num = double.parse(
+                                                _numSessionsController.text)
+                                            .toInt();
+                                        if (num > 100) {
+                                          return t.errorEnterNumSessions;
+                                        }
+                                      } catch (e) {
+                                        return t.errorEnterNumSessions;
+                                      }
+
                                       return null;
                                     },
                                   ),

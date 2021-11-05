@@ -17,7 +17,7 @@
     "enterPhonePrompt": "Enter your Phone Number",
     "enterPhonePromptDetail": "We will send you a code to login",
     "errorEnterName": "Provide a name for the circle",
-    "errorEnterNumSessions": "Enter a number of sessions",
+    "errorEnterNumSessions": "Enter a number of sessions between 1 and 100",
     "errorInvalidPhoneNumber": "Invalid Phone Number",
     "errorPinCode": "Please enter a 6 digit code",
     "errorNoProfile": "There is no profile",
