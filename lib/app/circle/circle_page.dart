@@ -18,9 +18,6 @@ class CirclePage extends StatelessWidget {
     final textStyles = themeData.textTheme;
     final themeColors = themeData.themeColors;
 
-    // This will come from the circle
-    final testUser =
-        UserProfile.fromJson({"name": "schalky", "image": "assets/dude.jpg"});
     return GradientBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
@@ -69,11 +66,11 @@ class CirclePage extends StatelessWidget {
                         ),
                         itemBuilder: (context, index) {
                           return CircleParticipant(
-                            userProfile: testUser,
+                            userProfile: circle.participants[index],
                             role: index == 0 ? Roles.keeper : Roles.member,
                           );
                         },
-                        itemCount: 5,
+                        itemCount: circle.participants.length,
                       ),
                       const SizedBox(
                         height: 20,

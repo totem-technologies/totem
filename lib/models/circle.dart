@@ -17,13 +17,17 @@ class Circle {
   List<Session> sessions = [];
   CircleStatus _status = CircleStatus.idle;
   String? activeSession;
+  List<UserProfile> participants = [];
 
-  Circle.fromJson(Map<String, dynamic> json, {required this.id, UserProfile? createdUser}) {
+  Circle.fromJson(Map<String, dynamic> json,
+      {required this.id, UserProfile? createdUser}) {
     name = json['name'] ?? "";
     description = json['description'];
     createdBy = createdUser;
     createdOn = DateTimeEx.fromMapValue(json['createdOn']) ?? DateTime.now();
     updatedOn = DateTimeEx.fromMapValue(json['updatedOn']);
+    final participantRefs = json['participants'];
+    if (participantRefs != null) {}
   }
 
   CircleStatus get status {
@@ -34,7 +38,8 @@ class Circle {
     DateTime now = DateTime.now();
     _status = CircleStatus.idle;
     if (sessions.isNotEmpty) {
-      int index = sessions.indexWhere((element) => element.id == activeSession || element.scheduledDate.isAfter(now));
+      int index = sessions.indexWhere((element) =>
+          element.id == activeSession || element.scheduledDate.isAfter(now));
       if (index != -1) {
         Session session = sessions[index];
         if (session.id == activeSession) {
@@ -52,10 +57,7 @@ class Circle {
   }
 
   Map<String, dynamic> toJson() {
-    Map<String, dynamic> data = {
-      "name": name,
-      "createdOn": createdOn
-    };
+    Map<String, dynamic> data = {"name": name, "createdOn": createdOn};
     if (description != null) {
       data["description"] = description!;
     }

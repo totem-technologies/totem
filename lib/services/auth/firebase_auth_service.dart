@@ -1,12 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:async';
 import 'package:rxdart/rxdart.dart';
 import 'package:totem/services/auth/auth_exception.dart';
 import 'package:totem/services/auth/index.dart';
+import 'package:totem/services/firebase_providers/paths.dart';
 import 'auth_service.dart';
 import 'package:totem/models/index.dart';
-
 
 class FirebaseAuthService implements AuthService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -17,6 +18,7 @@ class FirebaseAuthService implements AuthService {
   String? _pendingVerificationId;
   String? _lastRegisterError;
   BehaviorSubject<AuthRequestState>? _authRequestStateStreamController;
+  bool newUser = false;
 
   AuthUser? _userFromFirebase(User? user, {bool isNewUser = false}) {
     if (user == null) {
@@ -41,21 +43,20 @@ class FirebaseAuthService implements AuthService {
 
   @override
   Stream<AuthUser?> get onAuthStateChanged {
-    _currentUser =  _userFromFirebase(_firebaseAuth.currentUser, );
+    _currentUser = _userFromFirebase(
+      _firebaseAuth.currentUser,
+    );
     streamController ??= BehaviorSubject<AuthUser?>();
     _listener ??= _firebaseAuth.authStateChanges().listen((User? user) async {
-        // if user logs out, clear the auth state
-        if (user == null) {
-          _currentUser = null;
-          streamController?.add(_currentUser);
-        } else if (_currentUser != null) {
-          // this is a load event
-          streamController?.add(_currentUser);
-        } else {
-          _currentUser = _userFromFirebase(user);
-          streamController?.add(_currentUser);
-        }
-      });
+      // if user logs out, clear the auth state
+      if (user == null) {
+        _currentUser = null;
+        streamController?.add(_currentUser);
+      } else if (_currentUser != null) {
+        // this is a load event
+        streamController?.add(_currentUser);
+      }
+    });
     return streamController!.stream;
   }
 
@@ -86,13 +87,15 @@ class FirebaseAuthService implements AuthService {
         smsCode: code,
       );
       try {
-        await _firebaseAuth.signInWithCredential(credential);
+        _handleUserAuth(await _firebaseAuth.signInWithCredential(credential));
       } on FirebaseAuthException catch (e) {
         debugPrint('Error:' + e.toString());
         throw AuthException(code: e.code, message: e.message);
       }
     } else {
-      throw AuthException(code: AuthException.errorCodeRetrievalTimeout,);
+      throw AuthException(
+        code: AuthException.errorCodeRetrievalTimeout,
+      );
     }
   }
 
@@ -101,34 +104,38 @@ class FirebaseAuthService implements AuthService {
     _assertRequestStateStream();
     _pendingVerificationId = null;
     _lastRegisterError = null;
-    await _firebaseAuth.verifyPhoneNumber(
-      phoneNumber: phoneNumber,
-      verificationCompleted: (PhoneAuthCredential credential) async {
-        // Android only
-        debugPrint('verificationCompleted');
-        // should trigger auth state change
-        await _firebaseAuth.signInWithCredential(credential);
-        _authRequestStateStreamController!.add(AuthRequestState.complete);
-      },
-      verificationFailed: (FirebaseAuthException e) {
-        debugPrint('verificationFailed');
-        _lastRegisterError = "code: " + e.code; //e.message;
-        _authRequestStateStreamController!.add(AuthRequestState.failed);
-      },
-      codeSent: (String verificationId, int? resendToken) {
-        debugPrint('codeSent');
-        _pendingVerificationId = verificationId;
-        _authRequestStateStreamController!.add(AuthRequestState.pending);
-      },
-      codeAutoRetrievalTimeout: (String verificationId) {
-        debugPrint('codeAutoRetrievalTimeout');
-      },
-    );
+    try {
+      await _firebaseAuth.verifyPhoneNumber(
+        phoneNumber: phoneNumber,
+        verificationCompleted: (PhoneAuthCredential credential) async {
+          // Android only
+          debugPrint('verificationCompleted');
+          // should trigger auth state change
+          _handleUserAuth(await _firebaseAuth.signInWithCredential(credential));
+          _authRequestStateStreamController!.add(AuthRequestState.complete);
+        },
+        verificationFailed: (FirebaseAuthException e) {
+          debugPrint('verificationFailed');
+          _lastRegisterError = "code: " + e.code; //e.message;
+          _authRequestStateStreamController!.add(AuthRequestState.failed);
+        },
+        codeSent: (String verificationId, int? resendToken) {
+          debugPrint('codeSent');
+          _pendingVerificationId = verificationId;
+          _authRequestStateStreamController!.add(AuthRequestState.pending);
+        },
+        codeAutoRetrievalTimeout: (String verificationId) {
+          debugPrint('codeAutoRetrievalTimeout');
+        },
+      );
+    } on FirebaseAuthException catch (e) {
+      debugPrint('Error:' + e.toString());
+      throw AuthException(code: e.code, message: e.message);
+    }
   }
 
   @override
-  Future<void> initialize() async {
-  }
+  Future<void> initialize() async {}
 
   @override
   String? get lastRegisterError {
@@ -142,11 +149,29 @@ class FirebaseAuthService implements AuthService {
     _authRequestStateStreamController!.add(AuthRequestState.entry);
   }
 
-
   void _assertRequestStateStream() {
     if (_authRequestStateStreamController == null) {
       _authRequestStateStreamController = BehaviorSubject<AuthRequestState>();
       _authRequestStateStreamController!.add(AuthRequestState.entry);
+    }
+  }
+
+  void _handleUserAuth(UserCredential credential) async {
+    bool isNewUser = credential.additionalUserInfo?.isNewUser ?? false;
+    _assertUserProfile(credential.user!.uid);
+    _currentUser = _userFromFirebase(credential.user, isNewUser: isNewUser);
+    streamController?.add(_currentUser);
+  }
+
+  void _assertUserProfile(String uid) async {
+    DocumentReference userRef =
+        FirebaseFirestore.instance.collection(Paths.users).doc(uid);
+    DocumentSnapshot userDataSnapshot = await userRef.get();
+    if (!userDataSnapshot.exists) {
+      // create placeholder
+      DateTime now = DateTime.now();
+      await userRef.set(
+          {"created_on": now, "name": "", "updated_on": now, "last_seen": now});
     }
   }
 }

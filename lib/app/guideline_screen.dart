@@ -26,7 +26,7 @@ class GuidelineScreen extends StatelessWidget {
                       left: 35,
                       right: 35,
                       top: 40,
-                      bottom: 100 + bottomPadding),
+                      bottom: 120 + bottomPadding),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [

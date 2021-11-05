@@ -36,6 +36,7 @@ class AuthWidget extends ConsumerWidget {
     var repo = context.read(repositoryProvider);
     if (user != null && !user.isAnonymous) {
       repo.user = user;
+
       return signedInBuilder(context);
     }
     repo.user = null;

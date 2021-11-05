@@ -82,52 +82,79 @@ class _UserProfilePageState extends State<UserProfilePage> {
                             ),
                           ],
                         ),
-                        SingleChildScrollView(
-                          padding: EdgeInsets.only(
-                              left: themeData.pageHorizontalPadding,
-                              right: themeData.pageHorizontalPadding,
-                              top: 8,
-                              bottom: 20),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              Text(
-                                t.editProfile,
-                                style: textStyles.headline2,
-                                textAlign: TextAlign.center,
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                t.profilePicture,
-                                style: textStyles.headline3,
-                                textAlign: TextAlign.center,
-                              ),
-                              const SizedBox(
-                                height: 16,
-                              ),
-                              InkWell(
-                                onTap: () {
-                                  // edit
-                                },
-                                child: Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.stretch,
-                                  children: [
-                                    const ProfileImage(),
-                                    const SizedBox(
-                                      height: 16,
-                                    ),
-                                    Text(
-                                      t.editProfilePicture,
-                                      style: textStyles.headline3,
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ],
+                        Expanded(
+                          child: LayoutBuilder(
+                            builder: (context, constraint) {
+                              return SingleChildScrollView(
+                                padding: EdgeInsets.only(
+                                  left: themeData.pageHorizontalPadding,
+                                  right: themeData.pageHorizontalPadding,
                                 ),
-                              ),
-                              const SizedBox(height: 20),
-                              _profileEditForm(context),
-                            ],
+                                child: ConstrainedBox(
+                                  constraints: BoxConstraints(
+                                      minHeight: constraint.maxHeight),
+                                  child: IntrinsicHeight(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.stretch,
+                                      children: [
+                                        const SizedBox(height: 8),
+                                        Text(
+                                          t.editProfile,
+                                          style: textStyles.headline2,
+                                          textAlign: TextAlign.center,
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Text(
+                                          t.profilePicture,
+                                          style: textStyles.headline3,
+                                          textAlign: TextAlign.center,
+                                        ),
+                                        const SizedBox(
+                                          height: 16,
+                                        ),
+                                        InkWell(
+                                          onTap: () {
+                                            // edit
+                                          },
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.stretch,
+                                            children: [
+                                              const ProfileImage(),
+                                              const SizedBox(
+                                                height: 16,
+                                              ),
+                                              Text(
+                                                t.editProfilePicture,
+                                                style: textStyles.headline3,
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        const SizedBox(height: 20),
+                                        _profileEditForm(context),
+                                        Expanded(
+                                          child: Container(),
+                                        ),
+                                        const SizedBox(height: 20),
+                                        ThemedRaisedButton(
+                                          label: t.signOut,
+                                          onPressed: () async {
+                                            await context
+                                                .read(authServiceProvider)
+                                                .signOut();
+                                            Navigator.of(context).pop();
+                                          },
+                                        ),
+                                        const SizedBox(height: 20),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
                           ),
                         ),
                       ],
