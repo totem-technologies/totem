@@ -34,6 +34,7 @@ class _CirclesListState extends State<CirclesList> {
 
   @override
   Widget build(BuildContext context) {
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
     return StreamBuilder<List<Circle>>(
         stream: _circles,
         builder: (context, snapshot) {
@@ -56,6 +57,7 @@ class _CirclesListState extends State<CirclesList> {
 
           if (list.isNotEmpty) {
             return ListView.builder(
+              padding: EdgeInsets.only(bottom: 100 + bottomPadding),
               itemCount: list.length,
               itemBuilder: (c, i) => CircleItem(
                 circle: list[i],

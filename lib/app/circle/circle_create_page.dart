@@ -136,7 +136,7 @@ class _CircleCreatePageState extends State<CircleCreatePage> {
                                       textStyles: textStyles,
                                       themeColors: themeColors,
                                     ),
-                                    format: DateFormat("MM-dd-yyyy"),
+                                    format: DateFormat.yMMMd(),
                                     onShowPicker: (context, currentValue) {
                                       final now = DateTime.now();
                                       return showDatePicker(

@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/theme/index.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CircleParticipant extends StatelessWidget {
   const CircleParticipant(
@@ -15,6 +16,7 @@ class CircleParticipant extends StatelessWidget {
     final themeData = Theme.of(context);
     final textStyles = themeData.textTheme;
     final themeColors = themeData.themeColors;
+    final t = AppLocalizations.of(context)!;
     return ClipRRect(
         borderRadius: BorderRadius.circular(24),
         child: Stack(
@@ -72,7 +74,7 @@ class CircleParticipant extends StatelessWidget {
                             const SizedBox(
                               width: 4,
                             ),
-                            Text(role.toString(), style: textStyles.headline5),
+                            Text(t.keeper, style: textStyles.headline5),
                           ],
                         ),
                       ),

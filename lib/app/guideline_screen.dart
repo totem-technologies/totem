@@ -12,6 +12,7 @@ class GuidelineScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context)!;
     final textStyles = Theme.of(context).textTheme;
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
     return GradientBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
@@ -21,8 +22,11 @@ class GuidelineScreen extends StatelessWidget {
             children: [
               SingleChildScrollView(
                 child: Padding(
-                  padding: const EdgeInsets.only(
-                      left: 35, right: 35, top: 40, bottom: 150),
+                  padding: EdgeInsets.only(
+                      left: 35,
+                      right: 35,
+                      top: 40,
+                      bottom: 120 + bottomPadding),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
