@@ -195,6 +195,7 @@ class FirebaseCirclesProvider extends CirclesProvider {
     List<DocumentReference> sessions = [];
     DateTime nextTime = DateTime(startsOn.year, startsOn.month, startsOn.day,
         startTime.hour, startTime.minute, 0);
+    WriteBatch batch = FirebaseFirestore.instance.batch();
     for (int i = 0; i < numSessions; i++) {
       try {
         int dayOfWeek = daysOfTheWeek[nextDay];
@@ -214,12 +215,14 @@ class FirebaseCirclesProvider extends CirclesProvider {
           "scheduledDate": nextTime,
         };
         DocumentReference ref =
-            await circleRef.collection(Paths.scheduledSessions).add(session);
+            circleRef.collection(Paths.scheduledSessions).doc(i.toString());
+        batch.set(ref, session);
         sessions.add(ref);
       } catch (ex) {
         debugPrint("unable to create session: " + ex.toString());
       }
     }
+    batch.commit();
     return sessions;
   }
 }
