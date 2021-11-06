@@ -14,10 +14,11 @@ class AuthWidget extends ConsumerWidget {
   final WidgetBuilder signedInBuilder;
 
   @override
-  Widget build(BuildContext context, ScopedReader watch) {
-    final authStateChanges = watch(authStateChangesProvider);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final authStateChanges = ref.watch(authStateChangesProvider);
+    final repo = ref.watch(repositoryProvider);
     return authStateChanges.when(
-      data: (user) => _data(context, user),
+      data: (user) => _data(context, repo, user),
       loading: () => const Scaffold(
         body: Center(
           child: CircularProgressIndicator(),
@@ -32,8 +33,7 @@ class AuthWidget extends ConsumerWidget {
     );
   }
 
-  Widget _data(BuildContext context, AuthUser? user) {
-    var repo = context.read(repositoryProvider);
+  Widget _data(BuildContext context, TotemRepository repo, AuthUser? user) {
     if (user != null && !user.isAnonymous) {
       repo.user = user;
 
@@ -49,8 +49,8 @@ class LoggedinGuard extends ConsumerWidget {
   final WidgetBuilder builder;
 
   @override
-  Widget build(BuildContext context, ScopedReader watch) {
-    final authStateChanges = watch(authStateChangesProvider);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final authStateChanges = ref.watch(authStateChangesProvider);
     return authStateChanges.when(
       data: (user) => _data(context, user),
       loading: () => const Scaffold(

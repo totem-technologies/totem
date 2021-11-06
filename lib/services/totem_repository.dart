@@ -11,10 +11,10 @@ import 'package:totem/services/index.dart';
 import 'firebase_providers/firebase_topics_provider.dart';
 
 class TotemRepository {
-
-  static final userProfileProvider = StreamProvider.autoDispose<UserProfile?>((ref) {
+  static final userProfileProvider =
+      StreamProvider.autoDispose<UserProfile?>((ref) {
     final repo = ref.read(repositoryProvider);
-    final authUser = ref.watch(authStateChangesProvider).data?.value;
+    final authUser = ref.watch(authStateChangesProvider).asData?.value;
     if (authUser == null) {
       final streamController = StreamController<UserProfile?>();
       streamController.add(null);
@@ -36,7 +36,8 @@ class TotemRepository {
   }
 
   // Topics
-  Stream<List<Topic>> topics({String sort = TopicSort.title}) => _topicsProvider.topics(sort: sort);
+  Stream<List<Topic>> topics({String sort = TopicSort.title}) =>
+      _topicsProvider.topics(sort: sort);
 
   // Circles
   Future<Circle?> createCircle({
@@ -47,20 +48,25 @@ class TotemRepository {
     required List<int> daysOfTheWeek,
     String? description,
     bool addAsMember = true,
-  }) => _circlesProvider.createCircle(
-      name: name,
-      numSessions: numSessions,
-      startDate: startDate,
-      startTime: startTime,
-      daysOfTheWeek: daysOfTheWeek,
-      description: description,
-      uid: user!.uid,
-      addAsMember: addAsMember,
-    );
-  Stream<List<Circle>> circles({bool allCircles = false}) => _circlesProvider.circles(!allCircles ? user?.uid : null);
+  }) =>
+      _circlesProvider.createCircle(
+        name: name,
+        numSessions: numSessions,
+        startDate: startDate,
+        startTime: startTime,
+        daysOfTheWeek: daysOfTheWeek,
+        description: description,
+        uid: user!.uid,
+        addAsMember: addAsMember,
+      );
+  Stream<List<Circle>> circles({bool allCircles = false}) =>
+      _circlesProvider.circles(!allCircles ? user?.uid : null);
 
   // Users
-  Stream<UserProfile> userProfileStream() => _userProvider.userProfileStream(uid: user!.uid);
-  Future<UserProfile?> userProfile() => _userProvider.userProfile(uid: user!.uid);
-  Future<void> updateUserProfile(UserProfile userProfile) => _userProvider.updateUserProfile(userProfile: userProfile, uid: user!.uid);
+  Stream<UserProfile> userProfileStream() =>
+      _userProvider.userProfileStream(uid: user!.uid);
+  Future<UserProfile?> userProfile() =>
+      _userProvider.userProfile(uid: user!.uid);
+  Future<void> updateUserProfile(UserProfile userProfile) =>
+      _userProvider.updateUserProfile(userProfile: userProfile, uid: user!.uid);
 }

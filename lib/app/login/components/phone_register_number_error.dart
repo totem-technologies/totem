@@ -6,12 +6,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:totem/theme/index.dart';
 
-class PhoneRegisterNumberError extends StatelessWidget {
+class PhoneRegisterNumberError extends ConsumerWidget {
   const PhoneRegisterNumberError({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    final auth = context.read(authServiceProvider);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final auth = ref.watch(authServiceProvider);
     final textTheme = Theme.of(context).textTheme;
     final themeColors = Theme.of(context).themeColors;
     final t = AppLocalizations.of(context)!;

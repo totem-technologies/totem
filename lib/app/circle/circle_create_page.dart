@@ -9,14 +9,14 @@ import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class CircleCreatePage extends StatefulWidget {
+class CircleCreatePage extends ConsumerStatefulWidget {
   const CircleCreatePage({Key? key}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _CircleCreatePageState();
+  _CircleCreatePageState createState() => _CircleCreatePageState();
 }
 
-class _CircleCreatePageState extends State<CircleCreatePage> {
+class _CircleCreatePageState extends ConsumerState<CircleCreatePage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _numSessionsController = TextEditingController();
@@ -214,7 +214,7 @@ class _CircleCreatePageState extends State<CircleCreatePage> {
                                   ThemedRaisedButton(
                                     label: t.createCircle,
                                     onPressed: () {
-                                      _saveCircle(context);
+                                      _saveCircle();
                                     },
                                   ),
                                   const SizedBox(height: 50)
@@ -239,7 +239,7 @@ class _CircleCreatePageState extends State<CircleCreatePage> {
     );
   }
 
-  void _saveCircle(BuildContext context) async {
+  void _saveCircle() async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
@@ -247,7 +247,7 @@ class _CircleCreatePageState extends State<CircleCreatePage> {
     _formKey.currentState!.save();
     int numSessions = double.parse(_numSessionsController.text).toInt();
 
-    var repo = context.read(repositoryProvider);
+    var repo = ref.read(repositoryProvider);
     try {
       final circle = await repo.createCircle(
           name: _nameController.text,
