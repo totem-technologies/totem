@@ -78,7 +78,10 @@ class FirebaseSessionProvider extends SessionProvider {
       if (sessionData.exists) {
         Map<String, dynamic> data = sessionData.data()! as Map<String, dynamic>;
         List<Map<String, dynamic>> participants = data["participants"] ?? [];
-        participants.add(_participant(uid, sessionUserId: sessionUserId));
+        participants.add(_participant(uid,
+            sessionUserId: sessionUserId,
+            role: session.circle.participantRole(uid).toString()));
+        await ref.update({"participants": participants});
         if (_activeSession == null) {
           _createLiveSession(session);
         }
