@@ -6,6 +6,8 @@ class UserProfile with ChangeNotifier {
   String? image;
   String? email;
   late DateTime createdOn;
+  late String uid;
+  late String ref;
 
   bool get hasImage {
     return image != null && image!.isNotEmpty;
@@ -17,7 +19,7 @@ class UserProfile with ChangeNotifier {
       if (index != -1) {
         try {
           String first = name.substring(0, 1);
-          String last = name.substring(index + 1, index+2);
+          String last = name.substring(index + 1, index + 2);
           return '$first$last';
         } catch (ex) {
           debugPrint('unable to parse name: ' + ex.toString());
@@ -28,14 +30,15 @@ class UserProfile with ChangeNotifier {
     return "?";
   }
 
-  UserProfile.fromJson(Map<String, dynamic> json) {
+  UserProfile.fromJson(Map<String, dynamic> json,
+      {required this.uid, required this.ref}) {
     name = json['name'] ?? "";
     image = json['image'];
     email = json['email'];
     createdOn = DateTimeEx.fromMapValue(json['created_on']) ?? DateTime.now();
   }
 
-  Map<String, dynamic> toJson({bool updated=false}) {
+  Map<String, dynamic> toJson({bool updated = false}) {
     Map<String, dynamic> data = {
       "name": name,
       "created_on": createdOn,

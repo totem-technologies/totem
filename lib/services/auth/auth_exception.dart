@@ -4,6 +4,7 @@
 class AuthException implements Exception {
   static const String errorCodeMissingVerification = 'missingVerificationId';
   static const String errorCodeRetrievalTimeout = 'codeAutoRetrievalTimeout';
+  static const String errorCodeUnauthorized = 'unauthorized';
 
   AuthException({
     this.message,

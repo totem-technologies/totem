@@ -77,14 +77,21 @@ class CircleItem extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(
-                DateFormat.yMMMd().format(session!.scheduledDate) +
-                    timeFormat.format(session.scheduledDate),
-                style: const TextStyle(fontSize: 14)),
-            const SizedBox(
-              height: 4,
-            ),
-            Text(t.nextSession, style: const TextStyle(fontSize: 12)),
+            if (session != null) ...[
+              Text(
+                  DateFormat.yMMMd().format(session.scheduledDate) +
+                      timeFormat.format(session.scheduledDate),
+                  style: const TextStyle(fontSize: 14)),
+              const SizedBox(
+                height: 4,
+              ),
+              Text(t.nextSession, style: const TextStyle(fontSize: 12)),
+            ],
+            if (session == null)
+              Text(
+                t.noUpcomingSessions,
+                style: const TextStyle(fontSize: 12),
+              ),
           ],
         );
       case CircleStatus.complete:

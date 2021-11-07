@@ -1,6 +1,8 @@
+export 'active_session.dart';
 export 'auth_user.dart';
 export 'circle.dart';
 export 'date_name_ext.dart';
+export 'participant.dart';
 export 'roles.dart';
 export 'session.dart';
 export 'topic.dart';

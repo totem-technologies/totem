@@ -78,7 +78,7 @@ class FirebaseCirclesProvider extends CirclesProvider {
         await addUserToCircle(id: ref.id, uid: uid, role: Roles.keeper);
       }
       // return circle
-      Circle circle = Circle.fromJson(data, id: ref.id);
+      Circle circle = Circle.fromJson(data, id: ref.id, ref: ref.path);
       return circle;
     } catch (e) {
       // TODO: throw specific exception here
@@ -141,7 +141,13 @@ class FirebaseCirclesProvider extends CirclesProvider {
       DocumentReference ref = data["ref"];
       return await ref.get().then((value) async {
         final circleData = value.data() as Map<String, dynamic>;
-        final circle = Circle.fromJson(circleData, id: value.id);
+        final circle = Circle.fromJson(circleData,
+            id: value.id, ref: value.reference.path);
+        // Check for the active session
+        String? activeSessionId;
+        if (data["activeSession"] != null) {
+          activeSessionId = (data["activeSession"] as DocumentReference).id;
+        }
         // resolve users participating in the circle
         if (circleData['participants'] != null) {
           final List<Map<String, dynamic>>? participantsRef =
@@ -151,23 +157,36 @@ class FirebaseCirclesProvider extends CirclesProvider {
                 await Future.wait(participantsRef.map((participantRef) async {
               DocumentReference ref = participantRef['ref'];
               DocumentSnapshot doc = await ref.get();
-              return UserProfile.fromJson(doc.data() as Map<String, dynamic>);
+              return Participant.fromJson(
+                participantRef,
+                userProfile: UserProfile.fromJson(
+                  doc.data() as Map<String, dynamic>,
+                  uid: doc.id,
+                  ref: doc.reference.path,
+                ),
+              );
             }).toList());
             circle.participants = participants;
           }
         }
+        DateTime now = DateTime.now();
         // resolve sessions for the circle
         var query = FirebaseFirestore.instance
             .collection(Paths.circles)
             .doc(value.id)
             .collection(Paths.scheduledSessions)
-            .orderBy("scheduledDate");
+            .orderBy("scheduledDate")
+            .where("scheduledDate", isGreaterThanOrEqualTo: now);
         QuerySnapshot<Map<String, dynamic>> result = await query.get();
         if (result.docs.isNotEmpty) {
-          List<Session> sessions = result.docs
-              .map((session) => Session.fromJson(session.data(),
-                  id: session.id, circle: circle))
-              .toList();
+          List<Session> sessions = result.docs.map((session) {
+            Session sessionItem = Session.fromJson(session.data(),
+                id: session.id, ref: session.reference.path, circle: circle);
+            if (sessionItem.id == activeSessionId) {
+              circle.activeSession = sessionItem;
+            }
+            return sessionItem;
+          }).toList();
           sessions.sort((a, b) => a.scheduledDate.compareTo(b.scheduledDate));
           circle.sessions = sessions;
         }
@@ -182,13 +201,16 @@ class FirebaseCirclesProvider extends CirclesProvider {
     for (DocumentSnapshot document in querySnapshot.docs) {
       try {
         Map<String, dynamic> data = document.data() as Map<String, dynamic>;
-        Circle circle = Circle.fromJson(data, id: document.id);
+        Circle circle = Circle.fromJson(data,
+            id: document.id, ref: document.reference.path);
         DocumentReference ref = data["createdBy"] as DocumentReference;
         DocumentSnapshot userData = await ref.get();
         if (userData.exists) {
-          UserProfile user =
-              UserProfile.fromJson(userData.data() as Map<String, dynamic>);
-          //        item.userProfile = await UserProfileStore.instance().userFromId(item.user);
+          UserProfile user = UserProfile.fromJson(
+            userData.data() as Map<String, dynamic>,
+            uid: userData.id,
+            ref: userData.reference.path,
+          );
           circle.createdBy = user;
         }
         circles.add(circle);
@@ -233,7 +255,7 @@ class FirebaseCirclesProvider extends CirclesProvider {
               startTime.hour, startTime.minute),
         };
         DocumentReference ref =
-            circleRef.collection(Paths.scheduledSessions).doc(i.toString());
+            circleRef.collection(Paths.scheduledSessions).doc();
         batch.set(ref, session);
         sessions.add(ref);
       } catch (ex) {

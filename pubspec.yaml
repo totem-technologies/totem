@@ -45,6 +45,7 @@ dependencies:
   keyboard_actions: ^3.4.4
   modal_bottom_sheet: ^2.0.0
   cached_network_image: ^3.1.0
+  agora_rtc_engine: ^4.0.7
 
 dev_dependencies:
   flutter_test:

@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:totem/app/circle/components/circle_participant.dart';
 import 'package:totem/app/circle/components/session_item.dart';
+import 'package:totem/components/fade_route.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/components/widgets/sub_page_header.dart';
 import 'package:totem/models/index.dart';
+import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import 'circle_session_page.dart';
 
 class CirclePage extends StatelessWidget {
   const CirclePage({Key? key, required this.circle}) : super(key: key);
@@ -17,7 +22,8 @@ class CirclePage extends StatelessWidget {
     final themeData = Theme.of(context);
     final textStyles = themeData.textTheme;
     final themeColors = themeData.themeColors;
-
+    final authUser = context.read(authServiceProvider).currentUser()!;
+    final userRole = circle.participantRole(authUser.uid);
     return GradientBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
@@ -39,7 +45,8 @@ class CirclePage extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      if (circle.description != null) ...[
+                      if (circle.description != null &&
+                          circle.description!.isNotEmpty) ...[
                         Text(
                           t.circleDescription,
                           style: textStyles.headline3,
@@ -66,8 +73,7 @@ class CirclePage extends StatelessWidget {
                         ),
                         itemBuilder: (context, index) {
                           return CircleParticipant(
-                            userProfile: circle.participants[index],
-                            role: index == 0 ? Roles.keeper : Roles.member,
+                            participant: circle.participants[index],
                           );
                         },
                         itemCount: circle.participants.length,
@@ -82,17 +88,34 @@ class CirclePage extends StatelessWidget {
                       const SizedBox(
                         height: 8,
                       ),
-                      ListView.separated(
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemBuilder: (context, index) {
-                          return SessionItem(session: circle.sessions[index]);
-                        },
-                        separatorBuilder: (context, index) {
-                          return const SizedBox(height: 8);
-                        },
-                        itemCount: circle.sessions.length,
-                      ),
+                      if (circle.sessions.isNotEmpty)
+                        ListView.separated(
+                          physics: const NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          itemBuilder: (context, index) {
+                            return SessionItem(
+                              session: circle.sessions[index],
+                              role: userRole,
+                              nextSession: index == 0,
+                              startSession: (session) {
+                                _startSession(context, session);
+                              },
+                            );
+                          },
+                          separatorBuilder: (context, index) {
+                            return const SizedBox(height: 8);
+                          },
+                          itemCount: circle.sessions.length,
+                        ),
+                      if (circle.sessions.isEmpty)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 20),
+                          child: Text(
+                            t.noUpcomingSessions,
+                            style: textStyles.headline4,
+                            textAlign: TextAlign.center,
+                          ),
+                        )
                     ],
                   ),
                 ),
@@ -100,6 +123,18 @@ class CirclePage extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  void _startSession(BuildContext context, Session session) async {
+    // use this session to create a pending session
+    final repo = context.read(repositoryProvider);
+    ActiveSession activeSession = await repo.activateSession(session: session);
+    Navigator.pushReplacement(
+      context,
+      FadeRoute(
+        page: CircleSessionPage(activeSession: activeSession),
       ),
     );
   }

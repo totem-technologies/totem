@@ -5,11 +5,9 @@ import 'package:totem/theme/index.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CircleParticipant extends StatelessWidget {
-  const CircleParticipant(
-      {Key? key, required this.userProfile, this.role = Roles.member})
+  const CircleParticipant({Key? key, required this.participant})
       : super(key: key);
-  final UserProfile userProfile;
-  final Role role;
+  final Participant participant;
 
   @override
   Widget build(BuildContext context) {
@@ -21,12 +19,12 @@ class CircleParticipant extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
         child: Stack(
           children: [
-            if (!userProfile.hasImage)
+            if (!participant.userProfile.hasImage)
               Container(
                 color: themeColors.primary,
               ),
             Positioned.fill(
-              child: (userProfile.hasImage)
+              child: (participant.userProfile.hasImage)
                   ? _renderUserImage(context)
                   : _genericUserImage(context),
             ),
@@ -41,8 +39,8 @@ class CircleParticipant extends StatelessWidget {
                     child: Padding(
                       padding:
                           const EdgeInsets.only(left: 12, right: 12, bottom: 8),
-                      child:
-                          Text(userProfile.name, style: textStyles.headline5),
+                      child: Text(participant.userProfile.name,
+                          style: textStyles.headline5),
                     ),
                   ),
                 ],
@@ -51,7 +49,7 @@ class CircleParticipant extends StatelessWidget {
               start: 0,
               end: 0,
             ),
-            if (role == Roles.keeper)
+            if (participant.role == Roles.keeper)
               PositionedDirectional(
                 top: 0,
                 start: 0,
@@ -88,14 +86,14 @@ class CircleParticipant extends StatelessWidget {
   }
 
   Widget _renderUserImage(BuildContext context) {
-    if (userProfile.image!.toLowerCase().contains("assets/")) {
+    if (participant.userProfile.image!.toLowerCase().contains("assets/")) {
       return Image.asset(
-        userProfile.image!,
+        participant.userProfile.image!,
         fit: BoxFit.cover,
       );
     }
     return CachedNetworkImage(
-      imageUrl: userProfile.image!,
+      imageUrl: participant.userProfile.image!,
       imageBuilder: (context, imageProvider) => Container(
         decoration: BoxDecoration(
           shape: BoxShape.circle,

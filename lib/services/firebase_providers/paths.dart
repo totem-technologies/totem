@@ -3,4 +3,5 @@ class Paths {
   static const String circles = "circles";
   static const String users = "users";
   static const String scheduledSessions = "scheduledSessions";
+  static const String completedSessions = "completedSessions";
 }
