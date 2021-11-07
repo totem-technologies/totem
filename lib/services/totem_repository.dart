@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:totem/models/index.dart';
+import 'package:totem/services/agora/agora_communication_provider.dart';
 import 'package:totem/services/circles_provider.dart';
 import 'package:totem/services/firebase_providers/firebase_circles_provider.dart';
 import 'package:totem/services/firebase_providers/firebase_session_provider.dart';
@@ -74,6 +75,12 @@ class TotemRepository {
   Future<void> endActiveSession() => _sessionProvider.endActiveSession();
   void clearActiveSession() => _sessionProvider.clear();
   ActiveSession? get activeSession => _sessionProvider.activeSession;
+  // Communications for Session
+  CommunicationProvider createCommunicationProvider() {
+    CommunicationProvider provider = AgoraCommunicationProvider(
+        sessionProvider: _sessionProvider, userId: user!.uid);
+    return provider;
+  }
 
   // Users
   Stream<UserProfile> userProfileStream() =>

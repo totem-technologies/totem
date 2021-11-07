@@ -176,9 +176,9 @@ class CircleSessionControls extends ConsumerWidget {
       },
     );
     if (result) {
-      final repo = ref.read(repositoryProvider);
-      await repo.endActiveSession();
-      Navigator.of(context).pop();
+      final commProvider = ref.read(communicationsProvider);
+      await commProvider.endSession();
+//       Navigator.of(context).pop();
     }
   }
 }

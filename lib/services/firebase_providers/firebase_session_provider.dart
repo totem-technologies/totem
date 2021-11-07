@@ -51,9 +51,6 @@ class FirebaseSessionProvider extends SessionProvider {
       Map<String, dynamic> sessionData = {
         "state": SessionState.waiting,
       };
-      sessionData["participants"] = [
-        _participant(uid, role: Roles.keeper.toString())
-      ];
       batch.update(sessionRef, sessionData);
       Map<String, dynamic> circleData = {"activeSession": sessionRef};
       batch.update(ref, circleData);
@@ -69,7 +66,9 @@ class FirebaseSessionProvider extends SessionProvider {
 
   @override
   Future<void> joinSession(
-      {required Session session, required String uid}) async {
+      {required Session session,
+      required String uid,
+      String? sessionUserId}) async {
     // For security reasons, this might be better in a cloud function
     // so as not to give direct write permission to a session from a
     // participant? For now just allow it till we get functional
@@ -79,7 +78,7 @@ class FirebaseSessionProvider extends SessionProvider {
       if (sessionData.exists) {
         Map<String, dynamic> data = sessionData.data()! as Map<String, dynamic>;
         List<Map<String, dynamic>> participants = data["participants"] ?? [];
-        participants.add(_participant(uid));
+        participants.add(_participant(uid, sessionUserId: sessionUserId));
         if (_activeSession == null) {
           _createLiveSession(session);
         }
@@ -164,12 +163,17 @@ class FirebaseSessionProvider extends SessionProvider {
     }
   }
 
-  Map<String, dynamic> _participant(String uid, {String? role}) {
-    return {
+  Map<String, dynamic> _participant(String uid,
+      {String? role, String? sessionUserId}) {
+    Map<String, dynamic> data = {
       "ref": FirebaseFirestore.instance.collection(Paths.users).doc(uid),
       "role": role ?? Roles.member.toString(),
       "joined": DateTime.now(),
     };
+    if (sessionUserId != null) {
+      data["sessionUserId"] = sessionUserId;
+    }
+    return data;
   }
 
   void _createLiveSession(Session session) {
