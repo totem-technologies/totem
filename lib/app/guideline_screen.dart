@@ -6,13 +6,14 @@ import 'package:totem/theme/index.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class GuidelineScreen extends StatelessWidget {
+class GuidelineScreen extends ConsumerWidget {
   const GuidelineScreen({Key? key}) : super(key: key);
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final t = AppLocalizations.of(context)!;
     final textStyles = Theme.of(context).textTheme;
     final bottomPadding = MediaQuery.of(context).padding.bottom;
+    final authService = ref.watch(authServiceProvider);
     return GradientBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
@@ -55,7 +56,7 @@ class GuidelineScreen extends StatelessWidget {
               ),
               Align(
                 alignment: Alignment.bottomCenter,
-                child: _bottomControls(context),
+                child: _bottomControls(context, authService),
               ),
             ],
           ),
@@ -64,16 +65,20 @@ class GuidelineScreen extends StatelessWidget {
     );
   }
 
-  Widget _bottomControls(BuildContext context) {
+  Widget _bottomControls(BuildContext context, AuthService authService) {
     final t = AppLocalizations.of(context)!;
     final textStyles = Theme.of(context).textTheme;
     final themeColors = Theme.of(context).themeColors;
+
     return BottomTrayContainer(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           TextButton(
-              onPressed: () => _signOut(context),
+              onPressed: () {
+                authService.signOut();
+                Navigator.of(context).pop();
+              },
               child: Row(
                 children: [
                   Icon(
@@ -98,10 +103,5 @@ class GuidelineScreen extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  Future<void> _signOut(BuildContext context) async {
-    await context.read(authServiceProvider).signOut();
-    Navigator.of(context).pop();
   }
 }

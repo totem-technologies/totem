@@ -6,16 +6,17 @@ import 'package:totem/services/index.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class PhoneRegisterCodeEntry extends StatefulWidget {
+class PhoneRegisterCodeEntry extends ConsumerStatefulWidget {
   const PhoneRegisterCodeEntry({Key? key}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _PhoneRegisterCodeEntryState();
+  _PhoneRegisterCodeEntryState createState() => _PhoneRegisterCodeEntryState();
 }
 
 final errors = {'invalid-verification-code': 'Invalid code. Please try again.'};
 
-class _PhoneRegisterCodeEntryState extends State<PhoneRegisterCodeEntry> {
+class _PhoneRegisterCodeEntryState
+    extends ConsumerState<PhoneRegisterCodeEntry> {
   final _formKey = GlobalKey<FormState>();
   final AutovalidateMode _autoValidate = AutovalidateMode.disabled;
 
@@ -27,7 +28,7 @@ class _PhoneRegisterCodeEntryState extends State<PhoneRegisterCodeEntry> {
   void signInWithPhoneNumber() async {
     setState(() => _busy = true);
     try {
-      await context.read(authServiceProvider).verifyCode(pinValue);
+      await ref.read(authServiceProvider).verifyCode(pinValue);
       setState(() => _busy = false);
       await Navigator.pushReplacementNamed(
         context,

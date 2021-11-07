@@ -4,14 +4,14 @@ import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class TopicsList extends StatefulWidget {
+class TopicsList extends ConsumerStatefulWidget {
   const TopicsList({Key? key}) : super(key: key);
 
   @override
   _TopicsListState createState() => _TopicsListState();
 }
 
-class _TopicsListState extends State<TopicsList> {
+class _TopicsListState extends ConsumerState<TopicsList> {
   late Stream<List<Topic>> _topics;
 
   @override
@@ -21,7 +21,7 @@ class _TopicsListState extends State<TopicsList> {
   }
 
   void _updateTopicsQuery({String sort = TopicSort.title}) {
-    var repo = context.read(repositoryProvider);
+    var repo = ref.read(repositoryProvider);
     setState(() {
       _topics = repo.topics(sort: sort);
     });
@@ -54,6 +54,5 @@ class _TopicsListState extends State<TopicsList> {
         });
   }
 
-  void _handleShowTopic(BuildContext context, Topic topic) {
-  }
+  void _handleShowTopic(BuildContext context, Topic topic) {}
 }

@@ -7,14 +7,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:totem/theme/index.dart';
 
-class PhoneRegisterNumberEntry extends StatefulWidget {
+class PhoneRegisterNumberEntry extends ConsumerStatefulWidget {
   const PhoneRegisterNumberEntry({Key? key}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _PhoneRegisterNumberEntryState();
+  _PhoneRegisterNumberEntryState createState() =>
+      _PhoneRegisterNumberEntryState();
 }
 
-class _PhoneRegisterNumberEntryState extends State<PhoneRegisterNumberEntry> {
+class _PhoneRegisterNumberEntryState
+    extends ConsumerState<PhoneRegisterNumberEntry> {
   final formKey = GlobalKey<FormState>();
   final TextEditingController _phoneNumberController = TextEditingController();
   String initialCountry = 'US';
@@ -98,7 +100,7 @@ class _PhoneRegisterNumberEntryState extends State<PhoneRegisterNumberEntry> {
   }
 
   void onSubmit() async {
-    var auth = context.read(authServiceProvider);
+    var auth = ref.read(authServiceProvider);
     // Validate returns true if the form is valid, or false otherwise.
     if (formKey.currentState!.validate()) {
       setState(() => _busy = true);

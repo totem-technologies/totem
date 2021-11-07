@@ -51,6 +51,8 @@ class Circle {
           }
         }
         return session;
+      } else {
+        _status = CircleStatus.complete;
       }
     }
     return null;
