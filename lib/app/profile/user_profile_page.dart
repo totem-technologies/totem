@@ -7,14 +7,14 @@ import 'package:totem/theme/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class UserProfilePage extends StatefulWidget {
+class UserProfilePage extends ConsumerStatefulWidget {
   const UserProfilePage({Key? key}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _UserProfilePageState();
+  _UserProfilePageState createState() => _UserProfilePageState();
 }
 
-class _UserProfilePageState extends State<UserProfilePage> {
+class _UserProfilePageState extends ConsumerState<UserProfilePage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
@@ -29,7 +29,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
   @override
   void initState() {
-    _userProfileFetch = context.read(repositoryProvider).userProfile();
+    _userProfileFetch = ref.read(repositoryProvider).userProfile();
     super.initState();
   }
 
@@ -44,7 +44,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
         body: WillPopScope(
           onWillPop: () async {
             if (hasChanged) {
-              return await _savePrompt(context);
+              return await _savePrompt();
             }
             return true;
           },
@@ -73,7 +73,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                             TextButton(
                                 onPressed: !_busy
                                     ? () {
-                                        _saveForm(context);
+                                        _saveForm();
                                       }
                                     : null,
                                 child: Text(t.done)),
@@ -142,7 +142,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                                         ThemedRaisedButton(
                                           label: t.signOut,
                                           onPressed: () async {
-                                            await context
+                                            await ref
                                                 .read(authServiceProvider)
                                                 .signOut();
                                             Navigator.of(context).pop();
@@ -171,7 +171,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
     );
   }
 
-  Future<void> _saveForm(BuildContext context) async {
+  Future<void> _saveForm() async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
@@ -181,7 +181,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
       _formKey.currentState!.save();
       _userProfile!.name = _nameController.text;
       _userProfile!.email = _emailController.text;
-      await context.read(repositoryProvider).updateUserProfile(_userProfile!);
+      await ref.read(repositoryProvider).updateUserProfile(_userProfile!);
       setState(() => _busy = false);
     }
     Navigator.of(context).pop();
@@ -300,7 +300,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
     );
   }
 
-  Future<bool> _savePrompt(BuildContext context) async {
+  Future<bool> _savePrompt() async {
     FocusScope.of(context).unfocus();
     final t = AppLocalizations.of(context)!;
     // set up the buttons
@@ -341,7 +341,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
       },
     );
     if (result == 2) {
-      _saveForm(context);
+      _saveForm();
       return false;
     }
     return result == 1;

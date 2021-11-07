@@ -4,12 +4,13 @@ import 'package:totem/components/widgets/index.dart';
 import 'package:totem/services/index.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class SettingsPage extends StatelessWidget {
+class SettingsPage extends ConsumerWidget {
   const SettingsPage({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final t = AppLocalizations.of(context)!;
+    var authService = ref.watch(authServiceProvider);
     return GradientBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
@@ -36,7 +37,7 @@ class SettingsPage extends StatelessWidget {
                   child: ThemedRaisedButton(
                     label: t.signOut,
                     onPressed: () async {
-                      await context.read(authServiceProvider).signOut();
+                      await authService.signOut();
                       Navigator.of(context).pop();
                     },
                   ),

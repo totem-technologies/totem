@@ -6,20 +6,19 @@ import 'package:totem/app/login/components/phone_register_number_error.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/services/index.dart';
 
-class RegisterPage extends StatefulWidget {
+class RegisterPage extends ConsumerStatefulWidget {
   const RegisterPage({Key? key}) : super(key: key);
 
   @override
   _RegisterPageState createState() => _RegisterPageState();
 }
 
-class _RegisterPageState extends State<RegisterPage> {
-
+class _RegisterPageState extends ConsumerState<RegisterPage> {
   late Stream<AuthRequestState> _requestStateStream;
 
   @override
   void initState() {
-    final auth = context.read(authServiceProvider);
+    final auth = ref.read(authServiceProvider);
     _requestStateStream = auth.onAuthRequestStateChanged;
     super.initState();
   }
@@ -61,8 +60,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       }
                       // nothing available yet
                       return Container();
-                    }
-                ),
+                    }),
               ),
             ),
           ),
@@ -70,5 +68,4 @@ class _RegisterPageState extends State<RegisterPage> {
       ),
     );
   }
-
 }

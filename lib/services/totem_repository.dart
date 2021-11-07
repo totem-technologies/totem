@@ -15,7 +15,7 @@ class TotemRepository {
   static final userProfileProvider =
       StreamProvider.autoDispose<UserProfile?>((ref) {
     final repo = ref.read(repositoryProvider);
-    final authUser = ref.watch(authStateChangesProvider).data?.value;
+    final authUser = ref.watch(authStateChangesProvider).asData?.value;
     if (authUser == null) {
       final streamController = StreamController<UserProfile?>();
       streamController.add(null);

@@ -8,14 +8,14 @@ import 'package:totem/services/index.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class CirclesList extends StatefulWidget {
+class CirclesList extends ConsumerStatefulWidget {
   const CirclesList({Key? key}) : super(key: key);
 
   @override
   _CirclesListState createState() => _CirclesListState();
 }
 
-class _CirclesListState extends State<CirclesList> {
+class _CirclesListState extends ConsumerState<CirclesList> {
   late Stream<List<Circle>> _circles;
   final double bottomPadding = 80;
 
@@ -26,7 +26,7 @@ class _CirclesListState extends State<CirclesList> {
   }
 
   void _updateCircleQuery() {
-    var repo = context.read(repositoryProvider);
+    var repo = ref.read(repositoryProvider);
     setState(() {
       _circles = repo.circles();
     });
