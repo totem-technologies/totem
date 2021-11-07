@@ -12,17 +12,17 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'circle_session_page.dart';
 
-class CirclePage extends StatelessWidget {
+class CirclePage extends ConsumerWidget {
   const CirclePage({Key? key, required this.circle}) : super(key: key);
   final Circle circle;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final t = AppLocalizations.of(context)!;
     final themeData = Theme.of(context);
     final textStyles = themeData.textTheme;
     final themeColors = themeData.themeColors;
-    final authUser = context.read(authServiceProvider).currentUser()!;
+    final authUser = ref.read(authServiceProvider).currentUser()!;
     final userRole = circle.participantRole(authUser.uid);
     return GradientBackground(
       child: Scaffold(
@@ -98,7 +98,7 @@ class CirclePage extends StatelessWidget {
                               role: userRole,
                               nextSession: index == 0,
                               startSession: (session) {
-                                _startSession(context, session);
+                                _startSession(context, ref, session);
                               },
                             );
                           },
@@ -127,9 +127,10 @@ class CirclePage extends StatelessWidget {
     );
   }
 
-  void _startSession(BuildContext context, Session session) async {
+  void _startSession(
+      BuildContext context, WidgetRef ref, Session session) async {
     // use this session to create a pending session
-    final repo = context.read(repositoryProvider);
+    final repo = ref.read(repositoryProvider);
     ActiveSession activeSession = await repo.activateSession(session: session);
     Navigator.pushReplacement(
       context,

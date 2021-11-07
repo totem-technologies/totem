@@ -70,6 +70,7 @@ class TotemRepository {
       _sessionProvider.activateSession(session: session, uid: user!.uid);
   Future<void> joinSession({required Session session, required String uid}) =>
       _sessionProvider.joinSession(session: session, uid: user!.uid);
+  Future<void> startActiveSession() => _sessionProvider.startActiveSession();
   Future<void> endActiveSession() => _sessionProvider.endActiveSession();
   void clearActiveSession() => _sessionProvider.clear();
   ActiveSession? get activeSession => _sessionProvider.activeSession;

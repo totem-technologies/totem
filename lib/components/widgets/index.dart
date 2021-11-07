@@ -9,6 +9,7 @@ export 'list_item_container.dart';
 export 'profile_image.dart';
 export 'sub_page_header.dart';
 export 'text_form_field.dart';
+export 'themed_control_button.dart';
 export 'themed_input_decoration.dart';
 export 'themed_raised_button.dart';
 export 'themed_text_field.dart';

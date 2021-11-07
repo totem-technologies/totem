@@ -8,8 +8,8 @@ class CircleSessionContent extends ConsumerWidget {
   const CircleSessionContent({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, ScopedReader watch) {
-    final activeSession = watch(activeSessionProvider);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final activeSession = ref.watch(activeSessionProvider);
     if (activeSession.state == SessionState.live) {
       return Column(
         children: const [

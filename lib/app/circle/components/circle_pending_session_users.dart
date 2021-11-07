@@ -10,8 +10,8 @@ class CirclePendingSessionUsers extends ConsumerWidget {
   const CirclePendingSessionUsers({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, ScopedReader watch) {
-    final participants = watch(activeSessionProvider).participants;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final participants = ref.watch(activeSessionProvider).participants;
     if (participants.isNotEmpty) {
       return GridView.builder(
         physics: const NeverScrollableScrollPhysics(),

@@ -70,10 +70,19 @@ flutter:
     - assets/arrow_next.svg
     - assets/background_shape.svg
     - assets/background_shape_2.svg
+    - assets/check.svg
+    - assets/close.svg
+    - assets/fast_forward.svg
     - assets/home_background.svg
+    - assets/info.svg
+    - assets/leave.svg
+    - assets/microphone.svg
+    - assets/microphone_force.svg
+    - assets/more.svg
     - assets/more_info.svg
     - assets/profile.svg
-    - assets/dude.jpg
+    - assets/unlock.svg
+    - assets/view_circle.svg
 
   fonts:
     - family: Raleway

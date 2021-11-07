@@ -49,7 +49,7 @@ class FirebaseSessionProvider extends SessionProvider {
       DocumentReference sessionRef =
           FirebaseFirestore.instance.doc(session.ref);
       Map<String, dynamic> sessionData = {
-        "state": SessionState.pending,
+        "state": SessionState.waiting,
       };
       sessionData["participants"] = [
         _participant(uid, role: Roles.keeper.toString())
@@ -62,7 +62,9 @@ class FirebaseSessionProvider extends SessionProvider {
       return _activeSession!;
     }
     throw SessionException(
-        code: AuthException.errorCodeUnauthorized, reference: session.ref);
+      code: AuthException.errorCodeUnauthorized,
+      reference: session.ref,
+    );
   }
 
   @override
@@ -83,12 +85,34 @@ class FirebaseSessionProvider extends SessionProvider {
         }
       } else {
         throw SessionException(
-            code: SessionException.errorCodeInvalidSession,
-            reference: session.ref);
+          code: SessionException.errorCodeInvalidSession,
+          reference: session.ref,
+        );
       }
     } on FirebaseException catch (ex) {
       throw SessionException(
-          code: ex.code, message: ex.message, reference: session.ref);
+        code: ex.code,
+        message: ex.message,
+        reference: session.ref,
+      );
+    }
+  }
+
+  @override
+  Future<void> startActiveSession() async {
+    if (_activeSession != null) {
+      try {
+        DocumentReference ref =
+            FirebaseFirestore.instance.doc(activeSession!.session.ref);
+        Map<String, dynamic> data = {"state": SessionState.live};
+        await ref.update(data);
+      } on FirebaseException catch (ex) {
+        throw SessionException(
+          code: ex.code,
+          reference: _activeSession!.session.ref,
+          message: ex.message,
+        );
+      }
     }
   }
 
@@ -132,9 +156,10 @@ class FirebaseSessionProvider extends SessionProvider {
         clear();
       } on FirebaseException catch (ex) {
         throw SessionException(
-            code: ex.code,
-            reference: _activeSession!.session.ref,
-            message: ex.message);
+          code: ex.code,
+          reference: _activeSession!.session.ref,
+          message: ex.message,
+        );
       }
     }
   }

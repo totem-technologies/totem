@@ -35,6 +35,15 @@ class ActiveSession extends ChangeNotifier {
         null;
   }
 
+  Role participantRole(String participantId) {
+    Participant? participant = participants.firstWhereOrNull(
+        (element) => element.userProfile.uid == participantId);
+    if (participant != null) {
+      return participant.role;
+    }
+    return Roles.member;
+  }
+
   Map<String, dynamic> toJson() {
     Map<String, dynamic> data = session.toJson();
     if (started != null) {
