@@ -38,6 +38,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     try {
       _engine?.destroy();
       _engine = null;
+      super.dispose();
     } catch (ex) {
       debugPrint("unable to break down engine: " + ex.toString());
     }
@@ -95,6 +96,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
         }
         _engine!.muteAllRemoteAudioStreams(false);
         _engine!.muteLocalAudioStream(false);
+        _engine!.setEnableSpeakerphone(true);
         _updateState(CommunicationState.active);
       }, leaveChannel: (stats) async {
         // update state
