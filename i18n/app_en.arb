@@ -22,6 +22,7 @@
     "errorEnterName": "Provide a name for the circle",
     "errorEnterNumSessions": "Enter a number of sessions between 1 and 100",
     "errorInvalidPhoneNumber": "Invalid Phone Number",
+    "errorJoinSession": "Unable to join session",
     "errorPinCode": "Please enter a 6 digit code",
     "errorNoProfile": "There is no profile",
     "errorRegister": "An error occurred registering",

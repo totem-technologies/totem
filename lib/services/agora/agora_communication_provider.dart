@@ -11,7 +11,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   // Currently this is a test token and is short lived.
   // Token valid till: 8-nov-20201 @ 5:52PM UTC
   static const String tokenId =
-      "0064880737da9bf47e290f46d847cd1c3b1IAC8jKhbqTtHChsT3S6GxKmNEJwPb3hovVJ9hIH9F6iVfHLdK0QAAAAAEAD3dRUD0mOJYQEAAQDSY4lh";
+      "0064880737da9bf47e290f46d847cd1c3b1IADPQarAx4XXAm7aFYIutDZTH+5ofRzp4yxFgE/m8aRujFQp/7cAAAAAEAD3dRUDetaKYQEAAQB61oph";
   // This can be removed once a cloud function is enabled to generate tokens
   // based on the session id
   static const String channelName = "channel_test";
@@ -26,11 +26,21 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   late SessionProvider sessionProvider;
   Session? _session;
   final String userId;
+  ErrorCode? _lastError;
+
+  @override
+  String? get lastError {
+    return _lastError?.toString();
+  }
 
   @override
   void dispose() {
-    _engine?.destroy();
-    super.dispose();
+    try {
+      _engine?.destroy();
+      _engine = null;
+    } catch (ex) {
+      debugPrint("unable to break down engine: " + ex.toString());
+    }
   }
 
   @override
@@ -49,7 +59,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
       // TODO - Call SessionProvider to get token for current session
       // This will hit the server which will generate a token for the user
       // this is currently using the test token/channelName
-      await _engine!.joinChannel(tokenId, channelName, null, 0);
+      await _engine!.joinChannel(tokenId, session.id, null, 0);
     } catch (ex) {
       debugPrint('unable to activate agora session: ' + ex.toString());
       _updateState(CommunicationState.disconnected);
@@ -83,6 +93,8 @@ class AgoraCommunicationProvider extends CommunicationProvider {
         if (_handler != null && _handler!.joinedCircle != null) {
           _handler!.joinedCircle!(_session!.id, uid.toString());
         }
+        _engine!.muteAllRemoteAudioStreams(false);
+        _engine!.muteLocalAudioStream(false);
         _updateState(CommunicationState.active);
       }, leaveChannel: (stats) async {
         // update state
@@ -91,6 +103,9 @@ class AgoraCommunicationProvider extends CommunicationProvider {
         }
         _updateState(CommunicationState.disconnected);
         _handler = null;
+      }, error: (error) {
+        _lastError = error;
+        _updateState(CommunicationState.failed);
       }));
     }
   }

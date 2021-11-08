@@ -77,7 +77,8 @@ class FirebaseSessionProvider extends SessionProvider {
       DocumentSnapshot sessionData = await ref.get();
       if (sessionData.exists) {
         Map<String, dynamic> data = sessionData.data()! as Map<String, dynamic>;
-        List<Map<String, dynamic>> participants = data["participants"] ?? [];
+        List<Map<String, dynamic>> participants =
+            List<Map<String, dynamic>>.from(data["participants"] ?? []);
         participants.add(_participant(uid,
             sessionUserId: sessionUserId,
             role: session.circle.participantRole(uid).toString()));

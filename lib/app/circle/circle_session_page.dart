@@ -107,20 +107,43 @@ class _CircleSessionPageState extends ConsumerState<CircleSessionPage>
                             if (commProvider.state ==
                                 CommunicationState.joining)
                               _joiningSession(context),
+                            if (commProvider.state == CommunicationState.failed)
+                              _errorSession(context),
                           ],
                         ),
                       ),
                     ),
                   ],
                 ),
-                const Align(
-                  alignment: Alignment.bottomCenter,
-                  child: CircleSessionControls(),
-                ),
+                if (commProvider.state == CommunicationState.active)
+                  const Align(
+                    alignment: Alignment.bottomCenter,
+                    child: CircleSessionControls(),
+                  ),
               ],
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _errorSession(BuildContext context) {
+    final commProvider = ref.read(communicationsProvider);
+    final t = AppLocalizations.of(context)!;
+    final textStyles = Theme.of(context).textStyles;
+    return Center(
+      child: Column(
+        children: [
+          Text(
+            t.errorJoinSession,
+            style: textStyles.headline3,
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Text(commProvider.lastError ?? "unknown"),
+        ],
       ),
     );
   }
