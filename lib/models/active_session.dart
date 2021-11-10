@@ -16,6 +16,8 @@ class ActiveSession extends ChangeNotifier {
   late List<Participant> participants = [];
   String state = SessionState.pending;
   DateTime? started;
+  List<Participant> activeParticipants = [];
+  final List<String> _pendingUserAdded = [];
 
   void updateFromData(Map<String, dynamic> data) {
     state = data['state'] ?? state;
@@ -26,7 +28,55 @@ class ActiveSession extends ChangeNotifier {
     if (data['started'] != null && started == null) {
       started = DateTimeEx.fromMapValue(data['started']);
     }
+    if (_pendingUserAdded.isNotEmpty) {
+      List<String> pending = List<String>.from(_pendingUserAdded);
+      for (var element in pending) {
+        userJoined(sessionUserId: element, pending: true);
+      }
+    }
     notifyListeners();
+  }
+
+  bool userJoined({required String sessionUserId, bool pending = false}) {
+    Participant? participant = activeParticipants
+        .firstWhereOrNull((element) => element.sessionUserId == sessionUserId);
+    if (participant != null) {
+      // already in the active list
+      return true;
+    }
+    participant = participants
+        .firstWhereOrNull((element) => element.sessionUserId == sessionUserId);
+    bool found = false;
+    if (participant != null) {
+      activeParticipants.add(participant);
+      _pendingUserAdded.remove(sessionUserId);
+      found = true;
+    } else if (!pending) {
+      // user is not in the list yet, wait for next update
+      if (!_pendingUserAdded.contains(sessionUserId)) {
+        _pendingUserAdded.add(sessionUserId);
+      }
+    }
+    if (found && !pending) {
+      notifyListeners();
+    }
+    return found;
+  }
+
+  bool userOffline({required String sessionUserId}) {
+    // if pending, just remove
+    _pendingUserAdded.remove(sessionUserId);
+    // make sure the user is already in the active participants list
+    Participant? participant = activeParticipants
+        .firstWhereOrNull((element) => element.sessionUserId == sessionUserId);
+    if (participant == null) {
+      // not in the active list
+      return false;
+    }
+    participant.status = "offline";
+    activeParticipants.remove(participant);
+    notifyListeners();
+    return true;
   }
 
   bool participantInSession(String uid) {

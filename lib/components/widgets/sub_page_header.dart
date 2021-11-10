@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:totem/theme/index.dart';
 
 class SubPageHeader extends StatelessWidget {
-  const SubPageHeader({Key? key, required this.title}) : super(key: key);
+  const SubPageHeader({Key? key, required this.title, this.onClose})
+      : super(key: key);
   final String title;
+  final VoidCallback? onClose;
 
   @override
   Widget build(BuildContext context) {
@@ -17,14 +19,19 @@ class SubPageHeader extends StatelessWidget {
           child: Text(title, style: textStyles.headline2),
         ),
         IconButton(
-          onPressed: (){
-            Navigator.of(context).pop();
+          onPressed: () {
+            if (onClose == null) {
+              Navigator.of(context).pop();
+            }
+            onClose!();
           },
-          icon: Icon(Icons.close, color: themeColors.primaryText,),
+          icon: Icon(
+            Icons.close,
+            color: themeColors.primaryText,
+          ),
         ),
         const SizedBox(width: 8),
       ],
     );
   }
-
 }

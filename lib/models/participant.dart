@@ -4,10 +4,14 @@ class Participant {
   UserProfile userProfile;
   late Role role;
   DateTime? joined;
+  String? sessionUserId;
+  String? status;
 
   Participant.fromJson(Map<String, dynamic> json, {required this.userProfile}) {
     role = Role.fromString(json['role']);
     joined = DateTimeEx.fromMapValue(json['joined']);
+    status = json['status'];
+    sessionUserId = json["sessionUserId"];
   }
 
   Map<String, dynamic> toJson() {

@@ -21,17 +21,12 @@ final activeSessionProvider =
 final communicationsProvider =
     ChangeNotifierProvider.autoDispose<CommunicationProvider>((ref) {
   final repo = ref.read(repositoryProvider);
-  final communicationProvider = repo.createCommunicationProvider();
-  ref.onDispose(() {
-    communicationProvider.dispose();
-  });
-  return communicationProvider;
+  return repo.createCommunicationProvider();
 });
 
 class CircleSessionPage extends ConsumerStatefulWidget {
-  const CircleSessionPage({Key? key, required this.activeSession})
-      : super(key: key);
-  final ActiveSession activeSession;
+  const CircleSessionPage({Key? key, required this.session}) : super(key: key);
+  final Session session;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
@@ -70,7 +65,10 @@ class _CircleSessionPageState extends ConsumerState<CircleSessionPage>
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     SubPageHeader(
-                      title: widget.activeSession.session.circle.name,
+                      title: widget.session.circle.name,
+                      onClose: () async {
+                        await _exitPrompt(context);
+                      },
                     ),
                     Expanded(
                       child: SingleChildScrollView(
@@ -82,10 +80,8 @@ class _CircleSessionPageState extends ConsumerState<CircleSessionPage>
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            if (widget.activeSession.session.circle
-                                        .description !=
-                                    null &&
-                                widget.activeSession.session.circle.description!
+                            if (widget.session.circle.description != null &&
+                                widget.session.circle.description!
                                     .isNotEmpty) ...[
                               Text(
                                 t.circleDescription,
@@ -94,21 +90,17 @@ class _CircleSessionPageState extends ConsumerState<CircleSessionPage>
                               const SizedBox(
                                 height: 4,
                               ),
-                              Text(widget
-                                  .activeSession.session.circle.description!),
+                              Text(widget.session.circle.description!),
                               Divider(
                                 height: 48,
                                 thickness: 1,
                                 color: themeColors.divider,
                               ),
                             ],
-                            if (commProvider.state == CommunicationState.active)
-                              const CircleSessionContent(),
-                            if (commProvider.state ==
-                                CommunicationState.joining)
-                              _joiningSession(context),
-                            if (commProvider.state == CommunicationState.failed)
-                              _errorSession(context),
+                            AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 200),
+                              child: _sessionContent(context, commProvider),
+                            ),
                           ],
                         ),
                       ),
@@ -128,6 +120,20 @@ class _CircleSessionPageState extends ConsumerState<CircleSessionPage>
     );
   }
 
+  Widget _sessionContent(
+      BuildContext context, CommunicationProvider commProvider) {
+    switch (commProvider.state) {
+      case CommunicationState.failed:
+        return _errorSession(context);
+      case CommunicationState.joining:
+        return _joiningSession(context);
+      case CommunicationState.active:
+        return const CircleSessionContent();
+      case CommunicationState.disconnected:
+        return Container();
+    }
+  }
+
   Widget _errorSession(BuildContext context) {
     final commProvider = ref.read(communicationsProvider);
     final t = AppLocalizations.of(context)!;
@@ -142,7 +148,8 @@ class _CircleSessionPageState extends ConsumerState<CircleSessionPage>
           const SizedBox(
             height: 20,
           ),
-          Text(commProvider.lastError ?? "unknown"),
+          Text(ErrorCodeTranslation.get(
+              context, commProvider.lastError ?? "unknown")),
         ],
       ),
     );
@@ -168,25 +175,91 @@ class _CircleSessionPageState extends ConsumerState<CircleSessionPage>
   }
 
   Future<bool> _exitPrompt(BuildContext context) async {
-    // TODO - check session state here and if active,
+    final repo = ref.read(repositoryProvider);
+    final authUser = ref.read(authServiceProvider).currentUser()!;
     // then prompt the user about leaving
-    return true;
+    final commProvider = ref.read(communicationsProvider);
+    final role = repo.activeSession!.participantRole(authUser.uid);
+    if (commProvider.state == CommunicationState.active) {
+      // prompt
+      FocusScope.of(context).unfocus();
+      final t = AppLocalizations.of(context)!;
+      // set up the AlertDialog
+      final actions = [
+        TextButton(
+          child: Text(t.leaveSession),
+          onPressed: () {
+            Navigator.of(context).pop("leave");
+          },
+        ),
+        TextButton(
+          child: Text(t.cancel),
+          onPressed: () {
+            Navigator.of(context).pop("cancel");
+          },
+        ),
+      ];
+      if (role == Roles.keeper) {
+        actions.insert(
+          0,
+          TextButton(
+            child: Text(t.endSession),
+            onPressed: () {
+              Navigator.of(context).pop("end");
+            },
+          ),
+        );
+      }
+
+      AlertDialog alert = AlertDialog(
+        title: Text(
+            role == Roles.keeper ? t.endSessionPrompt : t.leaveSessionPrompt),
+        content: Text(role == Roles.keeper
+            ? t.endSessionPromptMessage
+            : t.leaveSessionPromptMessage),
+        actions: actions,
+      );
+      // show the dialog
+      final result = await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return alert;
+        },
+      );
+      if (result != "cancel") {
+        await completeSession(result == "end");
+      }
+    } else {
+      await completeSession(false);
+    }
+    return false;
+  }
+
+  Future<void> completeSession(bool complete) async {
+    final repo = ref.read(repositoryProvider);
+    repo.clearActiveSession();
+    final commProvider = ref.read(communicationsProvider);
+    if (!complete) {
+      await commProvider.leaveSession();
+    } else {
+      await commProvider.endSession();
+    }
   }
 
   @override
   void afterFirstLayout(BuildContext context) {
     final provider = ref.read(communicationsProvider);
     provider.joinSession(
-      session: widget.activeSession.session,
+      session: widget.session,
       handler: CommunicationHandler(
           joinedCircle: (String sessionId, String sessionUserId) {
-/*        setState(() {
-          _sessionUserId = sessionUserId;
-        }); */
         debugPrint("joined circle as: " + sessionUserId);
       }, leaveCircle: () {
-        debugPrint("left circle");
         // prompt?
+        Future.delayed(const Duration(milliseconds: 0), () {
+          Navigator.of(context).pop();
+        });
       }),
     );
   }

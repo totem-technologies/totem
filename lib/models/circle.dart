@@ -4,6 +4,7 @@ import 'package:totem/models/index.dart';
 enum CircleStatus {
   idle,
   preSession,
+  waiting,
   active,
   complete,
 }
@@ -21,6 +22,7 @@ class Circle {
   CircleStatus _status = CircleStatus.idle;
   List<Participant> participants = [];
   Session? activeSession;
+  bool hasActiveSession = false;
 
   Circle.fromJson(Map<String, dynamic> json,
       {required this.id, required this.ref, UserProfile? createdUser}) {
@@ -29,6 +31,7 @@ class Circle {
     createdBy = createdUser;
     createdOn = DateTimeEx.fromMapValue(json['createdOn']) ?? DateTime.now();
     updatedOn = DateTimeEx.fromMapValue(json['updatedOn']);
+    hasActiveSession = json['activeSession'] != null;
   }
 
   CircleStatus get status {
@@ -44,7 +47,9 @@ class Circle {
       if (index != -1) {
         Session session = sessions[index];
         if (session == activeSession) {
-          _status = CircleStatus.active;
+          _status = session.state == SessionState.waiting
+              ? CircleStatus.waiting
+              : _status = CircleStatus.active;
         } else {
           Duration duration = session.scheduledDate.difference(now);
           if (duration.inMinutes <= 10) {

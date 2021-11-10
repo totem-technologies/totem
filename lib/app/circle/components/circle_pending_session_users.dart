@@ -11,7 +11,7 @@ class CirclePendingSessionUsers extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final participants = ref.watch(activeSessionProvider).participants;
+    final participants = ref.watch(activeSessionProvider).activeParticipants;
     if (participants.isNotEmpty) {
       return GridView.builder(
         physics: const NeverScrollableScrollPhysics(),

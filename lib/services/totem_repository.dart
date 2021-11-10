@@ -65,12 +65,16 @@ class TotemRepository {
       );
   Stream<List<Circle>> circles({bool allCircles = false}) =>
       _circlesProvider.circles(!allCircles ? user?.uid : null);
+  Stream<Circle> circle({required String circleId}) =>
+      _circlesProvider.circle(circleId);
 
   // Sessions
   Future<ActiveSession> activateSession({required Session session}) =>
       _sessionProvider.activateSession(session: session, uid: user!.uid);
-  Future<void> joinSession({required Session session, required String uid}) =>
+  Future<void> joinSession({required Session session}) =>
       _sessionProvider.joinSession(session: session, uid: user!.uid);
+  Future<ActiveSession> createActiveSession({required Session session}) =>
+      _sessionProvider.createActiveSession(session: session);
   Future<void> startActiveSession() => _sessionProvider.startActiveSession();
   Future<void> endActiveSession() => _sessionProvider.endActiveSession();
   void clearActiveSession() => _sessionProvider.clear();

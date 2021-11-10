@@ -12,130 +12,195 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'circle_session_page.dart';
 
-class CirclePage extends ConsumerWidget {
+class CirclePage extends ConsumerStatefulWidget {
   const CirclePage({Key? key, required this.circle}) : super(key: key);
   final Circle circle;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ConsumerStatefulWidget> createState() => CirclePageState();
+}
+
+class CirclePageState extends ConsumerState<CirclePage> {
+  CirclePageState();
+
+  late final Stream<Circle> _stream;
+  late Circle circle;
+  @override
+  void initState() {
+    circle = widget.circle;
+    _stream = ref.read(repositoryProvider).circle(circleId: circle.id);
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final t = AppLocalizations.of(context)!;
     final themeData = Theme.of(context);
     final textStyles = themeData.textTheme;
     final themeColors = themeData.themeColors;
-    final authUser = ref.read(authServiceProvider).currentUser()!;
-    final userRole = circle.participantRole(authUser.uid);
     return GradientBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: SafeArea(
           top: true,
           bottom: false,
-          child: Column(
-            children: [
-              SubPageHeader(
-                title: circle.name,
-              ),
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: EdgeInsets.only(
-                      left: themeData.pageHorizontalPadding,
-                      right: themeData.pageHorizontalPadding,
-                      top: 12,
-                      bottom: 20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      if (circle.description != null &&
-                          circle.description!.isNotEmpty) ...[
-                        Text(
-                          t.circleDescription,
-                          style: textStyles.headline3,
-                        ),
-                        const SizedBox(
-                          height: 4,
-                        ),
-                        Text(circle.description!),
-                        Divider(
-                          height: 48,
-                          thickness: 1,
-                          color: themeColors.divider,
-                        ),
-                      ],
-                      GridView.builder(
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          childAspectRatio: 1.0,
-                          mainAxisSpacing: 8,
-                          crossAxisSpacing: 8,
-                        ),
-                        itemBuilder: (context, index) {
-                          return CircleParticipant(
-                            participant: circle.participants[index],
-                          );
-                        },
-                        itemCount: circle.participants.length,
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      Text(
-                        t.sessions,
-                        style: textStyles.headline3,
-                      ),
-                      const SizedBox(
-                        height: 8,
-                      ),
-                      if (circle.sessions.isNotEmpty)
-                        ListView.separated(
-                          physics: const NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          itemBuilder: (context, index) {
-                            return SessionItem(
-                              session: circle.sessions[index],
-                              role: userRole,
-                              nextSession: index == 0,
-                              startSession: (session) {
-                                _startSession(context, ref, session);
-                              },
-                            );
-                          },
-                          separatorBuilder: (context, index) {
-                            return const SizedBox(height: 8);
-                          },
-                          itemCount: circle.sessions.length,
-                        ),
-                      if (circle.sessions.isEmpty)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 20),
-                          child: Text(
-                            t.noUpcomingSessions,
-                            style: textStyles.headline4,
-                            textAlign: TextAlign.center,
-                          ),
-                        )
-                    ],
+          child: StreamBuilder<Circle>(
+            stream: _stream,
+            builder: (context, snapshot) {
+              bool loading =
+                  snapshot.connectionState == ConnectionState.waiting;
+              if (!loading && snapshot.hasData) {
+                circle = snapshot.data!;
+              }
+              return Column(
+                children: [
+                  SubPageHeader(
+                    title: circle.name,
                   ),
-                ),
-              ),
-            ],
+                  Expanded(
+                    child: SingleChildScrollView(
+                      padding: EdgeInsets.only(
+                          left: themeData.pageHorizontalPadding,
+                          right: themeData.pageHorizontalPadding,
+                          top: 12,
+                          bottom: 20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          if (circle.description != null &&
+                              circle.description!.isNotEmpty) ...[
+                            Text(
+                              t.circleDescription,
+                              style: textStyles.headline3,
+                            ),
+                            const SizedBox(
+                              height: 4,
+                            ),
+                            Text(circle.description!),
+                            Divider(
+                              height: 48,
+                              thickness: 1,
+                              color: themeColors.divider,
+                            ),
+                          ],
+                          if (!loading) ..._fullCircleContent(context),
+                          if (loading) ...[
+                            const SizedBox(height: 30),
+                            const Center(
+                              child: BusyIndicator(),
+                            ),
+                          ]
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
           ),
         ),
       ),
     );
   }
 
+  List<Widget> _fullCircleContent(BuildContext context) {
+    final themeData = Theme.of(context);
+    final textStyles = themeData.textTheme;
+    final authUser = ref.read(authServiceProvider).currentUser()!;
+    Role userRole = circle.participantRole(authUser.uid);
+    final t = AppLocalizations.of(context)!;
+    return [
+      GridView.builder(
+        physics: const NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          childAspectRatio: 1.0,
+          mainAxisSpacing: 8,
+          crossAxisSpacing: 8,
+        ),
+        itemBuilder: (context, index) {
+          return CircleParticipant(
+            participant: circle.participants[index],
+          );
+        },
+        itemCount: circle.participants.length,
+      ),
+      const SizedBox(
+        height: 20,
+      ),
+      if (!circle.hasActiveSession) ...[
+        Text(
+          t.sessions,
+          style: textStyles.headline3,
+        ),
+        const SizedBox(
+          height: 8,
+        ),
+        if (circle.sessions.isNotEmpty)
+          ListView.separated(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemBuilder: (context, index) {
+              return SessionItem(
+                session: circle.sessions[index],
+                role: userRole,
+                nextSession: index == 0,
+                startSession: (session) {
+                  _startSession(context, ref, session);
+                },
+              );
+            },
+            separatorBuilder: (context, index) {
+              return const SizedBox(height: 8);
+            },
+            itemCount: circle.sessions.length,
+          ),
+        if (circle.sessions.isEmpty)
+          Padding(
+            padding: const EdgeInsets.only(top: 20),
+            child: Text(
+              t.noUpcomingSessions,
+              style: textStyles.headline4,
+              textAlign: TextAlign.center,
+            ),
+          )
+      ],
+      if (circle.hasActiveSession)
+        ThemedRaisedButton(
+          label: t.joinSession,
+          onPressed: () {
+            _joinSession(context);
+          },
+        ),
+    ];
+  }
+
+  // THIS IS PLACEHOLDER UNTIL THE SERVER UPDATES THE ACTIVE SESSION
+  // AUTOMATICALLY
   void _startSession(
       BuildContext context, WidgetRef ref, Session session) async {
     // use this session to create a pending session
     final repo = ref.read(repositoryProvider);
-    ActiveSession activeSession = await repo.activateSession(session: session);
+    await repo.activateSession(session: session);
     Navigator.pushReplacement(
       context,
       FadeRoute(
-        page: CircleSessionPage(activeSession: activeSession),
+        page: CircleSessionPage(session: session),
+      ),
+    );
+  }
+
+  void _joinSession(BuildContext context) async {
+    // use this session to create a pending session
+    final repo = ref.read(repositoryProvider);
+    // Generate an instance of the live session before
+    // going to the live page
+    await repo.createActiveSession(session: circle.activeSession!);
+    Navigator.pushReplacement(
+      context,
+      FadeRoute(
+        page: CircleSessionPage(session: circle.activeSession!),
       ),
     );
   }

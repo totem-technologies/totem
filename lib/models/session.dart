@@ -6,16 +6,17 @@ class Session {
   late final String ref;
   late String topic;
   late DateTime scheduledDate;
+  late String state;
 
   Session.fromJson(Map<String, dynamic> json,
       {required this.id, required this.ref, required this.circle}) {
     topic = json['topic'] ?? "";
     scheduledDate = DateTimeEx.fromMapValue(json['scheduledDate'])!;
+    state = json['state'] ?? SessionState.pending;
   }
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> item = {
-      "topic": topic,
       "scheduledData": scheduledDate,
     };
     return item;

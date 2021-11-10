@@ -73,6 +73,11 @@ class CircleItem extends StatelessWidget {
           t.sessionInProgress,
           style: const TextStyle(fontWeight: FontWeight.bold),
         );
+      case CircleStatus.waiting:
+        return Text(
+          t.sessionWaiting,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        );
       case CircleStatus.idle:
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
