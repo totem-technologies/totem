@@ -12,6 +12,7 @@ describe("offline api tests", () => {
   let adminInitStub: sinon.SinonStub;
 
   before(() => {
+    test.mockConfig({agora: {appid: "testappid0", certificate: "abcdefghij012345"}});
     adminInitStub = sinon.stub(admin, "initializeApp");
     myFunctions = require("../src");
   });

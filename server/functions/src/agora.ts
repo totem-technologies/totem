@@ -1,11 +1,10 @@
 import {RtcTokenBuilder, RtcRole} from "agora-access-token";
 import * as functions from "firebase-functions";
 
-// TODO: If we are worried about code leakage these constants can be moved into the DB
-const appId = "4880737da9bf47e290f46d847cd1c3b1";
-const appCertificate = "c4ccb470443048c0b05fa686566a1fe5";
+const appId = functions.config().agora.appid;
+const appCertificate = functions.config().agora.certificate;
 const role = RtcRole.PUBLISHER;
-const defaultExpirationInSeconds = 3600;
+const defaultExpirationInSeconds = 60 * 60 * 5; // Default to 5 hours
 
 export const getToken = functions.https.onCall(({channelName, expirationInSeconds}, {auth}) => {
   const currentTimestamp = Math.floor(Date.now() / 1000);
