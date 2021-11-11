@@ -15,7 +15,7 @@ export const getToken = functions.https.onCall(({channelName, expirationInSecond
     throw new functions.https.HttpsError("failed-precondition", "The function must be called while authenticated.");
   }
 
-  // TODO: Might want to validate channelName and user's inclusion in the channel before generating a tocken
+  // TODO: Might want to validate channelName and user's inclusion in the channel before generating a token
   const token = RtcTokenBuilder.buildTokenWithAccount(appId, appCertificate, channelName, auth.uid, role, expiration);
 
   return {token, expiration};
