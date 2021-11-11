@@ -67,7 +67,9 @@ class _CircleSessionPageState extends ConsumerState<CircleSessionPage>
                     SubPageHeader(
                       title: widget.session.circle.name,
                       onClose: () async {
-                        await _exitPrompt(context);
+                        if (await _exitPrompt(context)) {
+                          Navigator.of(context).pop();
+                        }
                       },
                     ),
                     Expanded(
@@ -179,59 +181,63 @@ class _CircleSessionPageState extends ConsumerState<CircleSessionPage>
     final authUser = ref.read(authServiceProvider).currentUser()!;
     // then prompt the user about leaving
     final commProvider = ref.read(communicationsProvider);
-    final role = repo.activeSession!.participantRole(authUser.uid);
-    if (commProvider.state == CommunicationState.active) {
-      // prompt
-      FocusScope.of(context).unfocus();
-      final t = AppLocalizations.of(context)!;
-      // set up the AlertDialog
-      final actions = [
-        TextButton(
-          child: Text(t.leaveSession),
-          onPressed: () {
-            Navigator.of(context).pop("leave");
-          },
-        ),
-        TextButton(
-          child: Text(t.cancel),
-          onPressed: () {
-            Navigator.of(context).pop("cancel");
-          },
-        ),
-      ];
-      if (role == Roles.keeper) {
-        actions.insert(
-          0,
+    if (repo.activeSession != null) {
+      final role = repo.activeSession!.participantRole(authUser.uid);
+      if (commProvider.state == CommunicationState.active) {
+        // prompt
+        FocusScope.of(context).unfocus();
+        final t = AppLocalizations.of(context)!;
+        // set up the AlertDialog
+        final actions = [
           TextButton(
-            child: Text(t.endSession),
+            child: Text(t.leaveSession),
             onPressed: () {
-              Navigator.of(context).pop("end");
+              Navigator.of(context).pop("leave");
             },
           ),
-        );
-      }
+          TextButton(
+            child: Text(t.cancel),
+            onPressed: () {
+              Navigator.of(context).pop("cancel");
+            },
+          ),
+        ];
+        if (role == Roles.keeper) {
+          actions.insert(
+            0,
+            TextButton(
+              child: Text(t.endSession),
+              onPressed: () {
+                Navigator.of(context).pop("end");
+              },
+            ),
+          );
+        }
 
-      AlertDialog alert = AlertDialog(
-        title: Text(
-            role == Roles.keeper ? t.endSessionPrompt : t.leaveSessionPrompt),
-        content: Text(role == Roles.keeper
-            ? t.endSessionPromptMessage
-            : t.leaveSessionPromptMessage),
-        actions: actions,
-      );
-      // show the dialog
-      final result = await showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return alert;
-        },
-      );
-      if (result != "cancel") {
-        await completeSession(result == "end");
+        AlertDialog alert = AlertDialog(
+          title: Text(
+              role == Roles.keeper ? t.endSessionPrompt : t.leaveSessionPrompt),
+          content: Text(role == Roles.keeper
+              ? t.endSessionPromptMessage
+              : t.leaveSessionPromptMessage),
+          actions: actions,
+        );
+        // show the dialog
+        final result = await showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return alert;
+          },
+        );
+        if (result != "cancel") {
+          await completeSession(result == "end");
+        }
+      } else {
+        return true;
       }
     } else {
-      await completeSession(false);
+      return true;
     }
     return false;
   }

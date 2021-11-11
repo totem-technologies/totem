@@ -1,5 +1,6 @@
 import 'package:agora_rtc_engine/rtc_engine.dart';
 import 'package:flutter/foundation.dart';
+import 'package:totem/models/index.dart';
 import 'package:totem/models/session.dart';
 import 'package:totem/services/communication_provider.dart';
 import 'package:totem/services/index.dart';
@@ -27,6 +28,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   final String userId;
   String? _lastError;
   bool _pendingComplete = false;
+  late SessionToken _sessionToken;
 
   @override
   String? get lastError {
@@ -60,10 +62,12 @@ class AgoraCommunicationProvider extends CommunicationProvider {
       // TODO - Call SessionProvider to get token for current session
       // This will hit the server which will generate a token for the user
       // this is currently using the test token
-      await _engine!.joinChannel(tokenId, session.id, null, 0);
+      _sessionToken =
+          await sessionProvider.requestSessionToken(session: session);
+      await _engine!.joinChannel(_sessionToken.token, session.id, null, 0);
     } catch (ex) {
       debugPrint('unable to activate agora session: ' + ex.toString());
-      _updateState(CommunicationState.disconnected);
+      _updateState(CommunicationState.failed);
     }
     return false;
   }

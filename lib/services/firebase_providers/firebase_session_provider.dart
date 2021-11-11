@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:collection/collection.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:totem/models/index.dart';
@@ -146,6 +147,18 @@ class FirebaseSessionProvider extends SessionProvider {
           message: ex.message,
         );
       }
+    }
+  }
+
+  @override
+  Future<SessionToken> requestSessionToken({required Session session}) async {
+    try {
+      HttpsCallable callable =
+          FirebaseFunctions.instance.httpsCallable('getToken');
+      final result = await callable({"channelName": session.id});
+      return SessionToken.fromJson(result.data);
+    } catch (ex) {
+      throw SessionException(code: "token_error", reference: session.ref);
     }
   }
 
