@@ -131,7 +131,7 @@ class CirclePageState extends ConsumerState<CirclePage> {
       ),
       if (!circle.hasActiveSession) ...[
         Text(
-          t.sessions,
+          t.sessionsUpcoming,
           style: textStyles.headline3,
         ),
         const SizedBox(

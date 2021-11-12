@@ -6,6 +6,6 @@ class SessionToken {
 
   SessionToken.fromJson(Map<String, dynamic> json) {
     token = json["token"] ?? "";
-    expires = DateTimeEx.fromMapValue(json["expiration"]);
+    expires = DateTimeEx.fromMapValue((json["expiration"] ?? 0) * 1000);
   }
 }

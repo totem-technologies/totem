@@ -59,7 +59,7 @@
     "retrySignin": "Retry",
     "save": "Save",
     "sendCode": "Send Code",
-    "sessions": "Upcoming sessions",
+    "sessionsUpcoming": "Upcoming sessions",
     "sessionInProgress": "Session in progress",
     "sessionsCompleted": "All session completed",
     "sessionWaiting": "Waiting to start",
