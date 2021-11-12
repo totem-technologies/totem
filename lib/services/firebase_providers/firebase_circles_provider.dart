@@ -17,7 +17,7 @@ class FirebaseCirclesProvider extends CirclesProvider {
           .collection(Paths.circles);
       return userCollection
           .snapshots()
-          .asyncMap((snapshot) => _getCirclesFromSnapshot(snapshot))
+          .asyncMap((snapshot) => _getCirclesFromSnapshot(snapshot, uid))
           .transform(StreamTransformer<List<Circle>, List<Circle>>.fromHandlers(
               handleData: (inList, EventSink<List<Circle>> sink) {
         inList.sort((circle1, circle2) {
@@ -88,7 +88,7 @@ class FirebaseCirclesProvider extends CirclesProvider {
   }
 
   @override
-  Stream<Circle> circle(String circleId) {
+  Stream<Circle> circle(String circleId, String uid) {
     return FirebaseFirestore.instance
         .collection(Paths.circles)
         .doc(circleId)
@@ -97,7 +97,7 @@ class FirebaseCirclesProvider extends CirclesProvider {
                 Circle>.fromHandlers(
             handleData: (DocumentSnapshot<Map<String, dynamic>> docSnapshot,
                 EventSink<Circle> sink) async {
-      Circle circle = await _getCircleFromSnapshot(docSnapshot);
+      Circle circle = await _getCircleFromSnapshot(docSnapshot, uid: uid);
       sink.add(circle);
     }));
   }
@@ -151,7 +151,8 @@ class FirebaseCirclesProvider extends CirclesProvider {
   Future<Circle> _getCircleFromSnapshot(
       DocumentSnapshot<Map<String, dynamic>> circleSnapshot,
       {bool resolveUsers = true,
-      bool resolveAllSessions = true}) async {
+      bool resolveAllSessions = true,
+      String? uid}) async {
     // Resolve all the session data and user details for a circle
     Map<String, dynamic> circleData =
         circleSnapshot.data() as Map<String, dynamic>;
@@ -171,14 +172,13 @@ class FirebaseCirclesProvider extends CirclesProvider {
             await Future.wait(participantsRef.map((participantRef) async {
           DocumentReference ref = participantRef['ref'];
           DocumentSnapshot doc = await ref.get();
-          return Participant.fromJson(
-            participantRef,
-            userProfile: UserProfile.fromJson(
-              doc.data() as Map<String, dynamic>,
-              uid: doc.id,
-              ref: doc.reference.path,
-            ),
-          );
+          return Participant.fromJson(participantRef,
+              userProfile: UserProfile.fromJson(
+                doc.data() as Map<String, dynamic>,
+                uid: doc.id,
+                ref: doc.reference.path,
+              ),
+              me: doc.id == uid);
         }).toList());
         circle.participants = participants;
       }
@@ -210,7 +210,8 @@ class FirebaseCirclesProvider extends CirclesProvider {
     return circle;
   }
 
-  Future<List<Circle>> _getCirclesFromSnapshot(QuerySnapshot circleSnapshot) {
+  Future<List<Circle>> _getCirclesFromSnapshot(
+      QuerySnapshot circleSnapshot, String uid) {
     // Maps from User's list of circles to global circle reference
     return Future.wait(
         circleSnapshot.docs.map((DocumentSnapshot circleDoc) async {
@@ -219,7 +220,7 @@ class FirebaseCirclesProvider extends CirclesProvider {
       DocumentSnapshot<Map<String, dynamic>> circleSnapshot =
           await ref.get() as DocumentSnapshot<Map<String, dynamic>>;
       return await _getCircleFromSnapshot(circleSnapshot,
-          resolveAllSessions: false, resolveUsers: false);
+          resolveAllSessions: false, resolveUsers: false, uid: uid);
     }).toList());
   }
 

@@ -132,8 +132,36 @@ class _CircleSessionPageState extends ConsumerState<CircleSessionPage>
       case CommunicationState.active:
         return const CircleSessionContent();
       case CommunicationState.disconnected:
-        return Container();
+        return _sessionDisconnected(context);
     }
+  }
+
+  Widget _sessionDisconnected(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
+    final textStyles = Theme.of(context).textStyles;
+    final repo = ref.read(repositoryProvider);
+    // then prompt the user about leaving
+    final commProvider = ref.read(communicationsProvider);
+    if (repo.activeSession != null) {
+      return Container();
+    }
+    return Center(
+      child: Column(
+        children: [
+          Text(
+            t.errorJoinSession,
+            style: textStyles.headline3,
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Text(
+            ErrorCodeTranslation.get(
+                context, commProvider.lastError ?? "unknown"),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _errorSession(BuildContext context) {

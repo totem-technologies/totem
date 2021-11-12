@@ -80,6 +80,7 @@ flutter:
     - assets/info.svg
     - assets/leave.svg
     - assets/microphone.svg
+    - assets/microphone_mute.svg
     - assets/microphone_force.svg
     - assets/more.svg
     - assets/more_info.svg

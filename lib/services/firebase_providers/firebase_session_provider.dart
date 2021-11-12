@@ -47,7 +47,7 @@ class FirebaseSessionProvider extends SessionProvider {
       Map<String, dynamic> circleData = {"activeSession": sessionRef};
       batch.update(ref, circleData);
       await batch.commit();
-      createActiveSession(session: session);
+      createActiveSession(session: session, uid: uid);
       return _activeSession!;
     }
     throw SessionException(
@@ -225,9 +225,10 @@ class FirebaseSessionProvider extends SessionProvider {
   }
 
   @override
-  Future<ActiveSession> createActiveSession({required Session session}) async {
+  Future<ActiveSession> createActiveSession(
+      {required Session session, required String uid}) async {
     clear();
-    _activeSession = ActiveSession(session: session);
+    _activeSession = ActiveSession(session: session, userId: uid);
     DocumentReference ref = FirebaseFirestore.instance.doc(session.ref);
     Stream<DocumentSnapshot> liveSession = ref.snapshots();
     _sessionSubscription = liveSession.listen(_updateLiveSession);
@@ -248,14 +249,13 @@ class FirebaseSessionProvider extends SessionProvider {
             await Future.wait(participantUpdates.map((participantData) async {
           DocumentReference ref = participantData['ref'];
           DocumentSnapshot doc = await ref.get();
-          return Participant.fromJson(
-            participantData,
-            userProfile: UserProfile.fromJson(
-              doc.data() as Map<String, dynamic>,
-              uid: doc.id,
-              ref: doc.reference.path,
-            ),
-          );
+          return SessionParticipant.fromJson(participantData,
+              userProfile: UserProfile.fromJson(
+                doc.data() as Map<String, dynamic>,
+                uid: doc.id,
+                ref: doc.reference.path,
+              ),
+              me: doc.id == _activeSession!.userId);
         }).toList());
         data['participants'] = participants;
       }

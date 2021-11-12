@@ -22,8 +22,9 @@ class SubPageHeader extends StatelessWidget {
           onPressed: () {
             if (onClose == null) {
               Navigator.of(context).pop();
+            } else {
+              onClose!();
             }
-            onClose!();
           },
           icon: Icon(
             Icons.close,

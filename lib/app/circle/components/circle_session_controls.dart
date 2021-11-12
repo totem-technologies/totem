@@ -21,23 +21,27 @@ class CircleSessionControls extends ConsumerWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 30),
         child: activeSession.state == SessionState.waiting
-            ? waitingControls(context, ref, activeSession, role)
+            ? waitingControls(context, ref, activeSession, role, authUser.uid)
             : liveControls(context, ref, activeSession, role),
       ),
     );
   }
 
   Widget waitingControls(BuildContext context, WidgetRef ref,
-      ActiveSession activeSession, Role role) {
+      ActiveSession activeSession, Role role, String userId) {
     final themeColors = Theme.of(context).themeColors;
     final t = AppLocalizations.of(context)!;
+    final communications = ref.watch(communicationsProvider);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         ThemedControlButton(
-          label: t.mute,
-          svgImage: 'assets/microphone.svg',
+          label: communications.muted ? t.unmute : t.mute,
+          svgImage: communications.muted
+              ? 'assets/microphone_mute.svg'
+              : 'assets/microphone.svg',
           onPressed: () {
+            communications.muteAudio(communications.muted ? false : true);
             debugPrint('mute pressed');
           },
         ),

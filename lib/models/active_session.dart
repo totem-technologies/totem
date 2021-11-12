@@ -10,14 +10,20 @@ class SessionState {
 }
 
 class ActiveSession extends ChangeNotifier {
-  ActiveSession({required this.session});
+  ActiveSession({required this.session, required this.userId});
 
   final Session session;
-  late List<Participant> participants = [];
+  final String userId;
+  late List<SessionParticipant> participants = [];
   String state = SessionState.pending;
   DateTime? started;
-  List<Participant> activeParticipants = [];
+  List<SessionParticipant> activeParticipants = [];
   final List<String> _pendingUserAdded = [];
+
+  SessionParticipant? participantWithID(String id) {
+    return activeParticipants
+        .firstWhereOrNull((element) => element.userProfile.uid == id);
+  }
 
   void updateFromData(Map<String, dynamic> data) {
     state = data['state'] ?? state;
@@ -38,7 +44,7 @@ class ActiveSession extends ChangeNotifier {
   }
 
   bool userJoined({required String sessionUserId, bool pending = false}) {
-    Participant? participant = activeParticipants
+    SessionParticipant? participant = activeParticipants
         .firstWhereOrNull((element) => element.sessionUserId == sessionUserId);
     if (participant != null) {
       // already in the active list
@@ -67,7 +73,7 @@ class ActiveSession extends ChangeNotifier {
     // if pending, just remove
     _pendingUserAdded.remove(sessionUserId);
     // make sure the user is already in the active participants list
-    Participant? participant = activeParticipants
+    SessionParticipant? participant = activeParticipants
         .firstWhereOrNull((element) => element.sessionUserId == sessionUserId);
     if (participant == null) {
       // not in the active list
@@ -77,6 +83,25 @@ class ActiveSession extends ChangeNotifier {
     activeParticipants.remove(participant);
     notifyListeners();
     return true;
+  }
+
+  void updateMutedStateForUser(
+      {required String sessionUserId, required bool muted}) {
+    SessionParticipant? participant = activeParticipants
+        .firstWhereOrNull((element) => element.sessionUserId == sessionUserId);
+    if (participant != null) {
+      participant.muted = muted;
+    }
+  }
+
+  bool mutedStateForUser({required String sessionUserId}) {
+    SessionParticipant? participant = activeParticipants
+        .firstWhereOrNull((element) => element.sessionUserId == sessionUserId);
+    if (participant == null) {
+      // not in the active list
+      return false;
+    }
+    return participant.muted;
   }
 
   bool participantInSession(String uid) {

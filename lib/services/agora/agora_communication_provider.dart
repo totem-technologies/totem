@@ -9,14 +9,6 @@ import 'package:permission_handler/permission_handler.dart';
 class AgoraCommunicationProvider extends CommunicationProvider {
   static const String appId = "4880737da9bf47e290f46d847cd1c3b1";
 
-  // FOR TESTING
-  // Currently this is a test token and is short lived.
-  // Token valid till: 8-nov-20201 @ 5:52PM UTC
-  // generated for session id of '
-  static const String tokenId =
-      "0064880737da9bf47e290f46d847cd1c3b1IADRsXHsREg5T7O5TPEvgjHClfSo9vWM28C0LzcVpnBSxFQp/7cAAAAAEAD3dRUD3FqMYQEAAQDcWoxh";
-  // END FOR TESTING
-
   AgoraCommunicationProvider(
       {required this.sessionProvider, required this.userId});
 
@@ -64,7 +56,8 @@ class AgoraCommunicationProvider extends CommunicationProvider {
       // this is currently using the test token
       _sessionToken =
           await sessionProvider.requestSessionToken(session: session);
-      await _engine!.joinChannel(_sessionToken.token, session.id, null, 0);
+      await _engine!
+          .joinChannelWithUserAccount(_sessionToken.token, session.id, userId);
     } catch (ex) {
       debugPrint('unable to activate agora session: ' + ex.toString());
       _updateState(CommunicationState.failed);
@@ -97,18 +90,25 @@ class AgoraCommunicationProvider extends CommunicationProvider {
           // enable audio and fancy noise cancelling
           await _engine!.enableAudio();
           await _engine!.enableDeepLearningDenoise(true);
+          await _engine!.enableAudioVolumeIndication(200, 3, true);
           // setup event handlers that will let us know about connections
           // and other events
           _engine!.setEventHandler(
             RtcEngineEventHandler(
-              joinChannelSuccess: _handleJoinSession,
-              leaveChannel: _handleLeaveSession,
-              userJoined: _userJoined,
-              userOffline: _userOffline,
+              audioPublishStateChanged: _handleAudioPublishStateChanged,
+              activeSpeaker: _handleActiveSpeaker,
               connectionLost: () {
                 debugPrint('connection lost');
               },
+              connectionStateChanged: _handleConnectionStateChanged,
               error: _handleSessionError,
+              joinChannelSuccess: _handleJoinSession,
+              leaveChannel: _handleLeaveSession,
+              localAudioStateChanged: _handleLocalAudioStateChanged,
+              remoteAudioStateChanged: _handleRemoteAudioStateChanged,
+              userInfoUpdated: _handleUserInfoUpdated,
+              userJoined: _handleUserJoined,
+              userOffline: _handleUserOffline,
             ),
           );
         } else {
@@ -123,9 +123,77 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     }
   }
 
+  void _handleUserInfoUpdated(int uid, UserInfo userInfo) {
+    // A user's information has been updated, this should be a mapping
+    // of their user id and the user account id provided at join time which is the
+    // totem user id.
+    debugPrint('Got user update with id: ' +
+        uid.toString() +
+        " UserInfo: " +
+        userInfo.userAccount);
+  }
+
   void _handleSessionError(error) {
     _lastError = error.toString();
     _updateState(CommunicationState.failed);
+  }
+
+  void _handleActiveSpeaker(int uid) {
+    // handle display / update of status for the current active speaker
+    // this is the loudest speaker in the channel
+    debugPrint('Current active speaker is now: ' + uid.toString());
+  }
+
+  void _handleAudioPublishStateChanged(String channel,
+      StreamPublishState oldState, StreamPublishState newState, int elapsed) {
+    debugPrint('audio state changed: ' +
+        oldState.toString() +
+        " > " +
+        newState.toString());
+    bool _mute = newState == StreamPublishState.NoPublished;
+    if (muted != _mute) {
+      muted = _mute;
+      sessionProvider.activeSession?.updateMutedStateForUser(
+          sessionUserId: commUid.toString(), muted: muted);
+      notifyListeners();
+    }
+  }
+
+  void _handleLocalAudioStateChanged(
+      AudioLocalState state, AudioLocalError error) {
+    // handles local changes to audio
+    debugPrint('local audio state changes: ' + state.toString());
+  }
+
+  void _handleRemoteAudioStateChanged(int uid, AudioRemoteState state,
+      AudioRemoteStateReason reason, int elapsed) {
+    // handle changes to the audio state for a given user. This will be called
+    // when people are muted so that we can register the audio status of that
+    // user for display
+    if (state == AudioRemoteState.Stopped &&
+        reason == AudioRemoteStateReason.RemoteMuted) {
+      sessionProvider.activeSession
+          ?.updateMutedStateForUser(sessionUserId: uid.toString(), muted: true);
+    } else if (state == AudioRemoteState.Decoding &&
+        reason == AudioRemoteStateReason.RemoteUnmuted) {
+      sessionProvider.activeSession?.updateMutedStateForUser(
+          sessionUserId: uid.toString(), muted: false);
+    }
+    debugPrint('Remote audio state change for user: ' +
+        uid.toString() +
+        ' state: ' +
+        state.toString() +
+        ' reason: ' +
+        reason.toString());
+  }
+
+  void _handleConnectionStateChanged(
+      ConnectionStateType state, ConnectionChangedReason reason) {
+    // TODO - handle changes to connection state here
+    debugPrint('connection state changed: ' +
+        state.toString() +
+        ' reason: ' +
+        reason.toString());
   }
 
   Future<void> _handleJoinSession(channel, uid, elapsed) async {
@@ -139,17 +207,11 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     if (_handler != null && _handler!.joinedCircle != null) {
       _handler!.joinedCircle!(_session!.id, uid.toString());
     }
-    await _engine!.muteAllRemoteAudioStreams(false);
-    await _engine!.muteLocalAudioStream(false);
     await _engine!.setEnableSpeakerphone(true);
     _updateState(CommunicationState.active);
   }
 
   Future<void> _handleLeaveSession(stats) async {
-    // update state
-    if (_handler != null && _handler!.leaveCircle != null) {
-      _handler!.leaveCircle!();
-    }
     if (_pendingComplete) {
       await sessionProvider.endActiveSession();
     } else {
@@ -158,10 +220,14 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     }
     _pendingComplete = false;
     _updateState(CommunicationState.disconnected);
+    // update state
+    if (_handler != null && _handler!.leaveCircle != null) {
+      _handler!.leaveCircle!();
+    }
     _handler = null;
   }
 
-  void _userJoined(int user, int elapsed) {
+  void _handleUserJoined(int user, int elapsed) {
     sessionProvider.activeSession?.userJoined(sessionUserId: user.toString());
     debugPrint('User joined event: ' +
         user.toString() +
@@ -169,7 +235,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
         elapsed.toString());
   }
 
-  void _userOffline(int user, UserOfflineReason reason) {
+  void _handleUserOffline(int user, UserOfflineReason reason) {
     sessionProvider.activeSession?.userOffline(sessionUserId: user.toString());
     debugPrint(
         'User left: ' + user.toString() + " reason: " + reason.toString());
@@ -179,6 +245,15 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     if (newState != state) {
       state = newState;
       notifyListeners();
+    }
+  }
+
+  @override
+  Future<void> muteAudio(bool mute) async {
+    if (state == CommunicationState.active) {
+      if (mute != muted) {
+        _engine?.muteLocalAudioStream(mute);
+      }
     }
   }
 }

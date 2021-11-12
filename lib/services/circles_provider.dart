@@ -12,5 +12,5 @@ abstract class CirclesProvider {
     String? description,
     required bool addAsMember,
   });
-  Stream<Circle> circle(String circleId);
+  Stream<Circle> circle(String circleId, String uid);
 }

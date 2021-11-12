@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:totem/app/circle/circle_session_page.dart';
+import 'package:totem/app/circle/components/circle_session_participant.dart';
 import 'package:totem/theme/index.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
-import 'circle_participant.dart';
 
 class CirclePendingSessionUsers extends ConsumerWidget {
   const CirclePendingSessionUsers({Key? key}) : super(key: key);
@@ -23,9 +22,8 @@ class CirclePendingSessionUsers extends ConsumerWidget {
           crossAxisSpacing: 8,
         ),
         itemBuilder: (context, index) {
-          return CircleParticipant(
-            participant: participants[index],
-          );
+          return CircleSessionParticipant(
+              participantId: participants[index].userProfile.uid);
         },
         itemCount: participants.length,
       );
