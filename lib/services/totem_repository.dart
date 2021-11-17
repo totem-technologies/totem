@@ -2,8 +2,10 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:totem/models/index.dart';
+import 'package:totem/services/agora/agora_communication_provider.dart';
 import 'package:totem/services/circles_provider.dart';
 import 'package:totem/services/firebase_providers/firebase_circles_provider.dart';
+import 'package:totem/services/firebase_providers/firebase_session_provider.dart';
 import 'package:totem/services/firebase_providers/firebase_user_provider.dart';
 import 'package:totem/services/topics_provider.dart';
 import 'package:totem/services/user_provider.dart';
@@ -27,12 +29,14 @@ class TotemRepository {
   late final TopicsProvider _topicsProvider;
   late final CirclesProvider _circlesProvider;
   late final UserProvider _userProvider;
+  late final SessionProvider _sessionProvider;
   AuthUser? user;
 
   TotemRepository() {
     _topicsProvider = FirebaseTopicsProvider();
     _circlesProvider = FirebaseCirclesProvider();
     _userProvider = FirebaseUserProvider();
+    _sessionProvider = FirebaseSessionProvider();
   }
 
   // Topics
@@ -61,6 +65,26 @@ class TotemRepository {
       );
   Stream<List<Circle>> circles({bool allCircles = false}) =>
       _circlesProvider.circles(!allCircles ? user?.uid : null);
+  Stream<Circle> circle({required String circleId}) =>
+      _circlesProvider.circle(circleId, user!.uid);
+
+  // Sessions
+  Future<ActiveSession> activateSession({required Session session}) =>
+      _sessionProvider.activateSession(session: session, uid: user!.uid);
+  Future<void> joinSession({required Session session}) =>
+      _sessionProvider.joinSession(session: session, uid: user!.uid);
+  Future<ActiveSession> createActiveSession({required Session session}) =>
+      _sessionProvider.createActiveSession(session: session, uid: user!.uid);
+  Future<void> startActiveSession() => _sessionProvider.startActiveSession();
+  Future<void> endActiveSession() => _sessionProvider.endActiveSession();
+  void clearActiveSession() => _sessionProvider.clear();
+  ActiveSession? get activeSession => _sessionProvider.activeSession;
+  // Communications for Session
+  CommunicationProvider createCommunicationProvider() {
+    CommunicationProvider provider = AgoraCommunicationProvider(
+        sessionProvider: _sessionProvider, userId: user!.uid);
+    return provider;
+  }
 
   // Users
   Stream<UserProfile> userProfileStream() =>

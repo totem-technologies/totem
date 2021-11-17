@@ -1,4 +1,3 @@
-
 import 'package:totem/models/index.dart';
 
 abstract class CirclesProvider {
@@ -13,4 +12,5 @@ abstract class CirclesProvider {
     String? description,
     required bool addAsMember,
   });
+  Stream<Circle> circle(String circleId, String uid);
 }

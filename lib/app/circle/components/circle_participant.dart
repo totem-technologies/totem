@@ -5,28 +5,25 @@ import 'package:totem/theme/index.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CircleParticipant extends StatelessWidget {
-  const CircleParticipant(
-      {Key? key, required this.userProfile, this.role = Roles.member})
+  const CircleParticipant({Key? key, required this.participant})
       : super(key: key);
-  final UserProfile userProfile;
-  final Role role;
+  final Participant participant;
 
   @override
   Widget build(BuildContext context) {
     final themeData = Theme.of(context);
     final textStyles = themeData.textTheme;
     final themeColors = themeData.themeColors;
-    final t = AppLocalizations.of(context)!;
     return ClipRRect(
         borderRadius: BorderRadius.circular(24),
         child: Stack(
           children: [
-            if (!userProfile.hasImage)
+            if (!participant.userProfile.hasImage)
               Container(
-                color: themeColors.primary,
+                color: themeColors.primary.withAlpha(80),
               ),
             Positioned.fill(
-              child: (userProfile.hasImage)
+              child: (participant.userProfile.hasImage)
                   ? _renderUserImage(context)
                   : _genericUserImage(context),
             ),
@@ -41,8 +38,10 @@ class CircleParticipant extends StatelessWidget {
                     child: Padding(
                       padding:
                           const EdgeInsets.only(left: 12, right: 12, bottom: 8),
-                      child:
-                          Text(userProfile.name, style: textStyles.headline5),
+                      child: Text(
+                        participant.userProfile.name,
+                        style: textStyles.headline5,
+                      ),
                     ),
                   ),
                 ],
@@ -51,51 +50,95 @@ class CircleParticipant extends StatelessWidget {
               start: 0,
               end: 0,
             ),
-            if (role == Roles.keeper)
-              PositionedDirectional(
-                top: 0,
-                start: 0,
-                end: 0,
-                child: Row(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        color: themeColors.primaryText,
-                        borderRadius: const BorderRadius.only(
-                            bottomRight: Radius.circular(16)),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 4),
-                        child: Row(
-                          children: [
-                            Icon(Icons.star,
-                                color: themeColors.primary, size: 24),
-                            const SizedBox(
-                              width: 4,
-                            ),
-                            Text(t.keeper, style: textStyles.headline5),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Expanded(child: Container()),
-                  ],
-                ),
-              )
+            if (participant.me) renderMe(context),
+            if (participant.role == Roles.keeper && !participant.me)
+              renderKeeperLabel(context)
           ],
         ));
   }
 
+  Widget renderMe(BuildContext context) {
+    final textStyles = Theme.of(context).textTheme;
+    final themeColors = Theme.of(context).themeColors;
+    final t = AppLocalizations.of(context)!;
+    return PositionedDirectional(
+      top: 0,
+      start: 0,
+      end: 0,
+      child: Row(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              color: themeColors.primary,
+              borderRadius:
+                  const BorderRadius.only(bottomRight: Radius.circular(16)),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              child: Row(
+                children: [
+                  Text(
+                    t.me,
+                    style: textStyles.headline5!.merge(
+                      TextStyle(
+                        color: themeColors.primaryText,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Expanded(child: Container()),
+        ],
+      ),
+    );
+  }
+
+  Widget renderKeeperLabel(BuildContext context) {
+    final textStyles = Theme.of(context).textTheme;
+    final themeColors = Theme.of(context).themeColors;
+    final t = AppLocalizations.of(context)!;
+    return PositionedDirectional(
+      top: 0,
+      start: 0,
+      end: 0,
+      child: Row(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              color: themeColors.primaryText,
+              borderRadius:
+                  const BorderRadius.only(bottomRight: Radius.circular(16)),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              child: Row(
+                children: [
+                  Icon(Icons.star, color: themeColors.primary, size: 24),
+                  const SizedBox(
+                    width: 4,
+                  ),
+                  Text(t.keeper, style: textStyles.headline5),
+                ],
+              ),
+            ),
+          ),
+          Expanded(child: Container()),
+        ],
+      ),
+    );
+  }
+
   Widget _renderUserImage(BuildContext context) {
-    if (userProfile.image!.toLowerCase().contains("assets/")) {
+    if (participant.userProfile.image!.toLowerCase().contains("assets/")) {
       return Image.asset(
-        userProfile.image!,
+        participant.userProfile.image!,
         fit: BoxFit.cover,
       );
     }
     return CachedNetworkImage(
-      imageUrl: userProfile.image!,
+      imageUrl: participant.userProfile.image!,
       imageBuilder: (context, imageProvider) => Container(
         decoration: BoxDecoration(
           shape: BoxShape.circle,

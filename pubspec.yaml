@@ -29,6 +29,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   firebase_core: ^1.2.0
   cloud_firestore: ^3.1.0
+  cloud_functions: ^3.1.1
   firebase_auth: ^3.0.0
   intl_phone_number_input: ^0.7.0+2
   flutter_spinkit: ^5.0.0
@@ -45,6 +46,9 @@ dependencies:
   keyboard_actions: ^3.4.4
   modal_bottom_sheet: ^2.0.0
   cached_network_image: ^3.1.0
+  agora_rtc_engine: ^4.0.7
+  after_layout: ^1.1.0
+  permission_handler: ^6.0.0
 
 dev_dependencies:
   flutter_test:
@@ -69,10 +73,20 @@ flutter:
     - assets/arrow_next.svg
     - assets/background_shape.svg
     - assets/background_shape_2.svg
+    - assets/check.svg
+    - assets/close.svg
+    - assets/fast_forward.svg
     - assets/home_background.svg
+    - assets/info.svg
+    - assets/leave.svg
+    - assets/microphone.svg
+    - assets/microphone_mute.svg
+    - assets/microphone_force.svg
+    - assets/more.svg
     - assets/more_info.svg
     - assets/profile.svg
-    - assets/dude.jpg
+    - assets/unlock.svg
+    - assets/view_circle.svg
 
   fonts:
     - family: Raleway

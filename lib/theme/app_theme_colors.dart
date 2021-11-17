@@ -22,9 +22,11 @@ class AppThemeColors {
     required this.itemBorder,
     required this.divider,
     required this.profileGradient,
+    required this.controlButtonBackground,
   });
 
   final Color busyIndicator;
+  final Color controlButtonBackground;
   final Color dialogBackground;
   final Color error;
   final Color itemBackground;
