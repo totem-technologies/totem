@@ -48,7 +48,7 @@ class App extends StatelessWidget {
       ],
       debugShowCheckedModeBanner: false,
       title: 'totem',
-      theme: _appTheme(context),
+      theme: appTheme(context),
       home: AuthWidget(
         nonSignedInBuilder: (_) => const LoginPage(),
         signedInBuilder: (_) => const HomePage(),
@@ -77,32 +77,31 @@ class App extends StatelessWidget {
       },
     );
   }
+}
 
-  ThemeData _appTheme(BuildContext context) {
-    AppThemeColors themeColors = StdAppThemeColors();
-    AppTextStyles textStyles = StdAppTextStyles(themeColors);
-    AppThemeStyles.setStyles(colors: themeColors, textStyles: textStyles);
-    return ThemeData(
-      appBarTheme: AppBarTheme(
-        centerTitle: true,
-        systemOverlayStyle: SystemUiOverlayStyle.dark,
-        iconTheme: IconThemeData(color: themeColors.primaryText),
-      ),
-      brightness: Brightness.light,
-      primaryColor: themeColors.primary,
-      scaffoldBackgroundColor: themeColors.screenBackground,
-      fontFamily: 'Raleway',
-      dialogTheme: DialogTheme(
-        backgroundColor: themeColors.dialogBackground,
-        contentTextStyle: textStyles.dialogContent,
-      ),
-      textTheme: textStyles,
-      textButtonTheme: TextButtonThemeData(
-        style: TextButton.styleFrom(
-            primary: themeColors.linkText,
-            textStyle: textStyles.textLinkButton),
-      ),
-      //,
-    );
-  }
+ThemeData appTheme(BuildContext context) {
+  AppThemeColors themeColors = StdAppThemeColors();
+  AppTextStyles textStyles = StdAppTextStyles(themeColors);
+  AppThemeStyles.setStyles(colors: themeColors, textStyles: textStyles);
+  return ThemeData(
+    appBarTheme: AppBarTheme(
+      centerTitle: true,
+      systemOverlayStyle: SystemUiOverlayStyle.dark,
+      iconTheme: IconThemeData(color: themeColors.primaryText),
+    ),
+    brightness: Brightness.light,
+    primaryColor: themeColors.primary,
+    scaffoldBackgroundColor: themeColors.screenBackground,
+    fontFamily: 'Raleway',
+    dialogTheme: DialogTheme(
+      backgroundColor: themeColors.dialogBackground,
+      contentTextStyle: textStyles.dialogContent,
+    ),
+    textTheme: textStyles,
+    textButtonTheme: TextButtonThemeData(
+      style: TextButton.styleFrom(
+          primary: themeColors.linkText, textStyle: textStyles.textLinkButton),
+    ),
+    //,
+  );
 }

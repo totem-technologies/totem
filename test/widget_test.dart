@@ -7,8 +7,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
-//import 'package:totem/components/widgets/headers.dart';
+import 'package:totem/components/widgets/headers.dart';
+import 'package:totem/main.dart';
 
 class WidgetTestHarness extends StatelessWidget {
   const WidgetTestHarness({Key? key, required this.child}) : super(key: key);
@@ -18,19 +22,28 @@ class WidgetTestHarness extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('en', ''),
+      ],
+      debugShowCheckedModeBanner: false,
+      title: 'Flutter Test',
       home: Scaffold(body: child),
+      theme: appTheme(context),
     );
   }
 }
 
 void main() {
   testWidgets('Test header widget shows text', (WidgetTester tester) async {
-    /* TODO
-    await tester.pumpWidget(
-        const WidgetTestHarness(child: TotemHeader(text: 'Welcome')));
+    await tester.pumpWidget(const ProviderScope(
+        child: WidgetTestHarness(child: TotemHeader(text: 'Welcome'))));
     // Verify text
     expect(find.text('Welcome'), findsOneWidget);
-     */
   });
 }
