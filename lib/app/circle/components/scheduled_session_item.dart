@@ -5,15 +5,15 @@ import 'package:totem/models/index.dart';
 import 'package:totem/theme/app_theme_styles.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class SessionItem extends StatelessWidget {
-  const SessionItem(
-      {Key? key,
-      required this.session,
-      required this.role,
-      this.startSession,
-      this.nextSession = false})
-      : super(key: key);
-  final Session session;
+class ScheduledSessionItem extends StatelessWidget {
+  const ScheduledSessionItem({
+    Key? key,
+    required this.session,
+    required this.role,
+    this.startSession,
+    this.nextSession = false,
+  }) : super(key: key);
+  final ScheduledSession session;
   final Role role;
   final bool nextSession;
   final Function? startSession;

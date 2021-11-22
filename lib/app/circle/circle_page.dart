@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:totem/app/circle/components/circle_participant.dart';
-import 'package:totem/app/circle/components/session_item.dart';
 import 'package:totem/components/fade_route.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/components/widgets/sub_page_header.dart';
@@ -11,10 +10,11 @@ import 'package:totem/theme/index.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'circle_session_page.dart';
+import 'components/scheduled_session_item.dart';
 
 class CirclePage extends ConsumerStatefulWidget {
   const CirclePage({Key? key, required this.circle}) : super(key: key);
-  final Circle circle;
+  final ScheduledCircle circle;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => CirclePageState();
@@ -23,12 +23,12 @@ class CirclePage extends ConsumerStatefulWidget {
 class CirclePageState extends ConsumerState<CirclePage> {
   CirclePageState();
 
-  late final Stream<Circle> _stream;
-  late Circle circle;
+  late final Stream<ScheduledCircle> _stream;
+  late ScheduledCircle circle;
   @override
   void initState() {
     circle = widget.circle;
-    _stream = ref.read(repositoryProvider).circle(circleId: circle.id);
+    _stream = ref.read(repositoryProvider).scheduledCircle(circleId: circle.id);
     super.initState();
   }
 
@@ -44,7 +44,7 @@ class CirclePageState extends ConsumerState<CirclePage> {
         body: SafeArea(
           top: true,
           bottom: false,
-          child: StreamBuilder<Circle>(
+          child: StreamBuilder<ScheduledCircle>(
             stream: _stream,
             builder: (context, snapshot) {
               bool loading =
@@ -142,7 +142,7 @@ class CirclePageState extends ConsumerState<CirclePage> {
             physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
             itemBuilder: (context, index) {
-              return SessionItem(
+              return ScheduledSessionItem(
                 session: circle.sessions[index],
                 role: userRole,
                 nextSession: index == 0,
@@ -179,7 +179,7 @@ class CirclePageState extends ConsumerState<CirclePage> {
   // THIS IS PLACEHOLDER UNTIL THE SERVER UPDATES THE ACTIVE SESSION
   // AUTOMATICALLY
   void _startSession(
-      BuildContext context, WidgetRef ref, Session session) async {
+      BuildContext context, WidgetRef ref, ScheduledSession session) async {
     // use this session to create a pending session
     final repo = ref.read(repositoryProvider);
     await repo.activateSession(session: session);

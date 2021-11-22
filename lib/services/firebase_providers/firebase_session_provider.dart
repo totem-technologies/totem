@@ -29,7 +29,7 @@ class FirebaseSessionProvider extends SessionProvider {
 
   @override
   Future<ActiveSession> activateSession(
-      {required Session session, required String uid}) async {
+      {required ScheduledSession session, required String uid}) async {
     // validate session keeper vs uid
     if (_activeSession != null && _activeSession!.session == session) {
       return _activeSession!;
@@ -57,43 +57,33 @@ class FirebaseSessionProvider extends SessionProvider {
   }
 
   @override
-  Future<void> joinSession(
-      {required Session session,
-      required String uid,
-      String? sessionUserId}) async {
+  Future<void> joinSession({
+    required Session session,
+    required String uid,
+    String? sessionUserId,
+  }) async {
     // For security reasons, this might be better in a cloud function
     // so as not to give direct write permission to a session from a
     // participant? For now just allow it till we get functional
     try {
-      DocumentReference ref = FirebaseFirestore.instance.doc(session.ref);
-      DocumentReference userProfileRef =
-          FirebaseFirestore.instance.collection(Paths.users).doc(uid);
-      DocumentSnapshot sessionData = await ref.get();
-      if (sessionData.exists) {
-        Map<String, dynamic> data = sessionData.data()! as Map<String, dynamic>;
-        List<Map<String, dynamic>> participants =
-            List<Map<String, dynamic>>.from(data["participants"] ?? []);
-        final existingUser = participants.firstWhereOrNull(
-            (element) => element['ref']?.path == userProfileRef.path);
-        if (existingUser == null) {
-          participants.add(_participant(userProfileRef,
-              sessionUserId: sessionUserId,
-              role: session.circle.participantRole(uid).toString()));
-        } else {
-          existingUser['sessionUserId'] = sessionUserId;
-        }
-        await ref.update({"participants": participants});
+      bool result = false;
+      if (session is SnapSession) {
+        result = await _joinSnapSession(session, uid, sessionUserId);
       } else {
+        result = await _joinScheduledSession(
+            session as ScheduledSession, uid, sessionUserId);
+      }
+      if (!result) {
         throw SessionException(
           code: SessionException.errorCodeInvalidSession,
-          reference: session.ref,
+          reference: session.circle.ref,
         );
       }
     } on FirebaseException catch (ex) {
       throw SessionException(
         code: ex.code,
         message: ex.message,
-        reference: session.ref,
+        reference: session.circle.ref,
       );
     }
   }
@@ -105,29 +95,24 @@ class FirebaseSessionProvider extends SessionProvider {
     // so as not to give direct write permission to a session from a
     // participant? For now just allow it till we get functional
     try {
-      DocumentReference ref = FirebaseFirestore.instance.doc(session.ref);
-      DocumentSnapshot sessionData = await ref.get();
-      if (sessionData.exists && sessionData['state'] == SessionState.waiting) {
-        // only remove people if they leave before the session is live,
-        // this way they don't end up in the list of users when the
-        // session is archived after completion
-        Map<String, dynamic> data = sessionData.data()! as Map<String, dynamic>;
-        List<Map<String, dynamic>> participants =
-            List<Map<String, dynamic>>.from(data["participants"] ?? []);
-        participants
-            .removeWhere((element) => element['sessionUserId'] == sessionUid);
-        await ref.update({"participants": participants});
+      bool result = false;
+      if (session is SnapSession) {
+        result = await _removeSnapSessionParticipant(session, sessionUid);
       } else {
+        result = await _removeScheduledSessionParticipant(
+            session as ScheduledSession, sessionUid);
+      }
+      if (!result) {
         throw SessionException(
           code: SessionException.errorCodeInvalidSession,
-          reference: session.ref,
+          reference: session.circle.ref,
         );
       }
     } on FirebaseException catch (ex) {
       throw SessionException(
         code: ex.code,
         message: ex.message,
-        reference: session.ref,
+        reference: session.circle.ref,
       );
     }
   }
@@ -262,5 +247,107 @@ class FirebaseSessionProvider extends SessionProvider {
       _activeSession!.updateFromData(data);
       notifyListeners();
     }
+  }
+
+  Future<bool> _removeScheduledSessionParticipant(
+      ScheduledSession session, String sessionUid) async {
+    // this way they don't end up in the list of users when the
+    // session is archived after completion
+    DocumentReference ref = FirebaseFirestore.instance.doc(session.ref);
+    DocumentSnapshot sessionDataSnapshot = await ref.get();
+    if (sessionDataSnapshot.exists) {
+      Map<String, dynamic> sessionData =
+          sessionDataSnapshot.data()! as Map<String, dynamic>;
+      if (sessionData['state'] == SessionState.waiting) {
+        // only remove people if they leave before the session is live,
+        // this way they don't end up in the list of users when the
+        // session is archived after completion
+        List<Map<String, dynamic>> participants =
+            List<Map<String, dynamic>>.from(sessionData["participants"] ?? []);
+        participants
+            .removeWhere((element) => element['sessionUserId'] == sessionUid);
+        await ref.update({"participants": participants});
+        return true;
+      }
+    }
+    return false;
+  }
+
+  Future<bool> _removeSnapSessionParticipant(
+      SnapSession session, String sessionUid) async {
+    DocumentReference ref = FirebaseFirestore.instance.doc(session.circle.ref);
+    DocumentSnapshot circleDataSnapshot = await ref.get();
+    if (circleDataSnapshot.exists) {
+      Map<String, dynamic> circleData =
+          circleDataSnapshot.data()! as Map<String, dynamic>;
+      Map<String, dynamic> sessionData =
+          Map<String, dynamic>.from(circleData['activeSession']);
+      if (sessionData['state'] == SessionState.waiting) {
+        // only remove people if they leave before the session is live,
+        // this way they don't end up in the list of users when the
+        // session is archived after completion
+        List<Map<String, dynamic>> participants =
+            List<Map<String, dynamic>>.from(sessionData["participants"] ?? []);
+        participants
+            .removeWhere((element) => element['sessionUserId'] == sessionUid);
+        sessionData['participants'] = participants;
+        await ref.update({"activeSession": sessionData});
+        return true;
+      }
+    }
+    return false;
+  }
+
+  Future<bool> _joinScheduledSession(
+      ScheduledSession session, String uid, String? sessionUserId) async {
+    DocumentReference ref = FirebaseFirestore.instance.doc(session.ref);
+    DocumentReference userProfileRef =
+        FirebaseFirestore.instance.collection(Paths.users).doc(uid);
+    DocumentSnapshot sessionData = await ref.get();
+    if (sessionData.exists) {
+      Map<String, dynamic> data = sessionData.data()! as Map<String, dynamic>;
+      List<Map<String, dynamic>> participants =
+          List<Map<String, dynamic>>.from(data["participants"] ?? []);
+      final existingUser = participants.firstWhereOrNull(
+          (element) => element['ref']?.path == userProfileRef.path);
+      if (existingUser == null) {
+        participants.add(_participant(userProfileRef,
+            sessionUserId: sessionUserId,
+            role: session.circle.participantRole(uid).toString()));
+      } else {
+        existingUser['sessionUserId'] = sessionUserId;
+      }
+      await ref.update({"participants": participants});
+    }
+    return false;
+  }
+
+  Future<bool> _joinSnapSession(
+      SnapSession session, String uid, String? sessionUserId) async {
+    DocumentReference circleRef =
+        FirebaseFirestore.instance.doc(session.circle.ref);
+    DocumentReference userProfileRef =
+        FirebaseFirestore.instance.collection(Paths.users).doc(uid);
+    DocumentSnapshot circleSessionData = await circleRef.get();
+    if (circleSessionData.exists) {
+      Map<String, dynamic> data =
+          circleSessionData.data()! as Map<String, dynamic>;
+      Map<String, dynamic> activeSession =
+          Map<String, dynamic>.from(data['activeSession']);
+      List<Map<String, dynamic>> participants =
+          List<Map<String, dynamic>>.from(activeSession["participants"] ?? []);
+      final existingUser = participants.firstWhereOrNull(
+          (element) => element['ref']?.path == userProfileRef.path);
+      if (existingUser == null) {
+        participants.add(_participant(userProfileRef,
+            sessionUserId: sessionUserId,
+            role: session.circle.participantRole(uid).toString()));
+      } else {
+        existingUser['sessionUserId'] = sessionUserId;
+      }
+      await circleRef.update({"activeSession": activeSession});
+      return true;
+    }
+    return false;
   }
 }

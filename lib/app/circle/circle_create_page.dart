@@ -249,7 +249,7 @@ class _CircleCreatePageState extends ConsumerState<CircleCreatePage> {
 
     var repo = ref.read(repositoryProvider);
     try {
-      final circle = await repo.createCircle(
+      final circle = await repo.createScheduledCircle(
           name: _nameController.text,
           numSessions: numSessions,
           startDate: _startDate!,

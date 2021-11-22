@@ -10,10 +10,12 @@ class SessionState {
 }
 
 class ActiveSession extends ChangeNotifier {
-  ActiveSession({required this.session, required this.userId});
+  ActiveSession(
+      {required this.session, required this.userId, this.isSnap = true});
 
   final Session session;
   final String userId;
+  final bool isSnap;
   late List<SessionParticipant> participants = [];
   String state = SessionState.pending;
   DateTime? started;

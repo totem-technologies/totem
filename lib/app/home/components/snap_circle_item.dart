@@ -6,10 +6,13 @@ import 'package:totem/models/index.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:totem/theme/index.dart';
 
-class CircleItem extends StatelessWidget {
-  const CircleItem({Key? key, required this.circle, required this.onPressed})
-      : super(key: key);
-  final ScheduledCircle circle;
+class SnapCircleItem extends StatelessWidget {
+  const SnapCircleItem({
+    Key? key,
+    required this.circle,
+    required this.onPressed,
+  }) : super(key: key);
+  final SnapCircle circle;
   final Function onPressed;
 
   @override
@@ -31,10 +34,11 @@ class CircleItem extends StatelessWidget {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(
-                        width: 24,
-                        child: SvgPicture.asset(
-                            'assets/alert.svg')), // FIXME - this is some indicator icon
+                    const SizedBox(
+                      width: 24,
+                      /*child: SvgPicture.asset(
+                            'assets/alert.svg')*/ // FIXME - this is some indicator icon
+                    ),
                     const SizedBox(
                       width: 4,
                     ),
@@ -64,44 +68,32 @@ class CircleItem extends StatelessWidget {
   }
 
   Widget _sessionInfo(BuildContext context) {
-    final timeFormat = DateFormat(" @ h:mm a");
+    final timeFormat = DateFormat.Hm();
     final t = AppLocalizations.of(context)!;
-    ScheduledSession? session = circle.nextSession;
+    String status = "";
     switch (circle.status) {
-      case CircleStatus.active:
-        return Text(
-          t.sessionInProgress,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        );
-      case CircleStatus.waiting:
-        return Text(
-          t.sessionWaiting,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        );
-      case CircleStatus.idle:
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            if (session != null) ...[
-              Text(
-                  DateFormat.yMMMd().format(session.scheduledDate) +
-                      timeFormat.format(session.scheduledDate),
-                  style: const TextStyle(fontSize: 14)),
-              const SizedBox(
-                height: 4,
-              ),
-              Text(t.nextSession, style: const TextStyle(fontSize: 12)),
-            ],
-            if (session == null)
-              Text(
-                t.noUpcomingSessions,
-                style: const TextStyle(fontSize: 12),
-              ),
-          ],
-        );
-      case CircleStatus.complete:
+      case SessionState.live:
+        status = t.sessionInProgress;
+        break;
+      case SessionState.waiting:
+        status = t.sessionWaiting;
+        break;
       default:
-        return Text(t.sessionsCompleted);
+        break;
     }
+    return Column(
+      children: [
+        Text(
+          status,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(
+          height: 5,
+        ),
+        Text(
+          t.started + " : " + timeFormat.format(circle.createdOn),
+        )
+      ],
+    );
   }
 }
