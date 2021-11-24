@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/firebase_providers/paths.dart';
 import 'package:totem/services/circles_provider.dart';
+import 'package:totem/services/index.dart';
 
 class FirebaseCirclesProvider extends CirclesProvider {
   @override
@@ -50,7 +51,7 @@ class FirebaseCirclesProvider extends CirclesProvider {
   Stream<List<SnapCircle>> snapCircles() {
     final collection = FirebaseFirestore.instance.collection(Paths.snapCircles);
     return collection
-        .where('state', isEqualTo: SnapCircle.stateActive)
+        .where('state', isEqualTo: SessionState.waiting)
         .snapshots()
         .transform(
       StreamTransformer<QuerySnapshot<Map<String, dynamic>>,
@@ -113,7 +114,6 @@ class FirebaseCirclesProvider extends CirclesProvider {
     required String name,
     required String uid,
     String? description,
-    required bool addAsMember,
   }) async {
     final DocumentReference userRef =
         FirebaseFirestore.instance.collection(Paths.users).doc(uid);
@@ -123,30 +123,31 @@ class FirebaseCirclesProvider extends CirclesProvider {
       "createdOn": now,
       "updatedOn": now,
       "createdBy": userRef,
+      "state": SessionState.waiting,
     };
     if (description != null) {
       data["description"] = description;
     }
     Map<String, dynamic> snapSession = {
       "state": SessionState.waiting,
+      "started": now,
     };
     data["activeSession"] = snapSession;
     try {
       DocumentReference ref = await FirebaseFirestore.instance
           .collection(Paths.snapCircles)
           .add(data);
-      if (addAsMember) {
-        await addUserToCircle(Paths.snapCircles,
-            id: ref.id, uid: uid, role: Roles.keeper);
-      }
       // return circle
       SnapCircle circle = SnapCircle.fromJson(data, id: ref.id, ref: ref.path);
+      circle.createdBy = await _userFromRef(userRef);
       return circle;
-    } catch (e) {
+    } on FirebaseException catch (e) {
       // TODO: throw specific exception here
-      debugPrint(e.toString());
+      throw (ServiceException(code: e.code, message: e.message));
+    } catch (e) {
+      throw (ServiceException(
+          code: ServiceException.errorCodeUnknown, message: e.toString()));
     }
-    return null;
   }
 
   @override
@@ -194,7 +195,7 @@ class FirebaseCirclesProvider extends CirclesProvider {
         } else {
           participants.add(circleData);
         }
-        circleRef.update({"participants": participants});
+        await circleRef.update({"participants": participants});
         // Update the user reference to the circle
         final userCircleData = {
           "role": role.toString(),
@@ -204,7 +205,7 @@ class FirebaseCirclesProvider extends CirclesProvider {
         await FirebaseFirestore.instance
             .collection(Paths.users)
             .doc(uid)
-            .collection(Paths.circles)
+            .collection(path)
             .add(userCircleData);
         return true;
       }
@@ -318,6 +319,9 @@ class FirebaseCirclesProvider extends CirclesProvider {
             id: document.id, ref: document.reference.path);
         DocumentReference ref = data["createdBy"] as DocumentReference;
         circle.createdBy = await _userFromRef(ref);
+        if (data['activeSession'] != null) {
+          SnapSession.fromJson(data['activeSession'], circle: circle);
+        }
         circles.add(circle);
       } catch (ex) {
         debugPrint(ex.toString());

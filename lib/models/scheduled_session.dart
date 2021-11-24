@@ -3,6 +3,7 @@ import 'package:totem/models/index.dart';
 class ScheduledSession extends Session {
   late final String _ref;
   late DateTime scheduledDate;
+  late String _state;
 
   ScheduledSession.fromJson(
     Map<String, dynamic> json, {
@@ -16,6 +17,17 @@ class ScheduledSession extends Session {
         ) {
     _ref = ref;
     scheduledDate = DateTimeEx.fromMapValue(json['scheduledDate'])!;
+    _state = json['state'] ?? SessionState.pending;
+  }
+
+  @override
+  String get state {
+    return _state;
+  }
+
+  @override
+  set state(String stateVal) {
+    _state = stateVal;
   }
 
   @override
@@ -27,6 +39,7 @@ class ScheduledSession extends Session {
   Map<String, dynamic> toJson() {
     Map<String, dynamic> item = super.toJson();
     item["scheduledData"] = scheduledDate;
+    item["state"] = _state;
     return item;
   }
 }

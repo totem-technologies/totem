@@ -3,8 +3,12 @@ import 'package:totem/models/index.dart';
 class SnapSession extends Session {
   static const String snap = "snap";
 
-  late DateTime started;
   List<Participant> participants = [];
+  List<Map<String, dynamic>> participantData = [];
+
+  int get participantCount {
+    return participantData.length;
+  }
 
   SnapSession.fromJson(
     Map<String, dynamic> json, {
@@ -14,7 +18,9 @@ class SnapSession extends Session {
           id: circle.id,
           circle: circle,
         ) {
-    started = DateTimeEx.fromMapValue(json['started'])!;
+    if (json['participants'] != null) {
+      participantData = List<Map<String, dynamic>>.from(json['participants']);
+    }
   }
 
   @override
@@ -23,9 +29,18 @@ class SnapSession extends Session {
   }
 
   @override
+  String get state {
+    return (circle as SnapCircle).state;
+  }
+
+  @override
+  set state(String stateVal) {
+    (circle as SnapCircle).state = state;
+  }
+
+  @override
   Map<String, dynamic> toJson({bool includeParticipants = true}) {
     Map<String, dynamic> data = super.toJson();
-    data["started"] = started;
     if (includeParticipants) {
       List<Map<String, dynamic>> partData = [];
       for (var participant in participants) {

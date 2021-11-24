@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:totem/components/fade_route.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/components/widgets/sub_page_header.dart';
 import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class CircleCreatePage extends ConsumerStatefulWidget {
-  const CircleCreatePage({Key? key}) : super(key: key);
+import 'circle_session_page.dart';
+
+class CircleCreateSnapPage extends ConsumerStatefulWidget {
+  const CircleCreateSnapPage({Key? key}) : super(key: key);
 
   @override
   _CircleCreatePageState createState() => _CircleCreatePageState();
 }
 
-class _CircleCreatePageState extends ConsumerState<CircleCreatePage> {
+class _CircleCreatePageState extends ConsumerState<CircleCreateSnapPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
@@ -83,9 +86,11 @@ class _CircleCreatePageState extends ConsumerState<CircleCreatePage> {
                                 const SizedBox(height: 30),
                                 ThemedRaisedButton(
                                   label: t.createCircle,
-                                  onPressed: () {
-                                    _saveCircle();
-                                  },
+                                  onPressed: !_busy
+                                      ? () {
+                                          _saveCircle();
+                                        }
+                                      : null,
                                 ),
                                 const SizedBox(height: 50)
                               ],
@@ -112,6 +117,7 @@ class _CircleCreatePageState extends ConsumerState<CircleCreatePage> {
     if (!_formKey.currentState!.validate()) {
       return;
     }
+    FocusScope.of(context).unfocus();
     setState(() => _busy = true);
     _formKey.currentState!.save();
     var repo = ref.read(repositoryProvider);
@@ -119,12 +125,43 @@ class _CircleCreatePageState extends ConsumerState<CircleCreatePage> {
       final circle = await repo.createSnapCircle(
           name: _nameController.text, description: _descriptionController.text);
       if (circle != null) {
-        Navigator.of(context).pop();
+        await repo.createActiveSession(session: circle.activeSession!);
+        Navigator.pushReplacement(
+          context,
+          FadeRoute(
+            page: CircleSessionPage(session: circle.snapSession),
+          ),
+        );
         return;
       }
-    } catch (ex) {
+    } on ServiceException catch (ex) {
       debugPrint('Error creating circle: ' + ex.toString());
+      _showCreateError(ex);
     }
     setState(() => _busy = false);
+  }
+
+  Future<void> _showCreateError(ServiceException exception) async {
+    final t = AppLocalizations.of(context)!;
+    AlertDialog alert = AlertDialog(
+      title: Text(t.errorCreateSnapCircle),
+      content: Text(exception.toString()),
+      actions: [
+        TextButton(
+          child: Text(t.ok),
+          onPressed: () {
+            Navigator.of(context).pop(true);
+          },
+        ),
+      ],
+    );
+    // show the dialog
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
   }
 }

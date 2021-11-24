@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:totem/app/circle/circle_snap_session_page.dart';
+import 'package:totem/app/circle/circle_session_page.dart';
 import 'package:totem/app/home/components/snap_circle_item.dart';
 import 'package:totem/theme/index.dart';
 import 'package:totem/app/home/components/index.dart';
@@ -83,7 +83,7 @@ class _SnapCirclesListState extends ConsumerState<SnapCirclesList> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            t.noCirclesMessage,
+            t.noSnapCirclesMessage,
             style: const TextStyle(fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
           ),
@@ -92,8 +92,11 @@ class _SnapCirclesListState extends ConsumerState<SnapCirclesList> {
     );
   }
 
-  void _handleShowCircle(BuildContext context, SnapCircle circle) {
+  Future<void> _handleShowCircle(
+      BuildContext context, SnapCircle circle) async {
+    var repo = ref.read(repositoryProvider);
+    await repo.createActiveSession(session: circle.activeSession!);
     Navigator.of(context).push(MaterialPageRoute(
-        builder: (_) => CircleSnapSessionPage(circle: circle)));
+        builder: (_) => CircleSessionPage(session: circle.snapSession)));
   }
 }

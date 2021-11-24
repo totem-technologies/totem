@@ -7,6 +7,8 @@ class SessionState {
   static const String waiting = "waiting";
   static const String live = "live";
   static const String complete = "complete";
+  static const String cancelled = "cancelled";
+  static const String idle = "idle";
 }
 
 class ActiveSession extends ChangeNotifier {
@@ -17,7 +19,7 @@ class ActiveSession extends ChangeNotifier {
   final String userId;
   final bool isSnap;
   late List<SessionParticipant> participants = [];
-  String state = SessionState.pending;
+  String state = SessionState.waiting;
   DateTime? started;
   List<SessionParticipant> activeParticipants = [];
   final List<String> _pendingUserAdded = [];
@@ -29,9 +31,11 @@ class ActiveSession extends ChangeNotifier {
 
   void updateFromData(Map<String, dynamic> data) {
     state = data['state'] ?? state;
-    if (data['participants'] != null) {
+    if (data['participants'] != null && data['participants'].isNotEmpty) {
       // update list of participants in the session
       participants = data['participants'];
+    } else {
+      participants = [];
     }
     if (data['started'] != null && started == null) {
       started = DateTimeEx.fromMapValue(data['started']);
@@ -48,6 +52,8 @@ class ActiveSession extends ChangeNotifier {
   bool userJoined({required String sessionUserId, bool pending = false}) {
     SessionParticipant? participant = activeParticipants
         .firstWhereOrNull((element) => element.sessionUserId == sessionUserId);
+
+    // a user has joined the call, add them to the list of session participants
     if (participant != null) {
       // already in the active list
       return true;
@@ -74,6 +80,7 @@ class ActiveSession extends ChangeNotifier {
   bool userOffline({required String sessionUserId}) {
     // if pending, just remove
     _pendingUserAdded.remove(sessionUserId);
+
     // make sure the user is already in the active participants list
     SessionParticipant? participant = activeParticipants
         .firstWhereOrNull((element) => element.sessionUserId == sessionUserId);

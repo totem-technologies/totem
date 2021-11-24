@@ -1,7 +1,7 @@
 import * as functions from "firebase-functions";
 
 export * from "./agora";
-
+export * from "./session";
 // // Start writing Firebase Functions
 // // https://firebase.google.com/docs/functions/typescript
 //

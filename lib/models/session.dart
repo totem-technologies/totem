@@ -1,19 +1,20 @@
 import 'package:totem/models/index.dart';
 
-class Session {
+abstract class Session {
   late final String id;
   late final Circle circle;
   late String topic;
-  late String state;
 
   String get ref {
     return "";
   }
 
+  String get state;
+  set state(String stateVal);
+
   Session.fromJson(Map<String, dynamic> json,
       {required this.id, required this.circle}) {
     topic = json['topic'] ?? "";
-    state = json['state'] ?? SessionState.pending;
   }
 
   Map<String, dynamic> toJson() {

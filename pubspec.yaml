@@ -82,6 +82,7 @@ flutter:
     - assets/microphone.svg
     - assets/microphone_mute.svg
     - assets/microphone_force.svg
+    - assets/less.svg
     - assets/more.svg
     - assets/more_info.svg
     - assets/profile.svg
@@ -100,3 +101,5 @@ flutter:
           weight: 500
         - asset: fonts/Raleway-Italic.ttf
           style: italic
+flutter_intl:
+  enabled: true

@@ -67,18 +67,18 @@ class CircleItem extends StatelessWidget {
     final timeFormat = DateFormat(" @ h:mm a");
     final t = AppLocalizations.of(context)!;
     ScheduledSession? session = circle.nextSession;
-    switch (circle.status) {
-      case CircleStatus.active:
+    switch (circle.state) {
+      case SessionState.live:
         return Text(
           t.sessionInProgress,
           style: const TextStyle(fontWeight: FontWeight.bold),
         );
-      case CircleStatus.waiting:
+      case SessionState.waiting:
         return Text(
           t.sessionWaiting,
           style: const TextStyle(fontWeight: FontWeight.bold),
         );
-      case CircleStatus.idle:
+      case SessionState.idle:
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -99,7 +99,7 @@ class CircleItem extends StatelessWidget {
               ),
           ],
         );
-      case CircleStatus.complete:
+      case SessionState.complete:
       default:
         return Text(t.sessionsCompleted);
     }

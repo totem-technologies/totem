@@ -6,45 +6,27 @@ import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
-import 'components/circle_session_controls.dart';
+import 'package:totem/app/circle/circle_session_page.dart';
+import 'circle_session_controls.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-final activeSessionProvider =
-    ChangeNotifierProvider.autoDispose<ActiveSession>((ref) {
-  final repo = ref.read(repositoryProvider);
-  ref.onDispose(() {
-    repo.clearActiveSession();
-  });
-  return repo.activeSession!;
-});
-
-final communicationsProvider =
-    ChangeNotifierProvider.autoDispose<CommunicationProvider>((ref) {
-  final repo = ref.read(repositoryProvider);
-  return repo.createCommunicationProvider();
-});
-
-class CircleSnapSessionPage extends ConsumerStatefulWidget {
-  const CircleSnapSessionPage({
-    Key? key,
-    required this.circle,
-  }) : super(key: key);
-  final SnapCircle circle;
+class CircleScheduledSessionContent extends ConsumerStatefulWidget {
+  const CircleScheduledSessionContent({Key? key, required this.session})
+      : super(key: key);
+  final Session session;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
-      _CircleSnapSessionPageState();
+      _CircleScheduledSessionContentState();
 }
 
-class _CircleSnapSessionPageState extends ConsumerState<CircleSnapSessionPage>
-    with AfterLayoutMixin<CircleSnapSessionPage> {
+class _CircleScheduledSessionContentState
+    extends ConsumerState<CircleScheduledSessionContent>
+    with AfterLayoutMixin<CircleScheduledSessionContent> {
   // String? _sessionUserId;
-
-  late bool _validSession;
 
   @override
   void initState() {
-    _validSession = widget.circle.activeSession != null;
     super.initState();
   }
 
@@ -71,7 +53,7 @@ class _CircleSnapSessionPageState extends ConsumerState<CircleSnapSessionPage>
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     SubPageHeader(
-                      title: widget.circle.name,
+                      title: widget.session.circle.name,
                       onClose: () async {
                         if (await _exitPrompt(context)) {
                           Navigator.of(context).pop();
@@ -79,42 +61,39 @@ class _CircleSnapSessionPageState extends ConsumerState<CircleSnapSessionPage>
                       },
                     ),
                     Expanded(
-                      child: _validSession
-                          ? SingleChildScrollView(
-                              padding: EdgeInsets.only(
-                                  left: themeData.pageHorizontalPadding,
-                                  right: themeData.pageHorizontalPadding,
-                                  top: 12,
-                                  bottom: 20),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  if (widget.circle.description != null &&
-                                      widget
-                                          .circle.description!.isNotEmpty) ...[
-                                    Text(
-                                      t.circleDescription,
-                                      style: textStyles.headline3,
-                                    ),
-                                    const SizedBox(
-                                      height: 4,
-                                    ),
-                                    Text(widget.circle.description!),
-                                    Divider(
-                                      height: 48,
-                                      thickness: 1,
-                                      color: themeColors.divider,
-                                    ),
-                                  ],
-                                  AnimatedSwitcher(
-                                    duration: const Duration(milliseconds: 200),
-                                    child:
-                                        _sessionContent(context, commProvider),
-                                  ),
-                                ],
+                      child: SingleChildScrollView(
+                        padding: EdgeInsets.only(
+                            left: themeData.pageHorizontalPadding,
+                            right: themeData.pageHorizontalPadding,
+                            top: 12,
+                            bottom: 20),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            if (widget.session.circle.description != null &&
+                                widget.session.circle.description!
+                                    .isNotEmpty) ...[
+                              Text(
+                                t.circleDescription,
+                                style: textStyles.headline3,
                               ),
-                            )
-                          : _invalidSession(context),
+                              const SizedBox(
+                                height: 4,
+                              ),
+                              Text(widget.session.circle.description!),
+                              Divider(
+                                height: 48,
+                                thickness: 1,
+                                color: themeColors.divider,
+                              ),
+                            ],
+                            AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 200),
+                              child: _sessionContent(context, commProvider),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -142,7 +121,13 @@ class _CircleSnapSessionPageState extends ConsumerState<CircleSnapSessionPage>
         return const CircleSessionContent();
       case CommunicationState.disconnected:
         return _sessionDisconnected(context);
+      case CommunicationState.disconnecting:
+        return _sessionDisconnecting(context);
     }
+  }
+
+  Widget _sessionDisconnecting(BuildContext context) {
+    return const Center(child: BusyIndicator());
   }
 
   Widget _sessionDisconnected(BuildContext context) {
@@ -279,22 +264,6 @@ class _CircleSnapSessionPageState extends ConsumerState<CircleSnapSessionPage>
     return false;
   }
 
-  Widget _invalidSession(BuildContext context) {
-    // the active session doesn't exist, this is likely
-    // a completed session
-    final t = AppLocalizations.of(context)!;
-    final textStyles = Theme.of(context).textStyles;
-    return Column(
-      children: [
-        Text(
-          t.errorSessionInvalid,
-          style: textStyles.headline3,
-        ),
-        const SizedBox(height: 20),
-      ],
-    );
-  }
-
   Future<void> completeSession(bool complete) async {
     final repo = ref.read(repositoryProvider);
     repo.clearActiveSession();
@@ -308,20 +277,18 @@ class _CircleSnapSessionPageState extends ConsumerState<CircleSnapSessionPage>
 
   @override
   void afterFirstLayout(BuildContext context) {
-    if (widget.circle.activeSession != null) {
-      final provider = ref.read(communicationsProvider);
-      provider.joinSession(
-        session: widget.circle.activeSession!,
-        handler: CommunicationHandler(
-            joinedCircle: (String sessionId, String sessionUserId) {
-          debugPrint("joined circle as: " + sessionUserId);
-        }, leaveCircle: () {
-          // prompt?
-          Future.delayed(const Duration(milliseconds: 0), () {
-            Navigator.of(context).pop();
-          });
-        }),
-      );
-    }
+    final provider = ref.read(communicationsProvider);
+    provider.joinSession(
+      session: widget.session,
+      handler: CommunicationHandler(
+          joinedCircle: (String sessionId, String sessionUserId) {
+        debugPrint("joined circle as: " + sessionUserId);
+      }, leaveCircle: () {
+        // prompt?
+        Future.delayed(const Duration(milliseconds: 0), () {
+          Navigator.of(context).pop();
+        });
+      }),
+    );
   }
 }

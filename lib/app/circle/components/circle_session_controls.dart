@@ -1,17 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:totem/app/circle/circle_session_page.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/providers.dart';
 import 'package:totem/theme/index.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:totem/app/circle/circle_session_page.dart';
 
-class CircleSessionControls extends ConsumerWidget {
+class CircleSessionControls extends ConsumerStatefulWidget {
   const CircleSessionControls({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  _CircleSessionControlsState createState() => _CircleSessionControlsState();
+}
+
+class _CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
+  bool _more = false;
+
+  @override
+  Widget build(BuildContext context) {
     // final textStyles = themeData.textStyles;
 //    final themeColors = Theme.of(context).themeColors;
     final authUser = ref.read(authServiceProvider).currentUser()!;
@@ -71,40 +78,53 @@ class CircleSessionControls extends ConsumerWidget {
       ActiveSession activeSession, Role role) {
     final themeColors = Theme.of(context).themeColors;
     final t = AppLocalizations.of(context)!;
+    final communications = ref.watch(communicationsProvider);
     return Column(
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             ThemedControlButton(
-              label: t.mute,
-              svgImage: 'assets/microphone_force.svg',
+              label: communications.muted ? t.unmute : t.mute,
+              svgImage: communications.muted
+                  ? 'assets/microphone_mute.svg'
+                  : 'assets/microphone.svg',
               onPressed: () {
+                communications.muteAudio(communications.muted ? false : true);
                 debugPrint('mute pressed');
               },
             ),
             ThemedControlButton(
-              label: t.start,
+              label: t.receive,
               svgImage: 'assets/check.svg',
               backgroundColor: themeColors.primary,
-              onPressed: () {},
+              onPressed: null, //() {},
             ),
             ThemedControlButton(
-              label: t.start,
+              label: t.pass,
               svgImage: 'assets/close.svg',
               backgroundColor: themeColors.primary,
-              onPressed: () {},
+              onPressed: null, //() {},
             ),
-            ThemedControlButton(
-              label: t.info,
-              svgImage: 'assets/info.svg',
-              onPressed: () {
-                debugPrint('start pressed');
-              },
-            ),
+            if (role == Roles.member)
+              ThemedControlButton(
+                label: t.info,
+                svgImage: 'assets/info.svg',
+                onPressed: () {
+                  debugPrint('info pressed');
+                },
+              ),
+            if (role == Roles.keeper)
+              ThemedControlButton(
+                label: !_more ? t.more : t.less,
+                svgImage: !_more ? 'assets/more.svg' : 'assets/less.svg',
+                onPressed: () {
+                  setState(() => _more = !_more);
+                },
+              ),
           ],
         ),
-        if (role == Roles.keeper) ...[
+        if (role == Roles.keeper && _more) ...[
           const SizedBox(height: 24),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -113,7 +133,7 @@ class CircleSessionControls extends ConsumerWidget {
                 label: t.info,
                 svgImage: 'assets/info.svg',
                 onPressed: () {
-                  debugPrint('mute pressed');
+                  debugPrint('info pressed');
                 },
               ),
               ThemedControlButton(

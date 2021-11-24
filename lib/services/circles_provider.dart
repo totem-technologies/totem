@@ -16,7 +16,6 @@ abstract class CirclesProvider {
   Future<SnapCircle?> createSnapCircle({
     required String name,
     String? description,
-    required bool addAsMember,
     required String uid,
   });
   Stream<ScheduledCircle> scheduledCircle(String circleId, String uid);

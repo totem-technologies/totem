@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:intl/intl.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -35,7 +34,7 @@ class SnapCircleItem extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(
-                      width: 24,
+                      width: 12,
                       /*child: SvgPicture.asset(
                             'assets/alert.svg')*/ // FIXME - this is some indicator icon
                     ),
@@ -68,10 +67,10 @@ class SnapCircleItem extends StatelessWidget {
   }
 
   Widget _sessionInfo(BuildContext context) {
-    final timeFormat = DateFormat.Hm();
+    //final timeFormat = DateFormat.Hm();
     final t = AppLocalizations.of(context)!;
     String status = "";
-    switch (circle.status) {
+    switch (circle.state) {
       case SessionState.live:
         status = t.sessionInProgress;
         break;
@@ -81,18 +80,37 @@ class SnapCircleItem extends StatelessWidget {
       default:
         break;
     }
+    final themeColor = Theme.of(context).themeColors;
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(
-          status,
-          style: const TextStyle(fontWeight: FontWeight.bold),
+        if (circle.description != null && circle.description!.isNotEmpty) ...[
+          Text(circle.description!),
+          const SizedBox(
+            height: 8,
+          ),
+        ],
+        Divider(
+          height: 5,
+          thickness: 1,
+          color: themeColor.divider,
         ),
         const SizedBox(
-          height: 5,
+          height: 8,
         ),
-        Text(
-          t.started + " : " + timeFormat.format(circle.createdOn),
-        )
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                status,
+                style: const TextStyle(fontStyle: FontStyle.italic),
+              ),
+            ),
+            Text(
+              t.participantCount(circle.snapSession.participantCount),
+            ),
+          ],
+        ),
       ],
     );
   }

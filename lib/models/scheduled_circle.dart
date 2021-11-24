@@ -1,17 +1,9 @@
 import 'package:collection/collection.dart';
 import 'package:totem/models/index.dart';
 
-enum CircleStatus {
-  idle,
-  preSession,
-  waiting,
-  active,
-  complete,
-}
-
 class ScheduledCircle extends Circle {
   List<ScheduledSession> sessions = [];
-  CircleStatus _status = CircleStatus.idle;
+  String _state = SessionState.idle;
   List<Participant> participants = [];
   bool hasActiveSession = false;
 
@@ -21,36 +13,36 @@ class ScheduledCircle extends Circle {
     hasActiveSession = json['activeSession'] != null;
   }
 
-  CircleStatus get status {
-    return _status;
+  String get state {
+    return _state;
   }
 
   ScheduledSession? get nextSession {
     DateTime now = DateTime.now();
-    _status = CircleStatus.idle;
+    _state = SessionState.idle;
     if (sessions.isNotEmpty) {
       int index = sessions.indexWhere((element) =>
           element == activeSession || element.scheduledDate.isAfter(now));
       if (index != -1) {
         ScheduledSession session = sessions[index];
         if (session == activeSession) {
-          _status = session.state == SessionState.waiting
-              ? CircleStatus.waiting
-              : _status = CircleStatus.active;
+          _state = session.state == SessionState.waiting
+              ? SessionState.waiting
+              : _state = SessionState.live;
         } else {
           Duration duration = session.scheduledDate.difference(now);
           if (duration.inMinutes <= 10) {
-            _status = CircleStatus.preSession;
+            _state = SessionState.pending;
           }
         }
         return session;
       } else {
-        _status = CircleStatus.complete;
+        _state = SessionState.complete;
       }
     } else if (activeSession != null) {
-      _status = activeSession!.state == SessionState.waiting
-          ? CircleStatus.waiting
-          : _status = CircleStatus.active;
+      _state = activeSession!.state == SessionState.waiting
+          ? SessionState.waiting
+          : _state = SessionState.live;
     }
     return null;
   }

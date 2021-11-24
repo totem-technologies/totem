@@ -76,6 +76,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     // need to see if there is another call for
     // session owner to end for all?
     _pendingComplete = true;
+    _updateState(CommunicationState.disconnecting);
     await _engine?.leaveChannel();
   }
 

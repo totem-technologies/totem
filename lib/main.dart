@@ -7,6 +7,7 @@ import 'package:totem/app/profile/index.dart';
 import 'package:totem/components/fade_route.dart';
 import 'package:totem/theme/index.dart';
 import 'app/circle/circle_create_page.dart';
+import 'app/circle/circle_create_snap_page.dart';
 import 'app/login/login_page.dart';
 import 'app/login/phone_register_page.dart';
 import 'app/settings/settings_page.dart';
@@ -63,6 +64,9 @@ class App extends StatelessWidget {
             return FadeRoute(page: const GuidelineScreen());
           case '/circle/create':
             return MaterialPageRoute(builder: (_) => const CircleCreatePage());
+          case '/snap_circle/create':
+            return MaterialPageRoute(
+                builder: (_) => const CircleCreateSnapPage());
           case '/settings':
             return MaterialPageRoute(
                 builder: (_) =>

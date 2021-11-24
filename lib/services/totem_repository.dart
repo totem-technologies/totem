@@ -72,7 +72,6 @@ class TotemRepository {
         name: name,
         description: description,
         uid: user!.uid,
-        addAsMember: addAsMember,
       );
   Stream<List<ScheduledCircle>> scheduledCircles({bool allCircles = false}) =>
       _circlesProvider.scheduledCircles(!allCircles ? user?.uid : null);
