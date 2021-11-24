@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:totem/app/circle/circle_session_page.dart';
-import 'package:totem/app/circle/components/circle_session_participant.dart';
+//import 'package:totem/app/circle/components/circle_live_session_participant.dart';
 import 'package:totem/theme/index.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'dart:math' as math;
@@ -18,32 +18,32 @@ class CircleLiveSessionUsers extends ConsumerWidget {
     if (participants.isNotEmpty) {
       final List<Widget> userItems = <Widget>[];
       for (int i = 0; i < participants.length; i++) {
-        userItems.add(CircleSessionParticipant(
-            participantId: participants[i].userProfile.uid));
+        userItems.add(
+          LayoutId(
+            id: participants[i].userProfile.uid,
+            child: const SizedBox(
+              width: 64,
+              height: 64,
+              child: Text('hi'),
+            ) /*CircleLiveSessionParticipant(
+                  participantId: participants[i].userProfile.uid)*/
+            ,
+          ),
+        );
       }
 
-      return CustomMultiChildLayout(
-        delegate: _CircularLayoutDelegate(
-          itemCount: participants.length,
-          radius: 120,
+      return Flexible(
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          child: CustomMultiChildLayout(
+            delegate: _CircularLayoutDelegate(
+              itemCount: participants.length,
+              radius: 120,
+            ),
+            children: userItems,
+          ),
         ),
-        children: userItems,
       );
-/*      return GridView.builder(
-        physics: const NeverScrollableScrollPhysics(),
-        shrinkWrap: true,
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          childAspectRatio: 1.0,
-          mainAxisSpacing: 8,
-          crossAxisSpacing: 8,
-        ),
-        itemBuilder: (context, index) {
-          return CircleSessionParticipant(
-              participantId: participants[index].userProfile.uid);
-        },
-        itemCount: participants.length,
-      ); */
     }
     final t = AppLocalizations.of(context)!;
     final themeData = Theme.of(context);

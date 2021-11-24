@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:totem/app/circle/components/index.dart';
+import 'package:totem/app/circle/components/circle_live_participant.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/theme/index.dart';
 
 import '../circle_session_page.dart';
 
-class CircleSessionParticipant extends ConsumerWidget {
-  const CircleSessionParticipant({Key? key, required this.participantId})
+class CircleLiveSessionParticipant extends ConsumerWidget {
+  const CircleLiveSessionParticipant({Key? key, required this.participantId})
       : super(key: key);
   final String participantId;
 
@@ -17,7 +17,11 @@ class CircleSessionParticipant extends ConsumerWidget {
     final participant = ref.watch(participantProvider(participantId));
     return Stack(
       children: [
-        CircleParticipant(participant: participant),
+        SizedBox(
+          width: 64,
+          height: 64,
+          child: CircleLiveParticipant(participant: participant),
+        ),
         PositionedDirectional(
           top: 5,
           end: 5,
