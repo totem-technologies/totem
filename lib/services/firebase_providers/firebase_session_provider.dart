@@ -295,7 +295,7 @@ class FirebaseSessionProvider extends SessionProvider {
                   uid: doc.id,
                   ref: doc.reference.path,
                 ),
-                me: doc.id == _activeSession!.userId);
+                me: doc.id == _activeSession?.userId);
           }).toList());
           sessionData['participants'] = participants;
         } else {
@@ -341,10 +341,9 @@ class FirebaseSessionProvider extends SessionProvider {
           circleDataSnapshot.data()! as Map<String, dynamic>;
       Map<String, dynamic> sessionData =
           Map<String, dynamic>.from(circleData['activeSession']);
-      if (sessionData['state'] == SessionState.waiting) {
-        // only remove people if they leave before the session is live,
-        // this way they don't end up in the list of users when the
-        // session is archived after completion
+      if (sessionData['state'] != SessionState.cancelled ||
+          sessionData['state'] != SessionState.complete) {
+        // only remove people if they leave before the session is over,
         List<Map<String, dynamic>> participants =
             List<Map<String, dynamic>>.from(sessionData["participants"] ?? []);
         participants

@@ -40,6 +40,14 @@ class ActiveSession extends ChangeNotifier {
     if (data['started'] != null && started == null) {
       started = DateTimeEx.fromMapValue(data['started']);
     }
+    // update the active users
+    for (var participant in participants) {
+      var activeParticipant = activeParticipants.firstWhereOrNull(
+          (element) => element.userProfile.uid == participant.userProfile.uid);
+      if (activeParticipant != null) {
+        activeParticipant.updateWith(participant);
+      }
+    }
     if (_pendingUserAdded.isNotEmpty) {
       List<String> pending = List<String>.from(_pendingUserAdded);
       for (var element in pending) {

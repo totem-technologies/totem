@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:totem/app/circle/circle_session_page.dart';
-//import 'package:totem/app/circle/components/circle_live_session_participant.dart';
+import 'package:totem/app/circle/components/circle_live_session_participant.dart';
 import 'package:totem/theme/index.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'dart:math' as math;
 
-const double _radiansPerDegree = math.pi / 180;
-const double _startAngle = -90.0 * _radiansPerDegree;
+import 'circle_live_session_participant.dart';
 
 class CircleLiveSessionUsers extends ConsumerWidget {
   const CircleLiveSessionUsers({Key? key}) : super(key: key);
@@ -20,29 +18,37 @@ class CircleLiveSessionUsers extends ConsumerWidget {
       for (int i = 0; i < participants.length; i++) {
         userItems.add(
           LayoutId(
-            id: participants[i].userProfile.uid,
-            child: const SizedBox(
-              width: 64,
-              height: 64,
-              child: Text('hi'),
-            ) /*CircleLiveSessionParticipant(
-                  participantId: participants[i].userProfile.uid)*/
-            ,
+            id: 'item$i',
+            child: CircleLiveSessionParticipant(
+                participantId: participants[i].userProfile.uid),
           ),
         );
       }
 
-      return Flexible(
-        child: Container(
-          padding: const EdgeInsets.all(20),
-          child: CustomMultiChildLayout(
-            delegate: _CircularLayoutDelegate(
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(child: Container()),
+          const SizedBox(height: 10),
+          SizedBox(
+            height: 80,
+            child: ListView.separated(
+              padding: EdgeInsets.symmetric(
+                  horizontal: Theme.of(context).pageHorizontalPadding),
+              scrollDirection: Axis.horizontal,
+              itemBuilder: (context, index) {
+                return CircleLiveSessionParticipant(
+                    participantId: participants[index].userProfile.uid);
+              },
+              separatorBuilder: (context, index) {
+                return const SizedBox(
+                  width: 10,
+                );
+              },
               itemCount: participants.length,
-              radius: 120,
             ),
-            children: userItems,
           ),
-        ),
+        ],
       );
     }
     final t = AppLocalizations.of(context)!;
@@ -59,49 +65,5 @@ class CircleLiveSessionUsers extends ConsumerWidget {
         ),
       ),
     );
-  }
-}
-
-class _CircularLayoutDelegate extends MultiChildLayoutDelegate {
-  static const String actionButton = 'BUTTON';
-  late Offset center;
-  final int itemCount;
-  final double radius;
-
-  _CircularLayoutDelegate({
-    required this.itemCount,
-    required this.radius,
-  });
-
-  @override
-  void performLayout(Size size) {
-    center = Offset(size.width / 2, size.height / 2);
-    for (int i = 0; i < itemCount; i++) {
-      final String actionButtonId = '$actionButton$i';
-
-      if (hasChild(actionButtonId)) {
-        final Size buttonSize =
-            layoutChild(actionButtonId, BoxConstraints.loose(size));
-        final double itemAngle = _calculateItemAngle(i);
-
-        positionChild(
-          actionButtonId,
-          Offset(
-            (center.dx - buttonSize.width / 2) + (radius) * math.cos(itemAngle),
-            (center.dy - buttonSize.height / 2) +
-                (radius) * math.sin(itemAngle),
-          ),
-        );
-      }
-    }
-  }
-
-  @override
-  bool shouldRelayout(_CircularLayoutDelegate oldDelegate) =>
-      itemCount != oldDelegate.itemCount || radius != oldDelegate.radius;
-
-  double _calculateItemAngle(int index) {
-    double _itemSpacing = 360.0 / 5.0;
-    return _startAngle + index * _itemSpacing * _radiansPerDegree;
   }
 }

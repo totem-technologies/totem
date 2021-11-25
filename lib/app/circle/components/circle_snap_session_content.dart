@@ -53,64 +53,54 @@ class _CircleSnapSessionContentState
           child: SafeArea(
             top: true,
             bottom: false,
-            child: Stack(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    SubPageHeader(
-                      title: widget.circle.name,
-                      onClose: (commProvider.state !=
-                              CommunicationState.disconnecting)
-                          ? () async {
-                              if (commProvider.state !=
-                                  CommunicationState.active) {
-                                Navigator.of(context).pop();
-                              } else {
-                                await _exitPrompt(context);
-                              }
-                            }
-                          : null,
+                SubPageHeader(
+                  title: widget.circle.name,
+                  onClose: (commProvider.state !=
+                          CommunicationState.disconnecting)
+                      ? () async {
+                          if (commProvider.state != CommunicationState.active) {
+                            Navigator.of(context).pop();
+                          } else {
+                            await _exitPrompt(context);
+                          }
+                        }
+                      : null,
+                ),
+                if (widget.circle.description != null &&
+                    widget.circle.description!.isNotEmpty)
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: Theme.of(context).pageHorizontalPadding),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Text(
+                          t.circleDescription,
+                          style: textStyles.headline3,
+                        ),
+                        const SizedBox(
+                          height: 4,
+                        ),
+                        Text(widget.circle.description!),
+                        Divider(
+                          height: 48,
+                          thickness: 1,
+                          color: themeColors.divider,
+                        ),
+                      ],
                     ),
-                    Expanded(
-                      child: _validSession
-                          ? SingleChildScrollView(
-                              padding: EdgeInsets.only(
-                                  left: themeData.pageHorizontalPadding,
-                                  right: themeData.pageHorizontalPadding,
-                                  top: 12,
-                                  bottom: 20),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  if (widget.circle.description != null &&
-                                      widget
-                                          .circle.description!.isNotEmpty) ...[
-                                    Text(
-                                      t.circleDescription,
-                                      style: textStyles.headline3,
-                                    ),
-                                    const SizedBox(
-                                      height: 4,
-                                    ),
-                                    Text(widget.circle.description!),
-                                    Divider(
-                                      height: 48,
-                                      thickness: 1,
-                                      color: themeColors.divider,
-                                    ),
-                                  ],
-                                  AnimatedSwitcher(
-                                    duration: const Duration(milliseconds: 200),
-                                    child: _sessionContent(
-                                        context, commProvider, sessionProvider),
-                                  ),
-                                ],
-                              ),
-                            )
-                          : _invalidSession(context),
-                    ),
-                  ],
+                  ),
+                Expanded(
+                  child: _validSession
+                      ? AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 200),
+                          child: _sessionContent(
+                              context, commProvider, sessionProvider),
+                        )
+                      : _invalidSession(context),
                 ),
                 if (commProvider.state == CommunicationState.active)
                   const Align(
@@ -154,23 +144,22 @@ class _CircleSnapSessionContentState
     // then prompt the user about leaving
     if (sessionProvider.state == SessionState.complete ||
         sessionProvider.state == SessionState.cancelled) {
-      return Center(
-        child: Column(
-          children: [
-            Text(
-                repo.activeSession!.state == SessionState.complete
-                    ? t.sessionStateComplete
-                    : t.sessionStateCancelled,
-                style: textStyles.headline3),
-            const SizedBox(height: 20),
-            ThemedRaisedButton(
-              label: t.leaveSession,
-              onPressed: () async {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        ),
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+              repo.activeSession!.state == SessionState.complete
+                  ? t.sessionStateComplete
+                  : t.sessionStateCancelled,
+              style: textStyles.headline3),
+          const SizedBox(height: 20),
+          ThemedRaisedButton(
+            label: t.leaveSession,
+            onPressed: () async {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
       );
     }
     return Center(

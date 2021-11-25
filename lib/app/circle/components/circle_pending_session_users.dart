@@ -13,8 +13,7 @@ class CirclePendingSessionUsers extends ConsumerWidget {
     final participants = ref.watch(activeSessionProvider).activeParticipants;
     if (participants.isNotEmpty) {
       return GridView.builder(
-        physics: const NeverScrollableScrollPhysics(),
-        shrinkWrap: true,
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
           childAspectRatio: 1.0,

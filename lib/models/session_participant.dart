@@ -4,13 +4,23 @@ class SessionParticipant extends Participant {
   bool _muted = false;
   String? sessionUserId;
   String? status;
+  bool _totem = false;
 
   SessionParticipant.fromJson(Map<String, dynamic> json,
       {required UserProfile userProfile, bool me = false})
       : super.fromJson(json, userProfile: userProfile, me: me) {
     status = json['status'];
     _muted = json['muted'] ?? false;
+    _totem = json['totem'] ?? false;
     sessionUserId = json["sessionUserId"];
+  }
+
+  void updateWith(SessionParticipant participant) {
+    _totem = participant.totem;
+  }
+
+  bool get totem {
+    return _totem;
   }
 
   bool get muted {

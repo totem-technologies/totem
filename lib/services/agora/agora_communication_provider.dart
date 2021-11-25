@@ -213,11 +213,16 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   }
 
   Future<void> _handleLeaveSession(stats) async {
-    if (_pendingComplete) {
-      await sessionProvider.endActiveSession();
-    } else {
-      await sessionProvider.leaveSession(
-          session: _session!, sessionUid: commUid.toString());
+    try {
+      if (_pendingComplete) {
+        await sessionProvider.endActiveSession();
+      } else {
+        await sessionProvider.leaveSession(
+            session: _session!, sessionUid: commUid.toString());
+      }
+    } on ServiceException catch (ex) {
+      // just log this for now
+      debugPrint('Got exception trying to leave session: ${ex.toString()}');
     }
     _pendingComplete = false;
     _updateState(CommunicationState.disconnected);
