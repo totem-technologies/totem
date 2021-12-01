@@ -140,7 +140,7 @@ class _CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
                 label: t.openFloor,
                 svgImage: 'assets/unlock.svg',
                 onPressed: () {
-                  debugPrint('mute pressed');
+                  debugPrint('lock pressed');
                 },
               ),
               ThemedControlButton(

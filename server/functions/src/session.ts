@@ -68,3 +68,4 @@ export const startSnapSession = functions.https.onCall(async ({circleId}, {auth}
   }
   return false;
 });
+

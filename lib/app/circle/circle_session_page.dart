@@ -40,6 +40,7 @@ class _CircleSessionPageState extends ConsumerState<CircleSessionPage> {
     ref.read(activeSessionProvider).addListener(() {
       final commProvider = ref.read(communicationsProvider);
       final activeSession = ref.read(activeSessionProvider);
+
       if ((activeSession.state == SessionState.cancelled ||
               activeSession.state == SessionState.complete) &&
           commProvider.state == CommunicationState.active) {

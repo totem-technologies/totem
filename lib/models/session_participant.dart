@@ -33,4 +33,13 @@ class SessionParticipant extends Participant {
       notifyListeners();
     }
   }
+
+  @override
+  Map<String, dynamic> toJson() {
+    Map<String, dynamic> data = super.toJson();
+    if (sessionUserId != null) {
+      data["sessionUserId"] = sessionUserId;
+    }
+    return data;
+  }
 }

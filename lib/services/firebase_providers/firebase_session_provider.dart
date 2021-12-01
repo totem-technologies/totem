@@ -231,6 +231,30 @@ class FirebaseSessionProvider extends SessionProvider {
   }
 
   @override
+  Future<bool> updateActiveSession(Map<String, dynamic> update) async {
+    if (_activeSession != null) {
+      try {
+        if (_activeSession!.session is SnapSession) {
+          DocumentReference circleRef = FirebaseFirestore.instance
+              .doc(_activeSession!.session.circle.ref);
+          await circleRef.update({"activeSession": update});
+          circleRef.update(update);
+        } else {
+          // todo for scheduled session
+        }
+        return true;
+      } on FirebaseException catch (ex) {
+        throw ServiceException(
+          code: ex.code,
+          reference: activeSession!.session.ref,
+          message: ex.message,
+        );
+      }
+    }
+    return false;
+  }
+
+  @override
   Future<ActiveSession> createActiveSession(
       {required Session session, required String uid}) async {
     clear();
@@ -404,6 +428,7 @@ class FirebaseSessionProvider extends SessionProvider {
         existingUser['sessionUserId'] = sessionUserId;
       }
       activeSession["participants"] = participants;
+      activeSession["lastChange"] = ActiveSessionChange.participantsChange;
       await circleRef.update({"activeSession": activeSession});
       return true;
     }

@@ -14,4 +14,5 @@ abstract class CommunicationProvider extends ChangeNotifier {
   String? get lastError;
 
   Future<void> muteAudio(bool mute);
+  Future<bool> updateActiveSessionTotem({required String sessionUserId});
 }

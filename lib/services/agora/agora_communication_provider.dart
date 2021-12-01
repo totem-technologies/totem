@@ -80,6 +80,16 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     await _engine?.leaveChannel();
   }
 
+  @override
+  Future<bool> updateActiveSessionTotem({required String sessionUserId}) async {
+    Map<String, dynamic>? update = sessionProvider.activeSession
+        ?.requestUserTotem(nextSessionId: sessionUserId);
+    if (update != null) {
+      return await sessionProvider.updateActiveSession(update);
+    }
+    return false;
+  }
+
   Future<void> _assertEngine() async {
     if (_engine == null) {
       try {
