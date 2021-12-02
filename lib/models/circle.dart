@@ -1,15 +1,6 @@
-import 'package:collection/collection.dart';
 import 'package:totem/models/index.dart';
 
-enum CircleStatus {
-  idle,
-  preSession,
-  waiting,
-  active,
-  complete,
-}
-
-class Circle {
+abstract class Circle {
   late final String id;
   late String name;
   late final String ref;
@@ -18,11 +9,7 @@ class Circle {
   UserProfile? createdBy;
   late DateTime createdOn;
   DateTime? updatedOn;
-  List<Session> sessions = [];
-  CircleStatus _status = CircleStatus.idle;
-  List<Participant> participants = [];
   Session? activeSession;
-  bool hasActiveSession = false;
 
   Circle.fromJson(Map<String, dynamic> json,
       {required this.id, required this.ref, UserProfile? createdUser}) {
@@ -31,47 +18,9 @@ class Circle {
     createdBy = createdUser;
     createdOn = DateTimeEx.fromMapValue(json['createdOn']) ?? DateTime.now();
     updatedOn = DateTimeEx.fromMapValue(json['updatedOn']);
-    hasActiveSession = json['activeSession'] != null;
   }
 
-  CircleStatus get status {
-    return _status;
-  }
-
-  Session? get nextSession {
-    DateTime now = DateTime.now();
-    _status = CircleStatus.idle;
-    if (sessions.isNotEmpty) {
-      int index = sessions.indexWhere((element) =>
-          element == activeSession || element.scheduledDate.isAfter(now));
-      if (index != -1) {
-        Session session = sessions[index];
-        if (session == activeSession) {
-          _status = session.state == SessionState.waiting
-              ? CircleStatus.waiting
-              : _status = CircleStatus.active;
-        } else {
-          Duration duration = session.scheduledDate.difference(now);
-          if (duration.inMinutes <= 10) {
-            _status = CircleStatus.preSession;
-          }
-        }
-        return session;
-      } else {
-        _status = CircleStatus.complete;
-      }
-    }
-    return null;
-  }
-
-  Role participantRole(String participantId) {
-    Participant? participant = participants.firstWhereOrNull(
-        (element) => element.userProfile.uid == participantId);
-    if (participant != null) {
-      return participant.role;
-    }
-    return Roles.member;
-  }
+  Role participantRole(String participantId);
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> data = {"name": name, "createdOn": createdOn};

@@ -44,7 +44,7 @@ class TotemRepository {
       _topicsProvider.topics(sort: sort);
 
   // Circles
-  Future<Circle?> createCircle({
+  Future<ScheduledCircle?> createScheduledCircle({
     required String name,
     required int numSessions,
     required DateTime startDate,
@@ -53,7 +53,7 @@ class TotemRepository {
     String? description,
     bool addAsMember = true,
   }) =>
-      _circlesProvider.createCircle(
+      _circlesProvider.createScheduledCircle(
         name: name,
         numSessions: numSessions,
         startDate: startDate,
@@ -63,13 +63,24 @@ class TotemRepository {
         uid: user!.uid,
         addAsMember: addAsMember,
       );
-  Stream<List<Circle>> circles({bool allCircles = false}) =>
-      _circlesProvider.circles(!allCircles ? user?.uid : null);
-  Stream<Circle> circle({required String circleId}) =>
-      _circlesProvider.circle(circleId, user!.uid);
+  Future<SnapCircle?> createSnapCircle({
+    required String name,
+    String? description,
+    bool addAsMember = true,
+  }) =>
+      _circlesProvider.createSnapCircle(
+        name: name,
+        description: description,
+        uid: user!.uid,
+      );
+  Stream<List<ScheduledCircle>> scheduledCircles({bool allCircles = false}) =>
+      _circlesProvider.scheduledCircles(!allCircles ? user?.uid : null);
+  Stream<List<SnapCircle>> snapCircles() => _circlesProvider.snapCircles();
+  Stream<ScheduledCircle> scheduledCircle({required String circleId}) =>
+      _circlesProvider.scheduledCircle(circleId, user!.uid);
 
   // Sessions
-  Future<ActiveSession> activateSession({required Session session}) =>
+  Future<ActiveSession> activateSession({required ScheduledSession session}) =>
       _sessionProvider.activateSession(session: session, uid: user!.uid);
   Future<void> joinSession({required Session session}) =>
       _sessionProvider.joinSession(session: session, uid: user!.uid);

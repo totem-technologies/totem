@@ -7,12 +7,6 @@ import 'package:totem/theme/index.dart';
 
 import '../circle_session_page.dart';
 
-final participantProvider = ChangeNotifierProvider.autoDispose
-    .family<SessionParticipant, String>((ref, uid) {
-  final activeSession = ref.read(activeSessionProvider);
-  return activeSession.participantWithID(uid)!;
-});
-
 class CircleSessionParticipant extends ConsumerWidget {
   const CircleSessionParticipant({Key? key, required this.participantId})
       : super(key: key);

@@ -1,8 +1,9 @@
 import 'package:totem/models/index.dart';
 
 abstract class CirclesProvider {
-  Stream<List<Circle>> circles(String? uid);
-  Future<Circle?> createCircle({
+  Stream<List<ScheduledCircle>> scheduledCircles(String? uid);
+  Stream<List<SnapCircle>> snapCircles();
+  Future<ScheduledCircle?> createScheduledCircle({
     required String name,
     required int numSessions,
     required DateTime startDate,
@@ -12,5 +13,10 @@ abstract class CirclesProvider {
     String? description,
     required bool addAsMember,
   });
-  Stream<Circle> circle(String circleId, String uid);
+  Future<SnapCircle?> createSnapCircle({
+    required String name,
+    String? description,
+    required String uid,
+  });
+  Stream<ScheduledCircle> scheduledCircle(String circleId, String uid);
 }

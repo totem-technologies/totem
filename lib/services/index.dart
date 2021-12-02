@@ -4,6 +4,7 @@ export 'communication_provider.dart';
 export 'error_code_translation.dart';
 export 'providers.dart';
 export 'session_provider.dart';
+export 'service_exception.dart';
 export 'totem_repository.dart';
 export 'topics_provider.dart';
 export 'user_provider.dart';

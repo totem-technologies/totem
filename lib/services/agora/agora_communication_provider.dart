@@ -76,7 +76,18 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     // need to see if there is another call for
     // session owner to end for all?
     _pendingComplete = true;
+    _updateState(CommunicationState.disconnecting);
     await _engine?.leaveChannel();
+  }
+
+  @override
+  Future<bool> updateActiveSessionTotem({required String sessionUserId}) async {
+    Map<String, dynamic>? update = sessionProvider.activeSession
+        ?.requestUserTotem(nextSessionId: sessionUserId);
+    if (update != null) {
+      return await sessionProvider.updateActiveSession(update);
+    }
+    return false;
   }
 
   Future<void> _assertEngine() async {
@@ -212,11 +223,16 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   }
 
   Future<void> _handleLeaveSession(stats) async {
-    if (_pendingComplete) {
-      await sessionProvider.endActiveSession();
-    } else {
-      await sessionProvider.leaveSession(
-          session: _session!, sessionUid: commUid.toString());
+    try {
+      if (_pendingComplete) {
+        await sessionProvider.endActiveSession();
+      } else {
+        await sessionProvider.leaveSession(
+            session: _session!, sessionUid: commUid.toString());
+      }
+    } on ServiceException catch (ex) {
+      // just log this for now
+      debugPrint('Got exception trying to leave session: ${ex.toString()}');
     }
     _pendingComplete = false;
     _updateState(CommunicationState.disconnected);

@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -6,6 +7,8 @@ import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
 
 class UserProfilePage extends ConsumerStatefulWidget {
   const UserProfilePage({Key? key}) : super(key: key);
@@ -116,20 +119,21 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
                                         InkWell(
                                           onTap: () {
                                             // edit
+                                            _promptImageSource(context);
                                           },
                                           child: Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.stretch,
-                                            children: [
-                                              const ProfileImage(),
-                                              const SizedBox(
+                                            children: const [
+                                              ProfileImage(),
+                                              SizedBox(
                                                 height: 16,
                                               ),
-                                              Text(
+/*                                              Text(
                                                 t.editProfilePicture,
                                                 style: textStyles.headline3,
                                                 textAlign: TextAlign.center,
-                                              ),
+                                              ), */
                                             ],
                                           ),
                                         ),
@@ -169,6 +173,83 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
         ),
       ),
     );
+  }
+
+  Future<void> _promptImageSource(BuildContext context) async {
+    final t = AppLocalizations.of(context)!;
+    String? source = await showDialog<String>(
+      context: context,
+      /*it shows a popup with few options which you can select, for option we
+        created enums which we can use with switch statement, in this first switch
+        will wait for the user to select the option which it can use with switch cases*/
+      builder: (BuildContext context) {
+        final actions = [
+          TextButton(
+            child: Text(t.selectPhotoExisting),
+            onPressed: () {
+              Navigator.of(context).pop("gallery");
+            },
+          ),
+          TextButton(
+            child: Text(t.selectPhotoCamera),
+            onPressed: () {
+              Navigator.of(context).pop("camera");
+            },
+          ),
+          TextButton(
+            child: Text(t.cancel),
+            onPressed: () {
+              Navigator.of(context).pop("");
+            },
+          ),
+        ];
+        return AlertDialog(
+          title: Center(
+            child: Text(
+              t.selectProfilePicture,
+            ),
+          ),
+          actions: actions,
+        );
+      },
+    );
+    switch (source) {
+      case 'camera':
+        _pickImage(context, ImageSource.gallery);
+        break;
+      case 'gallery':
+        _pickImage(context, ImageSource.camera);
+        break;
+      default:
+        break;
+    }
+  }
+
+  Future<void> _pickImage(BuildContext context, ImageSource source) async {
+    final picker = ImagePicker();
+    final selected = await picker.pickImage(
+        source: source,
+        preferredCameraDevice: CameraDevice.front,
+        imageQuality: 70,
+        maxWidth: 500,
+        maxHeight: 500);
+    if (selected != null) {
+      final themeColors = Theme.of(context).themeColors;
+      File? cropped = await ImageCropper.cropImage(
+          sourcePath: selected.path,
+          aspectRatioPresets: [CropAspectRatioPreset.square],
+          aspectRatio: const CropAspectRatio(ratioX: 1.0, ratioY: 1.0),
+          androidUiSettings: AndroidUiSettings(
+            toolbarColor: themeColors.primary,
+            toolbarTitle: 'Crop Image',
+            toolbarWidgetColor: themeColors.screenBackground,
+          ));
+      if (cropped != null) {
+        // upload the file then delete
+
+        cropped.delete();
+      }
+    }
   }
 
   Future<void> _saveForm() async {

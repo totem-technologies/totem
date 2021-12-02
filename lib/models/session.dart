@@ -1,23 +1,26 @@
 import 'package:totem/models/index.dart';
 
-class Session {
-  late final Circle circle;
+abstract class Session {
   late final String id;
-  late final String ref;
+  late final Circle circle;
   late String topic;
-  late DateTime scheduledDate;
-  late String state;
+
+  String get ref {
+    return "";
+  }
+
+  String get state;
+  set state(String stateVal);
 
   Session.fromJson(Map<String, dynamic> json,
-      {required this.id, required this.ref, required this.circle}) {
+      {required this.id, required this.circle}) {
     topic = json['topic'] ?? "";
-    scheduledDate = DateTimeEx.fromMapValue(json['scheduledDate'])!;
-    state = json['state'] ?? SessionState.pending;
   }
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> item = {
-      "scheduledData": scheduledDate,
+      "topic": topic,
+      "state": state,
     };
     return item;
   }
