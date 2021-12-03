@@ -27,7 +27,8 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
 
   bool get hasChanged {
     return (_userProfile!.name != _nameController.text ||
-        _userProfile!.email != _emailController.text);
+        (_userProfile!.email != null &&
+            _userProfile!.email != _emailController.text));
   }
 
   @override
@@ -125,7 +126,9 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.stretch,
                                             children: const [
-                                              ProfileImage(),
+                                              ProfileImage(
+                                                size: 120,
+                                              ),
                                               SizedBox(
                                                 height: 16,
                                               ),
@@ -215,10 +218,10 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
     );
     switch (source) {
       case 'camera':
-        _pickImage(context, ImageSource.gallery);
+        _pickImage(context, ImageSource.camera);
         break;
       case 'gallery':
-        _pickImage(context, ImageSource.camera);
+        _pickImage(context, ImageSource.gallery);
         break;
       default:
         break;
@@ -246,7 +249,13 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
           ));
       if (cropped != null) {
         // upload the file then delete
-
+        final _ = await showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return FilePromptSave(
+                uploadTarget: cropped,
+              );
+            });
         cropped.delete();
       }
     }

@@ -46,7 +46,7 @@ class ProfileImage extends ConsumerWidget {
                         shape: BoxShape.circle,
                         image: DecorationImage(
                           image: imageProvider,
-                          fit: BoxFit.cover,
+                          fit: BoxFit.contain,
                         ),
                       ),
                     ),

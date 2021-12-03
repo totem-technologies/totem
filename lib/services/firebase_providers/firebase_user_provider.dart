@@ -48,4 +48,16 @@ class FirebaseUserProvider extends UserProvider {
       debugPrint('error updating user profile: ' + ex.toString());
     }
   }
+
+  @override
+  Future<void> updateUserProfileImage(
+      {required String imageUrl, required String uid}) async {
+    try {
+      final userProfileDoc =
+          FirebaseFirestore.instance.collection(Paths.users).doc(uid);
+      await userProfileDoc.update({"image": imageUrl});
+    } catch (ex) {
+      debugPrint('error updating user profile image: ' + ex.toString());
+    }
+  }
 }

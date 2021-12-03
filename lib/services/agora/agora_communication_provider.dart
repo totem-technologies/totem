@@ -235,12 +235,12 @@ class AgoraCommunicationProvider extends CommunicationProvider {
       debugPrint('Got exception trying to leave session: ${ex.toString()}');
     }
     _pendingComplete = false;
-    _updateState(CommunicationState.disconnected);
     // update state
     if (_handler != null && _handler!.leaveCircle != null) {
       _handler!.leaveCircle!();
     }
     _handler = null;
+    _updateState(CommunicationState.disconnected);
   }
 
   void _handleUserJoined(int user, int elapsed) {

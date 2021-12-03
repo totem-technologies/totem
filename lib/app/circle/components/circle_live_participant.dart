@@ -55,15 +55,6 @@ class CircleLiveParticipant extends StatelessWidget {
     }
     return CachedNetworkImage(
       imageUrl: participant.userProfile.image!,
-      imageBuilder: (context, imageProvider) => Container(
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          image: DecorationImage(
-            image: imageProvider,
-            fit: BoxFit.cover,
-          ),
-        ),
-      ),
       errorWidget: (context, url, error) => _genericUserImage(context),
     );
   }
