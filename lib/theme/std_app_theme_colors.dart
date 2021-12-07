@@ -8,7 +8,7 @@ class StdThemePalette {
   static const baseBlack = Color(0xff16182a);
   static const baseWhite = Color(0xffffffff);
   static const offWhite = Color(0xffefefef);
-  static const dirtyWhite = Color.fromRGBO(255, 255, 255, 0.8);
+  static const dirtyWhite = Color.fromRGBO(255, 255, 255, 0.75);
   static const welcomeGradient = [Color(0xfffff9ec), Color(0xffffd472)];
   static const mainGradient = [Color(0xfffffdf9), Color(0xfffeeecc)];
   static const homeGradient = [Color(0xfffffdf9), Color(0xfffef7e8)];
@@ -30,6 +30,7 @@ class StdAppThemeColors extends AppThemeColors {
           primary: StdThemePalette.yellow,
           primaryButtonBackground: StdThemePalette.yellow,
           primaryText: StdThemePalette.baseBlack,
+          profileBackground: StdThemePalette.baseWhite,
           secondaryText: StdThemePalette.grey,
           reversedText: StdThemePalette.baseWhite,
           dialogBackground: StdThemePalette.baseWhite,
@@ -47,5 +48,6 @@ class StdAppThemeColors extends AppThemeColors {
           divider: StdThemePalette.lightGrey,
           profileGradient: StdThemePalette.profileGradient,
           controlButtonBackground: StdThemePalette.lightGrey,
+          blurBackground: StdThemePalette.baseBlack.withAlpha(40),
         );
 }

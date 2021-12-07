@@ -5,6 +5,7 @@ import 'package:totem/app/login/components/phone_register_number_entry.dart';
 import 'package:totem/app/login/components/phone_register_number_error.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/services/index.dart';
+import 'package:totem/theme/index.dart';
 
 class RegisterPage extends ConsumerStatefulWidget {
   const RegisterPage({Key? key}) : super(key: key);
@@ -31,6 +32,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return GradientBackground(
+      rotation: Theme.of(context).backgroundGradientRotation,
       child: Scaffold(
         backgroundColor: Colors.transparent,
         resizeToAvoidBottomInset: false,

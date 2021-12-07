@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:totem/app/circle/circle_join_dialog.dart';
 import 'package:totem/app/circle/circle_session_page.dart';
 import 'package:totem/app/home/components/snap_circle_item.dart';
 import 'package:totem/theme/index.dart';
@@ -95,8 +96,18 @@ class _SnapCirclesListState extends ConsumerState<SnapCirclesList> {
   Future<void> _handleShowCircle(
       BuildContext context, SnapCircle circle) async {
     var repo = ref.read(repositoryProvider);
-    await repo.createActiveSession(session: circle.activeSession!);
-    Navigator.of(context).push(MaterialPageRoute(
-        builder: (_) => CircleSessionPage(session: circle.snapSession)));
+    bool? response =
+        await CircleJoinDialog.showDialog(context, session: circle.snapSession);
+    debugPrint('session response: ' + response!.toString());
+    if (response == true) {
+      await repo.createActiveSession(session: circle.activeSession!);
+      Future.delayed(const Duration(milliseconds: 300), () async {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => CircleSessionPage(session: circle.snapSession),
+          ),
+        );
+      });
+    }
   }
 }

@@ -104,5 +104,9 @@ flutter:
           weight: 500
         - asset: fonts/Raleway-Italic.ttf
           style: italic
+    - family: Recoleta
+      fonts:
+        - asset: fonts/Recoleta-Regular.ttf
+
 flutter_intl:
   enabled: true

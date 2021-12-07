@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 
 class AppThemeColors {
   AppThemeColors({
+    required this.blurBackground,
     required this.busyIndicator,
     required this.screenBackground,
     required this.primaryText,
     required this.secondaryText,
     required this.reversedText,
     required this.linkText,
+    required this.profileBackground,
     required this.primary,
     required this.primaryButtonBackground,
     required this.dialogBackground,
@@ -25,6 +27,7 @@ class AppThemeColors {
     required this.controlButtonBackground,
   });
 
+  final Color blurBackground;
   final Color busyIndicator;
   final Color controlButtonBackground;
   final Color dialogBackground;
@@ -34,6 +37,7 @@ class AppThemeColors {
   final Color primary;
   final Color primaryButtonBackground;
   final Color primaryText;
+  final Color profileBackground;
   final Color secondaryText;
   final Color reversedText;
   final Color linkText;

@@ -10,6 +10,7 @@ class _LoginPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
     return Column(
       children: [
         Expanded(
@@ -21,13 +22,9 @@ class _LoginPanel extends StatelessWidget {
               children: [
                 Text(
                   t.welcome,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 32,
-                  ),
+                  style: theme.textStyles.headline1,
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 8),
                 const Center(
                   child: ContentDivider(),
                 ),
@@ -57,35 +54,29 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeColors = Theme.of(context).themeColors;
-    return GradientBackground(
-      gradient: themeColors.welcomeGradient,
-      child: Scaffold(
-          backgroundColor: Colors.transparent,
-          body: Stack(
+    return Scaffold(
+      backgroundColor: themeColors.dialogBackground,
+      body: Stack(
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Expanded(child: Container()),
-                  SvgPicture.asset(
-                    'assets/background_shape_2.svg',
-                    fit: BoxFit.fill,
-                  ),
-                ],
+              Expanded(
+                flex: 4,
+                child: Container(),
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Expanded(child: Container()),
-                  SvgPicture.asset(
-                    'assets/background_shape.svg',
-                    fit: BoxFit.fill,
-                  )
-                ],
+              Expanded(
+                flex: 6,
+                child: SvgPicture.asset(
+                  'assets/background_shape.svg',
+                  fit: BoxFit.fill,
+                ),
               ),
-              const _LoginPanel(),
             ],
-          )),
+          ),
+          const _LoginPanel(),
+        ],
+      ),
     );
   }
 }
