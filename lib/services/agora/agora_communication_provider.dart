@@ -5,6 +5,7 @@ import 'package:totem/models/session.dart';
 import 'package:totem/services/communication_provider.dart';
 import 'package:totem/services/index.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'dart:io';
 
 class AgoraCommunicationProvider extends CommunicationProvider {
   static const String appId = "4880737da9bf47e290f46d847cd1c3b1";
@@ -21,6 +22,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   String? _lastError;
   bool _pendingComplete = false;
   late SessionToken _sessionToken;
+  String? _sessionImage;
 
   @override
   String? get lastError {
@@ -42,10 +44,12 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   Future<bool> joinSession({
     required Session session,
     required CommunicationHandler handler,
+    String? sessionImage,
   }) async {
     // This is for test purposes, this should be moved
     // to the cloud function that generates a new session at
     // a specific time - this is using a predefined test token that is short lived
+    _sessionImage = sessionImage;
     _handler = handler;
     _session = session;
     _updateState(CommunicationState.joining);
@@ -93,10 +97,11 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   Future<void> _assertEngine() async {
     if (_engine == null) {
       try {
-        Map<Permission, PermissionStatus> status =
-            await [Permission.microphone].request();
-        if (status[Permission.microphone] == PermissionStatus.granted ||
-            status[Permission.microphone] == PermissionStatus.limited) {
+        PermissionStatus statusValue = (Platform.isAndroid)
+            ? await Permission.microphone.request()
+            : await Permission.microphone.status;
+        if (statusValue == PermissionStatus.granted ||
+            statusValue == PermissionStatus.limited) {
           _engine = await RtcEngine.create(appId);
           // enable audio and fancy noise cancelling
           await _engine!.enableAudio();
@@ -211,7 +216,10 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     commUid = uid;
     // Update the session to add user information to session display
     await sessionProvider.joinSession(
-        session: _session!, uid: userId, sessionUserId: commUid.toString());
+        session: _session!,
+        uid: userId,
+        sessionUserId: commUid.toString(),
+        sessionImage: _sessionImage);
     sessionProvider.activeSession
         ?.userJoined(sessionUserId: commUid.toString());
     // notify any callbacks that the user has joined the session

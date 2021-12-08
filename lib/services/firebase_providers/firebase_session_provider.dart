@@ -62,6 +62,7 @@ class FirebaseSessionProvider extends SessionProvider {
   Future<void> joinSession({
     required Session session,
     required String uid,
+    String? sessionImage,
     String? sessionUserId,
   }) async {
     // For security reasons, this might be better in a cloud function
@@ -70,10 +71,11 @@ class FirebaseSessionProvider extends SessionProvider {
     try {
       bool result = false;
       if (session is SnapSession) {
-        result = await _joinSnapSession(session, uid, sessionUserId);
+        result =
+            await _joinSnapSession(session, uid, sessionUserId, sessionImage);
       } else {
         result = await _joinScheduledSession(
-            session as ScheduledSession, uid, sessionUserId);
+            session as ScheduledSession, uid, sessionUserId, sessionImage);
       }
       if (!result) {
         throw ServiceException(
@@ -217,7 +219,7 @@ class FirebaseSessionProvider extends SessionProvider {
   }
 
   Map<String, dynamic> _participant(DocumentReference userRef,
-      {String? role, String? sessionUserId}) {
+      {String? role, String? sessionUserId, String? sessionImage}) {
     Map<String, dynamic> data = {
       "ref": userRef,
       "role": role ?? Roles.member.toString(),
@@ -226,6 +228,9 @@ class FirebaseSessionProvider extends SessionProvider {
     };
     if (sessionUserId != null) {
       data["sessionUserId"] = sessionUserId;
+    }
+    if (sessionImage != null) {
+      data["sessionImage"] = sessionImage;
     }
     return data;
   }
@@ -313,13 +318,19 @@ class FirebaseSessionProvider extends SessionProvider {
               await Future.wait(participantUpdates.map((participantData) async {
             DocumentReference ref = participantData['ref'];
             DocumentSnapshot doc = await ref.get();
-            return SessionParticipant.fromJson(participantData,
-                userProfile: UserProfile.fromJson(
-                  doc.data() as Map<String, dynamic>,
-                  uid: doc.id,
-                  ref: doc.reference.path,
-                ),
-                me: doc.id == _activeSession?.userId);
+            SessionParticipant participant =
+                SessionParticipant.fromJson(participantData,
+                    userProfile: UserProfile.fromJson(
+                      doc.data() as Map<String, dynamic>,
+                      uid: doc.id,
+                      ref: doc.reference.path,
+                    ),
+                    me: doc.id == _activeSession?.userId);
+            // use the session image if present
+            if (participantData['sessionImage'] != null) {
+              participant.userProfile.image = participantData['sessionImage'];
+            }
+            return participant;
           }).toList());
           sessionData['participants'] = participants;
         } else {
@@ -380,8 +391,8 @@ class FirebaseSessionProvider extends SessionProvider {
     return false;
   }
 
-  Future<bool> _joinScheduledSession(
-      ScheduledSession session, String uid, String? sessionUserId) async {
+  Future<bool> _joinScheduledSession(ScheduledSession session, String uid,
+      String? sessionUserId, String? sessionImage) async {
     DocumentReference ref = FirebaseFirestore.instance.doc(session.ref);
     DocumentReference userProfileRef =
         FirebaseFirestore.instance.collection(Paths.users).doc(uid);
@@ -395,17 +406,23 @@ class FirebaseSessionProvider extends SessionProvider {
       if (existingUser == null) {
         participants.add(_participant(userProfileRef,
             sessionUserId: sessionUserId,
+            sessionImage: sessionImage,
             role: session.circle.participantRole(uid).toString()));
       } else {
-        existingUser['sessionUserId'] = sessionUserId;
+        if (sessionUserId != null) {
+          existingUser['sessionUserId'] = sessionUserId;
+        }
+        if (sessionImage != null) {
+          existingUser['sessionImage'] = sessionImage;
+        }
       }
       await ref.update({"participants": participants});
     }
     return false;
   }
 
-  Future<bool> _joinSnapSession(
-      SnapSession session, String uid, String? sessionUserId) async {
+  Future<bool> _joinSnapSession(SnapSession session, String uid,
+      String? sessionUserId, String? sessionImage) async {
     DocumentReference circleRef =
         FirebaseFirestore.instance.doc(session.circle.ref);
     DocumentReference userProfileRef =
@@ -423,9 +440,15 @@ class FirebaseSessionProvider extends SessionProvider {
       if (existingUser == null) {
         participants.add(_participant(userProfileRef,
             sessionUserId: sessionUserId,
+            sessionImage: sessionImage,
             role: session.circle.participantRole(uid).toString()));
       } else {
-        existingUser['sessionUserId'] = sessionUserId;
+        if (sessionUserId != null) {
+          existingUser['sessionUserId'] = sessionUserId;
+        }
+        if (sessionImage != null) {
+          existingUser['sessionImage'] = sessionImage;
+        }
       }
       activeSession["participants"] = participants;
       activeSession["lastChange"] = ActiveSessionChange.participantsChange;

@@ -30,16 +30,19 @@ class CircleLiveParticipant extends StatelessWidget {
               border: Border.all(
                   color: themeColors.primary,
                   width: participant.totem ? 2.0 : 0),
-              borderRadius: const BorderRadius.all(Radius.circular(8)),
+              borderRadius: const BorderRadius.all(Radius.circular(10)),
             ),
-            child: (!participant.userProfile.hasImage)
-                ? Container(
-                    color: themeColors.primary.withAlpha(80),
-                    child: _genericUserImage(context),
-                  )
-                : Positioned.fill(
-                    child: _renderUserImage(context),
-                  ),
+            child: ClipRRect(
+              borderRadius: const BorderRadius.all(Radius.circular(8)),
+              child: (!participant.userProfile.hasImage)
+                  ? Container(
+                      color: themeColors.primary.withAlpha(80),
+                      child: _genericUserImage(context),
+                    )
+                  : Positioned.fill(
+                      child: _renderUserImage(context),
+                    ),
+            ),
           ),
         )
       ],

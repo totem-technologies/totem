@@ -96,15 +96,17 @@ class _SnapCirclesListState extends ConsumerState<SnapCirclesList> {
   Future<void> _handleShowCircle(
       BuildContext context, SnapCircle circle) async {
     var repo = ref.read(repositoryProvider);
-    bool? response =
+    String? sessionImage =
         await CircleJoinDialog.showDialog(context, session: circle.snapSession);
-    debugPrint('session response: ' + response!.toString());
-    if (response == true) {
-      await repo.createActiveSession(session: circle.activeSession!);
+    if (sessionImage != null && sessionImage.isNotEmpty) {
+      await repo.createActiveSession(
+        session: circle.activeSession!,
+      );
       Future.delayed(const Duration(milliseconds: 300), () async {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (_) => CircleSessionPage(session: circle.snapSession),
+            builder: (_) => CircleSessionPage(
+                session: circle.snapSession, sessionImage: sessionImage),
           ),
         );
       });

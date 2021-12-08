@@ -13,9 +13,11 @@ class FileUploader extends ConsumerStatefulWidget {
     Key? key,
     this.onComplete,
     this.clearFile = false,
+    this.assignProfile = true,
   }) : super(key: key);
   final ValueChanged<String?>? onComplete;
   final bool clearFile;
+  final bool assignProfile;
 
   @override
   FileUploaderState createState() => FileUploaderState();
@@ -77,7 +79,7 @@ class FileUploaderState extends ConsumerState<FileUploader> {
   }
 
   Future<void> _completeUpload(File upload, {String url = ''}) async {
-    if (url.isNotEmpty) {
+    if (url.isNotEmpty && widget.assignProfile) {
       var repo = ref.read(repositoryProvider);
       repo.updateUserProfileImage(url);
     }

@@ -27,8 +27,10 @@ final participantProvider = ChangeNotifierProvider.autoDispose
 });
 
 class CircleSessionPage extends ConsumerStatefulWidget {
-  const CircleSessionPage({Key? key, required this.session}) : super(key: key);
+  const CircleSessionPage({Key? key, required this.session, this.sessionImage})
+      : super(key: key);
   final Session session;
+  final String? sessionImage;
 
   @override
   _CircleSessionPageState createState() => _CircleSessionPageState();
@@ -56,7 +58,8 @@ class _CircleSessionPageState extends ConsumerState<CircleSessionPage> {
   Widget build(BuildContext context) {
     if (widget.session is SnapSession) {
       return CircleSnapSessionContent(
-          circle: widget.session.circle as SnapCircle);
+          circle: widget.session.circle as SnapCircle,
+          sessionImage: widget.sessionImage);
     } else {
       return CircleScheduledSessionContent(session: widget.session);
     }
