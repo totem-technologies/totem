@@ -17,7 +17,11 @@ class CircleSessionParticipant extends ConsumerWidget {
     final participant = ref.watch(participantProvider(participantId));
     return Stack(
       children: [
-        CircleParticipant(participant: participant),
+        CircleParticipant(
+            name: participant.name,
+            role: participant.role,
+            image: participant.sessionImage,
+            me: participant.me),
         PositionedDirectional(
           top: 5,
           end: 5,

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:totem/components/fade_route.dart';
 import 'package:totem/components/widgets/index.dart';
-import 'package:totem/components/widgets/sub_page_header.dart';
 import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import 'circle_join_dialog.dart';
 import 'circle_session_page.dart';
 
 class CircleCreateSnapPage extends ConsumerStatefulWidget {
@@ -80,6 +80,8 @@ class _CircleCreatePageState extends ConsumerState<CircleCreateSnapPage> {
                                   focusNode: _focusNodeDescription,
                                   controller: _descriptionController,
                                   labelText: t.description,
+                                  textCapitalization:
+                                      TextCapitalization.sentences,
                                   maxLines: 0,
                                   textInputAction: TextInputAction.done,
                                 ),
@@ -125,14 +127,24 @@ class _CircleCreatePageState extends ConsumerState<CircleCreateSnapPage> {
       final circle = await repo.createSnapCircle(
           name: _nameController.text, description: _descriptionController.text);
       if (circle != null) {
-        await repo.createActiveSession(session: circle.activeSession!);
-        Navigator.pushReplacement(
-          context,
-          FadeRoute(
-            page: CircleSessionPage(session: circle.snapSession),
-          ),
-        );
-        return;
+        String? sessionImage = await CircleJoinDialog.showDialog(context,
+            session: circle.snapSession);
+        if (sessionImage != null && sessionImage.isNotEmpty) {
+          await repo.createActiveSession(session: circle.activeSession!);
+          // prompt user for image
+          Navigator.pushReplacement(
+            context,
+            FadeRoute(
+              page: CircleSessionPage(
+                session: circle.snapSession,
+                sessionImage: sessionImage,
+              ),
+            ),
+          );
+          return;
+        } else {
+          // leave session in place or cancel?
+        }
       }
     } on ServiceException catch (ex) {
       debugPrint('Error creating circle: ' + ex.toString());

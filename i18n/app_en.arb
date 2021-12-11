@@ -9,6 +9,7 @@
     "changesTitle": "Save Changes?",
     "circleDescription": "Circle Description",
     "circles": "Circles",
+    "circleStarting": "Circle Starting",
     "createCircle": "Create Circle",
     "createdOn": "Created on",
     "description": "Description",
@@ -107,5 +108,6 @@
     "startTime": "Start Time",
     "unmute": "Unmute",
     "welcome": "Welcome to Totem",
-    "welcomeDetail": "We are a Community, made to let you share and participate with others, by communicating your thoughts on a topic of your interest."
+    "welcomeDetail": "We are a Community, made to let you share and participate with others, by communicating your thoughts on a topic of your interest.",
+    "yourTurn": "Your Turn"
   }

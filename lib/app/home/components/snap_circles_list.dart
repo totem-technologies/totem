@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:totem/app/circle/circle_join_dialog.dart';
 import 'package:totem/app/circle/circle_session_page.dart';
-import 'package:totem/app/home/components/snap_circle_item.dart';
-import 'package:totem/theme/index.dart';
 import 'package:totem/app/home/components/index.dart';
+import 'package:totem/app/home/components/snap_circle_item.dart';
 import 'package:totem/components/widgets/busy_indicator.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:totem/theme/index.dart';
 
 class SnapCirclesList extends ConsumerStatefulWidget {
   const SnapCirclesList({Key? key}) : super(key: key);
@@ -19,7 +19,6 @@ class SnapCirclesList extends ConsumerStatefulWidget {
 
 class _SnapCirclesListState extends ConsumerState<SnapCirclesList> {
   late Stream<List<SnapCircle>> _circles;
-  final double bottomPadding = 80;
 
   @override
   void initState() {
@@ -36,7 +35,7 @@ class _SnapCirclesListState extends ConsumerState<SnapCirclesList> {
 
   @override
   Widget build(BuildContext context) {
-    final bottomPadding = MediaQuery.of(context).padding.bottom;
+    final bottomPadding = MediaQuery.of(context).padding.bottom + 100;
     return StreamBuilder<List<SnapCircle>>(
         stream: _circles,
         builder: (context, snapshot) {
@@ -59,7 +58,7 @@ class _SnapCirclesListState extends ConsumerState<SnapCirclesList> {
 
           if (list.isNotEmpty) {
             return ListView.builder(
-              padding: EdgeInsets.only(bottom: 100 + bottomPadding),
+              padding: EdgeInsets.only(bottom: bottomPadding),
               itemCount: list.length,
               itemBuilder: (c, i) => SnapCircleItem(
                 circle: list[i],
@@ -67,18 +66,18 @@ class _SnapCirclesListState extends ConsumerState<SnapCirclesList> {
               ),
             );
           }
-          return _noCircles(context);
+          return _noCircles(context, bottomPadding);
         });
   }
 
-  Widget _noCircles(BuildContext context) {
+  Widget _noCircles(BuildContext context, double bottomPadding) {
     final themeData = Theme.of(context);
     final t = AppLocalizations.of(context)!;
     return Padding(
       padding: EdgeInsets.only(
           left: themeData.pageHorizontalPadding,
           right: themeData.pageHorizontalPadding,
-          bottom: bottomPadding),
+          bottom: bottomPadding + 20),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.stretch,

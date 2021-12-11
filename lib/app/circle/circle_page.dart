@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:totem/app/circle/components/circle_participant.dart';
 import 'package:totem/components/fade_route.dart';
 import 'package:totem/components/widgets/index.dart';
-import 'package:totem/components/widgets/sub_page_header.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
@@ -120,8 +119,12 @@ class CirclePageState extends ConsumerState<CirclePage> {
           crossAxisSpacing: 8,
         ),
         itemBuilder: (context, index) {
+          Participant participant = circle.participants[index];
           return CircleParticipant(
-            participant: circle.participants[index],
+            name: participant.userProfile.name,
+            image: participant.userProfile.image,
+            role: participant.role,
+            me: participant.me,
           );
         },
         itemCount: circle.participants.length,

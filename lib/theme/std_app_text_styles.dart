@@ -30,6 +30,11 @@ class StdAppTextStyles extends AppTextStyles {
               fontSize: 24,
               fontWeight: FontWeight.w400,
               color: themeColors.primaryText),
+          headline6: TextStyle(
+              fontFamily: 'Raleway',
+              fontSize: 24,
+              fontWeight: FontWeight.w600,
+              color: themeColors.primaryText),
           headline3: TextStyle(
               fontFamily: 'Raleway',
               fontSize: 16,

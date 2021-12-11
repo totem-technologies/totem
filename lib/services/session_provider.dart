@@ -19,4 +19,5 @@ abstract class SessionProvider extends ChangeNotifier {
   ActiveSession? get activeSession;
   Future<SessionToken> requestSessionToken({required Session session});
   Future<bool> updateActiveSession(Map<String, dynamic> update);
+  Future<bool> updateActiveSessionState(SessionState state);
 }

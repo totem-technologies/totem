@@ -1,8 +1,6 @@
 import 'package:agora_rtc_engine/rtc_engine.dart';
 import 'package:flutter/foundation.dart';
 import 'package:totem/models/index.dart';
-import 'package:totem/models/session.dart';
-import 'package:totem/services/communication_provider.dart';
 import 'package:totem/services/index.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'dart:io';
@@ -85,11 +83,39 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   }
 
   @override
-  Future<bool> updateActiveSessionTotem({required String sessionUserId}) async {
-    Map<String, dynamic>? update = sessionProvider.activeSession
-        ?.requestUserTotem(nextSessionId: sessionUserId);
-    if (update != null) {
-      return await sessionProvider.updateActiveSession(update);
+  Future<bool> receiveActiveSessionTotem(
+      {required String sessionUserId}) async {
+    if (sessionProvider.activeSession?.totemUser == sessionUserId) {
+      // update the session information with the user
+      Map<String, dynamic>? update =
+          sessionProvider.activeSession?.receiveUserTotem();
+      if (update != null) {
+        return await sessionProvider.updateActiveSession(update);
+      }
+    }
+    return false;
+  }
+
+  @override
+  Future<bool> passActiveSessionTotem({required String sessionUserId}) async {
+    if (sessionProvider.activeSession?.totemUser == sessionUserId) {
+      Map<String, dynamic>? update =
+          sessionProvider.activeSession?.requestNextUserTotem();
+      if (update != null) {
+        return await sessionProvider.updateActiveSession(update);
+      }
+    }
+    return false;
+  }
+
+  @override
+  Future<bool> doneActiveSessionTotem({required String sessionUserId}) async {
+    if (sessionProvider.activeSession?.totemUser == sessionUserId) {
+      Map<String, dynamic>? update =
+          sessionProvider.activeSession?.requestNextUserTotem();
+      if (update != null) {
+        return await sessionProvider.updateActiveSession(update);
+      }
     }
     return false;
   }
@@ -99,7 +125,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
       try {
         PermissionStatus statusValue = (Platform.isAndroid)
             ? await Permission.microphone.request()
-            : await Permission.microphone.status;
+            : PermissionStatus.granted;
         if (statusValue == PermissionStatus.granted ||
             statusValue == PermissionStatus.limited) {
           _engine = await RtcEngine.create(appId);

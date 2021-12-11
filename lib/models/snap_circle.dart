@@ -3,7 +3,7 @@ import 'package:totem/models/index.dart';
 class SnapCircle extends Circle {
   static const snapSessionId = "snap";
 
-  late String state;
+  late SessionState state;
   DateTime? started;
   DateTime? completed;
 
@@ -18,7 +18,11 @@ class SnapCircle extends Circle {
           ref: ref,
           createdUser: createdUser,
         ) {
-    state = json['state'] ?? SessionState.waiting;
+    if (json['state'] != null) {
+      state = SessionState.values.byName(json['state']);
+    } else {
+      state = SessionState.waiting;
+    }
     if (json['activeSession'] != null) {
       activeSession = SnapSession.fromJson(json['activeSession'], circle: this);
     }
@@ -33,15 +37,15 @@ class SnapCircle extends Circle {
   @override
   Role participantRole(String participantId) {
     if (createdBy != null && createdBy!.uid == participantId) {
-      return Roles.keeper;
+      return Role.keeper;
     }
-    return Roles.member;
+    return Role.member;
   }
 
   @override
   Map<String, dynamic> toJson({bool includeParticipants = true}) {
     Map<String, dynamic> data = super.toJson();
-    data["state"] = state;
+    data["state"] = state.name;
     if (activeSession != null) {
       data['activeSession'] = (activeSession! as SnapSession)
           .toJson(includeParticipants: includeParticipants);

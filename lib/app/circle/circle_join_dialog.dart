@@ -124,20 +124,25 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
                                 const SizedBox(height: 24),
                                 Expanded(child: _userInfo(context)),
                                 if (_selectedImage != null)
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      ThemedRaisedButton(
-                                        label: t.joinSession,
-                                        onPressed: _selectedImage != null
-                                            ? () {
-                                                _uploadImage(context);
-                                              }
-                                            : null,
-                                        width: Theme.of(context)
-                                            .standardButtonWidth,
-                                      ),
-                                    ],
+                                  SafeArea(
+                                    top: false,
+                                    bottom: true,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        ThemedRaisedButton(
+                                          label: t.joinSession,
+                                          onPressed: _selectedImage != null
+                                              ? () {
+                                                  _uploadImage(context);
+                                                }
+                                              : null,
+                                          width: Theme.of(context)
+                                              .standardButtonWidth,
+                                        ),
+                                      ],
+                                    ),
                                   ),
                               ],
                             ),

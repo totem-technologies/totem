@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:totem/models/index.dart';
-import 'package:totem/services/firebase_providers/paths.dart';
 import 'package:totem/services/circles_provider.dart';
+import 'package:totem/services/firebase_providers/paths.dart';
 import 'package:totem/services/index.dart';
 
 class FirebaseCirclesProvider extends CirclesProvider {
@@ -51,7 +51,7 @@ class FirebaseCirclesProvider extends CirclesProvider {
   Stream<List<SnapCircle>> snapCircles() {
     final collection = FirebaseFirestore.instance.collection(Paths.snapCircles);
     return collection
-        .where('state', isEqualTo: SessionState.waiting)
+        .where('state', isEqualTo: SessionState.waiting.name)
         .snapshots()
         .transform(
       StreamTransformer<QuerySnapshot<Map<String, dynamic>>,
@@ -96,7 +96,7 @@ class FirebaseCirclesProvider extends CirclesProvider {
       // add to users circle
       if (addAsMember) {
         await addUserToCircle(Paths.circles,
-            id: ref.id, uid: uid, role: Roles.keeper);
+            id: ref.id, uid: uid, role: Role.keeper);
       }
       // return circle
       ScheduledCircle circle =
@@ -123,13 +123,12 @@ class FirebaseCirclesProvider extends CirclesProvider {
       "createdOn": now,
       "updatedOn": now,
       "createdBy": userRef,
-      "state": SessionState.waiting,
+      "state": SessionState.waiting.name,
     };
     if (description != null) {
       data["description"] = description;
     }
     Map<String, dynamic> snapSession = {
-      "state": SessionState.waiting,
       "started": now,
     };
     data["activeSession"] = snapSession;
@@ -172,7 +171,7 @@ class FirebaseCirclesProvider extends CirclesProvider {
   Future<bool> addUserToCircle(String path,
       {required String id,
       required String uid,
-      Role role = Roles.member}) async {
+      Role role = Role.member}) async {
     try {
       DocumentReference circleRef =
           FirebaseFirestore.instance.collection(path).doc(id);
@@ -182,7 +181,7 @@ class FirebaseCirclesProvider extends CirclesProvider {
             FirebaseFirestore.instance.collection(Paths.users).doc(uid);
         final joined = DateTime.now();
         final circleData = {
-          "role": role.toString(),
+          "role": role.name,
           "joined": joined,
           "ref": userRef,
         };
@@ -198,7 +197,7 @@ class FirebaseCirclesProvider extends CirclesProvider {
         await circleRef.update({"participants": participants});
         // Update the user reference to the circle
         final userCircleData = {
-          "role": role.toString(),
+          "role": role.name,
           "joined": joined,
           "ref": circleRef
         };

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:totem/app/circle/circle_session_page.dart';
 import 'package:totem/app/circle/components/circle_live_session_participant.dart';
+import 'package:totem/app/circle/components/circle_live_totem_participant.dart';
 import 'package:totem/theme/index.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -12,7 +13,8 @@ class CircleLiveSessionUsers extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final participants = ref.watch(activeSessionProvider).activeParticipants;
+    final activeSession = ref.watch(activeSessionProvider);
+    final participants = activeSession.activeParticipants;
     if (participants.isNotEmpty) {
       final List<Widget> userItems = <Widget>[];
       for (int i = 0; i < participants.length; i++) {
@@ -20,7 +22,7 @@ class CircleLiveSessionUsers extends ConsumerWidget {
           LayoutId(
             id: 'item$i',
             child: CircleLiveSessionParticipant(
-                participantId: participants[i].userProfile.uid),
+                participantId: participants[i].uid),
           ),
         );
       }
@@ -28,7 +30,7 @@ class CircleLiveSessionUsers extends ConsumerWidget {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Expanded(child: Container()),
+          const Expanded(child: CircleLiveTotemParticipant()),
           const SizedBox(height: 10),
           SizedBox(
             height: 80,
@@ -38,7 +40,10 @@ class CircleLiveSessionUsers extends ConsumerWidget {
               scrollDirection: Axis.horizontal,
               itemBuilder: (context, index) {
                 return CircleLiveSessionParticipant(
-                    participantId: participants[index].userProfile.uid);
+                  participantId: participants[index].uid,
+                  hasTotem: activeSession.totemUser ==
+                      participants[index].sessionUserId,
+                );
               },
               separatorBuilder: (context, index) {
                 return const SizedBox(

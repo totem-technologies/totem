@@ -16,6 +16,7 @@ class StdThemePalette {
   static const brown = Color(0xffa47817);
   static const grey = Color(0xff696b76);
   static const lightGrey = Color(0xffc9c9cd);
+  static const lighterGrey = Color(0xffd8d8d8);
   static const profileGradient = [
     Color.fromRGBO(49, 53, 84, 0),
     Color.fromRGBO(28, 30, 51, 0.78),
@@ -49,5 +50,6 @@ class StdAppThemeColors extends AppThemeColors {
           profileGradient: StdThemePalette.profileGradient,
           controlButtonBackground: StdThemePalette.lightGrey,
           blurBackground: StdThemePalette.baseBlack.withAlpha(40),
+          participantBorder: StdThemePalette.lighterGrey,
         );
 }

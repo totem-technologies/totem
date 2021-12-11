@@ -5,9 +5,17 @@ import 'package:totem/theme/index.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CircleParticipant extends StatelessWidget {
-  const CircleParticipant({Key? key, required this.participant})
+  const CircleParticipant(
+      {Key? key,
+      required this.name,
+      required this.role,
+      this.image,
+      this.me = false})
       : super(key: key);
-  final Participant participant;
+  final String? image;
+  final String name;
+  final bool me;
+  final Role role;
 
   @override
   Widget build(BuildContext context) {
@@ -18,12 +26,12 @@ class CircleParticipant extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
         child: Stack(
           children: [
-            if (!participant.userProfile.hasImage)
+            if (image != null && image!.isNotEmpty)
               Container(
                 color: themeColors.primary.withAlpha(80),
               ),
             Positioned.fill(
-              child: (participant.userProfile.hasImage)
+              child: (image != null && image!.isNotEmpty)
                   ? _renderUserImage(context)
                   : _genericUserImage(context),
             ),
@@ -39,7 +47,7 @@ class CircleParticipant extends StatelessWidget {
                       padding:
                           const EdgeInsets.only(left: 12, right: 12, bottom: 8),
                       child: Text(
-                        participant.userProfile.name,
+                        name,
                         style: textStyles.headline5,
                       ),
                     ),
@@ -50,9 +58,8 @@ class CircleParticipant extends StatelessWidget {
               start: 0,
               end: 0,
             ),
-            if (participant.me) renderMe(context),
-            if (participant.role == Roles.keeper && !participant.me)
-              renderKeeperLabel(context)
+            if (me) renderMe(context),
+            if (role == Role.keeper && !me) renderKeeperLabel(context)
           ],
         ));
   }
@@ -131,14 +138,14 @@ class CircleParticipant extends StatelessWidget {
   }
 
   Widget _renderUserImage(BuildContext context) {
-    if (participant.userProfile.image!.toLowerCase().contains("assets/")) {
+    if (image!.toLowerCase().contains("assets/")) {
       return Image.asset(
-        participant.userProfile.image!,
+        image!,
         fit: BoxFit.cover,
       );
     }
     return CachedNetworkImage(
-      imageUrl: participant.userProfile.image!,
+      imageUrl: image!,
       errorWidget: (context, url, error) => _genericUserImage(context),
     );
   }

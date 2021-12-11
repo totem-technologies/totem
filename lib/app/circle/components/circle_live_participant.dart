@@ -1,12 +1,19 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/theme/index.dart';
 
 class CircleLiveParticipant extends StatelessWidget {
-  const CircleLiveParticipant({Key? key, required this.participant})
-      : super(key: key);
+  const CircleLiveParticipant({
+    Key? key,
+    required this.participant,
+    this.hasTotem = false,
+    this.totemReceived = false,
+  }) : super(key: key);
   final SessionParticipant participant;
+  final bool hasTotem;
+  final bool totemReceived;
 
   @override
   Widget build(BuildContext context) {
@@ -14,59 +21,61 @@ class CircleLiveParticipant extends StatelessWidget {
     final themeColors = themeData.themeColors;
     return Column(
       children: [
-        if (!participant.totem) const SizedBox(height: 8),
-        SizedBox(
-          height: participant.totem ? 72 : 64,
-          width: participant.totem ? 72 : 64,
-          child: Container(
-            decoration: BoxDecoration(
-              color: themeColors.trayBackground,
-              boxShadow: [
-                BoxShadow(
-                    color: themeColors.shadow,
-                    offset: Offset(0, participant.totem ? 4 : 2),
-                    blurRadius: 4),
-              ],
-              border: Border.all(
-                  color: themeColors.primary,
-                  width: participant.totem ? 2.0 : 0),
-              borderRadius: const BorderRadius.all(Radius.circular(10)),
-            ),
-            child: ClipRRect(
-              borderRadius: const BorderRadius.all(Radius.circular(8)),
-              child: (!participant.userProfile.hasImage)
-                  ? Container(
-                      color: themeColors.primary.withAlpha(80),
-                      child: _genericUserImage(context),
-                    )
-                  : Positioned.fill(
-                      child: _renderUserImage(context),
-                    ),
+        if (!hasTotem) const SizedBox(height: 8),
+        Opacity(
+          opacity: hasTotem || !totemReceived ? 1.0 : 0.6,
+          child: SizedBox(
+            height: hasTotem ? 72 : 64,
+            width: hasTotem ? 72 : 64,
+            child: Container(
+              decoration: BoxDecoration(
+                color: themeColors.trayBackground,
+                boxShadow: [
+                  BoxShadow(
+                      color: themeColors.shadow,
+                      offset: Offset(0, hasTotem ? 4 : 2),
+                      blurRadius: 4),
+                ],
+                border: Border.all(
+                  color: hasTotem
+                      ? themeColors.primary
+                      : themeColors.participantBorder,
+                  width: hasTotem ? 2.0 : 1,
+                ),
+                borderRadius: const BorderRadius.all(Radius.circular(10)),
+              ),
+              child: ClipRRect(
+                borderRadius: const BorderRadius.all(Radius.circular(8)),
+                child: (!participant.hasImage)
+                    ? Container(
+                        color: participant.me
+                            ? themeColors.primary.withAlpha(80)
+                            : themeColors.profileBackground,
+                        child: _genericUserImage(context),
+                      )
+                    : _renderUserImage(context),
+              ),
             ),
           ),
-        )
+        ),
       ],
     );
   }
 
   Widget _renderUserImage(BuildContext context) {
-    if (participant.userProfile.image!.toLowerCase().contains("assets/")) {
+    if (participant.sessionImage!.toLowerCase().contains("assets/")) {
       return Image.asset(
-        participant.userProfile.image!,
+        participant.sessionImage!,
         fit: BoxFit.cover,
       );
     }
     return CachedNetworkImage(
-      imageUrl: participant.userProfile.image!,
+      imageUrl: participant.sessionImage!,
       errorWidget: (context, url, error) => _genericUserImage(context),
     );
   }
 
   Widget _genericUserImage(BuildContext context) {
-    return Icon(
-      Icons.account_circle_rounded,
-      size: participant.totem ? 60 : 50,
-      color: Theme.of(context).themeColors.primaryText,
-    );
+    return SvgPicture.asset('assets/profile.svg');
   }
 }

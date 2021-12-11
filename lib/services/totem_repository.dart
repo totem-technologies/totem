@@ -7,8 +7,6 @@ import 'package:totem/services/circles_provider.dart';
 import 'package:totem/services/firebase_providers/firebase_circles_provider.dart';
 import 'package:totem/services/firebase_providers/firebase_session_provider.dart';
 import 'package:totem/services/firebase_providers/firebase_user_provider.dart';
-import 'package:totem/services/topics_provider.dart';
-import 'package:totem/services/user_provider.dart';
 import 'package:totem/services/index.dart';
 import 'firebase_providers/firebase_topics_provider.dart';
 

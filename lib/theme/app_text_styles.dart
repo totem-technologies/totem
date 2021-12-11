@@ -7,6 +7,7 @@ class AppTextStyles extends TextTheme {
     required TextStyle headline3,
     required TextStyle headline4,
     required TextStyle headline5,
+    required TextStyle headline6,
     required TextStyle body,
     required TextStyle button,
     required this.pinInput,
@@ -23,6 +24,7 @@ class AppTextStyles extends TextTheme {
           headline3: headline3,
           headline4: headline4,
           headline5: headline5,
+          headline6: headline6,
           button: button,
         );
   // custom styles go here

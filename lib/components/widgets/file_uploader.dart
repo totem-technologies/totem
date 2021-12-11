@@ -1,7 +1,8 @@
 import 'dart:io';
+
+import 'package:firebase_core/firebase_core.dart' as firebase_core;
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart' as firebase_core;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:totem/components/widgets/busy_indicator.dart';
 import 'package:totem/models/index.dart';
@@ -40,11 +41,13 @@ class FileUploaderState extends ConsumerState<FileUploader> {
           //var event = snapshot?.data?.snapshot;
           //double progressPercent = event != null ? event.bytesTransferred / event.totalByteCount : 0;
           return Column(
-            mainAxisSize: MainAxisSize.min,
+            mainAxisSize: MainAxisSize.max,
             children: [
               if (_uploadTask!.snapshot.state ==
                   firebase_storage.TaskState.running)
-                const BusyIndicator(),
+                const Center(
+                  child: BusyIndicator(),
+                ),
             ],
           );
         },

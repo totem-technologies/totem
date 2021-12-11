@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/auth_user.dart';

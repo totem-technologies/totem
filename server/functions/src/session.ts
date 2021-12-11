@@ -15,6 +15,7 @@ const SessionState = {
   complete: "complete",
   live: "live",
   waiting: "waiting",
+  starting: "starting",
 };
 
 export const endSnapSession = functions.https.onCall(async ({circleId}, {auth}) => {
@@ -39,7 +40,7 @@ export const endSnapSession = functions.https.onCall(async ({circleId}, {auth}) 
           batch.set(entryRef, {...entry, role, completedDate});
         });
       }
-      batch.update(ref, {state: endState, completedDate, activeSession: {state}});
+      batch.update(ref, {state: endState, completedDate, activeSession: {}});
       await batch.commit();
       return true;
     }
@@ -56,9 +57,12 @@ export const startSnapSession = functions.https.onCall(async ({circleId}, {auth}
     const circleSnapshot = await ref.get();
     if (circleSnapshot.exists) {
       const {activeSession, activeSession: {participants}, state} = circleSnapshot.data() ?? {};
-      if (state === SessionState.waiting) {
+      if (state === SessionState.starting) {
         const startedDate = admin.firestore.Timestamp.fromDate(new Date());
-        activeSession["state"] = SessionState.live;
+        activeSession["totemReceived"] = false;
+        if (participants.length > 0) {
+          activeSession["totemUser"] = participants[0].sessionUserId;
+        }
         // cache the participants at the circle level as an archive of the users that
         // are part of the started session
         ref.update({state: SessionState.live, startedDate, participants, activeSession});
