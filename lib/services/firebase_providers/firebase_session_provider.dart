@@ -167,6 +167,7 @@ class FirebaseSessionProvider extends SessionProvider {
   Future<void> endActiveSession({bool complete = true}) async {
     if (_activeSession != null) {
       try {
+        await updateActiveSessionState(SessionState.ending);
         if (activeSession!.session is SnapSession) {
           HttpsCallable callable =
               FirebaseFunctions.instance.httpsCallable('endSnapSession');
@@ -452,12 +453,14 @@ class FirebaseSessionProvider extends SessionProvider {
       final existingUser =
           participants.firstWhereOrNull((element) => element['uid'] == uid);
       if (existingUser == null) {
-        participants.add(_participant(
-            uid: uid,
-            name: userData['name'] ?? "",
-            sessionUserId: sessionUserId,
-            sessionImage: sessionImage,
-            role: session.circle.participantRole(uid).name));
+        participants.add(
+          _participant(
+              uid: uid,
+              name: userData['name'] ?? "",
+              sessionUserId: sessionUserId,
+              sessionImage: sessionImage,
+              role: session.circle.participantRole(uid).name),
+        );
       } else {
         if (sessionUserId != null) {
           existingUser['sessionUserId'] = sessionUserId;
@@ -467,7 +470,7 @@ class FirebaseSessionProvider extends SessionProvider {
         }
       }
       activeSession["participants"] = participants;
-      activeSession["lastChange"] = ActiveSessionChange.participantsChange;
+      activeSession["lastChange"] = ActiveSessionChange.participantsChange.name;
       await circleRef.update({"activeSession": activeSession});
       return true;
     }

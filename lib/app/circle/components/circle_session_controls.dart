@@ -122,9 +122,9 @@ class _CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               ThemedControlButton(
-                label: communications.muted ? t.unmute : t.mute,
+                label: communications.muted ? t.forceUnMute : t.mute,
                 svgImage: communications.muted
-                    ? 'assets/microphone_mute.svg'
+                    ? 'assets/microphone_force.svg'
                     : 'assets/microphone.svg',
                 onPressed: () {
                   communications.muteAudio(communications.muted ? false : true);

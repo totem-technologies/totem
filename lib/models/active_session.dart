@@ -7,16 +7,18 @@ enum SessionState {
   waiting,
   starting,
   live,
+  ending,
   complete,
   cancelled,
   idle,
 }
 
-class ActiveSessionChange {
-  static const String none = "none";
-  static const String totemPass = "pass";
-  static const String totemReceive = "receive";
-  static const String participantsChange = "participants";
+enum ActiveSessionChange {
+  none,
+  totemReceive,
+  totemChange,
+  started,
+  participantsChange,
 }
 
 class ActiveSession extends ChangeNotifier {
@@ -33,7 +35,7 @@ class ActiveSession extends ChangeNotifier {
   String? _totemUser;
   bool totemReceived = false;
   bool locked = true;
-  String lastChange = ActiveSessionChange.none;
+  ActiveSessionChange lastChange = ActiveSessionChange.none;
 
   String? get totemUser {
     if (_totemUser != null && _totemUser!.isNotEmpty) {
@@ -62,7 +64,7 @@ class ActiveSession extends ChangeNotifier {
       "participants": updatedParticipants,
       "totemUser": _totemUser,
       "totemReceived": true,
-      "lastChange": ActiveSessionChange.totemReceive,
+      "lastChange": ActiveSessionChange.totemReceive.name,
     };
     return request;
   }
@@ -94,7 +96,7 @@ class ActiveSession extends ChangeNotifier {
         "participants": updatedParticipants,
         "totemUser": nextSessionId,
         "totemReceived": false,
-        "lastChange": ActiveSessionChange.totemPass,
+        "lastChange": ActiveSessionChange.totemChange.name,
       };
       return request;
     }
@@ -127,7 +129,9 @@ class ActiveSession extends ChangeNotifier {
     }
     totemReceived = data["totemReceived"] ?? false;
     locked = data["locked"] ?? true;
-    lastChange = data['lastChange'] ?? ActiveSessionChange.none;
+    if (data['lastChange'] != null) {
+      lastChange = ActiveSessionChange.values.byName(data['lastChange']);
+    }
     if (data['state'] != null) {
       session.state = SessionState.values.byName(data['state']);
     }

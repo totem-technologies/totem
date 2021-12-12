@@ -76,7 +76,8 @@ class _CircleSnapSessionContentState
                             : null,
                   ),
                 if (sessionProvider.state == SessionState.live ||
-                    sessionProvider.state == SessionState.complete)
+                    sessionProvider.state == SessionState.complete ||
+                    sessionProvider.state == SessionState.ending)
                   _altHeader(context, commProvider),
                 if (sessionProvider.state == SessionState.waiting &&
                     widget.circle.description != null &&
@@ -155,7 +156,7 @@ class _CircleSnapSessionContentState
     );
   }
 
-  Widget _circleStarting(BuildContext context) {
+  Widget _circleStartingOrEnding(BuildContext context, SessionState state) {
     final t = AppLocalizations.of(context)!;
     final textStyles = Theme.of(context).textStyles;
     return Center(
@@ -163,7 +164,7 @@ class _CircleSnapSessionContentState
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            t.circleStarting,
+            state == SessionState.starting ? t.circleStarting : t.circleEnding,
             style: textStyles.headline3,
           ),
           const SizedBox(
@@ -177,8 +178,9 @@ class _CircleSnapSessionContentState
 
   Widget _sessionContent(BuildContext context,
       CommunicationProvider commProvider, ActiveSession sessionProvider) {
-    if (sessionProvider.state == SessionState.starting) {
-      return _circleStarting(context);
+    if (sessionProvider.state == SessionState.starting ||
+        sessionProvider.state == SessionState.ending) {
+      return _circleStartingOrEnding(context, sessionProvider.state);
     }
     switch (commProvider.state) {
       case CommunicationState.failed:

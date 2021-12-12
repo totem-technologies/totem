@@ -1,15 +1,18 @@
+import 'dart:io';
+
 import 'package:agora_rtc_engine/rtc_engine.dart';
 import 'package:flutter/foundation.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'dart:io';
 
 class AgoraCommunicationProvider extends CommunicationProvider {
   static const String appId = "4880737da9bf47e290f46d847cd1c3b1";
 
   AgoraCommunicationProvider(
-      {required this.sessionProvider, required this.userId});
+      {required this.sessionProvider, required this.userId}) {
+    sessionProvider.addListener(_updateCommunicationFromSession);
+  }
 
   RtcEngine? _engine;
   CommunicationHandler? _handler;
@@ -21,6 +24,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   bool _pendingComplete = false;
   late SessionToken _sessionToken;
   String? _sessionImage;
+  SessionState? _lastState;
 
   @override
   String? get lastError {
@@ -30,6 +34,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   @override
   void dispose() {
     try {
+      sessionProvider.removeListener(_updateCommunicationFromSession);
       _engine?.destroy();
       _engine = null;
       super.dispose();
@@ -304,6 +309,25 @@ class AgoraCommunicationProvider extends CommunicationProvider {
       if (mute != muted) {
         _engine?.muteLocalAudioStream(mute);
       }
+    }
+  }
+
+  void _updateCommunicationFromSession() {
+    // check the session state
+    ActiveSession? session = sessionProvider.activeSession;
+    if (session != null) {
+      if (session.state == SessionState.live) {
+        // have to manage mute state based on changes to the state
+        bool started = (_lastState == SessionState.starting &&
+            session.state == SessionState.live);
+        if (started || session.lastChange == ActiveSessionChange.totemChange) {
+          SessionParticipant? participant = session.totemParticipant;
+          if (participant != null) {
+            muteAudio(!participant.me);
+          }
+        }
+      }
+      _lastState = session.state;
     }
   }
 }

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:totem/app/circle/circle_session_page.dart';
 import 'package:totem/models/index.dart';
-import 'package:totem/theme/index.dart';
 
 class CircleLiveTotemParticipant extends ConsumerStatefulWidget {
   const CircleLiveTotemParticipant({Key? key}) : super(key: key);
@@ -38,7 +37,6 @@ class _CircleLiveTotemParticipantState
   }
 
   Widget participant(BuildContext context, SessionParticipant participant) {
-    final themeColors = Theme.of(context).themeColors;
     return Container(
       width: 142,
       height: 142,

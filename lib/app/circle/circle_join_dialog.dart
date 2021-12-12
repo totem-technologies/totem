@@ -1,16 +1,16 @@
-import 'dart:ui';
 import 'dart:io';
+import 'dart:ui';
 
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_crop/image_crop.dart';
 import 'package:totem/components/camera/camera_capture_component.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/providers.dart';
 import 'package:totem/theme/index.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:camera/camera.dart';
 
 class CircleJoinDialog extends ConsumerStatefulWidget {
   const CircleJoinDialog({Key? key, required this.session}) : super(key: key);
@@ -133,7 +133,8 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
                                       children: [
                                         ThemedRaisedButton(
                                           label: t.joinSession,
-                                          onPressed: _selectedImage != null
+                                          onPressed: _selectedImage != null &&
+                                                  !_uploading
                                               ? () {
                                                   _uploadImage(context);
                                                 }
