@@ -76,24 +76,29 @@ class HomePage extends StatelessWidget {
               Align(
                 alignment: Alignment.bottomCenter,
                 child: BottomTrayContainer(
-                  child: Center(
-                    child: ThemedRaisedButton(
-                      elevation: 0,
-                      height: 52,
-                      onPressed: () {
-                        // build new circle
-                        Navigator.of(context).pushNamed('/snap_circle/create');
-                      },
-                      padding: const EdgeInsets.symmetric(horizontal: 42),
-                      child: Wrap(
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        children: [
-                          Text(t.createCircle),
-                          const SizedBox(
-                            width: 12,
-                          ),
-                          const Icon(Icons.add)
-                        ],
+                  child: SafeArea(
+                    top: false,
+                    bottom: true,
+                    child: Center(
+                      child: ThemedRaisedButton(
+                        elevation: 0,
+                        height: 52,
+                        onPressed: () {
+                          // build new circle
+                          Navigator.of(context)
+                              .pushNamed('/snap_circle/create');
+                        },
+                        padding: const EdgeInsets.symmetric(horizontal: 42),
+                        child: Wrap(
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          children: [
+                            Text(t.createCircle),
+                            const SizedBox(
+                              width: 12,
+                            ),
+                            const Icon(Icons.add)
+                          ],
+                        ),
                       ),
                     ),
                   ),

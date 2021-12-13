@@ -1,30 +1,40 @@
+import 'package:flutter/material.dart';
 import 'package:totem/models/index.dart';
 
-class SessionParticipant extends Participant {
+class SessionParticipant extends ChangeNotifier {
   bool _muted = false;
   String? sessionUserId;
   String? status;
-  bool _totem = false;
+  String? sessionImage;
+  late String name;
+  late String uid;
+  Role role = Role.member;
+  DateTime? joined;
+  bool me;
 
-  SessionParticipant.fromJson(Map<String, dynamic> json,
-      {required UserProfile userProfile, bool me = false})
-      : super.fromJson(json, userProfile: userProfile, me: me) {
+  SessionParticipant.fromJson(Map<String, dynamic> json, {this.me = false}) {
+    uid = json['uid'] ?? "";
+    name = json['name'] ?? "";
     status = json['status'];
+    if (json['role'] != null) {
+      for (var element in Role.values) {
+        debugPrint(element.name);
+      }
+      role = Role.values.byName(json['role']);
+    }
     _muted = json['muted'] ?? false;
-    _totem = json['totem'] ?? false;
     sessionUserId = json["sessionUserId"];
+    sessionImage = json["sessionImage"];
   }
 
-  void updateWith(SessionParticipant participant) {
-    _totem = participant.totem;
-  }
-
-  bool get totem {
-    return _totem;
-  }
+  void updateWith(SessionParticipant participant) {}
 
   bool get muted {
     return _muted;
+  }
+
+  bool get hasImage {
+    return sessionImage != null && sessionImage!.isNotEmpty;
   }
 
   set muted(bool isMuted) {
@@ -34,11 +44,21 @@ class SessionParticipant extends Participant {
     }
   }
 
-  @override
   Map<String, dynamic> toJson() {
-    Map<String, dynamic> data = super.toJson();
+    Map<String, dynamic> data = {
+      "name": name,
+      "uid": uid,
+      "role": role.name,
+    };
+    if (joined != null) {
+      data["joined"] = joined;
+    }
     if (sessionUserId != null) {
       data["sessionUserId"] = sessionUserId;
+    }
+    if (hasImage) {
+      // store the image as the session image
+      data["sessionImage"] = sessionImage;
     }
     return data;
   }

@@ -2,19 +2,23 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:totem/models/index.dart';
 
-class SessionState {
-  static const String pending = "pending";
-  static const String waiting = "waiting";
-  static const String live = "live";
-  static const String complete = "complete";
-  static const String cancelled = "cancelled";
-  static const String idle = "idle";
+enum SessionState {
+  pending,
+  waiting,
+  starting,
+  live,
+  ending,
+  complete,
+  cancelled,
+  idle,
 }
 
-class ActiveSessionChange {
-  static const String none = "none";
-  static const String totemPass = "pass";
-  static const String participantsChange = "participants";
+enum ActiveSessionChange {
+  none,
+  totemReceive,
+  totemChange,
+  started,
+  participantsChange,
 }
 
 class ActiveSession extends ChangeNotifier {
@@ -25,15 +29,47 @@ class ActiveSession extends ChangeNotifier {
   final String userId;
   final bool isSnap;
   late List<SessionParticipant> participants = [];
-  String state = SessionState.waiting;
   DateTime? started;
   List<SessionParticipant> activeParticipants = [];
   final List<String> _pendingUserAdded = [];
-  String? totemUser;
+  String? _totemUser;
+  bool totemReceived = false;
   bool locked = true;
-  String lastChange = ActiveSessionChange.none;
+  ActiveSessionChange lastChange = ActiveSessionChange.none;
 
-  Map<String, dynamic>? requestUserTotem({String? nextSessionId}) {
+  String? get totemUser {
+    if (_totemUser != null && _totemUser!.isNotEmpty) {
+      return _totemUser;
+    }
+    return null;
+  }
+
+  SessionState get state {
+    return session.state;
+  }
+
+  SessionParticipant? get totemParticipant {
+    if (_totemUser != null && _totemUser!.isNotEmpty) {
+      return participantWithSessionID(_totemUser!);
+    }
+    return null;
+  }
+
+  Map<String, dynamic>? receiveUserTotem() {
+    List<Map<String, dynamic>> updatedParticipants = [];
+    for (SessionParticipant participant in activeParticipants) {
+      updatedParticipants.add(participant.toJson());
+    }
+    Map<String, dynamic> request = {
+      "participants": updatedParticipants,
+      "totemUser": _totemUser,
+      "totemReceived": true,
+      "lastChange": ActiveSessionChange.totemReceive.name,
+    };
+    return request;
+  }
+
+  Map<String, dynamic>? requestNextUserTotem({String? nextSessionId}) {
     // this should use the existing data to generate an data
     // update for the session to change the totem and update
     // the sort order of participants
@@ -59,7 +95,8 @@ class ActiveSession extends ChangeNotifier {
       Map<String, dynamic> request = {
         "participants": updatedParticipants,
         "totemUser": nextSessionId,
-        "lastChange": ActiveSessionChange.totemPass,
+        "totemReceived": false,
+        "lastChange": ActiveSessionChange.totemChange.name,
       };
       return request;
     }
@@ -67,12 +104,15 @@ class ActiveSession extends ChangeNotifier {
   }
 
   SessionParticipant? participantWithID(String id) {
+    return activeParticipants.firstWhereOrNull((element) => element.uid == id);
+  }
+
+  SessionParticipant? participantWithSessionID(String sessionId) {
     return activeParticipants
-        .firstWhereOrNull((element) => element.userProfile.uid == id);
+        .firstWhereOrNull((element) => element.sessionUserId == sessionId);
   }
 
   void updateFromData(Map<String, dynamic> data) {
-    state = data['state'] ?? state;
     if (data['participants'] != null && data['participants'].isNotEmpty) {
       // update list of participants in the session
       participants = data['participants'];
@@ -83,17 +123,32 @@ class ActiveSession extends ChangeNotifier {
       started = DateTimeEx.fromMapValue(data['started']);
     }
     if (data["totemUser"] != null) {
-      totemUser = data["totemUser"];
+      _totemUser = data["totemUser"];
+    } else {
+      _totemUser = null;
     }
+    totemReceived = data["totemReceived"] ?? false;
     locked = data["locked"] ?? true;
-    lastChange = data['lastChange'] ?? ActiveSessionChange.none;
-
-    // update the active users
-    for (var participant in participants) {
-      var activeParticipant = activeParticipants.firstWhereOrNull(
-          (element) => element.userProfile.uid == participant.userProfile.uid);
-      if (activeParticipant != null) {
-        activeParticipant.updateWith(participant);
+    if (data['lastChange'] != null) {
+      lastChange = ActiveSessionChange.values.byName(data['lastChange']);
+    }
+    if (data['state'] != null) {
+      session.state = SessionState.values.byName(data['state']);
+    }
+    if (session.state != SessionState.complete ||
+        session.state != SessionState.cancelled) {
+      if (data['activeParticipants'] != null) {
+        activeParticipants =
+            data['activeParticipants'] as List<SessionParticipant>;
+      } else {
+        // update the active users
+        for (var participant in participants) {
+          var activeParticipant = activeParticipants
+              .firstWhereOrNull((element) => element.uid == participant.uid);
+          if (activeParticipant != null) {
+            activeParticipant.updateWith(participant);
+          }
+        }
       }
     }
     if (_pendingUserAdded.isNotEmpty) {
@@ -170,18 +225,20 @@ class ActiveSession extends ChangeNotifier {
   }
 
   bool participantInSession(String uid) {
-    return participants.firstWhereOrNull(
-            (participant) => participant.userProfile.uid == uid) !=
+    return activeParticipants
+            .firstWhereOrNull((participant) => participant.uid == uid) !=
         null;
   }
 
   Role participantRole(String participantId) {
-    Participant? participant = participants.firstWhereOrNull(
-        (element) => element.userProfile.uid == participantId);
+    SessionParticipant? participant = participants
+        .firstWhereOrNull((element) => element.uid == participantId);
+    participant ??= activeParticipants
+        .firstWhereOrNull((element) => element.uid == participantId);
     if (participant != null) {
       return participant.role;
     }
-    return Roles.member;
+    return Role.member;
   }
 
   Map<String, dynamic> toJson() {

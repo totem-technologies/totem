@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 
 class AppThemeColors {
   AppThemeColors({
+    required this.blurBackground,
     required this.busyIndicator,
     required this.screenBackground,
     required this.primaryText,
     required this.secondaryText,
     required this.reversedText,
     required this.linkText,
+    required this.profileBackground,
     required this.primary,
     required this.primaryButtonBackground,
     required this.dialogBackground,
@@ -23,8 +25,10 @@ class AppThemeColors {
     required this.divider,
     required this.profileGradient,
     required this.controlButtonBackground,
+    required this.participantBorder,
   });
 
+  final Color blurBackground;
   final Color busyIndicator;
   final Color controlButtonBackground;
   final Color dialogBackground;
@@ -34,6 +38,7 @@ class AppThemeColors {
   final Color primary;
   final Color primaryButtonBackground;
   final Color primaryText;
+  final Color profileBackground;
   final Color secondaryText;
   final Color reversedText;
   final Color linkText;
@@ -42,6 +47,7 @@ class AppThemeColors {
   final Color trayBackground;
   final Color trayBorder;
   final Color divider;
+  final Color participantBorder;
   final List<Color> primaryGradient;
   final List<Color> secondaryGradient;
   final List<Color> welcomeGradient;

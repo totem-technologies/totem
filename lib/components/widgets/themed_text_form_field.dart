@@ -5,6 +5,8 @@ import 'package:totem/theme/index.dart';
 class ThemedTextFormField extends StatelessWidget {
   const ThemedTextFormField({
     Key? key,
+    this.hintText,
+    this.hintStyle,
     this.labelText,
     this.labelStyle,
     this.controller,
@@ -23,6 +25,8 @@ class ThemedTextFormField extends StatelessWidget {
     this.autofocus = false,
     this.onEditingComplete,
     this.suffixIcon,
+    this.contentPadding,
+    this.isDense = true,
   }) : super(key: key);
   final String? labelText;
   final TextEditingController? controller;
@@ -42,7 +46,10 @@ class ThemedTextFormField extends StatelessWidget {
   final bool autofocus;
   final void Function()? onEditingComplete;
   final Widget? suffixIcon;
-
+  final String? hintText;
+  final TextStyle? hintStyle;
+  final EdgeInsetsGeometry? contentPadding;
+  final bool isDense;
   @override
   Widget build(BuildContext context) {
     final themeData = Theme.of(context);
@@ -51,10 +58,15 @@ class ThemedTextFormField extends StatelessWidget {
 
     return TextFormField(
       decoration: ThemedInputDecoration(
+        hintText: hintText,
+        hintStyle: hintStyle,
         labelText: labelText,
+        labelStyle: labelStyle,
         themeColors: themeColors,
         textStyles: textStyles,
         suffixIcon: suffixIcon,
+        contentPadding: contentPadding,
+        isDense: isDense,
       ),
       controller: controller,
       autocorrect: autocorrect,

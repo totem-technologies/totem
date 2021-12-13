@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:totem/app/guideline_screen.dart';
 import 'package:totem/app/profile/index.dart';
+import 'package:totem/app/profile/onboarding_profile_page.dart';
 import 'package:totem/components/fade_route.dart';
 import 'package:totem/theme/index.dart';
 import 'app/circle/circle_create_page.dart';
@@ -62,6 +63,8 @@ class App extends StatelessWidget {
             return FadeRoute(page: const RegisterPage());
           case '/login/guideline':
             return FadeRoute(page: const GuidelineScreen());
+          case '/login/onboarding':
+            return FadeRoute(page: const OnboardingProfilePage());
           case '/circle/create':
             return MaterialPageRoute(builder: (_) => const CircleCreatePage());
           case '/snap_circle/create':

@@ -8,11 +8,15 @@ abstract class CommunicationProvider extends ChangeNotifier {
   CommunicationState state = CommunicationState.disconnected;
   bool muted = false;
   Future<bool> joinSession(
-      {required Session session, required CommunicationHandler handler});
+      {required Session session,
+      required CommunicationHandler handler,
+      String? sessionImage});
   Future<void> leaveSession();
   Future<void> endSession();
   String? get lastError;
 
   Future<void> muteAudio(bool mute);
-  Future<bool> updateActiveSessionTotem({required String sessionUserId});
+  Future<bool> receiveActiveSessionTotem({required String sessionUserId});
+  Future<bool> passActiveSessionTotem({required String sessionUserId});
+  Future<bool> doneActiveSessionTotem({required String sessionUserId});
 }

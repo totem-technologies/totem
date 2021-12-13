@@ -1,16 +1,18 @@
+import 'dart:io';
+
 import 'package:agora_rtc_engine/rtc_engine.dart';
 import 'package:flutter/foundation.dart';
-import 'package:totem/models/index.dart';
-import 'package:totem/models/session.dart';
-import 'package:totem/services/communication_provider.dart';
-import 'package:totem/services/index.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:totem/models/index.dart';
+import 'package:totem/services/index.dart';
 
 class AgoraCommunicationProvider extends CommunicationProvider {
   static const String appId = "4880737da9bf47e290f46d847cd1c3b1";
 
   AgoraCommunicationProvider(
-      {required this.sessionProvider, required this.userId});
+      {required this.sessionProvider, required this.userId}) {
+    sessionProvider.addListener(_updateCommunicationFromSession);
+  }
 
   RtcEngine? _engine;
   CommunicationHandler? _handler;
@@ -21,6 +23,8 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   String? _lastError;
   bool _pendingComplete = false;
   late SessionToken _sessionToken;
+  String? _sessionImage;
+  SessionState? _lastState;
 
   @override
   String? get lastError {
@@ -30,6 +34,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   @override
   void dispose() {
     try {
+      sessionProvider.removeListener(_updateCommunicationFromSession);
       _engine?.destroy();
       _engine = null;
       super.dispose();
@@ -42,10 +47,12 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   Future<bool> joinSession({
     required Session session,
     required CommunicationHandler handler,
+    String? sessionImage,
   }) async {
     // This is for test purposes, this should be moved
     // to the cloud function that generates a new session at
     // a specific time - this is using a predefined test token that is short lived
+    _sessionImage = sessionImage;
     _handler = handler;
     _session = session;
     _updateState(CommunicationState.joining);
@@ -81,11 +88,39 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   }
 
   @override
-  Future<bool> updateActiveSessionTotem({required String sessionUserId}) async {
-    Map<String, dynamic>? update = sessionProvider.activeSession
-        ?.requestUserTotem(nextSessionId: sessionUserId);
-    if (update != null) {
-      return await sessionProvider.updateActiveSession(update);
+  Future<bool> receiveActiveSessionTotem(
+      {required String sessionUserId}) async {
+    if (sessionProvider.activeSession?.totemUser == sessionUserId) {
+      // update the session information with the user
+      Map<String, dynamic>? update =
+          sessionProvider.activeSession?.receiveUserTotem();
+      if (update != null) {
+        return await sessionProvider.updateActiveSession(update);
+      }
+    }
+    return false;
+  }
+
+  @override
+  Future<bool> passActiveSessionTotem({required String sessionUserId}) async {
+    if (sessionProvider.activeSession?.totemUser == sessionUserId) {
+      Map<String, dynamic>? update =
+          sessionProvider.activeSession?.requestNextUserTotem();
+      if (update != null) {
+        return await sessionProvider.updateActiveSession(update);
+      }
+    }
+    return false;
+  }
+
+  @override
+  Future<bool> doneActiveSessionTotem({required String sessionUserId}) async {
+    if (sessionProvider.activeSession?.totemUser == sessionUserId) {
+      Map<String, dynamic>? update =
+          sessionProvider.activeSession?.requestNextUserTotem();
+      if (update != null) {
+        return await sessionProvider.updateActiveSession(update);
+      }
     }
     return false;
   }
@@ -93,10 +128,11 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   Future<void> _assertEngine() async {
     if (_engine == null) {
       try {
-        Map<Permission, PermissionStatus> status =
-            await [Permission.microphone].request();
-        if (status[Permission.microphone] == PermissionStatus.granted ||
-            status[Permission.microphone] == PermissionStatus.limited) {
+        PermissionStatus statusValue = (Platform.isAndroid)
+            ? await Permission.microphone.request()
+            : PermissionStatus.granted;
+        if (statusValue == PermissionStatus.granted ||
+            statusValue == PermissionStatus.limited) {
           _engine = await RtcEngine.create(appId);
           // enable audio and fancy noise cancelling
           await _engine!.enableAudio();
@@ -211,7 +247,10 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     commUid = uid;
     // Update the session to add user information to session display
     await sessionProvider.joinSession(
-        session: _session!, uid: userId, sessionUserId: commUid.toString());
+        session: _session!,
+        uid: userId,
+        sessionUserId: commUid.toString(),
+        sessionImage: _sessionImage);
     sessionProvider.activeSession
         ?.userJoined(sessionUserId: commUid.toString());
     // notify any callbacks that the user has joined the session
@@ -235,12 +274,12 @@ class AgoraCommunicationProvider extends CommunicationProvider {
       debugPrint('Got exception trying to leave session: ${ex.toString()}');
     }
     _pendingComplete = false;
-    _updateState(CommunicationState.disconnected);
     // update state
     if (_handler != null && _handler!.leaveCircle != null) {
       _handler!.leaveCircle!();
     }
     _handler = null;
+    _updateState(CommunicationState.disconnected);
   }
 
   void _handleUserJoined(int user, int elapsed) {
@@ -270,6 +309,25 @@ class AgoraCommunicationProvider extends CommunicationProvider {
       if (mute != muted) {
         _engine?.muteLocalAudioStream(mute);
       }
+    }
+  }
+
+  void _updateCommunicationFromSession() {
+    // check the session state
+    ActiveSession? session = sessionProvider.activeSession;
+    if (session != null) {
+      if (session.state == SessionState.live) {
+        // have to manage mute state based on changes to the state
+        bool started = (_lastState == SessionState.starting &&
+            session.state == SessionState.live);
+        if (started || session.lastChange == ActiveSessionChange.totemChange) {
+          SessionParticipant? participant = session.totemParticipant;
+          if (participant != null) {
+            muteAudio(!participant.me);
+          }
+        }
+      }
+      _lastState = session.state;
     }
   }
 }

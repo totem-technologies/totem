@@ -9,8 +9,8 @@ abstract class Session {
     return "";
   }
 
-  String get state;
-  set state(String stateVal);
+  SessionState get state;
+  set state(SessionState stateVal);
 
   Session.fromJson(Map<String, dynamic> json,
       {required this.id, required this.circle}) {
@@ -20,7 +20,7 @@ abstract class Session {
   Map<String, dynamic> toJson() {
     Map<String, dynamic> item = {
       "topic": topic,
-      "state": state,
+      "state": state.name,
     };
     return item;
   }

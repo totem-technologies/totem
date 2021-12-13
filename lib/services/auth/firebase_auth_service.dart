@@ -3,10 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:async';
 import 'package:rxdart/rxdart.dart';
-import 'package:totem/services/auth/auth_exception.dart';
 import 'package:totem/services/auth/index.dart';
 import 'package:totem/services/firebase_providers/paths.dart';
-import 'auth_service.dart';
 import 'package:totem/models/index.dart';
 
 class FirebaseAuthService implements AuthService {

@@ -29,18 +29,21 @@ class ThemedControlButton extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Container(
-            width: size,
-            height: size,
-            decoration: ShapeDecoration(
-              color: backgroundColor ?? themeColors.controlButtonBackground,
-              shape: const CircleBorder(),
-            ),
-            child: Center(
-              child: SvgPicture.asset(
-                svgImage,
-                color: imageColor,
-                fit: BoxFit.contain,
+          Opacity(
+            opacity: onPressed != null ? 1.0 : 0.2,
+            child: Container(
+              width: size,
+              height: size,
+              decoration: ShapeDecoration(
+                color: backgroundColor ?? themeColors.controlButtonBackground,
+                shape: const CircleBorder(),
+              ),
+              child: Center(
+                child: SvgPicture.asset(
+                  svgImage,
+                  color: imageColor,
+                  fit: BoxFit.contain,
+                ),
               ),
             ),
           ),

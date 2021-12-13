@@ -29,13 +29,13 @@ class SnapSession extends Session {
   }
 
   @override
-  String get state {
+  SessionState get state {
     return (circle as SnapCircle).state;
   }
 
   @override
-  set state(String stateVal) {
-    (circle as SnapCircle).state = state;
+  set state(SessionState stateVal) {
+    (circle as SnapCircle).state = stateVal;
   }
 
   @override

@@ -89,7 +89,7 @@ class _PhoneRegisterNumberEntryState
                   label: t.sendCode,
                   busy: _busy,
                   onPressed: onSubmit,
-                  width: 294,
+                  width: Theme.of(context).standardButtonWidth,
                 ),
               ],
             ),

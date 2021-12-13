@@ -224,7 +224,7 @@ class _CircleScheduledSessionContentState
             },
           ),
         ];
-        if (role == Roles.keeper) {
+        if (role == Role.keeper) {
           actions.insert(
             0,
             TextButton(
@@ -238,8 +238,8 @@ class _CircleScheduledSessionContentState
 
         AlertDialog alert = AlertDialog(
           title: Text(
-              role == Roles.keeper ? t.endSessionPrompt : t.leaveSessionPrompt),
-          content: Text(role == Roles.keeper
+              role == Role.keeper ? t.endSessionPrompt : t.leaveSessionPrompt),
+          content: Text(role == Role.keeper
               ? t.endSessionPromptMessage
               : t.leaveSessionPromptMessage),
           actions: actions,

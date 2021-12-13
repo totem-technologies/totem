@@ -8,7 +8,7 @@ class ContentDivider extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeColors = Theme.of(context).themeColors;
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: 2),
       child: Container(
         width: 80,
         height: 4,

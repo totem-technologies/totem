@@ -7,8 +7,6 @@ import 'package:totem/services/circles_provider.dart';
 import 'package:totem/services/firebase_providers/firebase_circles_provider.dart';
 import 'package:totem/services/firebase_providers/firebase_session_provider.dart';
 import 'package:totem/services/firebase_providers/firebase_user_provider.dart';
-import 'package:totem/services/topics_provider.dart';
-import 'package:totem/services/user_provider.dart';
 import 'package:totem/services/index.dart';
 import 'firebase_providers/firebase_topics_provider.dart';
 
@@ -82,8 +80,9 @@ class TotemRepository {
   // Sessions
   Future<ActiveSession> activateSession({required ScheduledSession session}) =>
       _sessionProvider.activateSession(session: session, uid: user!.uid);
-  Future<void> joinSession({required Session session}) =>
-      _sessionProvider.joinSession(session: session, uid: user!.uid);
+  Future<void> joinSession({required Session session, String? sessionImage}) =>
+      _sessionProvider.joinSession(
+          session: session, uid: user!.uid, sessionImage: sessionImage);
   Future<ActiveSession> createActiveSession({required Session session}) =>
       _sessionProvider.createActiveSession(session: session, uid: user!.uid);
   Future<void> startActiveSession() => _sessionProvider.startActiveSession();
@@ -104,4 +103,6 @@ class TotemRepository {
       _userProvider.userProfile(uid: user!.uid);
   Future<void> updateUserProfile(UserProfile userProfile) =>
       _userProvider.updateUserProfile(userProfile: userProfile, uid: user!.uid);
+  Future<void> updateUserProfileImage(String imageUrl) =>
+      _userProvider.updateUserProfileImage(imageUrl: imageUrl, uid: user!.uid);
 }

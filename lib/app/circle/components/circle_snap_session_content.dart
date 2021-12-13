@@ -1,21 +1,24 @@
 import 'package:after_layout/after_layout.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:totem/app/circle/circle_session_page.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
+
 import 'circle_session_content.dart';
 import 'circle_session_controls.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CircleSnapSessionContent extends ConsumerStatefulWidget {
   const CircleSnapSessionContent({
     Key? key,
     required this.circle,
+    this.sessionImage,
   }) : super(key: key);
   final SnapCircle circle;
+  final String? sessionImage;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
@@ -56,20 +59,28 @@ class _CircleSnapSessionContentState
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                SubPageHeader(
-                  title: widget.circle.name,
-                  onClose: (commProvider.state !=
-                          CommunicationState.disconnecting)
-                      ? () async {
-                          if (commProvider.state != CommunicationState.active) {
-                            Navigator.of(context).pop();
-                          } else {
-                            await _exitPrompt(context);
-                          }
-                        }
-                      : null,
-                ),
-                if (widget.circle.description != null &&
+                if (sessionProvider.state != SessionState.live &&
+                    sessionProvider.state != SessionState.complete)
+                  SubPageHeader(
+                    title: widget.circle.name,
+                    onClose:
+                        (commProvider.state != CommunicationState.disconnecting)
+                            ? () async {
+                                if (commProvider.state !=
+                                    CommunicationState.active) {
+                                  Navigator.of(context).pop();
+                                } else {
+                                  await _exitPrompt(context);
+                                }
+                              }
+                            : null,
+                  ),
+                if (sessionProvider.state == SessionState.live ||
+                    sessionProvider.state == SessionState.complete ||
+                    sessionProvider.state == SessionState.ending)
+                  _altHeader(context, commProvider),
+                if (sessionProvider.state == SessionState.waiting &&
+                    widget.circle.description != null &&
                     widget.circle.description!.isNotEmpty)
                   Padding(
                     padding: EdgeInsets.symmetric(
@@ -115,8 +126,62 @@ class _CircleSnapSessionContentState
     );
   }
 
+  Widget _altHeader(BuildContext context, CommunicationProvider commProvider) {
+    final themeData = Theme.of(context);
+    final themeColors = themeData.themeColors;
+    final textStyles = themeData.textStyles;
+    return Row(
+      children: [
+        SizedBox(width: themeData.pageHorizontalPadding),
+        Expanded(
+          child: Text(widget.circle.name, style: textStyles.headline1),
+        ),
+        IconButton(
+          onPressed: (commProvider.state != CommunicationState.disconnecting)
+              ? () async {
+                  if (commProvider.state != CommunicationState.active) {
+                    Navigator.of(context).pop();
+                  } else {
+                    await _exitPrompt(context);
+                  }
+                }
+              : null,
+          icon: Icon(
+            Icons.close,
+            color: themeColors.primaryText,
+          ),
+        ),
+        const SizedBox(width: 8),
+      ],
+    );
+  }
+
+  Widget _circleStartingOrEnding(BuildContext context, SessionState state) {
+    final t = AppLocalizations.of(context)!;
+    final textStyles = Theme.of(context).textStyles;
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            state == SessionState.starting ? t.circleStarting : t.circleEnding,
+            style: textStyles.headline3,
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          const BusyIndicator(),
+        ],
+      ),
+    );
+  }
+
   Widget _sessionContent(BuildContext context,
       CommunicationProvider commProvider, ActiveSession sessionProvider) {
+    if (sessionProvider.state == SessionState.starting ||
+        sessionProvider.state == SessionState.ending) {
+      return _circleStartingOrEnding(context, sessionProvider.state);
+    }
     switch (commProvider.state) {
       case CommunicationState.failed:
         return _errorSession(context);
@@ -164,6 +229,7 @@ class _CircleSnapSessionContentState
     }
     return Center(
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
             t.errorJoinSession,
@@ -186,18 +252,23 @@ class _CircleSnapSessionContentState
     final t = AppLocalizations.of(context)!;
     final textStyles = Theme.of(context).textStyles;
     return Center(
-      child: Column(
-        children: [
-          Text(
-            t.errorJoinSession,
-            style: textStyles.headline3,
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          Text(ErrorCodeTranslation.get(
-              context, commProvider.lastError ?? "unknown")),
-        ],
+      child: Padding(
+        padding: EdgeInsets.symmetric(
+            horizontal: Theme.of(context).pageHorizontalPadding),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              t.errorJoinSession,
+              style: textStyles.headline3,
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            Text(ErrorCodeTranslation.get(
+                context, commProvider.lastError ?? "unknown")),
+          ],
+        ),
       ),
     );
   }
@@ -207,6 +278,7 @@ class _CircleSnapSessionContentState
     final textStyles = Theme.of(context).textStyles;
     return Center(
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
             t.joiningCircle,
@@ -247,7 +319,7 @@ class _CircleSnapSessionContentState
             },
           ),
         ];
-        if (role == Roles.keeper) {
+        if (role == Role.keeper) {
           actions.insert(
             0,
             TextButton(
@@ -261,8 +333,8 @@ class _CircleSnapSessionContentState
 
         AlertDialog alert = AlertDialog(
           title: Text(
-              role == Roles.keeper ? t.endSessionPrompt : t.leaveSessionPrompt),
-          content: Text(role == Roles.keeper
+              role == Role.keeper ? t.endSessionPrompt : t.leaveSessionPrompt),
+          content: Text(role == Role.keeper
               ? t.endSessionPromptMessage
               : t.leaveSessionPromptMessage),
           actions: actions,
@@ -324,6 +396,7 @@ class _CircleSnapSessionContentState
       final provider = ref.read(communicationsProvider);
       provider.joinSession(
         session: widget.circle.activeSession!,
+        sessionImage: widget.sessionImage,
         handler: CommunicationHandler(
             joinedCircle: (String sessionId, String sessionUserId) {
           debugPrint("joined circle as: " + sessionUserId);

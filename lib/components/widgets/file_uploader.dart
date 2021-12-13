@@ -1,23 +1,30 @@
 import 'dart:io';
+
+import 'package:firebase_core/firebase_core.dart' as firebase_core;
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart' as firebase_core;
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:totem/components/widgets/busy_indicator.dart';
 import 'package:totem/models/index.dart';
+import 'package:totem/services/providers.dart';
 import 'package:uuid/uuid.dart';
 
-class FileUploader extends StatefulWidget {
+class FileUploader extends ConsumerStatefulWidget {
   const FileUploader({
     Key? key,
     this.onComplete,
+    this.clearFile = false,
+    this.assignProfile = true,
   }) : super(key: key);
   final ValueChanged<String?>? onComplete;
+  final bool clearFile;
+  final bool assignProfile;
 
   @override
-  State<StatefulWidget> createState() => FileUploaderState();
+  FileUploaderState createState() => FileUploaderState();
 }
 
-class FileUploaderState extends State<FileUploader> {
+class FileUploaderState extends ConsumerState<FileUploader> {
   final firebase_storage.FirebaseStorage _storage =
       firebase_storage.FirebaseStorage.instance;
   firebase_storage.UploadTask? _uploadTask;
@@ -34,11 +41,13 @@ class FileUploaderState extends State<FileUploader> {
           //var event = snapshot?.data?.snapshot;
           //double progressPercent = event != null ? event.bytesTransferred / event.totalByteCount : 0;
           return Column(
-            mainAxisSize: MainAxisSize.min,
+            mainAxisSize: MainAxisSize.max,
             children: [
               if (_uploadTask!.snapshot.state ==
                   firebase_storage.TaskState.running)
-                const BusyIndicator(),
+                const Center(
+                  child: BusyIndicator(),
+                ),
             ],
           );
         },
@@ -48,14 +57,14 @@ class FileUploaderState extends State<FileUploader> {
     }
   }
 
-  Future<void> avatarUpload(Map<String, dynamic> upload, AuthUser user) async {
+  Future<void> profileImageUpload(File upload, AuthUser user) async {
     const uuid = Uuid();
     try {
       firebase_storage.Reference ref =
           _storage.ref().child('user').child(user.uid).child(uuid.v1());
 
       setState(() {
-        _uploadFile = File(upload["file"]);
+        _uploadFile = upload;
         _uploadTask = ref.putFile(_uploadFile!);
       });
       firebase_storage.TaskSnapshot? snapshot = await _uploadTask;
@@ -72,25 +81,23 @@ class FileUploaderState extends State<FileUploader> {
     }
   }
 
-  Future<void> _completeUpload(Map<String, dynamic> upload,
-      {String url = ''}) async {
-    // TODO - upload file should be saved to user profile here
-
-    await clearTemporaryFiles(upload);
+  Future<void> _completeUpload(File upload, {String url = ''}) async {
+    if (url.isNotEmpty && widget.assignProfile) {
+      var repo = ref.read(repositoryProvider);
+      repo.updateUserProfileImage(url);
+    }
+    // await clearTemporaryFiles(upload);
     if (widget.onComplete != null) {
       widget.onComplete!(url);
     }
   }
 
-  static Future<void> clearTemporaryFiles(Map<String, dynamic>? upload) async {
+  static Future<void> clearTemporaryFiles(File? upload) async {
     if (upload != null) {
-      if (upload["file"] != null) {
-        try {
-          File file = File(upload["file"]);
-          await file.delete();
-        } catch (ex) {
-          debugPrint(ex.toString());
-        }
+      try {
+        await upload.delete();
+      } catch (ex) {
+        debugPrint(ex.toString());
       }
     }
   }

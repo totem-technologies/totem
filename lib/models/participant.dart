@@ -3,20 +3,22 @@ import 'package:totem/models/index.dart';
 
 class Participant extends ChangeNotifier {
   UserProfile userProfile;
-  late Role role;
+  Role role = Role.member;
   DateTime? joined;
   final bool me;
 
   Participant.fromJson(Map<String, dynamic> json,
       {required this.userProfile, this.me = false}) {
-    role = Role.fromString(json['role']);
+    if (json['role'] != null) {
+      role = Role.values.byName(json['role']);
+    }
     joined = DateTimeEx.fromMapValue(json['joined']);
   }
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> data = {
       "ref": userProfile.ref,
-      "role": role.toString(),
+      "role": role.name,
     };
     if (joined != null) {
       data["joined"] = joined;

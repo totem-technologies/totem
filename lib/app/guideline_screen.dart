@@ -1,6 +1,6 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:totem/components/widgets/index.dart';
+import 'package:totem/models/auth_user.dart';
 import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -69,7 +69,7 @@ class GuidelineScreen extends ConsumerWidget {
     final t = AppLocalizations.of(context)!;
     final textStyles = Theme.of(context).textTheme;
     final themeColors = Theme.of(context).themeColors;
-
+    final AuthUser? authUser = authService.currentUser();
     return BottomTrayContainer(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -97,7 +97,14 @@ class GuidelineScreen extends ConsumerWidget {
           ThemedRaisedButton(
             label: t.acceptGuidelines,
             onPressed: () {
-              Navigator.of(context).pop();
+              if (authUser != null && authUser.isNewUser) {
+                Navigator.pushReplacementNamed(
+                  context,
+                  '/login/onboarding',
+                );
+              } else {
+                Navigator.of(context).pop();
+              }
             },
           ),
         ],

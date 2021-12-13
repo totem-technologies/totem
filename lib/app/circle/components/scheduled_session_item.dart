@@ -38,7 +38,7 @@ class ScheduledSessionItem extends StatelessWidget {
           // This is temporary for testing !
           // allow the keeper to start a session -
           // eventually this should be automated by the backend
-          if (role == Roles.keeper && nextSession)
+          if (role == Role.keeper && nextSession)
             TextButton(
               onPressed: () {
                 if (startSession != null) {

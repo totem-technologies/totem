@@ -3,7 +3,7 @@ import 'package:totem/models/index.dart';
 
 class ScheduledCircle extends Circle {
   List<ScheduledSession> sessions = [];
-  String _state = SessionState.idle;
+  SessionState _state = SessionState.idle;
   List<Participant> participants = [];
   bool hasActiveSession = false;
 
@@ -13,7 +13,7 @@ class ScheduledCircle extends Circle {
     hasActiveSession = json['activeSession'] != null;
   }
 
-  String get state {
+  SessionState get state {
     return _state;
   }
 
@@ -54,7 +54,7 @@ class ScheduledCircle extends Circle {
     if (participant != null) {
       return participant.role;
     }
-    return Roles.member;
+    return Role.member;
   }
 
   @override

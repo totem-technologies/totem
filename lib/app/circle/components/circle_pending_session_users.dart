@@ -22,7 +22,7 @@ class CirclePendingSessionUsers extends ConsumerWidget {
         ),
         itemBuilder: (context, index) {
           return CircleSessionParticipant(
-              participantId: participants[index].userProfile.uid);
+              participantId: participants[index].uid);
         },
         itemCount: participants.length,
       );

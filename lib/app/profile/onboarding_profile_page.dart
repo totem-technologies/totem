@@ -11,14 +11,14 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 
-class UserProfilePage extends ConsumerStatefulWidget {
-  const UserProfilePage({Key? key}) : super(key: key);
+class OnboardingProfilePage extends ConsumerStatefulWidget {
+  const OnboardingProfilePage({Key? key}) : super(key: key);
 
   @override
-  _UserProfilePageState createState() => _UserProfilePageState();
+  _OnboardingProfilePageState createState() => _OnboardingProfilePageState();
 }
 
-class _UserProfilePageState extends ConsumerState<UserProfilePage> {
+class _OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
@@ -44,6 +44,7 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
     final themeData = Theme.of(context);
     final textStyles = themeData.textStyles;
     return GradientBackground(
+      rotation: themeData.backgroundGradientRotation,
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: WillPopScope(
@@ -67,26 +68,7 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            const SizedBox(
-                              width: 8,
-                            ),
-                            const BackButton(),
-                            Expanded(child: Container()),
-                            TextButton(
-                                onPressed: !_busy
-                                    ? () {
-                                        _saveForm();
-                                      }
-                                    : null,
-                                child: Text(t.done)),
-                            const SizedBox(
-                              width: 8,
-                            ),
-                          ],
-                        ),
+                        _header(context),
                         Expanded(
                           child: LayoutBuilder(
                             builder: (context, constraint) {
@@ -100,119 +82,38 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
                                       minHeight: constraint.maxHeight),
                                   child: IntrinsicHeight(
                                     child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.stretch,
                                       children: [
-                                        const SizedBox(height: 8),
-                                        Text(
-                                          t.editProfile,
-                                          style: textStyles.headline2,
-                                          textAlign: TextAlign.center,
-                                        ),
-                                        const SizedBox(height: 8),
                                         Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
                                           children: [
-                                            const RectProfileImage(),
-                                            const SizedBox(
-                                              width: 8,
-                                            ),
-                                            Expanded(
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Row(
-                                                    children: [
-                                                      Text(
-                                                        t.profilePicture
-                                                            .toLowerCase(),
-                                                        style: textStyles
-                                                            .headline3,
-                                                      ),
-                                                      const SizedBox(width: 6),
-                                                      InkWell(
-                                                        customBorder:
-                                                            const CircleBorder(),
-                                                        onTap: () {
-                                                          BottomTrayHelpDialog
-                                                              .showTrayHelp(
-                                                                  context,
-                                                                  title: t
-                                                                      .profilePicture,
-                                                                  detail: t
-                                                                      .helpPublicInformation);
-                                                        },
-                                                        child: Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(2),
-                                                          child:
-                                                              SvgPicture.asset(
-                                                            'assets/more_info.svg',
-                                                            width: 17,
-                                                            height: 17,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  TextButton(
-                                                      style:
-                                                          TextButton.styleFrom(
-                                                        minimumSize: Size.zero,
-                                                        padding:
-                                                            const EdgeInsets
-                                                                    .only(
-                                                                top: 8,
-                                                                bottom: 8,
-                                                                right: 20),
-                                                        tapTargetSize:
-                                                            MaterialTapTargetSize
-                                                                .shrinkWrap,
-                                                        alignment: Alignment
-                                                            .centerLeft,
-                                                      ),
-                                                      onPressed: !_busy
-                                                          ? () {
-                                                              _promptImageSource(
-                                                                  context);
-                                                            }
-                                                          : null,
-                                                      child: Text(t.edit)),
-                                                ],
-                                              ),
-                                            ),
+                                            Text(t.addProfilePicture,
+                                                style: textStyles.headline3),
+                                            const SizedBox(width: 6),
+                                            InkWell(
+                                              onTap: () {
+                                                BottomTrayHelpDialog
+                                                    .showTrayHelp(
+                                                  context,
+                                                  title: t.profilePicture,
+                                                  detail:
+                                                      t.helpPublicInformation,
+                                                );
+                                              },
+                                              child: SvgPicture.asset(
+                                                  'assets/more_info.svg'),
+                                            )
                                           ],
                                         ),
-                                        const SizedBox(height: 16),
-                                        Divider(
-                                          color: themeData.themeColors.divider,
-                                          height: 1,
-                                          thickness: 1,
-                                        ),
-                                        const SizedBox(height: 32),
+                                        const SizedBox(height: 10),
                                         _profileEditForm(context),
-                                        Expanded(
-                                          child: Container(),
-                                        ),
-                                        Divider(
-                                          color: themeData.themeColors.divider,
-                                          height: 1,
-                                          thickness: 1,
-                                        ),
-                                        _iconButton(
-                                            context,
-                                            Icons.logout,
-                                            t.signOut,
-                                            !_busy
-                                                ? () {
-                                                    _promptSignOut(context);
-                                                  }
-                                                : null),
-                                        Divider(
-                                          color: themeData.themeColors.divider,
-                                          height: 1,
-                                          thickness: 1,
+                                        const SizedBox(height: 20),
+                                        ThemedRaisedButton(
+                                          label: t.finish,
+                                          busy: _busy,
+                                          onPressed: !_busy ? _saveForm : null,
+                                          width: Theme.of(context)
+                                              .standardButtonWidth,
                                         ),
                                         const SizedBox(height: 20),
                                       ],
@@ -237,72 +138,22 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
     );
   }
 
-  Widget _iconButton(BuildContext context, IconData icon, String label,
-      VoidCallback? onPressed) {
-    final themeData = Theme.of(context);
-    final textStyles = themeData.textStyles;
-    return InkWell(
-      onTap: onPressed,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        child: Row(
-          children: [
-            Icon(
-              icon,
-              size: 24,
-              color: themeData.themeColors.primaryText,
-            ),
-            const SizedBox(
-              width: 10,
-            ),
-            Expanded(
-              child: Text(
-                label,
-                style: textStyles.button,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Future<void> _promptSignOut(BuildContext context) async {
+  Widget _header(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
     final t = AppLocalizations.of(context)!;
-    bool? signOut = await showDialog<bool>(
-      context: context,
-      /*it shows a popup with few options which you can select, for option we
-        created enums which we can use with switch statement, in this first switch
-        will wait for the user to select the option which it can use with switch cases*/
-      builder: (BuildContext context) {
-        final actions = [
-          TextButton(
-            child: Text(t.signOut),
-            onPressed: () {
-              Navigator.of(context).pop(true);
-            },
-          ),
-          TextButton(
-            child: Text(t.cancel),
-            onPressed: () {
-              Navigator.of(context).pop(false);
-            },
-          ),
-        ];
-        return AlertDialog(
-          title: Text(
-            t.signOut,
-          ),
-          content: Text(t.areYouSureSignOut),
-          actions: actions,
-        );
-      },
+    return Column(
+      children: [
+        SizedBox(height: Theme.of(context).titleTopPadding),
+        Text(
+          t.aboutYou,
+          style: textTheme.headline1,
+        ),
+        const Center(
+          child: ContentDivider(),
+        ),
+        const SizedBox(height: 20),
+      ],
     );
-    if (signOut == true) {
-      setState(() => _busy = true);
-      await ref.read(authServiceProvider).signOut();
-      Navigator.of(context).pop();
-    }
   }
 
   Future<void> _promptImageSource(BuildContext context) async {
@@ -438,6 +289,24 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  InkWell(
+                    customBorder: const CircleBorder(),
+                    onTap: () {
+                      // edit
+                      _promptImageSource(context);
+                    },
+                    child: (_userProfile != null && _userProfile!.hasImage)
+                        ? const ProfileImage(
+                            size: 100,
+                          )
+                        : _emptyProfileImage(context),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 32),
               Text(t.name, style: textStyles.inputLabel),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -446,10 +315,10 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
                     child: ThemedTextFormField(
                       hintText: t.helpExampleName,
                       controller: _nameController,
-                      textCapitalization: TextCapitalization.sentences,
-                      keyboardType: TextInputType.name,
-                      textInputAction: TextInputAction.done,
                       autocorrect: false,
+                      textCapitalization: TextCapitalization.sentences,
+                      textInputAction: TextInputAction.done,
+                      keyboardType: TextInputType.name,
                       autovalidateMode: AutovalidateMode.onUserInteraction,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -463,10 +332,12 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
                     width: 8,
                   ),
                   InkWell(
-                    customBorder: const CircleBorder(),
                     onTap: () {
-                      BottomTrayHelpDialog.showTrayHelp(context,
-                          title: t.name, detail: t.helpPublicInformation);
+                      BottomTrayHelpDialog.showTrayHelp(
+                        context,
+                        title: t.name,
+                        detail: t.helpPublicInformation,
+                      );
                     },
                     child: Padding(
                       padding:
@@ -481,20 +352,16 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
                 ],
               ),
               const SizedBox(height: 32),
-              Text(
-                t.email,
-                style: textStyles.inputLabel,
-              ),
+              Text(t.email, style: textStyles.inputLabel),
               Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
                     child: ThemedTextFormField(
                       hintText: t.helpExampleEmail,
                       controller: _emailController,
-                      textCapitalization: TextCapitalization.sentences,
-                      textInputAction: TextInputAction.done,
                       keyboardType: TextInputType.emailAddress,
+                      textInputAction: TextInputAction.done,
                       autovalidateMode: AutovalidateMode.onUserInteraction,
                       autocorrect: false,
                       validator: (value) {
@@ -509,10 +376,12 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
                     width: 8,
                   ),
                   InkWell(
-                    customBorder: const CircleBorder(),
                     onTap: () {
-                      BottomTrayHelpDialog.showTrayHelp(context,
-                          title: t.email, detail: t.helpPrivateInformation);
+                      BottomTrayHelpDialog.showTrayHelp(
+                        context,
+                        title: t.email,
+                        detail: t.helpPrivateInformation,
+                      );
                     },
                     child: Padding(
                       padding:
@@ -531,6 +400,26 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
           ),
         );
       },
+    );
+  }
+
+  Widget _emptyProfileImage(BuildContext context) {
+    final themeData = Theme.of(context);
+    return Container(
+      width: 100,
+      height: 100,
+      decoration: BoxDecoration(
+        border: Border.all(
+            color: themeData.themeColors.profileBackground, width: 1.0),
+        color: Colors.white,
+        shape: BoxShape.circle,
+      ),
+      child: Center(
+        child: Icon(
+          Icons.camera_alt_outlined,
+          color: themeData.themeColors.primaryText,
+        ),
+      ),
     );
   }
 
