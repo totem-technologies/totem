@@ -62,4 +62,15 @@ class SessionParticipant extends ChangeNotifier {
     }
     return data;
   }
+
+  @override
+  bool operator ==(other) {
+    if (other is! SessionParticipant) {
+      return false;
+    }
+    return other.uid == uid;
+  }
+
+  @override
+  int get hashCode => uid.hashCode;
 }

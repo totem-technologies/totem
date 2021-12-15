@@ -60,13 +60,10 @@ class ActiveSession extends ChangeNotifier {
     for (SessionParticipant participant in activeParticipants) {
       updatedParticipants.add(participant.toJson());
     }
-    Map<String, dynamic> request = {
-      "participants": updatedParticipants,
-      "totemUser": _totemUser,
-      "totemReceived": true,
-      "lastChange": ActiveSessionChange.totemReceive.name,
-    };
-    return request;
+    return _toJson(
+      received: true,
+      sessionChange: ActiveSessionChange.totemReceive,
+    );
   }
 
   Map<String, dynamic>? requestNextUserTotem({String? nextSessionId}) {
@@ -92,15 +89,17 @@ class ActiveSession extends ChangeNotifier {
       for (SessionParticipant participant in activeParticipants) {
         updatedParticipants.add(participant.toJson());
       }
-      Map<String, dynamic> request = {
-        "participants": updatedParticipants,
-        "totemUser": nextSessionId,
-        "totemReceived": false,
-        "lastChange": ActiveSessionChange.totemChange.name,
-      };
-      return request;
+      return _toJson(
+        nextTotemUser: nextSessionId,
+        received: false,
+        sessionChange: ActiveSessionChange.totemChange,
+      );
     }
     return null;
+  }
+
+  SessionParticipant? me() {
+    return activeParticipants.firstWhereOrNull((element) => element.me);
   }
 
   SessionParticipant? participantWithID(String id) {
@@ -110,6 +109,11 @@ class ActiveSession extends ChangeNotifier {
   SessionParticipant? participantWithSessionID(String sessionId) {
     return activeParticipants
         .firstWhereOrNull((element) => element.sessionUserId == sessionId);
+  }
+
+  Map<String, dynamic> reorderParticipants(
+      List<SessionParticipant> participants) {
+    return _toJson(participants: participants);
   }
 
   void updateFromData(Map<String, dynamic> data) {
@@ -262,4 +266,24 @@ class ActiveSession extends ChangeNotifier {
 
   @override
   int get hashCode => session.id.hashCode;
+
+  Map<String, dynamic> _toJson(
+      {List<SessionParticipant>? participants,
+      String? nextTotemUser,
+      bool? received,
+      ActiveSessionChange? sessionChange}) {
+    List<Map<String, dynamic>> updatedParticipants = [];
+    for (SessionParticipant participant
+        in (participants ?? activeParticipants)) {
+      updatedParticipants.add(participant.toJson());
+    }
+    Map<String, dynamic> data = {
+      "participants": updatedParticipants,
+      "totemUser": nextTotemUser ?? _totemUser,
+      "totemReceived": received ?? totemReceived,
+      "lastChange":
+          sessionChange != null ? sessionChange.name : lastChange.name,
+    };
+    return data;
+  }
 }

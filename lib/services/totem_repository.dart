@@ -8,6 +8,7 @@ import 'package:totem/services/firebase_providers/firebase_circles_provider.dart
 import 'package:totem/services/firebase_providers/firebase_session_provider.dart';
 import 'package:totem/services/firebase_providers/firebase_user_provider.dart';
 import 'package:totem/services/index.dart';
+
 import 'firebase_providers/firebase_topics_provider.dart';
 
 class TotemRepository {
@@ -89,6 +90,9 @@ class TotemRepository {
   Future<void> endActiveSession() => _sessionProvider.endActiveSession();
   void clearActiveSession() => _sessionProvider.clear();
   ActiveSession? get activeSession => _sessionProvider.activeSession;
+  Future<void> updateActiveSession(Map<String, dynamic> sessionData) =>
+      _sessionProvider.updateActiveSession(sessionData);
+
   // Communications for Session
   CommunicationProvider createCommunicationProvider() {
     CommunicationProvider provider = AgoraCommunicationProvider(

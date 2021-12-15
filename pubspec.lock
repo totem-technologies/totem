@@ -178,6 +178,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.0"
+  diffutil_dart:
+    dependency: "direct main"
+    description:
+      name: diffutil_dart
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.0.0"
   equatable:
     dependency: transitive
     description:
@@ -307,6 +314,15 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.5"
+  flutter_reorderable_list:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: HEAD
+      resolved-ref: dae1e8ad2c2343a91e1bb1bac41b1c7e322776bf
+      url: "https://github.com/Phase2Industries/flutter_reorderable_list.git"
+    source: git
+    version: "1.1.0"
   flutter_riverpod:
     dependency: "direct main"
     description:
@@ -314,6 +330,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.2"
+  flutter_slidable:
+    dependency: "direct main"
+    description:
+      name: flutter_slidable
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.6.0"
   flutter_spinbox:
     dependency: "direct main"
     description:

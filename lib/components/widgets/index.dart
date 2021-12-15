@@ -9,6 +9,7 @@ export 'frosted_panel_widget.dart';
 export 'gradient_background.dart';
 export 'headers.dart';
 export 'list_item_container.dart';
+export 'participant_rounded_rect_image.dart';
 export 'profile_image.dart';
 export 'rect_profile_image.dart';
 export 'sub_page_header.dart';

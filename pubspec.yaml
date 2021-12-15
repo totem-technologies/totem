@@ -57,6 +57,11 @@ dependencies:
       url: https://github.com/Phase2Industries/plugins.git
       path: packages/camera/camera
   image_crop: ^0.4.0
+  flutter_reorderable_list:
+    git:
+      url: https://github.com/Phase2Industries/flutter_reorderable_list.git
+  flutter_slidable: ^0.6.0
+  diffutil_dart: ^3.0.0
 
 dev_dependencies:
   flutter_test:
@@ -95,6 +100,7 @@ flutter:
     - assets/more_info.svg
     - assets/profile.svg
     - assets/send.svg
+    - assets/sort.svg
     - assets/unlock.svg
     - assets/view_circle.svg
 
