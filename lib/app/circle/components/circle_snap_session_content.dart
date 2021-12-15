@@ -60,7 +60,8 @@ class _CircleSnapSessionContentState
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 if (sessionProvider.state != SessionState.live &&
-                    sessionProvider.state != SessionState.complete)
+                    sessionProvider.state != SessionState.complete &&
+                    sessionProvider.state != SessionState.ending)
                   SubPageHeader(
                     title: widget.circle.name,
                     onClose:
@@ -114,9 +115,11 @@ class _CircleSnapSessionContentState
                       : _invalidSession(context),
                 ),
                 if (commProvider.state == CommunicationState.active)
-                  const Align(
+                  Align(
                     alignment: Alignment.bottomCenter,
-                    child: CircleSessionControls(),
+                    child: CircleSessionControls(
+                      session: widget.circle.snapSession,
+                    ),
                   ),
               ],
             ),
@@ -398,14 +401,16 @@ class _CircleSnapSessionContentState
         session: widget.circle.activeSession!,
         sessionImage: widget.sessionImage,
         handler: CommunicationHandler(
-            joinedCircle: (String sessionId, String sessionUserId) {
-          debugPrint("joined circle as: " + sessionUserId);
-        }, leaveCircle: () {
-          // prompt?
-          Future.delayed(const Duration(milliseconds: 0), () {
-            // Navigator.of(context).pop();
-          });
-        }),
+          joinedCircle: (String sessionId, String sessionUserId) {
+            debugPrint("joined circle as: " + sessionUserId);
+          },
+          leaveCircle: () {
+            // prompt?
+            Future.delayed(const Duration(milliseconds: 0), () {
+              // Navigator.of(context).pop();
+            });
+          },
+        ),
       );
     }
   }

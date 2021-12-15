@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:totem/app/circle/circle_session_info_page.dart';
 import 'package:totem/app/circle/circle_session_page.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
@@ -8,7 +9,9 @@ import 'package:totem/services/providers.dart';
 import 'package:totem/theme/index.dart';
 
 class CircleSessionControls extends ConsumerStatefulWidget {
-  const CircleSessionControls({Key? key}) : super(key: key);
+  const CircleSessionControls({Key? key, required this.session})
+      : super(key: key);
+  final Session session;
 
   @override
   _CircleSessionControlsState createState() => _CircleSessionControlsState();
@@ -82,7 +85,8 @@ class _CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
           label: t.info,
           svgImage: 'assets/info.svg',
           onPressed: () {
-            debugPrint('start pressed');
+            debugPrint('info pressed');
+            _showCircleInfo(context);
           },
         ),
       ],
@@ -244,6 +248,10 @@ class _CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
     final repo = ref.read(repositoryProvider);
 
     await repo.startActiveSession();
+  }
+
+  Future<void> _showCircleInfo(BuildContext context) async {
+    await CircleSessionInfoPage.showDialog(context, session: widget.session);
   }
 
   Future<void> _endSessionPrompt(BuildContext context, WidgetRef ref) async {

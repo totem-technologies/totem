@@ -1,14 +1,15 @@
 import 'package:after_layout/after_layout.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:totem/app/circle/circle_session_page.dart';
 import 'package:totem/app/circle/components/circle_session_content.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
-import 'package:totem/app/circle/circle_session_page.dart';
+
 import 'circle_session_controls.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CircleScheduledSessionContent extends ConsumerStatefulWidget {
   const CircleScheduledSessionContent({Key? key, required this.session})
@@ -98,9 +99,11 @@ class _CircleScheduledSessionContentState
                   ],
                 ),
                 if (commProvider.state == CommunicationState.active)
-                  const Align(
+                  Align(
                     alignment: Alignment.bottomCenter,
-                    child: CircleSessionControls(),
+                    child: CircleSessionControls(
+                      session: widget.session,
+                    ),
                   ),
               ],
             ),

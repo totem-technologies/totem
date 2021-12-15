@@ -8,5 +8,6 @@ export 'circle_scheduled_session_content.dart';
 export 'circle_session_content.dart';
 export 'circle_session_controls.dart';
 export 'circle_session_participant.dart';
+export 'circle_session_participant_list_item.dart';
 export 'circle_snap_session_content.dart';
 export 'scheduled_session_item.dart';
