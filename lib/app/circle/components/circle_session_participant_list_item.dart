@@ -16,7 +16,6 @@ class CircleSessionParticipantListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeColors = Theme.of(context).themeColors;
     return Padding(
       padding: EdgeInsets.symmetric(
         horizontal: Theme.of(context).pageHorizontalPadding,

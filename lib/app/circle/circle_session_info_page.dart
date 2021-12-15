@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:diffutil_dart/diffutil.dart' as diffUtil;
+import 'package:diffutil_dart/diffutil.dart' as diff_util;
 import 'package:flutter/material.dart' hide ReorderableList;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_reorderable_list/flutter_reorderable_list.dart';
@@ -57,7 +57,7 @@ class _CircleSessionInfoPageState extends ConsumerState<CircleSessionInfoPage> {
     ref.listen(activeSessionProvider,
         (ActiveSession? previous, ActiveSession next) {
       bool updated = false;
-      final result = diffUtil
+      final result = diff_util
           .calculateListDiff(_participants, next.activeParticipants)
           .getUpdatesWithData();
       for (var change in result) {
