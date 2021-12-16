@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class AuthUser with ChangeNotifier{
+class AuthUser with ChangeNotifier {
   AuthUser({
     required this.uid,
     this.email,
@@ -8,11 +8,13 @@ class AuthUser with ChangeNotifier{
     this.displayName = "",
     this.isNewUser = false,
     this.isAnonymous = false,
+    this.phoneNumber = "",
   });
 
   final String uid;
   final String? email;
   String? photoUrl;
+  String phoneNumber;
   String displayName;
   bool isNewUser;
   bool isAnonymous;

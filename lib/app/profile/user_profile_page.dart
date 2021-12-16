@@ -1,15 +1,19 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:totem/components/widgets/bottom_tray_help_dialog.dart';
-import 'package:totem/components/widgets/index.dart';
-import 'package:totem/services/index.dart';
-import 'package:totem/theme/index.dart';
-import 'package:totem/models/index.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl_phone_number_input/intl_phone_number_input.dart';
+import 'package:libphonenumber_plugin/libphonenumber_plugin.dart';
+import 'package:totem/app/profile/components/index.dart';
+import 'package:totem/components/widgets/bottom_tray_help_dialog.dart';
+import 'package:totem/components/widgets/index.dart';
+import 'package:totem/models/index.dart';
+import 'package:totem/services/index.dart';
+import 'package:totem/theme/index.dart';
 
 class UserProfilePage extends ConsumerStatefulWidget {
   const UserProfilePage({Key? key}) : super(key: key);
@@ -45,6 +49,7 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
     final textStyles = themeData.textStyles;
     return GradientBackground(
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         backgroundColor: Colors.transparent,
         body: WillPopScope(
           onWillPop: () async {
@@ -81,7 +86,7 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
                                         _saveForm();
                                       }
                                     : null,
-                                child: Text(t.done)),
+                                child: Text(t.save)),
                             const SizedBox(
                               width: 8,
                             ),
@@ -145,7 +150,10 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
                                                         child: Padding(
                                                           padding:
                                                               const EdgeInsets
-                                                                  .all(2),
+                                                                      .symmetric(
+                                                                  horizontal:
+                                                                      15,
+                                                                  vertical: 5),
                                                           child:
                                                               SvgPicture.asset(
                                                             'assets/more_info.svg',
@@ -190,30 +198,29 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
                                           height: 1,
                                           thickness: 1,
                                         ),
-                                        const SizedBox(height: 32),
+                                        const SizedBox(height: 22),
                                         _profileEditForm(context),
                                         Expanded(
                                           child: Container(),
                                         ),
-                                        Divider(
-                                          color: themeData.themeColors.divider,
-                                          height: 1,
-                                          thickness: 1,
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            TextButton(
+                                              onPressed: !_busy
+                                                  ? () {
+                                                      _promptSignOut(context);
+                                                    }
+                                                  : null,
+                                              child: Text(t.signOut,
+                                                  style: const TextStyle(
+                                                      fontSize: 12)),
+                                            ),
+                                          ],
                                         ),
-                                        _iconButton(
-                                            context,
-                                            Icons.logout,
-                                            t.signOut,
-                                            !_busy
-                                                ? () {
-                                                    _promptSignOut(context);
-                                                  }
-                                                : null),
-                                        Divider(
-                                          color: themeData.themeColors.divider,
-                                          height: 1,
-                                          thickness: 1,
-                                        ),
+                                        const SizedBox(height: 4),
+                                        const VersionInfo(),
                                         const SizedBox(height: 20),
                                       ],
                                     ),
@@ -237,6 +244,7 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
     );
   }
 
+  /* currently unused - revive if we make icon buttons for profile
   Widget _iconButton(BuildContext context, IconData icon, String label,
       VoidCallback? onPressed) {
     final themeData = Theme.of(context);
@@ -265,7 +273,7 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
         ),
       ),
     );
-  }
+  } */
 
   Future<void> _promptSignOut(BuildContext context) async {
     final t = AppLocalizations.of(context)!;
@@ -404,10 +412,45 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
     Navigator.of(context).pop();
   }
 
+  Widget _profileLabelItem(BuildContext context,
+      {required String label, required String helpType}) {
+    final textStyles = Theme.of(context).textStyles;
+    return Row(
+      children: [
+        InkWell(
+          onTap: () {
+            BottomTrayHelpDialog.showTrayHelp(context,
+                title: label, detail: helpType);
+          },
+          child: Padding(
+            padding: const EdgeInsets.only(
+              top: 10,
+              bottom: 5,
+            ),
+            child: Row(
+              children: [
+                Text(label, style: textStyles.inputLabel),
+                const SizedBox(
+                  width: 8,
+                ),
+                SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: SvgPicture.asset('assets/more_info.svg'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _profileEditForm(BuildContext context) {
     final t = AppLocalizations.of(context)!;
     final themeData = Theme.of(context);
     final textStyles = themeData.textStyles;
+    AuthUser user = ref.read(authServiceProvider).currentUser()!;
     return FutureBuilder<UserProfile?>(
       future: _userProfileFetch,
       builder: (context, asyncSnapshot) {
@@ -438,93 +481,49 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(t.name, style: textStyles.inputLabel),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Expanded(
-                    child: ThemedTextFormField(
-                      hintText: t.helpExampleName,
-                      controller: _nameController,
-                      textCapitalization: TextCapitalization.sentences,
-                      keyboardType: TextInputType.name,
-                      textInputAction: TextInputAction.done,
-                      autocorrect: false,
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return t.errorEnterName;
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 8,
-                  ),
-                  InkWell(
-                    customBorder: const CircleBorder(),
-                    onTap: () {
-                      BottomTrayHelpDialog.showTrayHelp(context,
-                          title: t.name, detail: t.helpPublicInformation);
-                    },
-                    child: Padding(
-                      padding:
-                          const EdgeInsets.only(bottom: 5, top: 5, left: 4),
-                      child: SizedBox(
-                        width: 24,
-                        height: 24,
-                        child: SvgPicture.asset('assets/more_info.svg'),
-                      ),
-                    ),
-                  )
-                ],
+              _profileLabelItem(context,
+                  label: t.name, helpType: t.helpPublicInformation),
+              ThemedTextFormField(
+                hintText: t.helpExampleName,
+                controller: _nameController,
+                textCapitalization: TextCapitalization.sentences,
+                keyboardType: TextInputType.name,
+                textInputAction: TextInputAction.done,
+                autocorrect: false,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return t.errorEnterName;
+                  }
+                  return null;
+                },
               ),
-              const SizedBox(height: 32),
-              Text(
-                t.email,
-                style: textStyles.inputLabel,
+              const SizedBox(height: 22),
+              _profileLabelItem(context,
+                  label: t.email, helpType: t.helpPrivateInformation),
+              ThemedTextFormField(
+                hintText: t.helpExampleEmail,
+                controller: _emailController,
+                textCapitalization: TextCapitalization.sentences,
+                textInputAction: TextInputAction.done,
+                keyboardType: TextInputType.emailAddress,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                autocorrect: false,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return t.errorEnterName;
+                  }
+                  return null;
+                },
               ),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Expanded(
-                    child: ThemedTextFormField(
-                      hintText: t.helpExampleEmail,
-                      controller: _emailController,
-                      textCapitalization: TextCapitalization.sentences,
-                      textInputAction: TextInputAction.done,
-                      keyboardType: TextInputType.emailAddress,
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
-                      autocorrect: false,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return t.errorEnterName;
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 8,
-                  ),
-                  InkWell(
-                    customBorder: const CircleBorder(),
-                    onTap: () {
-                      BottomTrayHelpDialog.showTrayHelp(context,
-                          title: t.email, detail: t.helpPrivateInformation);
-                    },
-                    child: Padding(
-                      padding:
-                          const EdgeInsets.only(bottom: 5, top: 5, left: 4),
-                      child: SizedBox(
-                        width: 24,
-                        height: 24,
-                        child: SvgPicture.asset('assets/more_info.svg'),
-                      ),
-                    ),
-                  )
-                ],
+              const SizedBox(height: 22),
+              _profileLabelItem(context,
+                  label: t.phoneNumber, helpType: t.helpPrivateInformation),
+              FutureBuilder<String>(
+                future: _formatPhoneNumber(user.phoneNumber),
+                builder: (context, asyncSnapshot) {
+                  return Text(asyncSnapshot.data ?? user.phoneNumber);
+                },
               ),
               const SizedBox(height: 20),
             ],
@@ -532,6 +531,14 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
         );
       },
     );
+  }
+
+  Future<String> _formatPhoneNumber(String phoneNumber) async {
+    PhoneNumber num =
+        await PhoneNumber.getRegionInfoFromPhoneNumber(phoneNumber);
+    String? formattedNumber =
+        await PhoneNumberUtil.formatAsYouType(num.phoneNumber!, num.isoCode!);
+    return formattedNumber ?? "";
   }
 
   Future<bool> _savePrompt() async {
