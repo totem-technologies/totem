@@ -68,7 +68,11 @@ class BottomTrayHelpDialog extends StatelessWidget {
                   onTap: () {
                     Navigator.of(context).pop();
                   },
-                  child: SvgPicture.asset('assets/close.svg'),
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                        left: 10, right: 10, top: 5, bottom: 5),
+                    child: SvgPicture.asset('assets/close.svg'),
+                  ),
                 ),
               )
             ],

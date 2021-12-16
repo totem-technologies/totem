@@ -350,11 +350,11 @@ PODS:
   - BoringSSL-GRPC/Interface (0.0.7)
   - camera (0.0.1):
     - Flutter
-  - cloud_firestore (3.1.1):
+  - cloud_firestore (3.1.4):
     - Firebase/Firestore (= 8.9.0)
     - firebase_core
     - Flutter
-  - cloud_functions (3.2.0):
+  - cloud_functions (3.2.3):
     - Firebase/Functions (= 8.9.0)
     - firebase_core
     - Flutter
@@ -372,14 +372,14 @@ PODS:
   - Firebase/Storage (8.9.0):
     - Firebase/CoreOnly
     - FirebaseStorage (~> 8.9.0)
-  - firebase_auth (3.3.0):
+  - firebase_auth (3.3.3):
     - Firebase/Auth (= 8.9.0)
     - firebase_core
     - Flutter
-  - firebase_core (1.10.2):
+  - firebase_core (1.10.5):
     - Firebase/CoreOnly (= 8.9.0)
     - Flutter
-  - firebase_storage (10.2.0):
+  - firebase_storage (10.2.3):
     - Firebase/Storage (= 8.9.0)
     - firebase_core
     - Flutter
@@ -487,6 +487,8 @@ PODS:
     - nanopb/encode (= 2.30908.0)
   - nanopb/decode (2.30908.0)
   - nanopb/encode (2.30908.0)
+  - package_info (0.0.1):
+    - Flutter
   - path_provider_ios (0.0.1):
     - Flutter
   - "permission_handler (5.1.0+2)":
@@ -512,6 +514,7 @@ DEPENDENCIES:
   - image_picker (from `.symlinks/plugins/image_picker/ios`)
   - libphonenumber (from `.symlinks/plugins/libphonenumber/ios`)
   - libphonenumber_plugin (from `.symlinks/plugins/libphonenumber_plugin/ios`)
+  - package_info (from `.symlinks/plugins/package_info/ios`)
   - path_provider_ios (from `.symlinks/plugins/path_provider_ios/ios`)
   - permission_handler (from `.symlinks/plugins/permission_handler/ios`)
   - sqflite (from `.symlinks/plugins/sqflite/ios`)
@@ -569,6 +572,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/libphonenumber/ios"
   libphonenumber_plugin:
     :path: ".symlinks/plugins/libphonenumber_plugin/ios"
+  package_info:
+    :path: ".symlinks/plugins/package_info/ios"
   path_provider_ios:
     :path: ".symlinks/plugins/path_provider_ios/ios"
   permission_handler:
@@ -582,12 +587,12 @@ SPEC CHECKSUMS:
   AgoraRtcEngine_iOS: ff8e085161ea98c917173783a899882f884dd9ef
   BoringSSL-GRPC: 8edf627ee524575e2f8d19d56f068b448eea3879
   camera: fe33292aff715a981eb34d7ce7b35b54337ff34c
-  cloud_firestore: 681d2ac94cc83eec7e3534fb9a9ba026d392fb97
-  cloud_functions: 3bd5f46b238980ffb8a3d530039ced116e2244e3
+  cloud_firestore: c978a55e0bfc675cdc2291ef7670a69695cc663a
+  cloud_functions: 786d5b5ebbb7b16daa9d4a2e302a76816cadf42f
   Firebase: 13d8d96499e2635428d5bf0ec675df21f95d9a95
-  firebase_auth: 9b2e9b08f1d64fcf861f0409ac909a5cf9aa52dc
-  firebase_core: 6d1a5e12a83b6d9419ecb8f2a53d876e7b4695da
-  firebase_storage: 61f69613ac9897d37baa6690500f309a15454c14
+  firebase_auth: fe3a1deb12ebd850295344234abc15588d086baf
+  firebase_core: dfcae4c150a5e24436a0b7677c470478a234d5bf
+  firebase_storage: 41d59adeff37c548e167ecbfa834d2d038e6ad87
   FirebaseAuth: 2b78b2a32c07b3ecfa4970bdf1d3632b8304099b
   FirebaseCore: 599ee609343eaf4941bd188f85e3aa077ffe325b
   FirebaseCoreDiagnostics: 5daa63f1c1409d981a2d5007daa100b36eac6a34
@@ -610,6 +615,7 @@ SPEC CHECKSUMS:
   libPhoneNumber-iOS: 0a32a9525cf8744fe02c5206eb30d571e38f7d75
   libphonenumber_plugin: 7cf755ad1656145935d6c208173a476bd3f12898
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
+  package_info: 873975fc26034f0b863a300ad47e7f1ac6c7ec62
   path_provider_ios: 7d7ce634493af4477d156294792024ec3485acd5
   permission_handler: ccb20a9fad0ee9b1314a52b70b76b473c5f8dab0
   PromisesObjC: 68159ce6952d93e17b2dfe273b8c40907db5ba58
