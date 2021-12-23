@@ -1,12 +1,14 @@
 import 'dart:io';
 
+import 'package:after_layout/after_layout.dart';
 import 'package:camera/camera.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:image/image.dart' as img;
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/theme/index.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 enum CaptureMode { videoAndPhoto, videoOnly, photoOnly }
 
@@ -14,29 +16,26 @@ class CameraCapture extends StatefulWidget {
   const CameraCapture({
     Key? key,
     this.captureMode = CaptureMode.videoAndPhoto,
+    this.mirrorFrontImage = true,
+    this.cropImage = true,
     required this.onImageTaken,
   }) : super(key: key);
   final CaptureMode captureMode;
+  final bool mirrorFrontImage;
+  final bool cropImage;
   final void Function(XFile) onImageTaken;
   @override
   CameraCaptureScreenState createState() => CameraCaptureScreenState();
 }
 
 class CameraCaptureScreenState extends State<CameraCapture>
-    with AutomaticKeepAliveClientMixin {
+    with AutomaticKeepAliveClientMixin, AfterLayoutMixin<CameraCapture> {
   CameraController? _controller;
   List<CameraDescription>? _cameras;
   bool _initialized = false;
   bool _error = false;
-  // bool _saving = false;
-
-  @override
-  void initState() {
-    Future.delayed(const Duration(seconds: 0), () {
-      _initCamera();
-    });
-    super.initState();
-  }
+  bool _frontCamera = false;
+  bool _saving = false;
 
   Future<void> _initCamera() async {
     _cameras = await availableCameras();
@@ -46,6 +45,7 @@ class CameraCaptureScreenState extends State<CameraCapture>
       for (int i = 0; i < _cameras!.length; i++) {
         if (_cameras![i].lensDirection == CameraLensDirection.front) {
           startIndex = i;
+          _frontCamera = true;
           break;
         }
       }
@@ -76,9 +76,37 @@ class CameraCaptureScreenState extends State<CameraCapture>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return LayoutBuilder(builder: (context, constraints) {
-      return _buildContent(context, constraints);
-    });
+    if (_controller != null) {
+      if (!_controller!.value.isInitialized) {
+        return _buildCameraError(context);
+      }
+    } else if (!_initialized) {
+      return const Center(
+        child: BusyIndicator(),
+      );
+    }
+    if (_error) {
+      return _buildCameraError(context);
+    }
+    final themeColor = Theme.of(context).themeColors;
+    return Stack(
+      children: <Widget>[
+        Container(
+          color: themeColor.primaryText,
+        ),
+        _buildCameraPreview(context),
+        if (_saving)
+          Positioned.fill(
+            child: Center(
+              child: BusyIndicator(
+                color: themeColor.reversedText,
+              ),
+            ),
+          ),
+        if (!_saving) _buildCameraControl(context),
+        if (!_saving) _buildCameraSelectorControl(context),
+      ],
+    );
   }
 
   Widget _buildCameraError(BuildContext context) {
@@ -102,41 +130,11 @@ class CameraCaptureScreenState extends State<CameraCapture>
     );
   }
 
-  Widget _buildContent(BuildContext context, BoxConstraints constraints) {
-    if (_controller != null) {
-      if (!_controller!.value.isInitialized) {
-        return _buildCameraError(context);
-      }
-    } else if (!_initialized) {
-      return const Center(
-        child: BusyIndicator(),
-      );
-    }
-    if (_error) {
-      return _buildCameraError(context);
-    }
-    return Stack(
-      children: <Widget>[
-        _buildCameraPreview(context, constraints),
-        _buildCameraControl(context),
-        _buildCameraSelectorControl(context),
-      ],
-    );
-  }
-
-  Widget _buildCameraPreview(BuildContext context, BoxConstraints constraints) {
-    var size = MediaQuery.of(context).size;
-    var scale = size.width / _controller!.value.previewSize!.width;
-    // to prevent scaling down, invert the value
-    if (scale < 1) scale = 1 / scale;
-
-    return Container(
-      constraints: const BoxConstraints.expand(),
-      child: Center(
-        child: Transform.scale(
-          scale: scale,
-          child: CameraPreview(_controller!),
-        ),
+  Widget _buildCameraPreview(BuildContext context) {
+    return Center(
+      child: Transform.scale(
+        scale: _controller!.value.aspectRatio,
+        child: CameraPreview(_controller!),
       ),
     );
   }
@@ -217,10 +215,12 @@ class CameraCaptureScreenState extends State<CameraCapture>
         (_controller!.description == _cameras![0])
             ? _cameras![1]
             : _cameras![0];
+    _frontCamera = cameraDescription.lensDirection == CameraLensDirection.front;
     if (_controller != null) {
       await _controller!.dispose();
     }
-    _controller = CameraController(cameraDescription, ResolutionPreset.medium);
+    _controller = CameraController(cameraDescription, ResolutionPreset.medium,
+        imageFormatGroup: ImageFormatGroup.jpeg);
     _controller!.addListener(() {
       if (mounted) setState(() {});
       if (_controller!.value.hasError) {
@@ -242,17 +242,16 @@ class CameraCaptureScreenState extends State<CameraCapture>
   void _captureImage() async {
     debugPrint('_captureImage');
     if (_controller!.value.isInitialized) {
-      final Directory extDir = await getApplicationDocumentsDirectory();
-      final String dirPath = '${extDir.path}/media';
-      await Directory(dirPath).create(recursive: true);
-      final String filePath = '$dirPath/${_timestamp()}.jpeg';
-      debugPrint('path: $filePath');
+      await _controller!.pausePreview();
       XFile file = await _controller!.takePicture();
+      setState(() => _saving = true);
+      if (widget.cropImage || (widget.mirrorFrontImage && _frontCamera)) {
+        await compute(processPhoto,
+            '${file.path}|${widget.cropImage.toString()}|${(_frontCamera && widget.mirrorFrontImage).toString()}');
+      }
       widget.onImageTaken(file);
     }
   }
-
-  String _timestamp() => DateTime.now().millisecondsSinceEpoch.toString();
 
   void _showCameraException(CameraException e) {
     logError(e.code, e.description ?? "");
@@ -269,4 +268,36 @@ class CameraCaptureScreenState extends State<CameraCapture>
 
   @override
   bool get wantKeepAlive => true;
+
+  @override
+  void afterFirstLayout(BuildContext context) {
+    _initCamera();
+  }
+}
+
+// run as isolate in background
+void processPhoto(String values) async {
+  List<String> params = values.split("|");
+  File file = File(params[0]);
+  bool crop = (params.length > 1) ? params[1] == 'true' : false;
+  bool mirror = (params.length > 2) ? params[2] == 'true' : false;
+  List<int> imageBytes = await file.readAsBytes();
+  img.Image? originalImage = img.decodeImage(imageBytes);
+  if (originalImage != null) {
+    if (mirror) {
+      // have to flip the image to mirrored as the output is no mirrored
+      originalImage = img.flipHorizontal(originalImage);
+    }
+    if (crop) {
+      // crop to a square
+      int top = (originalImage.height / 2 - originalImage.width / 2).toInt();
+      originalImage = img.copyCrop(
+          originalImage, 0, top, originalImage.width, originalImage.width);
+    }
+    File outfile = File(file.path);
+    await outfile.writeAsBytes(
+      img.encodeJpg(originalImage),
+      flush: true,
+    );
+  }
 }

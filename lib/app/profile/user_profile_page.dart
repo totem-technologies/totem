@@ -1,10 +1,7 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:libphonenumber_plugin/libphonenumber_plugin.dart';
@@ -372,8 +369,9 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
         maxWidth: 500,
         maxHeight: 500);
     if (selected != null) {
+      // FIXME!
       final themeColors = Theme.of(context).themeColors;
-      File? cropped = await ImageCropper.cropImage(
+/*      File? cropped = await ImageCropper.cropImage(
           sourcePath: selected.path,
           aspectRatioPresets: [CropAspectRatioPreset.square],
           aspectRatio: const CropAspectRatio(ratioX: 1.0, ratioY: 1.0),
@@ -392,7 +390,7 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
               );
             });
         cropped.delete();
-      }
+      } */
     }
   }
 

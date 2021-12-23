@@ -182,7 +182,8 @@ class _CircleSnapSessionContentState
   Widget _sessionContent(BuildContext context,
       CommunicationProvider commProvider, ActiveSession sessionProvider) {
     if (sessionProvider.state == SessionState.starting ||
-        sessionProvider.state == SessionState.ending) {
+        sessionProvider.state == SessionState.ending ||
+        sessionProvider.state == SessionState.cancelling) {
       return _circleStartingOrEnding(context, sessionProvider.state);
     }
     switch (commProvider.state) {

@@ -9,6 +9,7 @@ enum SessionState {
   live,
   ending,
   complete,
+  cancelling,
   cancelled,
   idle,
 }

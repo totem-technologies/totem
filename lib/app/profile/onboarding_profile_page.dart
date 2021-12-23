@@ -1,15 +1,15 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:totem/components/widgets/bottom_tray_help_dialog.dart';
 import 'package:totem/components/widgets/index.dart';
+import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
-import 'package:totem/models/index.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:image_cropper/image_cropper.dart';
-import 'package:image_picker/image_picker.dart';
 
 class OnboardingProfilePage extends ConsumerStatefulWidget {
   const OnboardingProfilePage({Key? key}) : super(key: key);
@@ -215,27 +215,17 @@ class _OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage> {
         maxWidth: 500,
         maxHeight: 500);
     if (selected != null) {
-      final themeColors = Theme.of(context).themeColors;
-      File? cropped = await ImageCropper.cropImage(
-          sourcePath: selected.path,
-          aspectRatioPresets: [CropAspectRatioPreset.square],
-          aspectRatio: const CropAspectRatio(ratioX: 1.0, ratioY: 1.0),
-          androidUiSettings: AndroidUiSettings(
-            toolbarColor: themeColors.primary,
-            toolbarTitle: 'Crop Image',
-            toolbarWidgetColor: themeColors.screenBackground,
-          ));
-      if (cropped != null) {
-        // upload the file then delete
-        final _ = await showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return FilePromptSave(
-                uploadTarget: cropped,
-              );
-            });
-        cropped.delete();
-      }
+      // upload the file then delete
+      File selectedFile = File(selected.path);
+      final _ = await showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return FilePromptSave(
+              uploadTarget: selectedFile,
+            );
+          });
+      selectedFile.delete();
+      //}
     }
   }
 

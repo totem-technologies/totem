@@ -13,8 +13,11 @@ import 'package:totem/services/providers.dart';
 import 'package:totem/theme/index.dart';
 
 class CircleJoinDialog extends ConsumerStatefulWidget {
-  const CircleJoinDialog({Key? key, required this.session}) : super(key: key);
+  const CircleJoinDialog(
+      {Key? key, required this.session, this.cropEnabled = false})
+      : super(key: key);
   final Session session;
+  final bool cropEnabled;
 
   static Future<String?> showDialog(BuildContext context,
       {required Session session}) async {
@@ -43,7 +46,6 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
 
   File? _pendingImage;
   File? _selectedImage;
-  bool _busy = false;
   bool _uploading = false;
 
   @override
@@ -63,7 +65,6 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
   Widget build(BuildContext context) {
     final themeColors = Theme.of(context).themeColors;
     final textStyles = Theme.of(context).textStyles;
-    final t = AppLocalizations.of(context)!;
     return BackdropFilter(
       filter: ImageFilter.blur(sigmaX: 2.5, sigmaY: 2.5),
       child: SafeArea(
@@ -123,28 +124,6 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
                                 ),
                                 const SizedBox(height: 24),
                                 Expanded(child: _userInfo(context)),
-                                if (_selectedImage != null)
-                                  SafeArea(
-                                    top: false,
-                                    bottom: true,
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        ThemedRaisedButton(
-                                          label: t.joinSession,
-                                          onPressed: _selectedImage != null &&
-                                                  !_uploading
-                                              ? () {
-                                                  _uploadImage(context);
-                                                }
-                                              : null,
-                                          width: Theme.of(context)
-                                              .standardButtonWidth,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
                               ],
                             ),
                           ),
@@ -199,19 +178,18 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
                         borderRadius:
                             const BorderRadius.all(Radius.circular(24)),
                         child: Container(
-                          decoration: BoxDecoration(
-                            color: themeColors.profileBackground,
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(24)),
+                          color: themeColors.primaryText,
+                          child: AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 300),
+                            child: _selectedImage == null
+                                ? CameraCapture(
+                                    captureMode: CaptureMode.photoOnly,
+                                    onImageTaken: (imageFile) {
+                                      _handleImage(imageFile);
+                                    },
+                                  )
+                                : _takenImage(context),
                           ),
-                          child: _selectedImage == null
-                              ? CameraCapture(
-                                  captureMode: CaptureMode.photoOnly,
-                                  onImageTaken: (imageFile) {
-                                    _handleImage(imageFile);
-                                  },
-                                )
-                              : _takenImage(context),
                         ),
                       ),
                     ),
@@ -227,80 +205,49 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
                       ),
                   ],
                 ),
-              if (_pendingImage != null) ...[
-                Stack(
-                  children: [
-                    AspectRatio(
-                      aspectRatio: 1.0,
-                      child: ClipRRect(
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(24)),
-                        child: _cropImage(context),
-                      ),
-                    ),
-                    if (_busy)
-                      Positioned.fill(
-                        child: Center(
-                          child: BusyIndicator(
-                            color: themeColors.reversedText,
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-                Text(
-                  'Drag image to recenter, pinch to zoom in or out',
-                  style: textStyles.headline4,
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 8),
+              const SizedBox(height: 10),
+              if (_selectedImage != null)
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     TextButton(
-                      onPressed: !_busy
+                      onPressed: _selectedImage != null && !_uploading
                           ? () {
-                              _savePendingImage(context);
+                              _uploadImage(context);
                             }
                           : null,
                       child: Text(
-                        'Use Image',
-                        style: TextStyle(color: themeColors.linkText),
+                        t.joinCircle,
+                        style: TextStyle(
+                            color: themeColors.linkText, fontSize: 20),
                       ),
                     ),
                     TextButton(
-                      onPressed: !_busy
+                      onPressed: !_uploading
                           ? () async {
-                              await _pendingImage!.delete();
+                              await _selectedImage!.delete();
                               setState(() {
-                                _pendingImage = null;
+                                _selectedImage = null;
                               });
                             }
                           : null,
                       child: Text(
-                        'Retake',
-                        style: TextStyle(color: themeColors.linkText),
+                        t.edit,
+                        style: TextStyle(
+                            color: themeColors.linkText, fontSize: 20),
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(
-                  height: 8,
-                ),
-              ]
+              const SizedBox(
+                height: 8,
+              ),
             ],
           );
         }
         return Container();
       },
-    );
-  }
-
-  Widget _cropImage(BuildContext context) {
-    return Crop.file(
-      _pendingImage!,
-      key: cropKey,
-      aspectRatio: 1.0,
     );
   }
 
@@ -319,29 +266,9 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
     _uploader.currentState!.profileImageUpload(_selectedImage!, authUser);
   }
 
-  Future<void> _savePendingImage(BuildContext context) async {
-    setState(() => _busy = true);
-    final scale = cropKey.currentState!.scale;
-    final area = cropKey.currentState!.area;
-
-    final sample = await ImageCrop.sampleImage(
-      file: _pendingImage!,
-      preferredSize: (500 / scale).round(),
-    );
-
-    final selected = await ImageCrop.cropImage(file: sample, area: area!);
-    sample.delete();
-    _pendingImage!.delete();
-    setState(() {
-      _pendingImage = null;
-      _selectedImage = selected;
-      _busy = false;
-    });
-  }
-
   Future<void> _handleImage(XFile imageFile) async {
     setState(() {
-      _pendingImage = File(imageFile.path);
+      _selectedImage = File(imageFile.path);
     });
   }
 }
