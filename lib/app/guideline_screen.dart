@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/auth_user.dart';
 import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class GuidelineScreen extends ConsumerWidget {
   const GuidelineScreen({Key? key}) : super(key: key);
@@ -97,7 +97,7 @@ class GuidelineScreen extends ConsumerWidget {
           ThemedRaisedButton(
             label: t.acceptGuidelines,
             onPressed: () {
-              if (authUser != null && authUser.isNewUser) {
+              if (true || authUser != null && authUser.isNewUser) {
                 Navigator.pushReplacementNamed(
                   context,
                   '/login/onboarding',

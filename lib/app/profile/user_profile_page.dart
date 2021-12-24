@@ -1,12 +1,13 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:libphonenumber_plugin/libphonenumber_plugin.dart';
 import 'package:totem/app/profile/components/index.dart';
-import 'package:totem/components/widgets/bottom_tray_help_dialog.dart';
+import 'package:totem/components/camera/index.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
@@ -26,17 +27,28 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
   late Future<UserProfile?> _userProfileFetch;
   UserProfile? _userProfile;
   bool _busy = false;
+  final GlobalKey<FileUploaderState> _uploader = GlobalKey();
+  File? _pendingImageChange;
+  bool _pendingClose = false;
 
   bool get hasChanged {
-    return (_userProfile!.name != _nameController.text ||
-        (_userProfile!.email != null &&
-            _userProfile!.email != _emailController.text));
+    return (_userProfile != null &&
+        (_userProfile!.name != _nameController.text ||
+            (_userProfile!.email != null &&
+                    _userProfile!.email != _emailController.text ||
+                _pendingImageChange != null)));
   }
 
   @override
   void initState() {
     _userProfileFetch = ref.read(repositoryProvider).userProfile();
     super.initState();
+  }
+
+  @override
+  void dispose() async {
+    _pendingImageChange?.delete();
+    super.dispose();
   }
 
   @override
@@ -50,8 +62,10 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
         backgroundColor: Colors.transparent,
         body: WillPopScope(
           onWillPop: () async {
-            if (hasChanged) {
-              return await _savePrompt();
+            if (_busy) {
+              return false;
+            } else if (hasChanged) {
+              return await _savePrompt(true);
             }
             return true;
           },
@@ -78,7 +92,7 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
                             const BackButton(),
                             Expanded(child: Container()),
                             TextButton(
-                                onPressed: !_busy
+                                onPressed: !_busy && hasChanged
                                     ? () {
                                         _saveForm();
                                       }
@@ -114,7 +128,27 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
                                         const SizedBox(height: 8),
                                         Row(
                                           children: [
-                                            const RectProfileImage(),
+                                            Stack(
+                                              children: [
+                                                ProfileImage(
+                                                  localImage:
+                                                      _pendingImageChange,
+                                                ),
+                                                if (_pendingImageChange != null)
+                                                  Positioned.fill(
+                                                    child: FileUploader(
+                                                      key: _uploader,
+                                                      assignProfile: false,
+                                                      showBusy: false,
+                                                      onComplete:
+                                                          (uploadedFileUrl) {
+                                                        _handleUploadComplete(
+                                                            uploadedFileUrl);
+                                                      },
+                                                    ),
+                                                  ),
+                                              ],
+                                            ),
                                             const SizedBox(
                                               width: 8,
                                             ),
@@ -179,7 +213,7 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
                                                       ),
                                                       onPressed: !_busy
                                                           ? () {
-                                                              _promptImageSource(
+                                                              _getUserImage(
                                                                   context);
                                                             }
                                                           : null,
@@ -241,6 +275,27 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
     );
   }
 
+  Future<void> _getUserImage(BuildContext context) async {
+    String? imagePath = await ProfileImageDialog.showDialog(context,
+        userProfile: _userProfile!);
+    if (imagePath != null) {
+      _pendingImageChange?.delete();
+      setState(() {
+        _pendingImageChange = File(imagePath);
+      });
+    }
+  }
+
+  Future<void> _handleUploadComplete(String? uploadedUrl) async {
+    if (uploadedUrl != null) {
+      _userProfile!.image = uploadedUrl;
+      await ref.read(repositoryProvider).updateUserProfile(_userProfile!);
+      setState(() => _busy = false);
+    }
+    if (_pendingClose) {
+      Navigator.of(context).pop();
+    }
+  }
   /* currently unused - revive if we make icon buttons for profile
   Widget _iconButton(BuildContext context, IconData icon, String label,
       VoidCallback? onPressed) {
@@ -310,104 +365,28 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
     }
   }
 
-  Future<void> _promptImageSource(BuildContext context) async {
-    final t = AppLocalizations.of(context)!;
-    String? source = await showDialog<String>(
-      context: context,
-      /*it shows a popup with few options which you can select, for option we
-        created enums which we can use with switch statement, in this first switch
-        will wait for the user to select the option which it can use with switch cases*/
-      builder: (BuildContext context) {
-        final actions = [
-          TextButton(
-            child: Text(t.selectPhotoExisting),
-            onPressed: () {
-              Navigator.of(context).pop("gallery");
-            },
-          ),
-          TextButton(
-            child: Text(t.selectPhotoCamera),
-            onPressed: () {
-              Navigator.of(context).pop("camera");
-            },
-          ),
-          TextButton(
-            child: Text(t.cancel),
-            onPressed: () {
-              Navigator.of(context).pop("");
-            },
-          ),
-        ];
-        return AlertDialog(
-          title: Center(
-            child: Text(
-              t.selectProfilePicture,
-            ),
-          ),
-          actions: actions,
-        );
-      },
-    );
-    switch (source) {
-      case 'camera':
-        _pickImage(context, ImageSource.camera);
-        break;
-      case 'gallery':
-        _pickImage(context, ImageSource.gallery);
-        break;
-      default:
-        break;
-    }
-  }
-
-  Future<void> _pickImage(BuildContext context, ImageSource source) async {
-    final picker = ImagePicker();
-    final selected = await picker.pickImage(
-        source: source,
-        preferredCameraDevice: CameraDevice.front,
-        imageQuality: 70,
-        maxWidth: 500,
-        maxHeight: 500);
-    if (selected != null) {
-      // FIXME!
-      final themeColors = Theme.of(context).themeColors;
-/*      File? cropped = await ImageCropper.cropImage(
-          sourcePath: selected.path,
-          aspectRatioPresets: [CropAspectRatioPreset.square],
-          aspectRatio: const CropAspectRatio(ratioX: 1.0, ratioY: 1.0),
-          androidUiSettings: AndroidUiSettings(
-            toolbarColor: themeColors.primary,
-            toolbarTitle: 'Crop Image',
-            toolbarWidgetColor: themeColors.screenBackground,
-          ));
-      if (cropped != null) {
-        // upload the file then delete
-        final _ = await showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return FilePromptSave(
-                uploadTarget: cropped,
-              );
-            });
-        cropped.delete();
-      } */
-    }
-  }
-
   Future<void> _saveForm() async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
-    if (_userProfile!.name != _nameController.text ||
-        _userProfile!.email != _emailController.text) {
+    if (hasChanged) {
       setState(() => _busy = true);
       _formKey.currentState!.save();
       _userProfile!.name = _nameController.text;
       _userProfile!.email = _emailController.text;
-      await ref.read(repositoryProvider).updateUserProfile(_userProfile!);
-      setState(() => _busy = false);
+      if (_pendingImageChange != null) {
+        AuthUser user = ref.read(authServiceProvider).currentUser()!;
+        _uploader.currentState!.profileImageUpload(_pendingImageChange!, user);
+        return;
+      } else {
+        // just save the profile
+        await ref.read(repositoryProvider).updateUserProfile(_userProfile!);
+        setState(() => _busy = false);
+      }
     }
-    Navigator.of(context).pop();
+    if (_pendingClose) {
+      Navigator.of(context).pop();
+    }
   }
 
   Widget _profileLabelItem(BuildContext context,
@@ -539,7 +518,7 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
     return formattedNumber ?? "";
   }
 
-  Future<bool> _savePrompt() async {
+  Future<bool> _savePrompt(bool pendingClose) async {
     FocusScope.of(context).unfocus();
     final t = AppLocalizations.of(context)!;
     // set up the buttons
@@ -580,6 +559,7 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
       },
     );
     if (result == 2) {
+      _pendingClose = pendingClose;
       _saveForm();
       return false;
     }

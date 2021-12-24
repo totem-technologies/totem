@@ -16,10 +16,12 @@ class FileUploader extends ConsumerStatefulWidget {
     this.onComplete,
     this.clearFile = false,
     this.assignProfile = true,
+    this.showBusy = true,
   }) : super(key: key);
   final ValueChanged<String?>? onComplete;
   final bool clearFile;
   final bool assignProfile;
+  final bool showBusy;
 
   @override
   FileUploaderState createState() => FileUploaderState();
@@ -41,11 +43,13 @@ class FileUploaderState extends ConsumerState<FileUploader> {
         builder: (context, snapshot) {
           //var event = snapshot?.data?.snapshot;
           //double progressPercent = event != null ? event.bytesTransferred / event.totalByteCount : 0;
-          return Center(
-            child: BusyIndicator(
-              color: Theme.of(context).themeColors.reversedText,
-            ),
-          );
+          return widget.showBusy
+              ? Center(
+                  child: BusyIndicator(
+                    color: Theme.of(context).themeColors.reversedText,
+                  ),
+                )
+              : Container();
         },
       );
     } else {

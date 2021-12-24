@@ -5,7 +5,6 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:image_crop/image_crop.dart';
 import 'package:totem/components/camera/camera_capture_component.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
@@ -41,10 +40,8 @@ class CircleJoinDialog extends ConsumerStatefulWidget {
 
 class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
   late Future<UserProfile?> _userProfileFetch;
-  final cropKey = GlobalKey<CropState>();
   final GlobalKey<FileUploaderState> _uploader = GlobalKey();
 
-  File? _pendingImage;
   File? _selectedImage;
   bool _uploading = false;
 
@@ -56,7 +53,6 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
 
   @override
   void dispose() {
-    _pendingImage?.delete();
     _selectedImage?.delete();
     super.dispose();
   }
@@ -169,42 +165,40 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 20),
-              if (_pendingImage == null)
-                Stack(
-                  children: [
-                    AspectRatio(
-                      aspectRatio: 1.0,
-                      child: ClipRRect(
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(24)),
-                        child: Container(
-                          color: themeColors.primaryText,
-                          child: AnimatedSwitcher(
-                            duration: const Duration(milliseconds: 300),
-                            child: _selectedImage == null
-                                ? CameraCapture(
-                                    captureMode: CaptureMode.photoOnly,
-                                    onImageTaken: (imageFile) {
-                                      _handleImage(imageFile);
-                                    },
-                                  )
-                                : _takenImage(context),
-                          ),
+              Stack(
+                children: [
+                  AspectRatio(
+                    aspectRatio: 1.0,
+                    child: ClipRRect(
+                      borderRadius: const BorderRadius.all(Radius.circular(24)),
+                      child: Container(
+                        color: themeColors.primaryText,
+                        child: AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 300),
+                          child: _selectedImage == null
+                              ? CameraCapture(
+                                  captureMode: CaptureMode.photoOnly,
+                                  onImageTaken: (imageFile) {
+                                    _handleImage(imageFile);
+                                  },
+                                )
+                              : _takenImage(context),
                         ),
                       ),
                     ),
-                    if (_selectedImage != null)
-                      Positioned.fill(
-                        child: FileUploader(
-                          key: _uploader,
-                          assignProfile: false,
-                          onComplete: (uploadedFileUrl) {
-                            Navigator.of(context).pop(uploadedFileUrl);
-                          },
-                        ),
+                  ),
+                  if (_selectedImage != null)
+                    Positioned.fill(
+                      child: FileUploader(
+                        key: _uploader,
+                        assignProfile: false,
+                        onComplete: (uploadedFileUrl) {
+                          Navigator.of(context).pop(uploadedFileUrl);
+                        },
                       ),
-                  ],
-                ),
+                    ),
+                ],
+              ),
               const SizedBox(height: 10),
               if (_selectedImage != null)
                 Row(
