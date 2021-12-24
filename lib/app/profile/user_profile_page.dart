@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -489,6 +490,8 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return t.errorEnterName;
+                  } else if (!EmailValidator.validate(value)) {
+                    return t.errorEmailInvalid;
                   }
                   return null;
                 },
