@@ -97,7 +97,7 @@ class GuidelineScreen extends ConsumerWidget {
           ThemedRaisedButton(
             label: t.acceptGuidelines,
             onPressed: () {
-              if (true || authUser != null && authUser.isNewUser) {
+              if (authUser != null && authUser.isNewUser) {
                 Navigator.pushReplacementNamed(
                   context,
                   '/login/onboarding',
