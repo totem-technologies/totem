@@ -8,7 +8,7 @@ class ErrorCodeTranslation {
       case 'errorCommunicationNoMicrophonePermission':
         return t.errorCommunicationNoMicrophonePermission;
       case 'errorCommunicationError':
-        return t.errorCommunciationError;
+        return t.errorCommunicationError;
     }
     return errorCode;
   }

@@ -1,15 +1,14 @@
 import 'dart:io';
+
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:totem/components/widgets/bottom_tray_help_dialog.dart';
-import 'package:totem/components/widgets/index.dart';
+import 'package:totem/components/index.dart';
+import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
-import 'package:totem/models/index.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:image_cropper/image_cropper.dart';
-import 'package:image_picker/image_picker.dart';
 
 class OnboardingProfilePage extends ConsumerStatefulWidget {
   const OnboardingProfilePage({Key? key}) : super(key: key);
@@ -25,17 +24,29 @@ class _OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage> {
   late Future<UserProfile?> _userProfileFetch;
   UserProfile? _userProfile;
   bool _busy = false;
+  final GlobalKey<FileUploaderState> _uploader = GlobalKey();
+  File? _pendingImageChange;
 
   bool get hasChanged {
     return (_userProfile!.name != _nameController.text ||
         (_userProfile!.email != null &&
-            _userProfile!.email != _emailController.text));
+                _userProfile!.email != _emailController.text ||
+            _pendingImageChange != null));
   }
 
   @override
   void initState() {
     _userProfileFetch = ref.read(repositoryProvider).userProfile();
     super.initState();
+  }
+
+  Future<void> _handleUploadComplete(String? uploadedUrl) async {
+    if (uploadedUrl != null) {
+      _userProfile!.image = uploadedUrl;
+      await ref.read(repositoryProvider).updateUserProfile(_userProfile!);
+      setState(() => _busy = false);
+    }
+    Navigator.of(context).pop();
   }
 
   @override
@@ -49,93 +60,95 @@ class _OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage> {
         backgroundColor: Colors.transparent,
         body: WillPopScope(
           onWillPop: () async {
-            if (hasChanged) {
+            if (_busy) {
+              return false;
+            } else if (hasChanged) {
               return await _savePrompt();
             }
             return true;
           },
           child: GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onTap: () {
-                // call this method here to hide soft keyboard
-                FocusScope.of(context).unfocus();
-              },
-              child: Stack(
+            behavior: HitTestBehavior.translucent,
+            onTap: () {
+              // call this method here to hide soft keyboard
+              FocusScope.of(context).unfocus();
+            },
+            child: SafeArea(
+              top: true,
+              bottom: false,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  SafeArea(
-                    top: true,
-                    bottom: false,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        _header(context),
-                        Expanded(
-                          child: LayoutBuilder(
-                            builder: (context, constraint) {
-                              return SingleChildScrollView(
-                                padding: EdgeInsets.only(
-                                  left: themeData.pageHorizontalPadding,
-                                  right: themeData.pageHorizontalPadding,
-                                ),
-                                child: ConstrainedBox(
-                                  constraints: BoxConstraints(
-                                      minHeight: constraint.maxHeight),
-                                  child: IntrinsicHeight(
-                                    child: Column(
-                                      children: [
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Text(t.addProfilePicture,
-                                                style: textStyles.headline3),
-                                            const SizedBox(width: 6),
-                                            InkWell(
-                                              onTap: () {
-                                                BottomTrayHelpDialog
-                                                    .showTrayHelp(
-                                                  context,
-                                                  title: t.profilePicture,
-                                                  detail:
-                                                      t.helpPublicInformation,
-                                                );
-                                              },
-                                              child: SvgPicture.asset(
-                                                  'assets/more_info.svg'),
-                                            )
-                                          ],
-                                        ),
-                                        const SizedBox(height: 10),
-                                        _profileEditForm(context),
-                                        const SizedBox(height: 20),
-                                        ThemedRaisedButton(
-                                          label: t.finish,
-                                          busy: _busy,
-                                          onPressed: !_busy ? _saveForm : null,
-                                          width: Theme.of(context)
-                                              .standardButtonWidth,
-                                        ),
-                                        const SizedBox(height: 20),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
+                  _header(context),
+                  Expanded(
+                    child: LayoutBuilder(
+                      builder: (context, constraint) {
+                        return SingleChildScrollView(
+                          padding: EdgeInsets.only(
+                            left: themeData.pageHorizontalPadding,
+                            right: themeData.pageHorizontalPadding,
                           ),
-                        ),
-                      ],
+                          child: ConstrainedBox(
+                            constraints:
+                                BoxConstraints(minHeight: constraint.maxHeight),
+                            child: IntrinsicHeight(
+                              child: Column(
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(t.addProfilePicture,
+                                          style: textStyles.headline3),
+                                      const SizedBox(width: 6),
+                                      InkWell(
+                                        onTap: () {
+                                          BottomTrayHelpDialog.showTrayHelp(
+                                            context,
+                                            title: t.profilePicture,
+                                            detail: t.helpPublicInformation,
+                                          );
+                                        },
+                                        child: SvgPicture.asset(
+                                            'assets/more_info.svg'),
+                                      )
+                                    ],
+                                  ),
+                                  const SizedBox(height: 10),
+                                  _profileEditForm(context),
+                                  const SizedBox(height: 20),
+                                  ThemedRaisedButton(
+                                    label: t.finish,
+                                    busy: _busy,
+                                    onPressed: !_busy ? _saveForm : null,
+                                    width:
+                                        Theme.of(context).standardButtonWidth,
+                                  ),
+                                  const SizedBox(height: 20),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      },
                     ),
                   ),
-                  if (_busy)
-                    const Center(
-                      child: BusyIndicator(),
-                    )
                 ],
-              )),
+              ),
+            ),
+          ),
         ),
       ),
     );
+  }
+
+  Future<void> _getUserImage(BuildContext context) async {
+    String? imagePath = await ProfileImageDialog.showDialog(context,
+        userProfile: _userProfile!);
+    if (imagePath != null) {
+      setState(() {
+        _pendingImageChange = File(imagePath);
+      });
+    }
   }
 
   Widget _header(BuildContext context) {
@@ -156,101 +169,26 @@ class _OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage> {
     );
   }
 
-  Future<void> _promptImageSource(BuildContext context) async {
-    final t = AppLocalizations.of(context)!;
-    String? source = await showDialog<String>(
-      context: context,
-      /*it shows a popup with few options which you can select, for option we
-        created enums which we can use with switch statement, in this first switch
-        will wait for the user to select the option which it can use with switch cases*/
-      builder: (BuildContext context) {
-        final actions = [
-          TextButton(
-            child: Text(t.selectPhotoExisting),
-            onPressed: () {
-              Navigator.of(context).pop("gallery");
-            },
-          ),
-          TextButton(
-            child: Text(t.selectPhotoCamera),
-            onPressed: () {
-              Navigator.of(context).pop("camera");
-            },
-          ),
-          TextButton(
-            child: Text(t.cancel),
-            onPressed: () {
-              Navigator.of(context).pop("");
-            },
-          ),
-        ];
-        return AlertDialog(
-          title: Center(
-            child: Text(
-              t.selectProfilePicture,
-            ),
-          ),
-          actions: actions,
-        );
-      },
-    );
-    switch (source) {
-      case 'camera':
-        _pickImage(context, ImageSource.camera);
-        break;
-      case 'gallery':
-        _pickImage(context, ImageSource.gallery);
-        break;
-      default:
-        break;
-    }
-  }
-
-  Future<void> _pickImage(BuildContext context, ImageSource source) async {
-    final picker = ImagePicker();
-    final selected = await picker.pickImage(
-        source: source,
-        preferredCameraDevice: CameraDevice.front,
-        imageQuality: 70,
-        maxWidth: 500,
-        maxHeight: 500);
-    if (selected != null) {
-      final themeColors = Theme.of(context).themeColors;
-      File? cropped = await ImageCropper.cropImage(
-          sourcePath: selected.path,
-          aspectRatioPresets: [CropAspectRatioPreset.square],
-          aspectRatio: const CropAspectRatio(ratioX: 1.0, ratioY: 1.0),
-          androidUiSettings: AndroidUiSettings(
-            toolbarColor: themeColors.primary,
-            toolbarTitle: 'Crop Image',
-            toolbarWidgetColor: themeColors.screenBackground,
-          ));
-      if (cropped != null) {
-        // upload the file then delete
-        final _ = await showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return FilePromptSave(
-                uploadTarget: cropped,
-              );
-            });
-        cropped.delete();
-      }
-    }
-  }
-
   Future<void> _saveForm() async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
     if (_userProfile!.name != _nameController.text ||
-        _userProfile!.email != _emailController.text) {
+        _userProfile!.email != _emailController.text ||
+        _pendingImageChange != null) {
       setState(() => _busy = true);
       _formKey.currentState!.save();
       _userProfile!.name = _nameController.text;
       _userProfile!.email = _emailController.text;
-      await ref.read(repositoryProvider).updateUserProfile(_userProfile!);
-      setState(() => _busy = false);
+      if (_pendingImageChange != null) {
+        AuthUser user = ref.read(authServiceProvider).currentUser()!;
+        _uploader.currentState!.profileImageUpload(_pendingImageChange!, user);
+        return;
+      } else {
+        // just save the profile
+        await ref.read(repositoryProvider).updateUserProfile(_userProfile!);
+        setState(() => _busy = false);
+      }
     }
     Navigator.of(context).pop();
   }
@@ -296,13 +234,31 @@ class _OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage> {
                     customBorder: const CircleBorder(),
                     onTap: () {
                       // edit
-                      _promptImageSource(context);
+                      _getUserImage(context);
                     },
-                    child: (_userProfile != null && _userProfile!.hasImage)
-                        ? const ProfileImage(
-                            size: 100,
-                          )
-                        : _emptyProfileImage(context),
+                    child: Stack(
+                      children: [
+                        ((_userProfile != null && _userProfile!.hasImage) ||
+                                _pendingImageChange != null)
+                            ? ProfileImage(
+                                size: 100,
+                                localImage: _pendingImageChange,
+                                shape: BoxShape.circle,
+                              )
+                            : _emptyProfileImage(context),
+                        if (_pendingImageChange != null)
+                          Positioned.fill(
+                            child: FileUploader(
+                              key: _uploader,
+                              assignProfile: false,
+                              showBusy: false,
+                              onComplete: (uploadedFileUrl) {
+                                _handleUploadComplete(uploadedFileUrl);
+                              },
+                            ),
+                          ),
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -366,7 +322,9 @@ class _OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage> {
                       autocorrect: false,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return t.errorEnterName;
+                          return t.errorEnterEmail;
+                        } else if (!EmailValidator.validate(value)) {
+                          return t.errorEmailInvalid;
                         }
                         return null;
                       },

@@ -136,6 +136,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
           _engine = await RtcEngine.create(appId);
           // enable audio and fancy noise cancelling
           await _engine!.enableAudio();
+          await _engine!.setDefaultAudioRoutetoSpeakerphone(true);
           await _engine!.enableDeepLearningDenoise(true);
           await _engine!.enableAudioVolumeIndication(200, 3, true);
           // setup event handlers that will let us know about connections
@@ -246,6 +247,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   Future<void> _handleJoinSession(channel, uid, elapsed) async {
     commUid = uid;
     // Update the session to add user information to session display
+    _engine!.setEnableSpeakerphone(true);
     await sessionProvider.joinSession(
         session: _session!,
         uid: userId,
@@ -257,7 +259,6 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     if (_handler != null && _handler!.joinedCircle != null) {
       _handler!.joinedCircle!(_session!.id, uid.toString());
     }
-    await _engine!.setEnableSpeakerphone(true);
     _updateState(CommunicationState.active);
   }
 

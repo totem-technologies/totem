@@ -1,4 +1,5 @@
 export 'bottom_tray_container.dart';
+export 'bottom_tray_help_dialog.dart';
 export 'busy_indicator.dart';
 export 'circular_layout_delegate.dart';
 export 'content_divider.dart';
@@ -11,7 +12,6 @@ export 'headers.dart';
 export 'list_item_container.dart';
 export 'participant_rounded_rect_image.dart';
 export 'profile_image.dart';
-export 'rect_profile_image.dart';
 export 'sub_page_header.dart';
 export 'text_form_field.dart';
 export 'themed_control_button.dart';

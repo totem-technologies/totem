@@ -164,10 +164,12 @@ class FirebaseSessionProvider extends SessionProvider {
   }
 
   @override
-  Future<void> endActiveSession({bool complete = true}) async {
+  Future<void> endActiveSession() async {
     if (_activeSession != null) {
+      bool complete = _activeSession!.state == SessionState.live;
       try {
-        await updateActiveSessionState(SessionState.ending);
+        await updateActiveSessionState(
+            complete ? SessionState.ending : SessionState.cancelling);
         if (activeSession!.session is SnapSession) {
           HttpsCallable callable =
               FirebaseFunctions.instance.httpsCallable('endSnapSession');
