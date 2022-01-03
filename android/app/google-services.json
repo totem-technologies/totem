@@ -14,6 +14,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "35349008308-0niklmq603bp7hopttpdc1amjhav36ue.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.kbl.totem",
+            "certificate_hash": "412bc378a3bf23ed4ce02f92986bb78f6b5c1ba3"
+          }
+        },
+        {
+          "client_id": "35349008308-2e5aa5pj8rdngrdggbscakm65303il9f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.kbl.totem",
+            "certificate_hash": "d8b8e4ab6d31c9dd2927ed1d2d4699994f7a12d8"
+          }
+        },
+        {
           "client_id": "35349008308-3ajtchlfr62bce5b09pv43lcohrhndmu.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -30,11 +46,11 @@
           }
         },
         {
-          "client_id": "35349008308-b9tqsdftjjijum2bl2pq8c2nkvgctpbo.apps.googleusercontent.com",
+          "client_id": "35349008308-48l3ck7go32pt5agr6gs7oem4n1fvirl.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "io.kbl.totem",
-            "certificate_hash": "606c971ca46634abf200331d519040f6af50af7d"
+            "certificate_hash": "8cd086fecb6aae25810c70e22aa3d3602241f52c"
           }
         },
         {
