@@ -32,6 +32,7 @@ dependencies:
   cloud_functions: ^3.1.1
   firebase_storage: ^10.0.1
   firebase_auth: ^3.0.0
+  firebase_crashlytics: ^2.4.4
   intl_phone_number_input: ^0.7.0+2
   flutter_spinkit: ^5.0.0
   flutter_riverpod: ^1.0.0

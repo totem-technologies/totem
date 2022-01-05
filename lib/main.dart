@@ -1,25 +1,35 @@
-import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/foundation.dart' show kDebugMode;
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:totem/app/guideline_screen.dart';
 import 'package:totem/app/profile/index.dart';
 import 'package:totem/app/profile/onboarding_profile_page.dart';
 import 'package:totem/components/fade_route.dart';
 import 'package:totem/theme/index.dart';
+
+import 'app/auth.dart';
 import 'app/circle/circle_create_page.dart';
 import 'app/circle/circle_create_snap_page.dart';
+import 'app/home/home_page.dart';
 import 'app/login/login_page.dart';
 import 'app/login/phone_register_page.dart';
 import 'app/settings/settings_page.dart';
-import 'app/home/home_page.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'app/auth.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  if (kDebugMode) {
+    // Force disable Crashlytics collection while doing every day development.
+    // Temporarily toggle this to true if you want to test crash reporting in your app.
+    await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(false);
+  } else {
+    FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
+  }
   runApp(const ProviderScope(
     child: App(),
   ));
