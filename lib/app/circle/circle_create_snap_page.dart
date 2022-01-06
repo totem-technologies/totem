@@ -130,6 +130,11 @@ class _CircleCreatePageState extends ConsumerState<CircleCreateSnapPage> {
         String? sessionImage = await CircleJoinDialog.showDialog(context,
             session: circle.snapSession);
         if (sessionImage != null && sessionImage.isNotEmpty) {
+          // Setup foreground service provider with notification values
+          final t = AppLocalizations.of(context)!;
+          SessionForeground.instance.notificationTitle = t.circleInProgress;
+          SessionForeground.instance.notificationMessage = t.circleReturnToApp;
+          // Create the active session
           await repo.createActiveSession(session: circle.activeSession!);
           // prompt user for image
           Navigator.pushReplacement(
@@ -144,6 +149,9 @@ class _CircleCreatePageState extends ConsumerState<CircleCreateSnapPage> {
           return;
         } else {
           // leave session in place or cancel?
+          await repo.removeSnapCircle(circle: circle);
+          Navigator.pop(context);
+          return;
         }
       }
     } on ServiceException catch (ex) {
