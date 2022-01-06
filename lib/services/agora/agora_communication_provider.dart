@@ -247,7 +247,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   Future<void> _handleJoinSession(channel, uid, elapsed) async {
     commUid = uid;
     // Update the session to add user information to session display
-    _engine!.setEnableSpeakerphone(true);
+    await _engine!.setEnableSpeakerphone(true);
     await sessionProvider.joinSession(
         session: _session!,
         uid: userId,
@@ -260,9 +260,22 @@ class AgoraCommunicationProvider extends CommunicationProvider {
       _handler!.joinedCircle!(_session!.id, uid.toString());
     }
     _updateState(CommunicationState.active);
+
+    // for android, start a foreground service to keep the process running
+    // to prevent drops in connection
+    if (Platform.isAndroid) {
+      SessionForeground.instance.startSessionTask();
+    }
   }
 
   Future<void> _handleLeaveSession(stats) async {
+    // for android, start a foreground service to keep the process running
+    // to prevent drops in connection
+    if (Platform.isAndroid) {
+      SessionForeground.instance.stopSessionTask();
+    }
+
+    // end the data session and update state
     try {
       if (_pendingComplete) {
         await sessionProvider.endActiveSession();

@@ -72,6 +72,8 @@ class TotemRepository {
         description: description,
         uid: user!.uid,
       );
+  Future<bool> removeSnapCircle({required SnapCircle circle}) =>
+      _circlesProvider.removeSnapCircle(circle: circle, uid: user!.uid);
   Stream<List<ScheduledCircle>> scheduledCircles({bool allCircles = false}) =>
       _circlesProvider.scheduledCircles(!allCircles ? user?.uid : null);
   Stream<List<SnapCircle>> snapCircles() => _circlesProvider.snapCircles();

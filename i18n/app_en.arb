@@ -11,6 +11,8 @@
     "circleDescription": "Circle Description",
     "circleEnding": "Circle is ending",
     "circles": "Circles",
+    "circleInProgress": "Circle in progress",
+    "circleReturnToApp": "Tap to return to Totem",
     "circleStarting": "Circle is starting",
     "circleWeeksSession": "This Weeks Session",
     "createCircle": "Create Circle",

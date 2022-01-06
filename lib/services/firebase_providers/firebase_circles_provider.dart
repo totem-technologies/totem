@@ -386,4 +386,19 @@ class FirebaseCirclesProvider extends CirclesProvider {
     await batch.commit();
     return sessions;
   }
+
+  @override
+  Future<bool> removeSnapCircle(
+      {required SnapCircle circle, required String uid}) async {
+    try {
+      final DocumentReference circleRef = FirebaseFirestore.instance
+          .collection(Paths.snapCircles)
+          .doc(circle.id);
+      circleRef.delete();
+      return true;
+    } catch (ex) {
+      debugPrint(ex.toString());
+    }
+    return false;
+  }
 }
