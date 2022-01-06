@@ -3,6 +3,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -61,9 +62,11 @@ class App extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'totem',
       theme: _appTheme(context),
-      home: AuthWidget(
-        nonSignedInBuilder: (_) => const LoginPage(),
-        signedInBuilder: (_) => const HomePage(),
+      home: WithForegroundTask(
+        child: AuthWidget(
+          nonSignedInBuilder: (_) => const LoginPage(),
+          signedInBuilder: (_) => const HomePage(),
+        ),
       ),
       onGenerateRoute: (settings) {
         switch (settings.name) {
