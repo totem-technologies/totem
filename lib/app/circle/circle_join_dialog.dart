@@ -200,23 +200,11 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
                 ],
               ),
               const SizedBox(height: 10),
-              if (_selectedImage != null)
+              if (_selectedImage != null) ...[
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    TextButton(
-                      onPressed: _selectedImage != null && !_uploading
-                          ? () {
-                              _uploadImage(context);
-                            }
-                          : null,
-                      child: Text(
-                        t.joinCircle,
-                        style: TextStyle(
-                            color: themeColors.linkText, fontSize: 20),
-                      ),
-                    ),
                     TextButton(
                       onPressed: !_uploading
                           ? () async {
@@ -229,11 +217,21 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
                       child: Text(
                         t.edit,
                         style: TextStyle(
-                            color: themeColors.linkText, fontSize: 20),
+                            color: themeColors.linkText, fontSize: 14),
                       ),
                     ),
                   ],
                 ),
+                const SizedBox(height: 8),
+                ThemedRaisedButton(
+                  onPressed: _selectedImage != null && !_uploading
+                      ? () {
+                          _uploadImage(context);
+                        }
+                      : null,
+                  label: t.joinCircle,
+                ),
+              ],
               const SizedBox(
                 height: 8,
               ),
