@@ -223,13 +223,15 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
                   ],
                 ),
                 const SizedBox(height: 8),
-                ThemedRaisedButton(
-                  onPressed: _selectedImage != null && !_uploading
-                      ? () {
-                          _uploadImage(context);
-                        }
-                      : null,
-                  label: t.joinCircle,
+                Center(
+                  child: ThemedRaisedButton(
+                    onPressed: _selectedImage != null && !_uploading
+                        ? () {
+                            _uploadImage(context);
+                          }
+                        : null,
+                    label: t.joinCircle,
+                  ),
                 ),
               ],
               const SizedBox(
