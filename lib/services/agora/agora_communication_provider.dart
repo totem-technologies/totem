@@ -247,7 +247,6 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   Future<void> _handleJoinSession(channel, uid, elapsed) async {
     commUid = uid;
     // Update the session to add user information to session display
-    await _engine!.setEnableSpeakerphone(true);
     await sessionProvider.joinSession(
         session: _session!,
         uid: userId,
@@ -255,6 +254,11 @@ class AgoraCommunicationProvider extends CommunicationProvider {
         sessionImage: _sessionImage);
     sessionProvider.activeSession
         ?.userJoined(sessionUserId: commUid.toString());
+    bool? onSpeaker = await _engine!.isSpeakerphoneEnabled();
+    if (onSpeaker != true) {
+      await _engine!.setEnableSpeakerphone(true);
+    }
+
     // notify any callbacks that the user has joined the session
     if (_handler != null && _handler!.joinedCircle != null) {
       _handler!.joinedCircle!(_session!.id, uid.toString());
