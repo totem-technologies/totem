@@ -1,6 +1,7 @@
 build: build-android build-ios
 
 build-ios:
+	pod repo update
 	flutter build ipa
 	xcodebuild -exportArchive -archivePath build/ios/archive/Runner.xcarchive -exportPath build/ios/archive -exportOptionsPlist build/ios/archive/Runner.xcarchive/info.plist
 	echo "Built build/ios/archive/totem.ipa"
