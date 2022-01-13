@@ -6,9 +6,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:image/image.dart' as img;
+import 'package:image/image.dart' as imglib;
+import 'package:path_provider/path_provider.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/theme/index.dart';
+import 'package:uuid/uuid.dart';
 
 enum CaptureMode { videoAndPhoto, videoOnly, photoOnly }
 
@@ -36,6 +38,7 @@ class CameraCaptureScreenState extends State<CameraCapture>
   bool _error = false;
   bool _frontCamera = false;
   bool _saving = false;
+  CameraImage? _savedImage;
 
   Future<void> _initCamera() async {
     _cameras = await availableCameras();
@@ -49,15 +52,19 @@ class CameraCaptureScreenState extends State<CameraCapture>
           break;
         }
       }
-      _controller =
-          CameraController(_cameras![startIndex], ResolutionPreset.medium);
-      _controller!.initialize().then((_) {
-        if (!mounted) {
-          return;
-        }
-        setState(() {
-          _initialized = true;
-        });
+      _controller = CameraController(
+        _cameras![startIndex],
+        ResolutionPreset.medium,
+      );
+      await _controller!.initialize();
+      if (!mounted) {
+        return;
+      }
+      setState(() {
+        _initialized = true;
+      });
+      _controller!.startImageStream((image) {
+        _savedImage = image;
       });
     } else {
       setState(() {
@@ -76,25 +83,27 @@ class CameraCaptureScreenState extends State<CameraCapture>
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    final themeColor = Theme.of(context).themeColors;
     if (_controller != null) {
-      if (!_controller!.value.isInitialized) {
+      if (_initialized && !_controller!.value.isInitialized) {
         return _buildCameraError(context);
       }
     } else if (!_initialized) {
-      return const Center(
-        child: BusyIndicator(),
+      return Center(
+        child: BusyIndicator(
+          color: themeColor.reversedText,
+        ),
       );
     }
     if (_error) {
       return _buildCameraError(context);
     }
-    final themeColor = Theme.of(context).themeColors;
     return Stack(
       children: <Widget>[
         Container(
           color: themeColor.primaryText,
         ),
-        _buildCameraPreview(context),
+        if (_initialized) _buildCameraPreview(context),
         if (_saving)
           Positioned.fill(
             child: Center(
@@ -186,7 +195,7 @@ class CameraCaptureScreenState extends State<CameraCapture>
           InkWell(
             customBorder: const CircleBorder(),
             onTap: () async {
-              HapticFeedback.heavyImpact();
+              await HapticFeedback.heavyImpact();
               _captureImage();
             },
             child: Container(
@@ -211,18 +220,19 @@ class CameraCaptureScreenState extends State<CameraCapture>
   }
 
   Future<void> _onCameraSwitch() async {
+    setState(() {
+      _initialized = false;
+    });
     final CameraDescription cameraDescription =
         (_controller!.description == _cameras![0])
             ? _cameras![1]
             : _cameras![0];
     _frontCamera = cameraDescription.lensDirection == CameraLensDirection.front;
-    if (_controller != null) {
-      await _controller!.dispose();
-    }
-    _controller = CameraController(cameraDescription, ResolutionPreset.medium,
-        imageFormatGroup: ImageFormatGroup.jpeg);
+    CameraController? _oldController = _controller;
+    await _oldController?.stopImageStream();
+    _controller = CameraController(cameraDescription, ResolutionPreset.medium);
+    await _oldController?.dispose();
     _controller!.addListener(() {
-      if (mounted) setState(() {});
       if (_controller!.value.hasError) {
         showInSnackBar('Camera error ${_controller!.value.errorDescription}');
       }
@@ -236,20 +246,45 @@ class CameraCaptureScreenState extends State<CameraCapture>
 
     if (mounted) {
       setState(() {});
+      _initialized = true;
+      _controller!.startImageStream((image) {
+        _savedImage = image;
+      });
     }
   }
 
   void _captureImage() async {
     debugPrint('_captureImage');
     if (_controller!.value.isInitialized) {
+      debugPrint('About to pause preview');
       await _controller!.pausePreview();
-      XFile file = await _controller!.takePicture();
-      setState(() => _saving = true);
-      if (widget.cropImage || (widget.mirrorFrontImage && _frontCamera)) {
-        await compute(processPhoto,
-            '${file.path}|${widget.cropImage.toString()}|${(_frontCamera && widget.mirrorFrontImage).toString()}');
+      debugPrint('Pause Preview to take picture');
+      if (_savedImage != null) {
+        setState(() => _saving = true);
+        final Directory extDir = await getTemporaryDirectory();
+        const uuid = Uuid();
+        final path = extDir.path + "/" + uuid.v1() + ".jpg";
+        final result = await compute(processImage, {
+          'image': _savedImage!,
+          'path': path,
+          'mirror': (widget.mirrorFrontImage && _frontCamera),
+          'crop': widget.cropImage,
+          'rotation': _controller!.value.aspectRatio > 1
+              ? (_frontCamera ? 270 : 90)
+              : 0,
+        });
+        if (result != null) {
+          XFile file = XFile(result);
+          widget.onImageTaken(file);
+        } else {
+          setState(() {
+            _saving = false;
+          });
+          showInSnackBar('Camera error, unrecognized format');
+        }
+      } else {
+        showInSnackBar('Camera error, unable to capture image');
       }
-      widget.onImageTaken(file);
     }
   }
 
@@ -276,28 +311,80 @@ class CameraCaptureScreenState extends State<CameraCapture>
 }
 
 // run as isolate in background
-void processPhoto(String values) async {
-  List<String> params = values.split("|");
-  File file = File(params[0]);
-  bool crop = (params.length > 1) ? params[1] == 'true' : false;
-  bool mirror = (params.length > 2) ? params[2] == 'true' : false;
-  List<int> imageBytes = await file.readAsBytes();
-  img.Image? originalImage = img.decodeImage(imageBytes);
-  if (originalImage != null) {
-    if (mirror) {
-      // have to flip the image to mirrored as the output is no mirrored
-      originalImage = img.flipHorizontal(originalImage);
+Future<String?> processImage(Map<String, dynamic> data) async {
+  try {
+    CameraImage image = data['image'];
+    String path = data['path'];
+    imglib.Image img;
+    bool crop = data['crop'] ?? true;
+    int rotation = data['rotation'] ?? 0;
+    bool mirrorImage = data['mirror'] ?? true;
+    if (image.format.group == ImageFormatGroup.yuv420) {
+      // Convert yuv420 to rgb,
+      final int width = image.width;
+      final int height = image.height;
+      final int uvRowStride = image.planes[1].bytesPerRow;
+      final int uvPixelStride = image.planes[1].bytesPerPixel ?? 1;
+      img = imglib.Image(width, height);
+      for (int x = 0; x < width; x++) {
+        // Fill image buffer with plane[0] from YUV420_888
+        for (int y = 0; y < height; y++) {
+          final int uvIndex =
+              uvPixelStride * (x / 2).floor() + uvRowStride * (y / 2).floor();
+          final int index = y * uvRowStride +
+              x; // Use the row stride instead of the image width as some devices pad the image data, and in those cases the image width != bytesPerRow. Using width will give you a distored image.
+          final yp = image.planes[0].bytes[index];
+          final up = image.planes[1].bytes[uvIndex];
+          final vp = image.planes[2].bytes[uvIndex];
+          int r = (yp + vp * 1436 / 1024 - 179).round().clamp(0, 255);
+          int g = (yp - up * 46549 / 131072 + 44 - vp * 93604 / 131072 + 91)
+              .round()
+              .clamp(0, 255);
+          int b = (yp + up * 1814 / 1024 - 227).round().clamp(0, 255);
+          img.setPixelRgba(x, y, r, g, b);
+        }
+      }
+      if (rotation != 0) {
+        img = imglib.copyRotate(img, rotation);
+      }
+      if (mirrorImage) {
+        img = imglib.flipHorizontal(img);
+      }
+    } else if (image.format.group == ImageFormatGroup.bgra8888) {
+      // this format doesn't seem to require rotation/mirror manipulation
+      img = imglib.Image.fromBytes(
+        image.width,
+        image.height,
+        image.planes[0].bytes,
+        format: imglib.Format.bgra,
+      );
+    } else if (image.format.group == ImageFormatGroup.jpeg) {
+      imglib.Image? jpgImg = imglib.decodeJpg(image.planes[0].bytes);
+      if (jpgImg == null) {
+        return null;
+      }
+      img = jpgImg;
+      if (rotation != 0) {
+        img = imglib.copyRotate(img, rotation);
+      }
+      if (mirrorImage) {
+        img = imglib.flipHorizontal(img);
+      }
+    } else {
+      return null;
     }
+    int top = (img.height / 2 - img.width / 2).toInt();
     if (crop) {
-      // crop to a square
-      int top = (originalImage.height / 2 - originalImage.width / 2).toInt();
-      originalImage = img.copyCrop(
-          originalImage, 0, top, originalImage.width, originalImage.width);
+      img = imglib.copyCrop(img, 0, top, img.width, img.width);
     }
-    File outfile = File(file.path);
+    File outfile = File(path);
     await outfile.writeAsBytes(
-      img.encodeJpg(originalImage),
+      imglib.encodeJpg(img),
       flush: true,
     );
+    return path;
+  } catch (e) {
+    debugPrint("image processing error:" + e.toString());
   }
+  return null;
 }
