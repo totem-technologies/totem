@@ -40,13 +40,16 @@ class _OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage> {
     super.initState();
   }
 
-  Future<void> _handleUploadComplete(String? uploadedUrl) async {
+  Future<void> _handleUploadComplete(String? uploadedUrl, String? error) async {
     if (uploadedUrl != null) {
       _userProfile!.image = uploadedUrl;
       await ref.read(repositoryProvider).updateUserProfile(_userProfile!);
       setState(() => _busy = false);
+      Navigator.of(context).pop();
+    } else {
+      setState(() => _busy = false);
+      _showUploadError(context, error);
     }
-    Navigator.of(context).pop();
   }
 
   @override
@@ -252,8 +255,8 @@ class _OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage> {
                               key: _uploader,
                               assignProfile: false,
                               showBusy: false,
-                              onComplete: (uploadedFileUrl) {
-                                _handleUploadComplete(uploadedFileUrl);
+                              onComplete: (uploadedFileUrl, error) {
+                                _handleUploadComplete(uploadedFileUrl, error);
                               },
                             ),
                           ),
@@ -426,5 +429,32 @@ class _OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage> {
       return false;
     }
     return result == 1;
+  }
+
+  Future<void> _showUploadError(BuildContext context, String? error) async {
+    final t = AppLocalizations.of(context)!;
+    await showDialog<bool>(
+      context: context,
+      /*it shows a popup with few options which you can select, for option we
+        created enums which we can use with switch statement, in this first switch
+        will wait for the user to select the option which it can use with switch cases*/
+      builder: (BuildContext context) {
+        final actions = [
+          TextButton(
+            child: Text(t.ok),
+            onPressed: () {
+              Navigator.of(context).pop(true);
+            },
+          ),
+        ];
+        return AlertDialog(
+          title: Text(
+            t.uploadErrorTitle,
+          ),
+          content: Text(error ?? t.uploadErrorGeneric),
+          actions: actions,
+        );
+      },
+    );
   }
 }

@@ -1,10 +1,11 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:totem/components/widgets/themed_raised_button.dart';
 import 'package:totem/services/providers.dart';
 import 'package:totem/theme/index.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'file_uploader.dart';
 
@@ -128,8 +129,12 @@ class _FilePromptSaveState extends ConsumerState<FilePromptSave> {
           child: Center(
             child: FileUploader(
               key: _uploader,
-              onComplete: (uploadedFileUrl) {
-                Navigator.pop(context, uploadedFileUrl);
+              onComplete: (uploadedFileUrl, error) {
+                if (uploadedFileUrl != null) {
+                  Navigator.pop(context, uploadedFileUrl);
+                } else {
+                  _showUploadError(context, error);
+                }
               },
             ),
           ),
@@ -172,5 +177,32 @@ class _FilePromptSaveState extends ConsumerState<FilePromptSave> {
     });
     final authUser = ref.read(authServiceProvider).currentUser()!;
     _uploader.currentState!.profileImageUpload(widget.uploadTarget, authUser);
+  }
+
+  Future<void> _showUploadError(BuildContext context, String? error) async {
+    final t = AppLocalizations.of(context)!;
+    await showDialog<bool>(
+      context: context,
+      /*it shows a popup with few options which you can select, for option we
+        created enums which we can use with switch statement, in this first switch
+        will wait for the user to select the option which it can use with switch cases*/
+      builder: (BuildContext context) {
+        final actions = [
+          TextButton(
+            child: Text(t.ok),
+            onPressed: () {
+              Navigator.of(context).pop(true);
+            },
+          ),
+        ];
+        return AlertDialog(
+          title: Text(
+            t.uploadErrorTitle,
+          ),
+          content: Text(error ?? t.uploadErrorGeneric),
+          actions: actions,
+        );
+      },
+    );
   }
 }

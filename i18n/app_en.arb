@@ -116,6 +116,8 @@
     "startSession": "Start Session",
     "startTime": "Start Time",
     "unmute": "Unmute",
+    "uploadErrorGeneric": "An unknown error occured trying to save your image.",
+    "uploadErrorTitle": "Unable to save image",
     "useImage": "Use Image",
     "version": "Version",
     "welcome": "Welcome to Totem",
