@@ -358,6 +358,9 @@ PODS:
     - Firebase/Functions (= 8.10.0)
     - firebase_core
     - Flutter
+  - Firebase/AppCheck (8.10.0):
+    - Firebase/CoreOnly
+    - FirebaseAppCheck (~> 8.10.0-beta)
   - Firebase/Auth (8.10.0):
     - Firebase/CoreOnly
     - FirebaseAuth (~> 8.10.0)
@@ -375,6 +378,11 @@ PODS:
   - Firebase/Storage (8.10.0):
     - Firebase/CoreOnly
     - FirebaseStorage (~> 8.10.0)
+  - firebase_app_check (0.0.6-4):
+    - Firebase/AppCheck (~> 8.10.0)
+    - Firebase/CoreOnly (~> 8.10.0)
+    - firebase_core
+    - Flutter
   - firebase_auth (3.3.5):
     - Firebase/Auth (= 8.10.0)
     - firebase_core
@@ -390,6 +398,10 @@ PODS:
     - Firebase/Storage (= 8.10.0)
     - firebase_core
     - Flutter
+  - FirebaseAppCheck (8.10.0-beta):
+    - FirebaseCore (~> 8.0)
+    - GoogleUtilities/Environment (~> 7.6)
+    - PromisesObjC (< 3.0, >= 1.2)
   - FirebaseAuth (8.10.0):
     - FirebaseCore (~> 8.0)
     - GoogleUtilities/AppDelegateSwizzler (~> 7.6)
@@ -525,6 +537,8 @@ DEPENDENCIES:
   - camera (from `.symlinks/plugins/camera/ios`)
   - cloud_firestore (from `.symlinks/plugins/cloud_firestore/ios`)
   - cloud_functions (from `.symlinks/plugins/cloud_functions/ios`)
+  - Firebase/AppCheck
+  - firebase_app_check (from `.symlinks/plugins/firebase_app_check/ios`)
   - firebase_auth (from `.symlinks/plugins/firebase_auth/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - firebase_crashlytics (from `.symlinks/plugins/firebase_crashlytics/ios`)
@@ -548,6 +562,7 @@ SPEC REPOS:
     - AgoraRtcEngine_iOS
     - BoringSSL-GRPC
     - Firebase
+    - FirebaseAppCheck
     - FirebaseAuth
     - FirebaseCore
     - FirebaseCoreDiagnostics
@@ -576,6 +591,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/cloud_firestore/ios"
   cloud_functions:
     :path: ".symlinks/plugins/cloud_functions/ios"
+  firebase_app_check:
+    :path: ".symlinks/plugins/firebase_app_check/ios"
   firebase_auth:
     :path: ".symlinks/plugins/firebase_auth/ios"
   firebase_core:
@@ -618,10 +635,12 @@ SPEC CHECKSUMS:
   cloud_firestore: 03020d987c2828e9b2d87f6940d365ddb089394f
   cloud_functions: acab801c51eb2c8772dc2f61397eb8b92012b81c
   Firebase: 44213362f1dcc52555b935dc925ed35ac55f1b20
+  firebase_app_check: 42198dc31c7fadef8d75fb02ca71b21380795d37
   firebase_auth: 9d959bddc3b255ddfb67cf630a5bbb6186964356
   firebase_core: 2ca2d6cc8a11693e701b37126afae4800be5dbac
   firebase_crashlytics: 994376faf6e6acb76b9081ee0a00d8596038dc2b
   firebase_storage: 740e81d4bef3360d50447dda37da9b8914a2acc0
+  FirebaseAppCheck: 4bb7c14da666a15dd7b4d55df2728832da9e7c72
   FirebaseAuth: 59a2d2b933b5b79e18fb1e6ad230c6abdaa73d26
   FirebaseCore: 04186597c095da37d90ff9fd3e53bc61a1ff2440
   FirebaseCoreDiagnostics: 56fb7216d87e0e6ec2feddefa9d8a392fe8b2c18
@@ -653,6 +672,6 @@ SPEC CHECKSUMS:
   shared_preferences_ios: aef470a42dc4675a1cdd50e3158b42e3d1232b32
   sqflite: 6d358c025f5b867b29ed92fc697fd34924e11904
 
-PODFILE CHECKSUM: ca7e27e85408469f9e52a546906ec762ba7785f3
+PODFILE CHECKSUM: de16cf64193cbbe6cbd6281db2d3b4870d809635
 
 COCOAPODS: 1.11.2
