@@ -292,6 +292,9 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
   Future<void> _handleUploadComplete(String? uploadedUrl, String? error) async {
     if (uploadedUrl != null) {
       _userProfile!.image = uploadedUrl;
+      // delete pending image
+      _pendingImageChange?.delete();
+      _pendingImageChange = null;
       await ref.read(repositoryProvider).updateUserProfile(_userProfile!);
       setState(() => _busy = false);
     } else {
