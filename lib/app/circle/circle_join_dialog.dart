@@ -192,8 +192,12 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
                       child: FileUploader(
                         key: _uploader,
                         assignProfile: false,
-                        onComplete: (uploadedFileUrl) {
-                          Navigator.of(context).pop(uploadedFileUrl);
+                        onComplete: (uploadedFileUrl, error) {
+                          if (uploadedFileUrl != null) {
+                            Navigator.of(context).pop(uploadedFileUrl);
+                          } else {
+                            _showUploadError(context, error);
+                          }
                         },
                       ),
                     ),
@@ -264,5 +268,32 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
     setState(() {
       _selectedImage = File(imageFile.path);
     });
+  }
+
+  Future<void> _showUploadError(BuildContext context, String? error) async {
+    final t = AppLocalizations.of(context)!;
+    await showDialog<bool>(
+      context: context,
+      /*it shows a popup with few options which you can select, for option we
+        created enums which we can use with switch statement, in this first switch
+        will wait for the user to select the option which it can use with switch cases*/
+      builder: (BuildContext context) {
+        final actions = [
+          TextButton(
+            child: Text(t.ok),
+            onPressed: () {
+              Navigator.of(context).pop(true);
+            },
+          ),
+        ];
+        return AlertDialog(
+          title: Text(
+            t.uploadErrorTitle,
+          ),
+          content: Text(error ?? t.uploadErrorGeneric),
+          actions: actions,
+        );
+      },
+    );
   }
 }

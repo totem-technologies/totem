@@ -142,9 +142,11 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
                                                       assignProfile: false,
                                                       showBusy: false,
                                                       onComplete:
-                                                          (uploadedFileUrl) {
+                                                          (uploadedFileUrl,
+                                                              error) {
                                                         _handleUploadComplete(
-                                                            uploadedFileUrl);
+                                                            uploadedFileUrl,
+                                                            error);
                                                       },
                                                     ),
                                                   ),
@@ -287,11 +289,19 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
     }
   }
 
-  Future<void> _handleUploadComplete(String? uploadedUrl) async {
+  Future<void> _handleUploadComplete(String? uploadedUrl, String? error) async {
     if (uploadedUrl != null) {
       _userProfile!.image = uploadedUrl;
+      // delete pending image
+      _pendingImageChange?.delete();
+      _pendingImageChange = null;
       await ref.read(repositoryProvider).updateUserProfile(_userProfile!);
       setState(() => _busy = false);
+    } else {
+      // this is an error condition
+      setState(() => _busy = false);
+      _showUploadError(context, error);
+      return;
     }
     if (_pendingClose) {
       Navigator.of(context).pop();
@@ -327,6 +337,33 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
       ),
     );
   } */
+
+  Future<void> _showUploadError(BuildContext context, String? error) async {
+    final t = AppLocalizations.of(context)!;
+    await showDialog<bool>(
+      context: context,
+      /*it shows a popup with few options which you can select, for option we
+        created enums which we can use with switch statement, in this first switch
+        will wait for the user to select the option which it can use with switch cases*/
+      builder: (BuildContext context) {
+        final actions = [
+          TextButton(
+            child: Text(t.ok),
+            onPressed: () {
+              Navigator.of(context).pop(true);
+            },
+          ),
+        ];
+        return AlertDialog(
+          title: Text(
+            t.uploadErrorTitle,
+          ),
+          content: Text(error ?? t.uploadErrorGeneric),
+          actions: actions,
+        );
+      },
+    );
+  }
 
   Future<void> _promptSignOut(BuildContext context) async {
     final t = AppLocalizations.of(context)!;

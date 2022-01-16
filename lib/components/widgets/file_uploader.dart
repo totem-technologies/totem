@@ -18,7 +18,7 @@ class FileUploader extends ConsumerStatefulWidget {
     this.assignProfile = true,
     this.showBusy = true,
   }) : super(key: key);
-  final ValueChanged<String?>? onComplete;
+  final Function(String?, String?)? onComplete;
   final bool clearFile;
   final bool assignProfile;
   final bool showBusy;
@@ -78,6 +78,9 @@ class FileUploaderState extends ConsumerState<FileUploader> {
         debugPrint(
             'User does not have permission to upload to this reference.');
       }
+      if (widget.onComplete != null) {
+        widget.onComplete!(null, e.message);
+      }
     }
   }
 
@@ -88,7 +91,7 @@ class FileUploaderState extends ConsumerState<FileUploader> {
     }
     // await clearTemporaryFiles(upload);
     if (widget.onComplete != null) {
-      widget.onComplete!(url);
+      widget.onComplete!(url, null);
     }
   }
 
