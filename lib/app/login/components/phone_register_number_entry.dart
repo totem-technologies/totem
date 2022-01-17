@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_sim_country_code/flutter_sim_country_code.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:totem/app/login/components/phone_register_number_header.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/services/index.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:totem/theme/index.dart';
 
 class PhoneRegisterNumberEntry extends ConsumerStatefulWidget {
@@ -19,9 +22,14 @@ class _PhoneRegisterNumberEntryState
     extends ConsumerState<PhoneRegisterNumberEntry> {
   final formKey = GlobalKey<FormState>();
   final TextEditingController _phoneNumberController = TextEditingController();
-  String initialCountry = 'US';
   PhoneNumber numberController = PhoneNumber(isoCode: 'US');
   bool _busy = false;
+
+  @override
+  void initState() {
+    _initISOCode();
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -78,7 +86,7 @@ class _PhoneRegisterNumberEntryState
                     ),
                   ),
                   keyboardType: const TextInputType.numberWithOptions(
-                      signed: true, decimal: true),
+                      signed: false, decimal: false),
                   onSaved: (PhoneNumber number) {
                     debugPrint('On Saved: $number');
                     numberController = number;
@@ -99,20 +107,46 @@ class _PhoneRegisterNumberEntryState
     );
   }
 
+  void _initISOCode() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      // if there is a cached previously used value for ISO, use that
+      String? initialCountry = prefs.getString('lastIso');
+      if (initialCountry != null) {
+        setState(() {
+          numberController = PhoneNumber(isoCode: initialCountry);
+        });
+      } else {
+        // try reading from sim card
+        String? platformVersion = await FlutterSimCountryCode.simCountryCode;
+        if (platformVersion != null) {
+          setState(() {
+            numberController =
+                PhoneNumber(isoCode: platformVersion.toUpperCase());
+          });
+        }
+      }
+    } on PlatformException catch (e) {
+      debugPrint('Error loading iso code: ${e.toString()}');
+    }
+  }
+
   void onSubmit() async {
     var auth = ref.read(authServiceProvider);
     // Validate returns true if the form is valid, or false otherwise.
     if (formKey.currentState!.validate()) {
       setState(() => _busy = true);
-      var number =
-          _phoneNumberController.text.replaceAll(RegExp(r'[^0-9]'), "");
-      if (!number.startsWith('+')) {
-        if (number.length == 10) {
-          // US user only input 10 digits
-          number = '1' + number;
-        }
-        number = '+' + number;
-      }
+      formKey.currentState!.save();
+
+      // Number will have been validated by this point
+      // and the phoneNumber member formats with iso code
+      String number = numberController.phoneNumber!;
+      // Stash isoCode in local storage so that its remembered if the user
+      // chooses a different one than the default
+      String isoCode = numberController.isoCode!;
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setString('lastIso', isoCode);
+
       debugPrint(number);
       try {
         await auth.signInWithPhoneNumber(number);

@@ -68,6 +68,8 @@ dependencies:
   email_validator: ^2.0.1
   flutter_foreground_task: ^3.5.4
   firebase_app_check: ^0.0.6+4
+  shared_preferences: ^2.0.12
+  flutter_sim_country_code: ^0.1.2
 
 dev_dependencies:
   flutter_test:
