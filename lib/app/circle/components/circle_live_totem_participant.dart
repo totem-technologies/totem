@@ -1,8 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:totem/app/circle/circle_session_page.dart';
 import 'package:totem/models/index.dart';
+import 'package:totem/theme/index.dart';
 
 class CircleLiveTotemParticipant extends ConsumerStatefulWidget {
   const CircleLiveTotemParticipant({Key? key}) : super(key: key);
@@ -19,15 +22,28 @@ class _CircleLiveTotemParticipantState
     final activeSession = ref.watch(activeSessionProvider);
     final totemParticipant = activeSession.totemParticipant;
     if (totemParticipant != null) {
+      final t = AppLocalizations.of(context)!;
+      final textStyles = Theme.of(context).textStyles;
       return Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Expanded(child: Container()),
           Opacity(
             opacity: totemParticipant.me ? 1.0 : 0,
-            child: const Text("Your Turn"), // FIXME - replace with design item
+            child: !activeSession.totemReceived
+                ? Text(t.yourTurn, style: textStyles.headline3)
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(t.youAreSharing, style: textStyles.headline3),
+                      const SizedBox(
+                        width: 6,
+                      ),
+                      SvgPicture.asset('assets/active_sharing.svg'),
+                    ],
+                  ), // FIXME - replace with design item
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 32),
           participant(context, totemParticipant),
           Expanded(child: Container()),
         ],

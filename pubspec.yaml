@@ -113,6 +113,7 @@ flutter:
     - assets/unlock.svg
     - assets/view_circle.svg
     - assets/circle_check.svg
+    - assets/active_sharing.svg
 
   fonts:
     - family: Raleway
