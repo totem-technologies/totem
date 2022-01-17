@@ -13,7 +13,6 @@ class HomePage extends StatelessWidget {
     final themeData = Theme.of(context);
     final t = AppLocalizations.of(context)!;
     final themeColors = themeData.themeColors;
-    final textStyles = themeData.textTheme;
     return GradientBackground(
       gradient: themeColors.secondaryGradient,
       child: Scaffold(
@@ -43,7 +42,7 @@ class HomePage extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
-                          child: TotemHeader(text: t.home),
+                          child: TotemHeader(text: t.circles),
                         ),
                         InkWell(
                           child: Padding(
@@ -57,16 +56,7 @@ class HomePage extends StatelessWidget {
                         )
                       ],
                     ),
-                    Padding(
-                      padding: EdgeInsets.only(
-                          left: themeData.pageHorizontalPadding,
-                          top: 8,
-                          bottom: 24),
-                      child: Text(
-                        t.circles,
-                        style: textStyles.headline2,
-                      ),
-                    ),
+                    const SizedBox(height: 10),
                     const Expanded(
                       child: SnapCirclesList(),
                     ),
