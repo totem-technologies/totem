@@ -101,27 +101,7 @@ class _CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
     final participant = activeSession.totemParticipant;
     return Column(
       children: [
-        if (participant != null &&
-            participant.me &&
-            activeSession.totemReceived)
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ThemedControlButton(
-                label: t.done,
-                svgImage: 'assets/send.svg',
-                backgroundColor: themeColors.primary,
-                onPressed: !_requesting
-                    ? () {
-                        _endTurn(context, participant);
-                      }
-                    : null,
-              ),
-            ],
-          ),
-        if (participant == null ||
-            !participant.me ||
-            !activeSession.totemReceived)
+        if (participant != null)
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -134,32 +114,6 @@ class _CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
                   communications.muteAudio(communications.muted ? false : true);
                   debugPrint('mute pressed');
                 },
-              ),
-              ThemedControlButton(
-                label: t.receive,
-                svgImage: 'assets/check.svg',
-                backgroundColor: themeColors.primary,
-                onPressed: participant != null &&
-                        participant.me &&
-                        !activeSession.totemReceived &&
-                        !_requesting
-                    ? () {
-                        _receiveTurn(context, participant);
-                      }
-                    : null,
-              ),
-              ThemedControlButton(
-                label: t.pass,
-                svgImage: 'assets/close.svg',
-                backgroundColor: themeColors.primary,
-                onPressed: participant != null &&
-                        participant.me &&
-                        !activeSession.totemReceived &&
-                        !_requesting
-                    ? () {
-                        _passTurn(context, participant);
-                      }
-                    : null,
               ),
               if (role == Role.member)
                 ThemedControlButton(
@@ -217,31 +171,6 @@ class _CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
         ],
       ],
     );
-  }
-
-  void _passTurn(BuildContext context, SessionParticipant participant) async {
-    setState(() => _requesting = true);
-    final commProvider = ref.read(communicationsProvider);
-    await commProvider.passActiveSessionTotem(
-        sessionUserId: participant.sessionUserId!);
-    setState(() => _requesting = false);
-  }
-
-  void _receiveTurn(
-      BuildContext context, SessionParticipant participant) async {
-    setState(() => _requesting = true);
-    final commProvider = ref.read(communicationsProvider);
-    await commProvider.receiveActiveSessionTotem(
-        sessionUserId: participant.sessionUserId!);
-    setState(() => _requesting = false);
-  }
-
-  void _endTurn(BuildContext context, SessionParticipant participant) async {
-    setState(() => _requesting = true);
-    final commProvider = ref.read(communicationsProvider);
-    await commProvider.doneActiveSessionTotem(
-        sessionUserId: participant.sessionUserId!);
-    setState(() => _requesting = false);
   }
 
   void _startSession(BuildContext context, WidgetRef ref) async {

@@ -5,6 +5,7 @@ import 'package:totem/theme/index.dart';
 
 class StdThemePalette {
   static const yellow = Color(0xffffcc59);
+  static const lightYellow = Color(0xfffde4a4);
   static const baseBlack = Color(0xff16182a);
   static const baseWhite = Color(0xffffffff);
   static const offWhite = Color(0xffefefef);
@@ -51,5 +52,6 @@ class StdAppThemeColors extends AppThemeColors {
           controlButtonBackground: StdThemePalette.lightGrey,
           blurBackground: StdThemePalette.baseBlack.withAlpha(40),
           participantBorder: StdThemePalette.lighterGrey,
+          sliderBackground: StdThemePalette.lightYellow,
         );
 }
