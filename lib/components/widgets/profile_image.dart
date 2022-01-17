@@ -53,7 +53,7 @@ class ProfileImage extends ConsumerWidget {
             ? BoxDecoration(
                 borderRadius: BorderRadius.all(Radius.circular(size / 4)),
                 image: DecorationImage(
-                  image: imageProvider,
+                  image: ResizeImage(imageProvider, width: 168),
                   fit: BoxFit.contain,
                 ),
               )
