@@ -157,21 +157,8 @@ class _ProfileImageDialogState extends ConsumerState<ProfileImageDialog> {
         ),
         const SizedBox(height: 10),
         if (_selectedImage != null)
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            crossAxisAlignment: CrossAxisAlignment.end,
+          Column(
             children: [
-              TextButton(
-                onPressed: _selectedImage != null
-                    ? () {
-                        _selectImage(context);
-                      }
-                    : null,
-                child: Text(
-                  t.useImage,
-                  style: TextStyle(color: themeColors.linkText, fontSize: 20),
-                ),
-              ),
               TextButton(
                 onPressed: () async {
                   await _selectedImage!.delete();
@@ -181,7 +168,18 @@ class _ProfileImageDialogState extends ConsumerState<ProfileImageDialog> {
                 },
                 child: Text(
                   t.edit,
-                  style: TextStyle(color: themeColors.linkText, fontSize: 20),
+                  style: TextStyle(color: themeColors.linkText, fontSize: 14),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Center(
+                child: ThemedRaisedButton(
+                  onPressed: _selectedImage != null
+                      ? () {
+                          _selectImage(context);
+                        }
+                      : null,
+                  label: t.useImage,
                 ),
               ),
             ],

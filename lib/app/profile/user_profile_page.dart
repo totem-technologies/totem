@@ -94,8 +94,9 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
                             Expanded(child: Container()),
                             TextButton(
                                 onPressed: !_busy && hasChanged
-                                    ? () {
-                                        _saveForm();
+                                    ? () async {
+                                        await _saveForm();
+                                        await Navigator.maybePop(context);
                                       }
                                     : null,
                                 child: Text(t.save)),
@@ -131,9 +132,13 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
                                           children: [
                                             Stack(
                                               children: [
-                                                ProfileImage(
-                                                  localImage:
-                                                      _pendingImageChange,
+                                                GestureDetector(
+                                                  onTap: () =>
+                                                      _getUserImage(context),
+                                                  child: ProfileImage(
+                                                    localImage:
+                                                        _pendingImageChange,
+                                                  ),
                                                 ),
                                                 if (_pendingImageChange != null)
                                                   Positioned.fill(
@@ -163,8 +168,7 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
                                                   Row(
                                                     children: [
                                                       Text(
-                                                        t.profilePicture
-                                                            .toLowerCase(),
+                                                        t.profilePicture,
                                                         style: textStyles
                                                             .headline3,
                                                       ),
@@ -214,12 +218,9 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
                                                         alignment: Alignment
                                                             .centerLeft,
                                                       ),
-                                                      onPressed: !_busy
-                                                          ? () {
-                                                              _getUserImage(
-                                                                  context);
-                                                            }
-                                                          : null,
+                                                      onPressed: () =>
+                                                          _getUserImage(
+                                                              context),
                                                       child: Text(t.edit)),
                                                 ],
                                               ),
@@ -279,6 +280,9 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
   }
 
   Future<void> _getUserImage(BuildContext context) async {
+    if (_busy) {
+      return;
+    }
     String? imagePath = await ProfileImageDialog.showDialog(context,
         userProfile: _userProfile!);
     if (imagePath != null) {
