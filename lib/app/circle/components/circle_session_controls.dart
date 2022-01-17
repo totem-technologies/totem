@@ -19,7 +19,6 @@ class CircleSessionControls extends ConsumerStatefulWidget {
 
 class _CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
   bool _more = false;
-  bool _requesting = false;
 
   @override
   Widget build(BuildContext context) {
@@ -95,7 +94,6 @@ class _CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
 
   Widget liveControls(BuildContext context, WidgetRef ref,
       ActiveSession activeSession, Role role) {
-    final themeColors = Theme.of(context).themeColors;
     final t = AppLocalizations.of(context)!;
     final communications = ref.watch(communicationsProvider);
     final participant = activeSession.totemParticipant;

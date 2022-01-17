@@ -7,8 +7,6 @@ import 'package:totem/app/circle/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/theme/index.dart';
 
-import 'circle_live_session_participant.dart';
-
 class CircleLiveSessionUsers extends ConsumerWidget {
   const CircleLiveSessionUsers({Key? key}) : super(key: key);
 
