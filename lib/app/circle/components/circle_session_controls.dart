@@ -96,41 +96,39 @@ class _CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
       ActiveSession activeSession, Role role) {
     final t = AppLocalizations.of(context)!;
     final communications = ref.watch(communicationsProvider);
-    final participant = activeSession.totemParticipant;
     return Column(
       children: [
-        if (participant != null)
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            ThemedControlButton(
+              label: communications.muted ? t.forceUnMute : t.mute,
+              svgImage: communications.muted
+                  ? 'assets/microphone_force.svg'
+                  : 'assets/microphone.svg',
+              onPressed: () {
+                communications.muteAudio(communications.muted ? false : true);
+                debugPrint('mute pressed');
+              },
+            ),
+            if (role == Role.member)
               ThemedControlButton(
-                label: communications.muted ? t.forceUnMute : t.mute,
-                svgImage: communications.muted
-                    ? 'assets/microphone_force.svg'
-                    : 'assets/microphone.svg',
+                label: t.info,
+                svgImage: 'assets/info.svg',
                 onPressed: () {
-                  communications.muteAudio(communications.muted ? false : true);
-                  debugPrint('mute pressed');
+                  debugPrint('info pressed');
                 },
               ),
-              if (role == Role.member)
-                ThemedControlButton(
-                  label: t.info,
-                  svgImage: 'assets/info.svg',
-                  onPressed: () {
-                    debugPrint('info pressed');
-                  },
-                ),
-              if (role == Role.keeper)
-                ThemedControlButton(
-                  label: !_more ? t.more : t.less,
-                  svgImage: !_more ? 'assets/more.svg' : 'assets/less.svg',
-                  onPressed: () {
-                    setState(() => _more = !_more);
-                  },
-                ),
-            ],
-          ),
+            if (role == Role.keeper)
+              ThemedControlButton(
+                label: !_more ? t.more : t.less,
+                svgImage: !_more ? 'assets/more.svg' : 'assets/less.svg',
+                onPressed: () {
+                  setState(() => _more = !_more);
+                },
+              ),
+          ],
+        ),
         if (role == Role.keeper && _more) ...[
           const SizedBox(height: 24),
           Row(

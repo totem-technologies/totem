@@ -25,6 +25,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   late SessionToken _sessionToken;
   String? _sessionImage;
   SessionState? _lastState;
+  bool _pendingRequestLeave = false;
 
   @override
   String? get lastError {
@@ -73,7 +74,17 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   }
 
   @override
-  Future<void> leaveSession() async {
+  Future<void> leaveSession({bool requested = true}) async {
+    _pendingRequestLeave = requested;
+    if (requested &&
+        sessionProvider.activeSession != null &&
+        sessionProvider.activeSession!.totemParticipant != null &&
+        sessionProvider.activeSession!.totemParticipant!.me) {
+      // User is requesting to leave and they are the active totem user ...
+      // need to pass the totem in this case
+      await passActiveSessionTotem(
+          sessionUserId: sessionProvider.activeSession!.totemUser!);
+    }
     await _engine?.leaveChannel();
     // update list of participants
   }
@@ -297,7 +308,9 @@ class AgoraCommunicationProvider extends CommunicationProvider {
       _handler!.leaveCircle!();
     }
     _handler = null;
-    _updateState(CommunicationState.disconnected);
+    // only notify if the user didn't request to leave
+    _updateState(CommunicationState.disconnected,
+        notify: !_pendingRequestLeave);
   }
 
   void _handleUserJoined(int user, int elapsed) {
@@ -314,10 +327,12 @@ class AgoraCommunicationProvider extends CommunicationProvider {
         'User left: ' + user.toString() + " reason: " + reason.toString());
   }
 
-  void _updateState(CommunicationState newState) {
+  void _updateState(CommunicationState newState, {bool notify = true}) {
     if (newState != state) {
       state = newState;
-      notifyListeners();
+      if (notify) {
+        notifyListeners();
+      }
     }
   }
 
@@ -338,10 +353,12 @@ class AgoraCommunicationProvider extends CommunicationProvider {
         // have to manage mute state based on changes to the state
         bool started = (_lastState == SessionState.starting &&
             session.state == SessionState.live);
-        if (started || session.lastChange == ActiveSessionChange.totemChange) {
+        if (started ||
+            session.lastChange == ActiveSessionChange.totemChange ||
+            session.lastChange == ActiveSessionChange.totemReceive) {
           SessionParticipant? participant = session.totemParticipant;
           if (participant != null) {
-            muteAudio(!participant.me);
+            muteAudio(!participant.me || !session.totemReceived);
           }
         }
       }

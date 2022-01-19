@@ -11,7 +11,7 @@ abstract class CommunicationProvider extends ChangeNotifier {
       {required Session session,
       required CommunicationHandler handler,
       String? sessionImage});
-  Future<void> leaveSession();
+  Future<void> leaveSession({bool requested = true});
   Future<void> endSession();
   String? get lastError;
 
