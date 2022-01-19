@@ -76,6 +76,10 @@ class ActiveSession extends ChangeNotifier {
       if (activeParticipants.length > 1) {
         nextSessionId = activeParticipants[1].sessionUserId;
         nextIndex = 1;
+      } else {
+        // This would be a test session with a single participant
+        nextIndex = 0;
+        nextSessionId = activeParticipants[0].sessionUserId;
       }
     } else {
       nextIndex = activeParticipants

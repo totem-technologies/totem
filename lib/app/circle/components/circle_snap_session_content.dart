@@ -383,7 +383,7 @@ class _CircleSnapSessionContentState
 //    final repo = ref.read(repositoryProvider);
     final commProvider = ref.read(communicationsProvider);
     if (!complete) {
-      await commProvider.leaveSession();
+      await commProvider.leaveSession(requested: true);
     } else {
       await commProvider.endSession();
     }

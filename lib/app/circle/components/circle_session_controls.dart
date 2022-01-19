@@ -19,7 +19,6 @@ class CircleSessionControls extends ConsumerStatefulWidget {
 
 class _CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
   bool _more = false;
-  bool _requesting = false;
 
   @override
   Widget build(BuildContext context) {
@@ -95,90 +94,41 @@ class _CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
 
   Widget liveControls(BuildContext context, WidgetRef ref,
       ActiveSession activeSession, Role role) {
-    final themeColors = Theme.of(context).themeColors;
     final t = AppLocalizations.of(context)!;
     final communications = ref.watch(communicationsProvider);
-    final participant = activeSession.totemParticipant;
     return Column(
       children: [
-        if (participant != null &&
-            participant.me &&
-            activeSession.totemReceived)
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            ThemedControlButton(
+              label: communications.muted ? t.forceUnMute : t.mute,
+              svgImage: communications.muted
+                  ? 'assets/microphone_force.svg'
+                  : 'assets/microphone.svg',
+              onPressed: () {
+                communications.muteAudio(communications.muted ? false : true);
+                debugPrint('mute pressed');
+              },
+            ),
+            if (role == Role.member)
               ThemedControlButton(
-                label: t.done,
-                svgImage: 'assets/send.svg',
-                backgroundColor: themeColors.primary,
-                onPressed: !_requesting
-                    ? () {
-                        _endTurn(context, participant);
-                      }
-                    : null,
-              ),
-            ],
-          ),
-        if (participant == null ||
-            !participant.me ||
-            !activeSession.totemReceived)
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              ThemedControlButton(
-                label: communications.muted ? t.forceUnMute : t.mute,
-                svgImage: communications.muted
-                    ? 'assets/microphone_force.svg'
-                    : 'assets/microphone.svg',
+                label: t.info,
+                svgImage: 'assets/info.svg',
                 onPressed: () {
-                  communications.muteAudio(communications.muted ? false : true);
-                  debugPrint('mute pressed');
+                  debugPrint('info pressed');
                 },
               ),
+            if (role == Role.keeper)
               ThemedControlButton(
-                label: t.receive,
-                svgImage: 'assets/check.svg',
-                backgroundColor: themeColors.primary,
-                onPressed: participant != null &&
-                        participant.me &&
-                        !activeSession.totemReceived &&
-                        !_requesting
-                    ? () {
-                        _receiveTurn(context, participant);
-                      }
-                    : null,
+                label: !_more ? t.more : t.less,
+                svgImage: !_more ? 'assets/more.svg' : 'assets/less.svg',
+                onPressed: () {
+                  setState(() => _more = !_more);
+                },
               ),
-              ThemedControlButton(
-                label: t.pass,
-                svgImage: 'assets/close.svg',
-                backgroundColor: themeColors.primary,
-                onPressed: participant != null &&
-                        participant.me &&
-                        !activeSession.totemReceived &&
-                        !_requesting
-                    ? () {
-                        _passTurn(context, participant);
-                      }
-                    : null,
-              ),
-              if (role == Role.member)
-                ThemedControlButton(
-                  label: t.info,
-                  svgImage: 'assets/info.svg',
-                  onPressed: () {
-                    debugPrint('info pressed');
-                  },
-                ),
-              if (role == Role.keeper)
-                ThemedControlButton(
-                  label: !_more ? t.more : t.less,
-                  svgImage: !_more ? 'assets/more.svg' : 'assets/less.svg',
-                  onPressed: () {
-                    setState(() => _more = !_more);
-                  },
-                ),
-            ],
-          ),
+          ],
+        ),
         if (role == Role.keeper && _more) ...[
           const SizedBox(height: 24),
           Row(
@@ -217,31 +167,6 @@ class _CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
         ],
       ],
     );
-  }
-
-  void _passTurn(BuildContext context, SessionParticipant participant) async {
-    setState(() => _requesting = true);
-    final commProvider = ref.read(communicationsProvider);
-    await commProvider.passActiveSessionTotem(
-        sessionUserId: participant.sessionUserId!);
-    setState(() => _requesting = false);
-  }
-
-  void _receiveTurn(
-      BuildContext context, SessionParticipant participant) async {
-    setState(() => _requesting = true);
-    final commProvider = ref.read(communicationsProvider);
-    await commProvider.receiveActiveSessionTotem(
-        sessionUserId: participant.sessionUserId!);
-    setState(() => _requesting = false);
-  }
-
-  void _endTurn(BuildContext context, SessionParticipant participant) async {
-    setState(() => _requesting = true);
-    final commProvider = ref.read(communicationsProvider);
-    await commProvider.doneActiveSessionTotem(
-        sessionUserId: participant.sessionUserId!);
-    setState(() => _requesting = false);
   }
 
   void _startSession(BuildContext context, WidgetRef ref) async {

@@ -47,7 +47,7 @@ class _CircleSessionPageState extends ConsumerState<CircleSessionPage> {
               activeSession.state == SessionState.complete) &&
           commProvider.state == CommunicationState.active) {
         // the session has been ended remotely... trigger leave session
-        commProvider.leaveSession();
+        commProvider.leaveSession(requested: false);
         debugPrint('triggering leave session for session that has eneded');
       }
     });
