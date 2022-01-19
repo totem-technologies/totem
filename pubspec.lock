@@ -67,11 +67,9 @@ packages:
   camera:
     dependency: "direct main"
     description:
-      path: "packages/camera/camera"
-      ref: HEAD
-      resolved-ref: "00543b52d55e8ce35f63ef259ebebd7347fb6dbd"
-      url: "https://github.com/Phase2Industries/plugins.git"
-    source: git
+      name: camera
+      url: "https://pub.dartlang.org"
+    source: hosted
     version: "0.9.4+5"
   camera_platform_interface:
     dependency: transitive
