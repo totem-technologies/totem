@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:image/image.dart' as imglib;
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/theme/index.dart';
 import 'package:uuid/uuid.dart';
@@ -38,9 +39,22 @@ class CameraCaptureScreenState extends State<CameraCapture>
   bool _error = false;
   bool _frontCamera = false;
   bool _saving = false;
+  bool _retry = false;
   CameraImage? _savedImage;
+  PermissionStatus? _permissionError;
 
   Future<void> _initCamera() async {
+    // check camera permissions here
+    PermissionStatus status = await Permission.camera.request();
+    if (status != PermissionStatus.granted) {
+      setState(() {
+        _permissionError = status;
+        _error = true;
+        _retry = false;
+      });
+      return;
+    }
+
     _cameras = await availableCameras();
     if (_cameras!.isNotEmpty) {
       int startIndex = 0;
@@ -84,6 +98,9 @@ class CameraCaptureScreenState extends State<CameraCapture>
   Widget build(BuildContext context) {
     super.build(context);
     final themeColor = Theme.of(context).themeColors;
+    if (_permissionError != null) {
+      return _buildCameraError(context);
+    }
     if (_controller != null) {
       if (_initialized && !_controller!.value.isInitialized) {
         return _buildCameraError(context);
@@ -121,20 +138,61 @@ class CameraCaptureScreenState extends State<CameraCapture>
   Widget _buildCameraError(BuildContext context) {
     final themeColor = Theme.of(context).themeColors;
     final t = AppLocalizations.of(context)!;
+    final errorStyle = TextStyle(color: themeColor.reversedText);
     return Center(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.error, color: themeColor.reversedText, size: 36),
-          const SizedBox(
-            height: 15,
-          ),
-          Text(t.errorCamera, style: TextStyle(color: themeColor.reversedText)),
-          const SizedBox(
-            height: 50,
-          ),
-        ],
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.error, color: themeColor.reversedText, size: 36),
+            const SizedBox(
+              height: 15,
+            ),
+            Text(t.errorCamera, style: errorStyle),
+            if (_permissionError != null &&
+                _permissionError != PermissionStatus.granted) ...[
+              const SizedBox(height: 10),
+              Text(
+                t.errorCameraPermissions,
+                style: errorStyle,
+                textAlign: TextAlign.center,
+              ),
+            ],
+            if (_permissionError != null) ...[
+              const SizedBox(height: 30),
+              Text(
+                t.errorEnablePermissions,
+                style: errorStyle,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 20),
+              Center(
+                child: ThemedRaisedButton(
+                  label: _retry ? t.errorRetryStart : t.errorDeviceSettings,
+                  onPressed: () {
+                    // trigger app settings
+                    if (!_retry) {
+                      openAppSettings();
+                      setState(() => _retry = true);
+                    } else {
+                      // user says they have reset, retry
+                      setState(() {
+                        _permissionError = null;
+                        _error = false;
+                      });
+                      _initCamera();
+                    }
+                  },
+                ),
+              ),
+            ],
+            const SizedBox(
+              height: 50,
+            ),
+          ],
+        ),
       ),
     );
   }

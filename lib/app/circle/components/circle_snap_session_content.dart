@@ -2,6 +2,7 @@ import 'package:after_layout/after_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:totem/app/circle/circle_session_page.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
@@ -31,6 +32,7 @@ class _CircleSnapSessionContentState
   // String? _sessionUserId;
 
   late bool _validSession;
+  bool _retry = false;
 
   @override
   void initState() {
@@ -245,6 +247,7 @@ class _CircleSnapSessionContentState
           Text(
             ErrorCodeTranslation.get(
                 context, commProvider.lastError ?? "unknown"),
+            textAlign: TextAlign.center,
           ),
         ],
       ),
@@ -269,8 +272,39 @@ class _CircleSnapSessionContentState
             const SizedBox(
               height: 20,
             ),
-            Text(ErrorCodeTranslation.get(
-                context, commProvider.lastError ?? "unknown")),
+            Text(
+              ErrorCodeTranslation.get(
+                  context, commProvider.lastError ?? "unknown"),
+              textAlign: TextAlign.center,
+            ),
+            if (commProvider.lastError ==
+                CommunicationErrors.noMicrophonePermission) ...[
+              const SizedBox(height: 30),
+              Text(
+                t.errorEnablePermissions,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 20),
+              Center(
+                child: ThemedRaisedButton(
+                  label: _retry ? t.errorRetryStart : t.errorDeviceSettings,
+                  onPressed: () {
+                    // trigger app settings
+                    if (!_retry) {
+                      openAppSettings();
+                      setState(() => _retry = true);
+                    } else {
+                      setState(() => _retry = false);
+                      // user says they have reset, retry
+                      _joinSession();
+                    }
+                  },
+                ),
+              ),
+            ],
+            const SizedBox(
+              height: 50,
+            ),
           ],
         ),
       ),
@@ -396,6 +430,10 @@ class _CircleSnapSessionContentState
   @override
   void afterFirstLayout(BuildContext context) {
     // join the session once the page is ready
+    _joinSession();
+  }
+
+  void _joinSession() {
     if (widget.circle.activeSession != null) {
       final provider = ref.read(communicationsProvider);
       provider.joinSession(
