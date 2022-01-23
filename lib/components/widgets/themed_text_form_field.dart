@@ -27,6 +27,7 @@ class ThemedTextFormField extends StatelessWidget {
     this.suffixIcon,
     this.contentPadding,
     this.isDense = true,
+    this.autofillHints,
   }) : super(key: key);
   final String? labelText;
   final TextEditingController? controller;
@@ -50,6 +51,7 @@ class ThemedTextFormField extends StatelessWidget {
   final TextStyle? hintStyle;
   final EdgeInsetsGeometry? contentPadding;
   final bool isDense;
+  final Iterable<String>? autofillHints;
   @override
   Widget build(BuildContext context) {
     final themeData = Theme.of(context);
@@ -68,6 +70,7 @@ class ThemedTextFormField extends StatelessWidget {
         contentPadding: contentPadding,
         isDense: isDense,
       ),
+      autofillHints: autofillHints,
       controller: controller,
       autocorrect: autocorrect,
       obscureText: obscureText,

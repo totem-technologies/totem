@@ -54,6 +54,7 @@ class _PhoneRegisterNumberEntryState
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 InternationalPhoneNumberInput(
+                  autofillHints: const [AutofillHints.telephoneNumberNational],
                   autoFocus: true,
                   onInputChanged: (PhoneNumber number) {
                     debugPrint(number.phoneNumber);
@@ -85,8 +86,7 @@ class _PhoneRegisterNumberEntryState
                       borderSide: BorderSide(color: themeColors.primaryText),
                     ),
                   ),
-                  keyboardType: const TextInputType.numberWithOptions(
-                      signed: false, decimal: false),
+                  keyboardType: TextInputType.phone,
                   onSaved: (PhoneNumber number) {
                     debugPrint('On Saved: $number');
                     numberController = number;
