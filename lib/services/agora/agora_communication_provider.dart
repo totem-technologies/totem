@@ -56,6 +56,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     _sessionImage = sessionImage;
     _handler = handler;
     _session = session;
+    _lastError = null;
     _updateState(CommunicationState.joining);
     try {
       await _assertEngine();
@@ -139,9 +140,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   Future<void> _assertEngine() async {
     if (_engine == null) {
       try {
-        PermissionStatus statusValue = (Platform.isAndroid)
-            ? await Permission.microphone.request()
-            : PermissionStatus.granted;
+        PermissionStatus statusValue = await Permission.microphone.request();
         if (statusValue == PermissionStatus.granted ||
             statusValue == PermissionStatus.limited) {
           _engine = await RtcEngine.create(appId);
@@ -171,12 +170,12 @@ class AgoraCommunicationProvider extends CommunicationProvider {
             ),
           );
         } else {
-          _lastError = "errorCommunicationNoMicrophonePermission";
+          _lastError = CommunicationErrors.noMicrophonePermission;
           _updateState(CommunicationState.failed);
         }
       } catch (ex) {
         // error initializing engine
-        _lastError = "errorCommunicationError";
+        _lastError = CommunicationErrors.communicationError;
         _updateState(CommunicationState.failed);
       }
     }

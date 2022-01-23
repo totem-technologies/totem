@@ -4,6 +4,12 @@ import 'package:totem/services/index.dart';
 
 enum CommunicationState { disconnected, disconnecting, joining, active, failed }
 
+class CommunicationErrors {
+  static const String communicationError = "errorCommunicationError";
+  static const String noMicrophonePermission =
+      "errorCommunicationNoMicrophonePermission";
+}
+
 abstract class CommunicationProvider extends ChangeNotifier {
   CommunicationState state = CommunicationState.disconnected;
   bool muted = false;
