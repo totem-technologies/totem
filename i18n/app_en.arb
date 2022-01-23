@@ -37,7 +37,7 @@
     "errorCreateSnapCircle": "Unable to create Circle",
     "errorEmailInvalid": "Invalid email address",
     "errorEnterEmail": "Provide a valid email address for your account",
-    "errorEnterName": "Provide a name for the circle",
+    "errorEnterName": "Provide a name",
     "errorEnterNumSessions": "Enter a number of sessions between 1 and 100",
     "errorInvalidPhoneNumber": "Invalid Phone Number",
     "errorJoinSession": "Unable to join session",

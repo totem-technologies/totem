@@ -504,6 +504,7 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
                   label: t.name, helpType: t.helpPublicInformation),
               ThemedTextFormField(
                 hintText: t.helpExampleName,
+                autofillHints: const [AutofillHints.givenName],
                 controller: _nameController,
                 textCapitalization: TextCapitalization.sentences,
                 keyboardType: TextInputType.name,
@@ -523,6 +524,7 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
               ThemedTextFormField(
                 hintText: t.helpExampleEmail,
                 controller: _emailController,
+                autofillHints: const [AutofillHints.email],
                 textCapitalization: TextCapitalization.sentences,
                 textInputAction: TextInputAction.done,
                 keyboardType: TextInputType.emailAddress,
@@ -530,7 +532,7 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
                 autocorrect: false,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return t.errorEnterName;
+                    return t.errorEnterEmail;
                   } else if (!EmailValidator.validate(value)) {
                     return t.errorEmailInvalid;
                   }

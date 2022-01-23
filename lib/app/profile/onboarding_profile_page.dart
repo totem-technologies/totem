@@ -278,6 +278,7 @@ class _OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage> {
                       textCapitalization: TextCapitalization.sentences,
                       textInputAction: TextInputAction.done,
                       keyboardType: TextInputType.name,
+                      autofillHints: const [AutofillHints.givenName],
                       autovalidateMode: AutovalidateMode.onUserInteraction,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -322,6 +323,7 @@ class _OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage> {
                       keyboardType: TextInputType.emailAddress,
                       textInputAction: TextInputAction.done,
                       autovalidateMode: AutovalidateMode.onUserInteraction,
+                      autofillHints: const [AutofillHints.email],
                       autocorrect: false,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
