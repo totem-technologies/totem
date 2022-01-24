@@ -7,7 +7,7 @@ log(){
 }
 
 BRANCH="$(git rev-parse --abbrev-ref HEAD)"
-if [[ "$BRANCH" != "feature/fastlane" ]]; then
+if [[ "$BRANCH" != "main" ]]; then
   log 'Please switch to main branch.'
   exit 1
 fi
