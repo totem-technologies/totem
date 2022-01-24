@@ -6,17 +6,19 @@ log(){
     echo "tag_release.sh: $1"
 }
 
+BRANCH="$(git rev-parse --abbrev-ref HEAD)"
+if [[ "$BRANCH" != "main" ]]; then
+  log 'Please switch to main branch.'
+  exit 1
+fi
+
 if [[ $(git diff --stat) != '' ]]; then
   log 'Repo is dirty. Please commit first.'
-  exit
+  exit 1
 fi
 
 RELEASE=`grep 'version:' pubspec.yaml | sed 's/version: //'`
 TAG=v$RELEASE
-if [ $(git tag -l "$TAG") ]; then
-    log "Tag $TAG exists. Please update pubspec.yml version."
-fi
-
 log "Tagging version $TAG..."
 git tag $TAG
 git push origin $TAG

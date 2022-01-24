@@ -1,5 +1,10 @@
 name: Build
-on: [workflow_dispatch]
+on:
+  workflow_dispatch:
+  push:
+    # Sequence of patterns matched against refs/tags
+    tags:
+      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
 
 jobs:
   build_ios:
@@ -14,7 +19,14 @@ jobs:
     - uses: webfactory/ssh-agent@v0.5.4
       with:
         ssh-private-key: ${{ secrets.MATCH_REPO_PRIVATE_KEY }}
-    - run: fastlane ios internal
+    - run: fastlane ios build
       env:
         MATCH_PASSWORD: ${{ secrets.FASTLANE_MATCH_PASSWORD }}
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: totem.ipa
+        body: Internal release
+    - run: fastlane ios internal
+      env:
         APPLE_STORE_CONNECT_API_KEY: ${{ secrets.APPLE_STORE_CONNECT_API_KEY }}
