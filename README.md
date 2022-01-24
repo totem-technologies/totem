@@ -1,6 +1,11 @@
 # totem
 
-## Release
+## Requirements
+- flutter
+- xcode
+- fastlane
+
+## Release Android
 
 1. Make sure the `android/key.properties` file exists. See: https://flutter.dev/docs/deployment/android#reference-the-keystore-from-the-app
 1. Update the `version` key in `pubspec.yaml`. At least bump the number after `+`. It may also make sense to change the version name depending on the changes.
@@ -10,3 +15,9 @@
     1. Click blue `Create new release` button on the top right
     1. Upload bundle
     1. Follow prompts
+
+## Release iOS
+
+1. Go to https://github.com/blopker/totem/actions/workflows/build.yml
+1. Select `Run workflow` dropdown
+1. Click `Run workflow` button

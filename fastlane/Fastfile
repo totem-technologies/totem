@@ -43,6 +43,6 @@ platform :ios do
         skip_package_dependencies_resolution: true,
         archive_path: "build/ios/archive/Runner.xcarchive"
       )
-    upload_to_testflight
+    # upload_to_testflight
   end
 end
