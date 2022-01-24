@@ -18,6 +18,8 @@ platform :ios do
   desc "Push a new test build to TestFlight"
   # Requires a `flutter build ipa` first
   lane :internal do
+    setup_ci if ENV['CI']
+    match(type: 'appstore')
     # disable auto signing
     disable_automatic_code_signing(path: "ios/Runner.xcodeproj")
     # build for app store / testflight
