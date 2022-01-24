@@ -49,4 +49,4 @@ app.*.map.json
 # Fastlane
 totem.ipa
 totem.app.dSYM.zip
-# report.xml
+report.xml
