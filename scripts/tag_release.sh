@@ -12,11 +12,11 @@ if [[ $(git diff --stat) != '' ]]; then
 fi
 
 RELEASE=`grep 'version:' pubspec.yaml | sed 's/version: //'`
-
-if [ $(git tag -l "$version") ]; then
-    log "Tag $RELEASE exists. Please update pubspec.yml version."
+TAG=v$RELEASE
+if [ $(git tag -l "$TAG") ]; then
+    log "Tag $TAG exists. Please update pubspec.yml version."
 fi
 
-log "Tagging version $RELEASE..."
-git tag $RELEASE
-git push --tags
+log "Tagging version $TAG..."
+git tag $TAG
+git push origin $TAG
