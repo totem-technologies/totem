@@ -1,11 +1,10 @@
 build: build-android build-ios
 
-build-ios:
-	pod repo update
-	flutter build ipa
-
 build-android:
 	flutter build appbundle
+
+build-ios:
+	fastlane ios build
 
 publish-ios:
 	fastlane ios internal
