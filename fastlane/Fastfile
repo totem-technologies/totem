@@ -15,13 +15,23 @@
 opt_out_usage
 
 platform :ios do
-  desc "Push a new test build to TestFlight"
-  # Requires a `flutter build ipa` first
+  desc "Build and push to internal TestFlight users"
   lane :internal do
-    setup_ci if ENV['CI']
+    if is_ci
+      setup_ci
+      app_store_connect_api_key(
+        key_id: "V8G6QL36D2",
+        issuer_id: "23440d74-86b4-4a09-9225-d22cf0a2607a",
+        key_content: ENV["APPLE_STORE_CONNECT_API_KEY"]
+      )
+    end
+    # set up signing keys
     match(type: 'appstore')
     # disable auto signing
-    disable_automatic_code_signing(path: "ios/Runner.xcodeproj")
+    update_code_signing_settings(
+      use_automatic_signing: false,
+      path: "ios/Runner.xcodeproj"
+    )
     # build app
     sh("flutter build ipa")
     # build for app store / testflight
@@ -33,6 +43,6 @@ platform :ios do
         skip_package_dependencies_resolution: true,
         archive_path: "build/ios/archive/Runner.xcarchive"
       )
-    # upload_to_testflight
+    upload_to_testflight
   end
 end

@@ -17,4 +17,4 @@ jobs:
     - run: fastlane ios internal
       env:
         MATCH_PASSWORD: ${{ secrets.FASTLANE_MATCH_PASSWORD }}
-
+        APPLE_STORE_CONNECT_API_KEY: ${{ secrets.APPLE_STORE_CONNECT_API_KEY }}
