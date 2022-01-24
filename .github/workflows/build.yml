@@ -11,9 +11,6 @@ jobs:
       with:
         flutter-version: '2.8.x'
         cache: true
-        cache-key: flutter
-        cache-path: ${{ runner.tool_cache }}/flutter
-    - run: flutter build ipa
     - run: fastlane ios internal
       env:
         MATCH_PASSWORD: ${{ secrets.FASTLANE_MATCH_PASSWORD }}

@@ -22,6 +22,8 @@ platform :ios do
     match(type: 'appstore')
     # disable auto signing
     disable_automatic_code_signing(path: "ios/Runner.xcodeproj")
+    # build app
+    sh("flutter build ipa")
     # build for app store / testflight
     build_app(scheme: "Runner",
         workspace: "ios/Runner.xcworkspace",
