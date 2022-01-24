@@ -46,6 +46,7 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
-# iOS build
-ios/*.ipa
-ios/*.zip
+# Fastlane
+totem.ipa
+totem.app.dSYM.zip
+# report.xml
