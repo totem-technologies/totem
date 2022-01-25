@@ -49,7 +49,7 @@ end
 
 # Android lanes
 platform :android do
-  desc "Submit a new Beta Build to Crashlytics Beta"
+  desc "Submit a new Build to the Google Play internal test track"
   lane :internal do
     puts "hi"
     if is_ci
@@ -57,6 +57,6 @@ platform :android do
     else
       key_data = IO.read("../play-deploy-key.json")
     end
-    upload_to_play_store(track: 'internal', json_key_data: key_data, aab: "build/app/outputs/bundle/release/app-release.aab")
+    # upload_to_play_store(track: 'internal', json_key_data: key_data, aab: "build/app/outputs/bundle/release/app-release.aab")
   end
 end
