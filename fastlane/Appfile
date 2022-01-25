@@ -1,8 +1,9 @@
+# iOS
 app_identifier("io.kbl.totem") # The bundle identifier of your app
 apple_id("lopkerk@gmail.com") # Your Apple email address
 
 itc_team_id("119963401") # App Store Connect Team ID
 team_id("LNLXP4VK97") # Developer Portal Team ID
 
-# For more information about the Appfile, see:
-#     https://docs.fastlane.tools/advanced/#appfile
+# Android
+package_name("io.kbl.totem") # e.g. com.krausefx.app

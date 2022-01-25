@@ -9,11 +9,10 @@
 #
 #     https://docs.fastlane.tools/plugins/available-plugins
 #
-
-# Uncomment the line if you want fastlane to automatically update itself
-# update_fastlane
+require 'json'
 opt_out_usage
 
+# iOS lanes
 platform :ios do
   desc "Create signed release build"
   lane :build do
@@ -44,5 +43,20 @@ platform :ios do
       )
     end
     # upload_to_testflight
+  end
+end
+
+
+# Android lanes
+platform :android do
+  desc "Submit a new Beta Build to Crashlytics Beta"
+  lane :internal do
+    puts "hi"
+    if is_ci
+      key_data = ENV["PLAY_DEPLOY_KEY"]
+    else
+      key_data = IO.read("../play-deploy-key.json")
+    end
+    upload_to_play_store(track: 'internal', json_key_data: key_data, aab: "build/app/outputs/bundle/release/app-release.aab")
   end
 end

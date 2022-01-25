@@ -15,13 +15,42 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 ## iOS
 
+### ios build
+
+```sh
+[bundle exec] fastlane ios build
+```
+
+Create signed release build
+
 ### ios internal
 
 ```sh
 [bundle exec] fastlane ios internal
 ```
 
-Push a new test build to TestFlight
+Push to internal TestFlight users
+
+----
+
+
+## Android
+
+### android build
+
+```sh
+[bundle exec] fastlane android build
+```
+
+Submit a new Beta Build to Crashlytics Beta
+
+### android internal
+
+```sh
+[bundle exec] fastlane android internal
+```
+
+
 
 ----
 
