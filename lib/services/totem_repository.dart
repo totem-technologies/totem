@@ -107,6 +107,9 @@ class TotemRepository {
       _userProvider.userProfileStream(uid: user!.uid);
   Future<UserProfile?> userProfile() =>
       _userProvider.userProfile(uid: user!.uid);
+  Future<UserProfile?> userProfileWithId(
+          {required String uid, bool circlesCompleted = false}) =>
+      _userProvider.userProfile(uid: uid, circlesCompleted: circlesCompleted);
   Future<void> updateUserProfile(UserProfile userProfile) =>
       _userProvider.updateUserProfile(userProfile: userProfile, uid: user!.uid);
   Future<void> updateUserProfileImage(String imageUrl) =>

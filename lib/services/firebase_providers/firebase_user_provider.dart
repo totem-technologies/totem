@@ -23,7 +23,8 @@ class FirebaseUserProvider extends UserProvider {
   }
 
   @override
-  Future<UserProfile?> userProfile({required String uid}) async {
+  Future<UserProfile?> userProfile(
+      {required String uid, bool circlesCompleted = false}) async {
     final userProfileDoc = FirebaseFirestore.instance
         .collection(Paths.users)
         .doc(uid)
@@ -34,7 +35,16 @@ class FirebaseUserProvider extends UserProvider {
               ref: snapshots.reference.path),
           toFirestore: (userProfile, _) => userProfile.toJson(),
         );
-    return (await userProfileDoc.get()).data();
+    UserProfile? profile = (await userProfileDoc.get()).data();
+    if (profile != null && circlesCompleted) {
+      QuerySnapshot completed = await FirebaseFirestore.instance
+          .collection(Paths.users)
+          .doc(uid)
+          .collection(Paths.snapCircles)
+          .get();
+      profile.completedCircles = completed.docs.length;
+    }
+    return profile;
   }
 
   @override

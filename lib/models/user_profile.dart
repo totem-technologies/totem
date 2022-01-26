@@ -8,6 +8,7 @@ class UserProfile with ChangeNotifier {
   late DateTime createdOn;
   late String uid;
   late String ref;
+  int? completedCircles;
 
   bool get hasImage {
     return image != null && image!.isNotEmpty;

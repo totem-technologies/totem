@@ -14,14 +14,22 @@ class CircleLiveSessionParticipant extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final participant = ref.watch(participantProvider(participantId));
-    return Stack(
-      children: [
-        CircleLiveParticipant(
+    return GestureDetector(
+      onTap: () {
+        CircleSessionParticipantDialog.showDialog(
+          context,
           participant: participant,
-          hasTotem: hasTotem,
-        ),
-        if (participant.me && !hasTotem) _renderMe(context, hasTotem),
-      ],
+        );
+      },
+      child: Stack(
+        children: [
+          CircleLiveParticipant(
+            participant: participant,
+            hasTotem: hasTotem,
+          ),
+          if (participant.me && !hasTotem) _renderMe(context, hasTotem),
+        ],
+      ),
     );
   }
 
