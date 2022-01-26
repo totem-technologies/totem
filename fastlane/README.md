@@ -36,21 +36,13 @@ Push to internal TestFlight users
 
 ## Android
 
-### android build
-
-```sh
-[bundle exec] fastlane android build
-```
-
-Submit a new Beta Build to Crashlytics Beta
-
 ### android internal
 
 ```sh
 [bundle exec] fastlane android internal
 ```
 
-
+Submit a new Build to the Google Play internal test track
 
 ----
 
