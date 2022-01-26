@@ -41,7 +41,6 @@ end
 platform :android do
   desc "Submit a new Build to the Google Play internal test track"
   lane :internal do
-    puts "hi"
     if is_ci
       key_data = ENV["PLAY_DEPLOY_KEY"]
     else

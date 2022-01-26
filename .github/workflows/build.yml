@@ -26,7 +26,7 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: totem.ipa
-        body: iOS release
+        body: Internal release
     - run: fastlane ios internal
       env:
         APPLE_STORE_CONNECT_API_KEY: ${{ secrets.APPLE_STORE_CONNECT_API_KEY }}
@@ -51,5 +51,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: build/app/outputs/bundle/release/app-release.aab
-          body: Android release
+          body: Internal release
       - run: fastlane android internal
+        env:
+          PLAY_DEPLOY_KEY: ${{ secrets.PLAY_DEPLOY_KEY }}

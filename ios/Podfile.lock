@@ -503,10 +503,6 @@ PODS:
   - GTMSessionFetcher/Core (1.7.0)
   - hexcolor (0.0.1):
     - Flutter
-  - image_crop (0.0.1):
-    - Flutter
-  - image_picker (0.0.1):
-    - Flutter
   - leveldb-library (1.22.1)
   - libphonenumber (0.0.1):
     - Flutter
@@ -549,8 +545,6 @@ DEPENDENCIES:
   - flutter_foreground_task (from `.symlinks/plugins/flutter_foreground_task/ios`)
   - flutter_sim_country_code (from `.symlinks/plugins/flutter_sim_country_code/ios`)
   - hexcolor (from `.symlinks/plugins/hexcolor/ios`)
-  - image_crop (from `.symlinks/plugins/image_crop/ios`)
-  - image_picker (from `.symlinks/plugins/image_picker/ios`)
   - libphonenumber (from `.symlinks/plugins/libphonenumber/ios`)
   - libphonenumber_plugin (from `.symlinks/plugins/libphonenumber_plugin/ios`)
   - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
@@ -612,10 +606,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_sim_country_code/ios"
   hexcolor:
     :path: ".symlinks/plugins/hexcolor/ios"
-  image_crop:
-    :path: ".symlinks/plugins/image_crop/ios"
-  image_picker:
-    :path: ".symlinks/plugins/image_picker/ios"
   libphonenumber:
     :path: ".symlinks/plugins/libphonenumber/ios"
   libphonenumber_plugin:
@@ -636,7 +626,7 @@ SPEC CHECKSUMS:
   agora_rtc_engine: 15f0ee1b38dda52b237f66674aac1285f3ea16ae
   AgoraRtcEngine_iOS: 3d13806d67e401298558c9a6fb09340a4299afa2
   BoringSSL-GRPC: 8edf627ee524575e2f8d19d56f068b448eea3879
-  camera: fe33292aff715a981eb34d7ce7b35b54337ff34c
+  camera: 9993f92f2c793e87b65e35f3a23c70582afb05b1
   cloud_firestore: 03020d987c2828e9b2d87f6940d365ddb089394f
   cloud_functions: acab801c51eb2c8772dc2f61397eb8b92012b81c
   Firebase: 44213362f1dcc52555b935dc925ed35ac55f1b20
@@ -664,8 +654,6 @@ SPEC CHECKSUMS:
   gRPC-Core: 4afa11bfbedf7cdecd04de535a9e046893404ed5
   GTMSessionFetcher: 43748f93435c2aa068b1cbe39655aaf600652e91
   hexcolor: fdfb9c4258ad96e949c2dbcdf790a62194b8aa89
-  image_crop: e0a67085d3ebf3cf46ca46d61c53a082507b0bc3
-  image_picker: 9aa50e1d8cdacdbed739e925b7eea16d014367e6
   leveldb-library: 50c7b45cbd7bf543c81a468fe557a16ae3db8729
   libphonenumber: bd14d5abfc5939ab0b0767234e2d8e2593af258e
   libPhoneNumber-iOS: 0a32a9525cf8744fe02c5206eb30d571e38f7d75
