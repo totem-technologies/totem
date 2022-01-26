@@ -5,8 +5,6 @@ import 'package:totem/app/circle/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/theme/index.dart';
 
-import '../circle_session_page.dart';
-
 class CircleSessionParticipant extends ConsumerWidget {
   const CircleSessionParticipant({Key? key, required this.participantId})
       : super(key: key);
