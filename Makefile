@@ -3,6 +3,9 @@ build: build-android build-ios
 build-android:
 	flutter build appbundle
 
+publish-andorid:
+	fastlane android internal
+
 build-ios:
 	fastlane ios build
 
