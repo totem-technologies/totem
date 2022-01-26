@@ -18,7 +18,8 @@ class ProfileImage extends ConsumerWidget {
       this.textSize = 30,
       this.useIcon = true,
       this.localImage,
-      this.shape = BoxShape.rectangle})
+      this.shape = BoxShape.rectangle,
+      this.profile})
       : super(key: key);
   final double size;
   final Color? fillColor;
@@ -27,20 +28,28 @@ class ProfileImage extends ConsumerWidget {
   final bool useIcon;
   final File? localImage;
   final BoxShape shape;
+  final UserProfile? profile;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final userProfileChanges = ref.watch(TotemRepository.userProfileProvider);
+    if (profile == null) {
+      final userProfileChanges = ref.watch(TotemRepository.userProfileProvider);
+      return SizedBox(
+        width: size,
+        height: size,
+        child: userProfileChanges.when(
+          data: (userProfile) => (localImage != null)
+              ? _localProfileImage(context)
+              : _component(context, userProfile),
+          loading: () => _userPlaceholder(context),
+          error: (_, __) => _userPlaceholder(context),
+        ),
+      );
+    }
     return SizedBox(
       width: size,
       height: size,
-      child: userProfileChanges.when(
-        data: (userProfile) => (localImage != null)
-            ? _localProfileImage(context)
-            : _component(context, userProfile),
-        loading: () => _userPlaceholder(context),
-        error: (_, __) => _userPlaceholder(context),
-      ),
+      child: _component(context, profile),
     );
   }
 
