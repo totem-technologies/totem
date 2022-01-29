@@ -98,15 +98,10 @@ class GuidelineScreen extends ConsumerWidget {
             label: t.acceptGuidelines,
             onPressed: () {
               if (authUser != null && authUser.isNewUser) {
-                Navigator.pushReplacementNamed(
-                  context,
-                  '/login/onboarding',
-                );
+                Navigator.pushNamedAndRemoveUntil(
+                    context, '/login/onboarding', (r) => false);
               } else {
-                Navigator.pushReplacementNamed(
-                  context,
-                  '/',
-                );
+                Navigator.pushNamedAndRemoveUntil(context, "/", (r) => false);
               }
             },
           ),

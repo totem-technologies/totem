@@ -30,10 +30,8 @@ class _PhoneRegisterCodeEntryState
     try {
       await ref.read(authServiceProvider).verifyCode(pinValue);
       setState(() => _busy = false);
-      await Navigator.pushReplacementNamed(
-        context,
-        '/login/guideline',
-      );
+      await Navigator.pushNamedAndRemoveUntil(
+          context, '/login/guideline', (r) => false);
     } on AuthException catch (e) {
       setState(() {
         error = e.message!;
