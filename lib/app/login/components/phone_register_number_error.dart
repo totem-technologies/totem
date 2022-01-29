@@ -34,6 +34,7 @@ class PhoneRegisterNumberError extends ConsumerWidget {
             label: t.retrySignin,
             onPressed: () {
               auth.resetAuthError();
+              Navigator.of(context).pushReplacementNamed('/login/phone');
             },
             width: 294,
           ),

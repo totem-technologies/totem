@@ -57,10 +57,10 @@ class _PhoneRegisterNumberEntryState
                   autofillHints: const [AutofillHints.telephoneNumberNational],
                   autoFocus: true,
                   onInputChanged: (PhoneNumber number) {
-                    debugPrint(number.phoneNumber);
+                    debugPrint("Input changed: ${number.phoneNumber}");
                   },
                   onInputValidated: (bool value) {
-                    debugPrint("$value");
+                    debugPrint("Input validated: $value");
                   },
                   selectorConfig: const SelectorConfig(
                     setSelectorButtonAsPrefixIcon: true,
@@ -147,9 +147,34 @@ class _PhoneRegisterNumberEntryState
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setString('lastIso', isoCode);
 
-      debugPrint(number);
       try {
-        await auth.signInWithPhoneNumber(number);
+        await auth.signInWithPhoneNumber(
+          number,
+          completed: () {
+            setState(() => _busy = false);
+            Navigator.pushReplacementNamed(
+              context,
+              '/login/guideline',
+            );
+          },
+          codeSent: () {
+            setState(() => _busy = false);
+            Navigator.pushNamed(
+              context,
+              '/login/phone/code',
+            );
+          },
+          failed: () {
+            setState(() => _busy = false);
+            Navigator.pushNamed(
+              context,
+              '/login/phone/error',
+            );
+          },
+          timeout: () {
+            setState(() => _busy = false);
+          },
+        );
       } on AuthException catch (e) {
         debugPrint(e.message ?? "unknown error");
         setState(() => _busy = false);

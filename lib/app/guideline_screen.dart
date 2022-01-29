@@ -103,7 +103,10 @@ class GuidelineScreen extends ConsumerWidget {
                   '/login/onboarding',
                 );
               } else {
-                Navigator.of(context).pop();
+                Navigator.pushReplacementNamed(
+                  context,
+                  '/',
+                );
               }
             },
           ),

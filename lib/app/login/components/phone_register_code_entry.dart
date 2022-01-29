@@ -90,9 +90,6 @@ class _PhoneRegisterCodeEntryState
               maxLines: 2,
             ),
           ),
-          const SizedBox(
-            height: 80,
-          ),
           ThemedRaisedButton(
             label: t.getStarted,
             busy: _busy,
@@ -103,6 +100,12 @@ class _PhoneRegisterCodeEntryState
                   }
                 : null,
           ),
+          const SizedBox(height: 20),
+          TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text(t.back))
         ],
       ),
     );

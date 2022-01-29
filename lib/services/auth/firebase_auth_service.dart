@@ -16,7 +16,6 @@ class FirebaseAuthService implements AuthService {
   AuthUser? _currentUser;
   String? _pendingVerificationId;
   String? _lastRegisterError;
-  BehaviorSubject<AuthRequestState>? _authRequestStateStreamController;
   bool newUser = false;
 
   AuthUser? _userFromFirebase(User? user, {bool isNewUser = false}) {
@@ -33,12 +32,6 @@ class FirebaseAuthService implements AuthService {
       isAnonymous: user.isAnonymous,
       phoneNumber: user.phoneNumber ?? "",
     );
-  }
-
-  @override
-  Stream<AuthRequestState> get onAuthRequestStateChanged {
-    _assertRequestStateStream();
-    return _authRequestStateStreamController!.stream;
   }
 
   @override
@@ -68,7 +61,6 @@ class FirebaseAuthService implements AuthService {
   @override
   Future<void> signOut() async {
     await _firebaseAuth.signOut();
-    _authRequestStateStreamController?.add(AuthRequestState.entry);
   }
 
   @override
@@ -100,8 +92,11 @@ class FirebaseAuthService implements AuthService {
   }
 
   @override
-  Future<void> signInWithPhoneNumber(String phoneNumber) async {
-    _assertRequestStateStream();
+  Future<void> signInWithPhoneNumber(String phoneNumber,
+      {required VoidCallback completed,
+      required VoidCallback failed,
+      required VoidCallback codeSent,
+      required VoidCallback timeout}) async {
     _pendingVerificationId = null;
     _lastRegisterError = null;
     try {
@@ -112,20 +107,21 @@ class FirebaseAuthService implements AuthService {
           debugPrint('verificationCompleted');
           // should trigger auth state change
           _handleUserAuth(await _firebaseAuth.signInWithCredential(credential));
-          _authRequestStateStreamController!.add(AuthRequestState.complete);
+          completed();
         },
         verificationFailed: (FirebaseAuthException e) {
           debugPrint('verificationFailed');
           _lastRegisterError = "code: " + e.code; //e.message;
-          _authRequestStateStreamController!.add(AuthRequestState.failed);
+          failed();
         },
         codeSent: (String verificationId, int? resendToken) {
           debugPrint('codeSent');
           _pendingVerificationId = verificationId;
-          _authRequestStateStreamController!.add(AuthRequestState.pending);
+          codeSent();
         },
         codeAutoRetrievalTimeout: (String verificationId) {
           debugPrint('codeAutoRetrievalTimeout');
+          timeout();
         },
       );
     } on FirebaseAuthException catch (e) {
@@ -144,19 +140,10 @@ class FirebaseAuthService implements AuthService {
 
   @override
   void resetAuthError() {
-    _assertRequestStateStream();
     _lastRegisterError = null;
-    _authRequestStateStreamController!.add(AuthRequestState.entry);
   }
 
-  void _assertRequestStateStream() {
-    if (_authRequestStateStreamController == null) {
-      _authRequestStateStreamController = BehaviorSubject<AuthRequestState>();
-      _authRequestStateStreamController!.add(AuthRequestState.entry);
-    }
-  }
-
-  void _handleUserAuth(UserCredential credential) async {
+  void _handleUserAuth(UserCredential credential) {
     bool isNewUser = credential.additionalUserInfo?.isNewUser ?? false;
     _assertUserProfile(credential.user!.uid);
     _currentUser = _userFromFirebase(credential.user, isNewUser: isNewUser);

@@ -79,7 +79,14 @@ class App extends StatelessWidget {
           case '/login':
             return MaterialPageRoute(builder: (_) => const LoginPage());
           case '/login/phone':
-            return FadeRoute(page: const RegisterPage());
+            return FadeRoute(
+                page: const RegisterPage(state: RegisterState.phone));
+          case '/login/phone/code':
+            return FadeRoute(
+                page: const RegisterPage(state: RegisterState.code));
+          case '/login/phone/error':
+            return FadeRoute(
+                page: const RegisterPage(state: RegisterState.error));
           case '/login/guideline':
             return FadeRoute(page: const GuidelineScreen());
           case '/login/onboarding':
