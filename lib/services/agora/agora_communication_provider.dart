@@ -167,6 +167,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
               userInfoUpdated: _handleUserInfoUpdated,
               userJoined: _handleUserJoined,
               userOffline: _handleUserOffline,
+              audioVolumeIndication: _handleAudioVolumeIndication,
             ),
           );
         } else {
@@ -363,5 +364,10 @@ class AgoraCommunicationProvider extends CommunicationProvider {
       }
       _lastState = session.state;
     }
+  }
+
+  void _handleAudioVolumeIndication(
+      List<AudioVolumeInfo> speakers, int totalVolume) {
+    // TODO - handle volume indication
   }
 }
