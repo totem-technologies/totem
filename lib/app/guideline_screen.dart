@@ -74,26 +74,6 @@ class GuidelineScreen extends ConsumerWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          TextButton(
-              onPressed: () {
-                authService.signOut();
-                Navigator.of(context).pop();
-              },
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.arrow_back,
-                    color: themeColors.primaryText,
-                  ),
-                  const SizedBox(
-                    width: 5,
-                  ),
-                  Text(
-                    t.back,
-                    style: textStyles.button,
-                  ),
-                ],
-              )),
           ThemedRaisedButton(
             label: t.acceptGuidelines,
             onPressed: () {
