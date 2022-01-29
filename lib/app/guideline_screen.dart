@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/auth_user.dart';
 import 'package:totem/services/index.dart';
-import 'package:totem/theme/index.dart';
 
 class GuidelineScreen extends ConsumerWidget {
   const GuidelineScreen({Key? key}) : super(key: key);
@@ -67,8 +66,6 @@ class GuidelineScreen extends ConsumerWidget {
 
   Widget _bottomControls(BuildContext context, AuthService authService) {
     final t = AppLocalizations.of(context)!;
-    final textStyles = Theme.of(context).textTheme;
-    final themeColors = Theme.of(context).themeColors;
     final AuthUser? authUser = authService.currentUser();
     return BottomTrayContainer(
       child: Row(
