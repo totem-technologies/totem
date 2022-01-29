@@ -111,7 +111,13 @@ class FirebaseAuthService implements AuthService {
           // Android only
           debugPrint('verificationCompleted');
           // should trigger auth state change
-          _handleUserAuth(await _firebaseAuth.signInWithCredential(credential));
+          try {
+            _handleUserAuth(
+                await _firebaseAuth.signInWithCredential(credential));
+          } on FirebaseAuthException catch (e) {
+            debugPrint('Error:' + e.toString());
+            throw AuthException(code: e.code, message: e.message);
+          }
           _authRequestStateStreamController!.add(AuthRequestState.complete);
         },
         verificationFailed: (FirebaseAuthException e) {

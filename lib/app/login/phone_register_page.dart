@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:totem/app/login/components/phone_register_code_entry.dart';
@@ -16,16 +18,25 @@ class RegisterPage extends ConsumerStatefulWidget {
 
 class _RegisterPageState extends ConsumerState<RegisterPage> {
   late Stream<AuthRequestState> _requestStateStream;
-
+  late StreamSubscription _subscription;
   @override
   void initState() {
     final auth = ref.read(authServiceProvider);
     _requestStateStream = auth.onAuthRequestStateChanged;
+    _subscription = _requestStateStream.listen((event) {
+      if (event == AuthRequestState.complete) {
+        Navigator.pushReplacementNamed(
+          context,
+          '/login/guideline',
+        );
+      }
+    });
     super.initState();
   }
 
   @override
   void dispose() {
+    _subscription.cancel();
     super.dispose();
   }
 
@@ -55,6 +66,9 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                             return const PhoneRegisterNumberError();
                           case AuthRequestState.pending:
                             return const PhoneRegisterCodeEntry();
+                          case AuthRequestState.complete:
+                            // this gets handled by stream
+                            return Container();
                           case AuthRequestState.entry:
                           default:
                             return const PhoneRegisterNumberEntry();

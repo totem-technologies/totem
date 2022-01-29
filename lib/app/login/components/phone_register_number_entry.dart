@@ -119,7 +119,7 @@ class _PhoneRegisterNumberEntryState
       } else {
         // try reading from sim card
         String? platformVersion = await FlutterSimCountryCode.simCountryCode;
-        if (platformVersion != null) {
+        if (platformVersion != null && platformVersion.isNotEmpty) {
           setState(() {
             numberController =
                 PhoneNumber(isoCode: platformVersion.toUpperCase());
