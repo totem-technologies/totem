@@ -3,16 +3,17 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:totem/theme/index.dart';
 
 class ThemedControlButton extends StatelessWidget {
-  const ThemedControlButton(
-      {Key? key,
-      required this.label,
-      required this.svgImage,
-      this.onPressed,
-      this.enabled = true,
-      this.imageColor,
-      this.backgroundColor,
-      this.size = 40})
-      : super(key: key);
+  const ThemedControlButton({
+    Key? key,
+    required this.label,
+    required this.svgImage,
+    this.onPressed,
+    this.enabled = true,
+    this.imageColor,
+    this.backgroundColor,
+    this.size = 40,
+    this.iconPadding = const EdgeInsets.all(0),
+  }) : super(key: key);
   final String label;
   final String svgImage;
   final bool enabled;
@@ -20,6 +21,7 @@ class ThemedControlButton extends StatelessWidget {
   final Color? imageColor;
   final Color? backgroundColor;
   final VoidCallback? onPressed;
+  final EdgeInsets iconPadding;
 
   @override
   Widget build(BuildContext context) {
@@ -39,10 +41,13 @@ class ThemedControlButton extends StatelessWidget {
                 shape: const CircleBorder(),
               ),
               child: Center(
-                child: SvgPicture.asset(
-                  svgImage,
-                  color: imageColor,
-                  fit: BoxFit.contain,
+                child: Padding(
+                  padding: iconPadding,
+                  child: SvgPicture.asset(
+                    svgImage,
+                    color: imageColor,
+                    fit: BoxFit.contain,
+                  ),
                 ),
               ),
             ),
