@@ -23,6 +23,7 @@ class CircleParticipant extends StatelessWidget {
     final textStyles = themeData.textTheme;
     final themeColors = themeData.themeColors;
     return ClipRRect(
+        clipBehavior: Clip.antiAliasWithSaveLayer,
         borderRadius: BorderRadius.circular(24),
         child: Stack(
           children: [

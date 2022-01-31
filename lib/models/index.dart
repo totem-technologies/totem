@@ -1,4 +1,5 @@
 export 'active_session.dart';
+export 'audio_indicator.dart';
 export 'auth_user.dart';
 export 'circle.dart';
 export 'date_name_ext.dart';
@@ -6,9 +7,9 @@ export 'participant.dart';
 export 'roles.dart';
 export 'scheduled_circle.dart';
 export 'scheduled_session.dart';
-export 'session.dart';
 export 'session_participant.dart';
 export 'session_token.dart';
+export 'session.dart';
 export 'snap_circle.dart';
 export 'snap_session.dart';
 export 'topic.dart';

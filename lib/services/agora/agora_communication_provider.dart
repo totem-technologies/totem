@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:agora_rtc_engine/rtc_engine.dart';
@@ -26,6 +27,9 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   String? _sessionImage;
   SessionState? _lastState;
   bool _pendingRequestLeave = false;
+  bool _isIndicatorStreamOpen = false;
+  StreamController<CommunicationAudioVolumeIndication>?
+      _audioIndicatorStreamController;
 
   @override
   String? get lastError {
@@ -38,6 +42,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
       sessionProvider.removeListener(_updateCommunicationFromSession);
       _engine?.destroy();
       _engine = null;
+      _audioIndicatorStreamController?.close();
       super.dispose();
     } catch (ex) {
       debugPrint("unable to break down engine: " + ex.toString());
@@ -57,6 +62,15 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     _handler = handler;
     _session = session;
     _lastError = null;
+    _audioIndicatorStreamController =
+        StreamController<CommunicationAudioVolumeIndication>.broadcast(
+      onListen: () {
+        _isIndicatorStreamOpen = true;
+      },
+      onCancel: () {
+        _isIndicatorStreamOpen = false;
+      },
+    );
     _updateState(CommunicationState.joining);
     try {
       await _assertEngine();
@@ -368,6 +382,19 @@ class AgoraCommunicationProvider extends CommunicationProvider {
 
   void _handleAudioVolumeIndication(
       List<AudioVolumeInfo> speakers, int totalVolume) {
-    // TODO - handle volume indication
+    if (!_isIndicatorStreamOpen) {
+      return;
+    }
+    var infos = speakers.map((info) {
+      return CommunicationAudioVolumeInfo(
+          uid: info.uid, volume: info.volume, speaking: info.vad == 1);
+    }).toList();
+    _audioIndicatorStreamController?.add(CommunicationAudioVolumeIndication(
+        speakers: infos, totalVolume: totalVolume));
+  }
+
+  @override
+  Stream<CommunicationAudioVolumeIndication> get audioIndicatorStream {
+    return _audioIndicatorStreamController!.stream;
   }
 }
