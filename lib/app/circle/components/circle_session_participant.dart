@@ -13,6 +13,7 @@ class CircleSessionParticipant extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final participant = ref.watch(participantProvider(participantId));
+    final commProvider = ref.watch(communicationsProvider);
     return GestureDetector(
       onTap: () {
         CircleSessionParticipantDialog.showDialog(
@@ -22,11 +23,42 @@ class CircleSessionParticipant extends ConsumerWidget {
       },
       child: Stack(
         children: [
-          CircleParticipant(
-              name: participant.name,
-              role: participant.role,
-              image: participant.sessionImage,
-              me: participant.me),
+          StreamBuilder<CommunicationAudioVolumeIndication>(
+            stream: commProvider.audioIndicatorStream,
+            builder: (context, snapshot) {
+              var speaking = false;
+              if (snapshot.hasData) {
+                final audioIndicator = snapshot.data!;
+                for (var i in audioIndicator.speakers) {
+                  debugPrint(i.uid.toString());
+                  // debugPrint(participant.sessionUserId.toString());
+                  if (i.uid.toString() == participant.sessionUserId ||
+                      (participant.me && i.local)) {
+                    speaking = i.speaking;
+                  }
+                }
+              }
+              var color = Theme.of(context).themeColors.primary;
+              return AnimatedContainer(
+                decoration: BoxDecoration(
+                  color: speaking ? color : color.withOpacity(0),
+                  borderRadius: BorderRadius.circular(24),
+                ),
+                duration: speaking
+                    ? const Duration(milliseconds: 0)
+                    : const Duration(milliseconds: 500),
+                curve: Curves.easeInCubic,
+              );
+            },
+          ),
+          Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: CircleParticipant(
+                name: participant.name,
+                role: participant.role,
+                image: participant.sessionImage,
+                me: participant.me),
+          ),
           PositionedDirectional(
             top: 5,
             end: 5,
