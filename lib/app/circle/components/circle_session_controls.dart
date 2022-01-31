@@ -76,6 +76,7 @@ class _CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
                 ? 'assets/view_circle.svg'
                 : 'assets/view_circle.svg',
             backgroundColor: themeColors.primary,
+            iconPadding: const EdgeInsets.all(6),
             onPressed: () {
               _startSession(context, ref);
             },
