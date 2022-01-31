@@ -110,19 +110,21 @@ class _PhoneRegisterNumberEntryState
   void _initISOCode() async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? number = ref.read(authServiceProvider).authRequestNumber;
       // if there is a cached previously used value for ISO, use that
       String? initialCountry = prefs.getString('lastIso');
       if (initialCountry != null) {
         setState(() {
-          numberController = PhoneNumber(isoCode: initialCountry);
+          numberController =
+              PhoneNumber(isoCode: initialCountry, phoneNumber: number);
         });
       } else {
         // try reading from sim card
         String? platformVersion = await FlutterSimCountryCode.simCountryCode;
         if (platformVersion != null && platformVersion.isNotEmpty) {
           setState(() {
-            numberController =
-                PhoneNumber(isoCode: platformVersion.toUpperCase());
+            numberController = PhoneNumber(
+                isoCode: platformVersion.toUpperCase(), phoneNumber: number);
           });
         }
       }

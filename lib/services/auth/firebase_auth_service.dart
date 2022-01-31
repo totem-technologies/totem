@@ -18,6 +18,7 @@ class FirebaseAuthService implements AuthService {
   String? _lastRegisterError;
   BehaviorSubject<AuthRequestState>? _authRequestStateStreamController;
   bool newUser = false;
+  String? _authRequestNumber;
 
   AuthUser? _userFromFirebase(User? user, {bool isNewUser = false}) {
     if (user == null) {
@@ -104,6 +105,7 @@ class FirebaseAuthService implements AuthService {
     _assertRequestStateStream();
     _pendingVerificationId = null;
     _lastRegisterError = null;
+    _authRequestNumber = phoneNumber;
     try {
       await _firebaseAuth.verifyPhoneNumber(
         phoneNumber: phoneNumber,
@@ -155,6 +157,9 @@ class FirebaseAuthService implements AuthService {
     _authRequestStateStreamController!.add(AuthRequestState.entry);
   }
 
+  @override
+  String? get authRequestNumber => _authRequestNumber;
+
   void _assertRequestStateStream() {
     if (_authRequestStateStreamController == null) {
       _authRequestStateStreamController = BehaviorSubject<AuthRequestState>();
@@ -179,5 +184,13 @@ class FirebaseAuthService implements AuthService {
       await userRef.set(
           {"created_on": now, "name": "", "updated_on": now, "last_seen": now});
     }
+  }
+
+  @override
+  void cancelPendingCode() {
+    // no option to cancel pending code with firebase auth, just reset the
+    // state of the system. If there was a reset for firebase auth it would
+    // be triggered here
+    _authRequestStateStreamController!.add(AuthRequestState.entry);
   }
 }
