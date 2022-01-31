@@ -30,32 +30,33 @@ class CircleSessionParticipant extends ConsumerWidget {
           PositionedDirectional(
             top: 5,
             end: 5,
-            child: _muteButton(context, participant),
+            child: _muteIndicator(context, participant),
           ),
         ],
       ),
     );
   }
 
-  Widget _muteButton(BuildContext context, SessionParticipant participant) {
+  Widget _muteIndicator(BuildContext context, SessionParticipant participant) {
     final themeColors = Theme.of(context).themeColors;
     final bool muted = participant.muted;
-    return Container(
-      width: 32,
-      height: 32,
-      decoration: ShapeDecoration(
-        color: muted ? themeColors.primaryText : themeColors.primary,
-        shape: const CircleBorder(),
-      ),
-      child: Center(
-        child: SvgPicture.asset(
-          participant.muted
-              ? 'assets/microphone_mute.svg'
-              : 'assets/microphone.svg',
-          color: muted ? themeColors.primary : themeColors.primaryText,
-          fit: BoxFit.contain,
+    if (muted) {
+      return Container(
+        width: 32,
+        height: 32,
+        decoration: ShapeDecoration(
+          color: muted ? themeColors.primaryText : themeColors.primary,
+          shape: const CircleBorder(),
         ),
-      ),
-    );
+        child: Center(
+          child: SvgPicture.asset(
+            'assets/microphone_mute.svg',
+            color: themeColors.primary,
+            fit: BoxFit.contain,
+          ),
+        ),
+      );
+    }
+    return Container();
   }
 }
