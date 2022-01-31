@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:totem/components/widgets/index.dart';
-import 'package:totem/theme/index.dart';
-import 'package:totem/app/login/components/pin_code_widget.dart';
-import 'package:totem/services/index.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl_phone_number_input/intl_phone_number_input.dart';
+import 'package:libphonenumber_plugin/libphonenumber_plugin.dart';
+import 'package:totem/app/login/components/pin_code_widget.dart';
+import 'package:totem/components/widgets/index.dart';
+import 'package:totem/services/index.dart';
+import 'package:totem/theme/index.dart';
 
 class PhoneRegisterCodeEntry extends ConsumerStatefulWidget {
   const PhoneRegisterCodeEntry({Key? key}) : super(key: key);
@@ -43,11 +45,20 @@ class _PhoneRegisterCodeEntryState
     }
   }
 
+  Future<String> _formatPhoneNumber(String phoneNumber) async {
+    PhoneNumber num =
+        await PhoneNumber.getRegionInfoFromPhoneNumber(phoneNumber);
+    String? formattedNumber =
+        await PhoneNumberUtil.formatAsYouType(num.phoneNumber!, num.isoCode!);
+    return formattedNumber ?? "";
+  }
+
   @override
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context)!;
     final textStyles = Theme.of(context).textTheme;
     final themeColors = Theme.of(context).themeColors;
+    final authService = ref.watch(authServiceProvider);
     return Padding(
       padding: const EdgeInsets.only(left: 35, right: 35),
       child: Column(
@@ -56,10 +67,15 @@ class _PhoneRegisterCodeEntryState
           Text(t.signup, style: textStyles.headline1),
           const ContentDivider(),
           const SizedBox(height: 20),
-          Text(
-            t.enterCode,
-            style: textStyles.bodyText1!
-                .merge(const TextStyle(fontWeight: FontWeight.w600)),
+          FutureBuilder<String>(
+            future: _formatPhoneNumber(authService.authRequestNumber ?? ""),
+            builder: (context, asyncSnapshot) {
+              return Text(
+                t.textSentTo(asyncSnapshot.data ?? ""),
+                style: textStyles.bodyText1!
+                    .merge(const TextStyle(fontWeight: FontWeight.w600)),
+              );
+            },
           ),
           const SizedBox(height: 8),
           Text(
@@ -67,7 +83,7 @@ class _PhoneRegisterCodeEntryState
             style: textStyles.bodyText1!,
           ),
           const SizedBox(
-            height: 90,
+            height: 50,
           ),
           Form(
             key: _formKey,
@@ -91,7 +107,7 @@ class _PhoneRegisterCodeEntryState
             ),
           ),
           const SizedBox(
-            height: 80,
+            height: 20,
           ),
           ThemedRaisedButton(
             label: t.getStarted,
@@ -103,8 +119,19 @@ class _PhoneRegisterCodeEntryState
                   }
                 : null,
           ),
+          const SizedBox(height: 20),
+          TextButton(
+              onPressed: _backToNumber,
+              child: Text(
+                t.retryPhone,
+                textAlign: TextAlign.center,
+              ))
         ],
       ),
     );
+  }
+
+  void _backToNumber() {
+    ref.read(authServiceProvider).cancelPendingCode();
   }
 }

@@ -2,13 +2,7 @@ import 'package:totem/models/index.dart';
 // AuthService
 // defines the auth service interface for specific auth service instances
 
-enum AuthRequestState {
-  entry,
-  failed,
-  pending,
-  complete,
-  timeout
-}
+enum AuthRequestState { entry, failed, pending, complete, timeout }
 
 abstract class AuthService {
   AuthUser? currentUser();
@@ -20,6 +14,8 @@ abstract class AuthService {
   Stream<AuthUser?> get onAuthStateChanged;
   Stream<AuthRequestState> get onAuthRequestStateChanged;
   String? get lastRegisterError;
+  String? get authRequestNumber;
   void resetAuthError();
+  void cancelPendingCode();
   void dispose();
 }
