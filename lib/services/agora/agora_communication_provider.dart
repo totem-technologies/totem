@@ -382,7 +382,6 @@ class AgoraCommunicationProvider extends CommunicationProvider {
 
   void _handleAudioVolumeIndication(
       List<AudioVolumeInfo> speakers, int totalVolume) {
-    // debugPrint(totalVolume.toString());
     if (!_isIndicatorStreamOpen) {
       return;
     }
