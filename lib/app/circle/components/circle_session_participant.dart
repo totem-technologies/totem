@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:totem/app/circle/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/theme/index.dart';
+import 'package:rxdart/rxdart.dart';
 
 class CircleSessionParticipant extends ConsumerWidget {
   const CircleSessionParticipant({Key? key, required this.participantId})
@@ -24,18 +25,16 @@ class CircleSessionParticipant extends ConsumerWidget {
       child: Stack(
         children: [
           StreamBuilder<CommunicationAudioVolumeIndication>(
-            stream: commProvider.audioIndicatorStream,
+            stream: commProvider.audioIndicatorStream
+                .throttleTime(const Duration(milliseconds: 100)),
             builder: (context, snapshot) {
               var speaking = false;
               if (snapshot.hasData) {
                 final audioIndicator = snapshot.data!;
-                for (var i in audioIndicator.speakers) {
-                  debugPrint(i.uid.toString());
-                  // debugPrint(participant.sessionUserId.toString());
-                  if (i.uid.toString() == participant.sessionUserId ||
-                      (participant.me && i.local)) {
-                    speaking = i.speaking;
-                  }
+                var speaker = audioIndicator.getSpeaker(
+                    participant.sessionUserId, participant.me);
+                if (speaker != null) {
+                  speaking = speaker.speaking;
                 }
               }
               var color = Theme.of(context).themeColors.primary;

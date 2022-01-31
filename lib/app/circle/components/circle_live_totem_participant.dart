@@ -60,56 +60,53 @@ class _CircleLiveTotemParticipantState
   Widget participant(BuildContext context, SessionParticipant participant,
       CommunicationProvider commProvider) {
     final themeColors = Theme.of(context).themeColors;
+    double size = 142;
+    var profileImage = Center(
+      child: ClipOval(
+        child: SizedBox(
+          width: size - 10,
+          height: size - 10,
+          child: participant.hasImage
+              ? CachedNetworkImage(
+                  imageUrl: participant.sessionImage!, fit: BoxFit.cover)
+              : Container(),
+        ),
+      ),
+    );
     return StreamBuilder<CommunicationAudioVolumeIndication>(
-        stream: commProvider.audioIndicatorStream
-            .throttleTime(const Duration(milliseconds: 100)),
+        stream: commProvider.audioIndicatorStream,
         builder: (context, snapshot) {
-          double blur = 20;
-          double size = 142;
+          double blur = 0;
           double spread = 0;
-          var duration = const Duration(milliseconds: 200);
+          var duration = const Duration(milliseconds: 500);
           if (snapshot.hasData) {
             var info = snapshot.data!
                 .getSpeaker(participant.sessionUserId!, participant.me);
             if (info != null && info.volume > 0) {
-              blur = max(info.volume.toDouble() / 5, blur);
-              spread = info.volume.toDouble() / 10;
-              duration = const Duration(milliseconds: 100);
+              blur = info.volume.toDouble() / 2;
+              spread = info.volume.toDouble() / 5;
             }
           }
           return AnimatedContainer(
-            width: size,
-            height: size,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: const LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [Color(0x3EFFE892), Color(0x3EFFCC59)],
-              ),
-              boxShadow: [
-                BoxShadow(
-                    color: themeColors.primary,
-                    offset: const Offset(0, 0),
-                    blurRadius: blur,
-                    spreadRadius: spread),
-              ],
-            ),
-            duration: duration,
-            child: Center(
-              child: ClipOval(
-                child: SizedBox(
-                  width: 126,
-                  height: 126,
-                  child: participant.hasImage
-                      ? CachedNetworkImage(
-                          imageUrl: participant.sessionImage!,
-                          fit: BoxFit.cover)
-                      : Container(),
+              width: size,
+              height: size,
+              curve: Curves.easeOutSine,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: const LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Color(0x3EFFE892), Color(0x3EFFCC59)],
                 ),
+                boxShadow: [
+                  BoxShadow(
+                      color: themeColors.primary,
+                      blurRadius: blur,
+                      spreadRadius: spread),
+                ],
               ),
-            ),
-          );
+              duration: duration,
+              child: profileImage);
         });
   }
 }
