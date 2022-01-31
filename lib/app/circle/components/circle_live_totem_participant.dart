@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -9,7 +7,6 @@ import 'package:totem/app/circle/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/communication_provider.dart';
 import 'package:totem/theme/index.dart';
-import 'package:rxdart/rxdart.dart';
 
 class CircleLiveTotemParticipant extends ConsumerStatefulWidget {
   const CircleLiveTotemParticipant({Key? key}) : super(key: key);
