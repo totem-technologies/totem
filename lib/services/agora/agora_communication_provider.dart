@@ -184,6 +184,8 @@ class AgoraCommunicationProvider extends CommunicationProvider {
               userJoined: _handleUserJoined,
               userOffline: _handleUserOffline,
               audioVolumeIndication: _handleAudioVolumeIndication,
+              videoPublishStateChanged: _handleVideoPublishStateChanged,
+              remoteVideoStateChanged: _handleRemoteVideoStateChanged,
             ),
           );
         } else {
@@ -234,6 +236,19 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     }
   }
 
+  void _handleVideoPublishStateChanged(String channel,
+      StreamPublishState oldState, StreamPublishState newState, int elapsed) {
+    debugPrint('video state changed: ' +
+        oldState.toString() +
+        " > " +
+        newState.toString());
+    bool _muteVideo = newState == StreamPublishState.NoPublished;
+    if (videoMuted != _muteVideo) {
+      videoMuted = _muteVideo;
+      notifyListeners();
+    }
+  }
+
   void _handleLocalAudioStateChanged(
       AudioLocalState state, AudioLocalError error) {
     // handles local changes to audio
@@ -252,6 +267,28 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     } else if (state == AudioRemoteState.Decoding &&
         reason == AudioRemoteStateReason.RemoteUnmuted) {
       sessionProvider.activeSession?.updateMutedStateForUser(
+          sessionUserId: uid.toString(), muted: false);
+    }
+    debugPrint('Remote audio state change for user: ' +
+        uid.toString() +
+        ' state: ' +
+        state.toString() +
+        ' reason: ' +
+        reason.toString());
+  }
+
+  void _handleRemoteVideoStateChanged(int uid, VideoRemoteState state,
+      VideoRemoteStateReason reason, int elapsed) {
+    // handle changes to the audio state for a given user. This will be called
+    // when people are muted so that we can register the audio status of that
+    // user for display
+    if (state == VideoRemoteState.Stopped &&
+        reason == VideoRemoteStateReason.RemoteMuted) {
+      sessionProvider.activeSession?.updateVideoMutedStateForUser(
+          sessionUserId: uid.toString(), muted: true);
+    } else if (state == VideoRemoteState.Decoding &&
+        reason == VideoRemoteStateReason.RemoteUnmuted) {
+      sessionProvider.activeSession?.updateVideoMutedStateForUser(
           sessionUserId: uid.toString(), muted: false);
     }
     debugPrint('Remote audio state change for user: ' +
@@ -408,5 +445,14 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   @override
   Future<void> stopPreview() async {
     await _engine?.stopPreview();
+  }
+
+  @override
+  Future<void> muteVideo(bool mute) async {
+    if (state == CommunicationState.active) {
+      if (mute != videoMuted) {
+        await _engine?.muteLocalVideoStream(mute);
+      }
+    }
   }
 }

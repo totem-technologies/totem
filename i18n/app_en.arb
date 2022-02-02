@@ -123,6 +123,8 @@
     "startDate": "Start Date",
     "startSession": "Start Session",
     "startTime": "Start Time",
+    "startVideo": "Start Video",
+    "stopVideo": "Stop Video",
     "textSentTo": "Text sent to {number}",
     "@textSentTo": {
         "placeholders": {

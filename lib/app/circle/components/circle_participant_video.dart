@@ -4,48 +4,36 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:totem/app/circle/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/theme/index.dart';
 
-class CircleParticipantVideo extends ConsumerStatefulWidget {
-  const CircleParticipantVideo(
-      {Key? key,
-      required this.name,
-      required this.role,
-      this.me = false,
-      required this.uid,
-      this.image})
-      : super(key: key);
-  final String name;
-  final bool me;
-  final Role role;
-  final int uid;
-  final String? image;
+class CircleParticipantVideo extends ConsumerWidget {
+  const CircleParticipantVideo({
+    Key? key,
+    required this.participant,
+  }) : super(key: key);
+  final SessionParticipant participant;
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() =>
-      _CircleParticipantVideoState();
-}
-
-class _CircleParticipantVideoState
-    extends ConsumerState<CircleParticipantVideo> {
-  bool videoEnabled = true; // used to toggle video
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final themeData = Theme.of(context);
     final textStyles = themeData.textTheme;
+    final commProvider = ref.watch(communicationsProvider);
     return ClipRRect(
       clipBehavior: Clip.antiAliasWithSaveLayer,
       borderRadius: BorderRadius.circular(24),
       child: Stack(
         children: [
-          if (widget.me && videoEnabled) rtc_local_view.SurfaceView(),
-          if (!widget.me && videoEnabled)
+          if (participant.me && !commProvider.videoMuted)
+            rtc_local_view.SurfaceView(),
+          if (!participant.me && !participant.videoMuted)
             rtc_remote_view.SurfaceView(
-              uid: widget.uid,
+              uid: int.parse(participant.sessionUserId!),
             ),
-          if (!videoEnabled) _renderUserImage(context),
+          if ((participant.me && commProvider.videoMuted) ||
+              (!participant.me && participant.videoMuted))
+            _renderUserImage(context),
           PositionedDirectional(
             child: Stack(
               children: [
@@ -58,7 +46,7 @@ class _CircleParticipantVideoState
                     padding:
                         const EdgeInsets.only(left: 12, right: 12, bottom: 8),
                     child: Text(
-                      widget.name,
+                      participant.name,
                       style: textStyles.headline5,
                     ),
                   ),
@@ -69,8 +57,8 @@ class _CircleParticipantVideoState
             start: 0,
             end: 0,
           ),
-          if (widget.me) renderMe(context),
-          if (widget.role == Role.keeper && !widget.me)
+          if (participant.me) renderMe(context),
+          if (participant.role == Role.keeper && !participant.me)
             renderKeeperLabel(context)
         ],
       ),
@@ -151,14 +139,14 @@ class _CircleParticipantVideoState
   }
 
   Widget _renderUserImage(BuildContext context) {
-    if (widget.image!.toLowerCase().contains("assets/")) {
+    if (participant.sessionImage!.toLowerCase().contains("assets/")) {
       return Image.asset(
-        widget.image!,
+        participant.sessionImage!,
         fit: BoxFit.cover,
       );
     }
     return CachedNetworkImage(
-      imageUrl: widget.image!,
+      imageUrl: participant.sessionImage!,
       errorWidget: (context, url, error) => _genericUserImage(context),
     );
   }

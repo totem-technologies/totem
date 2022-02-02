@@ -3,6 +3,7 @@ import 'package:totem/models/index.dart';
 
 class SessionParticipant extends ChangeNotifier {
   bool _muted = false;
+  bool _videoMuted = false;
   String? sessionUserId;
   String? status;
   String? sessionImage;
@@ -22,7 +23,7 @@ class SessionParticipant extends ChangeNotifier {
       }
       role = Role.values.byName(json['role']);
     }
-    _muted = json['muted'] ?? false;
+    _videoMuted = json['videoMuted'] ?? false;
     sessionUserId = json["sessionUserId"];
     sessionImage = json["sessionImage"];
   }
@@ -33,6 +34,10 @@ class SessionParticipant extends ChangeNotifier {
     return _muted;
   }
 
+  bool get videoMuted {
+    return _videoMuted;
+  }
+
   bool get hasImage {
     return sessionImage != null && sessionImage!.isNotEmpty;
   }
@@ -40,6 +45,13 @@ class SessionParticipant extends ChangeNotifier {
   set muted(bool isMuted) {
     if (_muted != isMuted) {
       _muted = isMuted;
+      notifyListeners();
+    }
+  }
+
+  set videoMuted(bool isMuted) {
+    if (_videoMuted != isMuted) {
+      _videoMuted = isMuted;
       notifyListeners();
     }
   }

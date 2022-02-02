@@ -51,7 +51,8 @@ class _CircleSnapSessionContentState
     ref.listen(activeSessionProvider,
         (ActiveSession? previous, ActiveSession next) {
       if (next.state == SessionState.starting) {
-        // stop preview for now when starting.
+        // stop video & preview for now when starting.
+        commProvider.muteVideo(true);
         commProvider.stopPreview();
       }
     });

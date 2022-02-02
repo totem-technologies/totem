@@ -53,11 +53,7 @@ class CircleSessionParticipant extends ConsumerWidget {
           Padding(
             padding: const EdgeInsets.all(4.0),
             child: CircleParticipantVideo(
-              name: participant.name,
-              role: participant.role,
-              image: participant.sessionImage,
-              me: participant.me,
-              uid: int.parse(participant.sessionUserId!),
+              participant: participant,
             ),
           ),
           PositionedDirectional(
