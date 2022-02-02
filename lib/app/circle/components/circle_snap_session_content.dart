@@ -48,6 +48,13 @@ class _CircleSnapSessionContentState
     final t = AppLocalizations.of(context)!;
     final commProvider = ref.watch(communicationsProvider);
     final sessionProvider = ref.watch(activeSessionProvider);
+    ref.listen(activeSessionProvider,
+        (ActiveSession? previous, ActiveSession next) {
+      if (next.state == SessionState.starting) {
+        // stop preview for now when starting.
+        commProvider.stopPreview();
+      }
+    });
     return GradientBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
@@ -439,6 +446,7 @@ class _CircleSnapSessionContentState
       provider.joinSession(
         session: widget.circle.activeSession!,
         sessionImage: widget.sessionImage,
+        enableVideo: true,
         handler: CommunicationHandler(
           joinedCircle: (String sessionId, String sessionUserId) {
             debugPrint("joined circle as: " + sessionUserId);

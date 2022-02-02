@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:totem/app/circle/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/theme/index.dart';
-import 'package:rxdart/rxdart.dart';
 
 class CircleSessionParticipant extends ConsumerWidget {
   const CircleSessionParticipant({Key? key, required this.participantId})
@@ -52,11 +52,13 @@ class CircleSessionParticipant extends ConsumerWidget {
           ),
           Padding(
             padding: const EdgeInsets.all(4.0),
-            child: CircleParticipant(
-                name: participant.name,
-                role: participant.role,
-                image: participant.sessionImage,
-                me: participant.me),
+            child: CircleParticipantVideo(
+              name: participant.name,
+              role: participant.role,
+              image: participant.sessionImage,
+              me: participant.me,
+              uid: int.parse(participant.sessionUserId!),
+            ),
           ),
           PositionedDirectional(
             top: 5,

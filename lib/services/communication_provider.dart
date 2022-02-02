@@ -16,10 +16,14 @@ abstract class CommunicationProvider extends ChangeNotifier {
   Future<bool> joinSession(
       {required Session session,
       required CommunicationHandler handler,
-      String? sessionImage});
+      String? sessionImage,
+      bool enableVideo});
   Future<void> leaveSession({bool requested = true});
   Future<void> endSession();
   String? get lastError;
+
+  Future<void> startPreview();
+  Future<void> stopPreview();
 
   Future<void> muteAudio(bool mute);
   Future<bool> receiveActiveSessionTotem({required String sessionUserId});

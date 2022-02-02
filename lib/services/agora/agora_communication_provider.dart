@@ -54,10 +54,8 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     required Session session,
     required CommunicationHandler handler,
     String? sessionImage,
+    bool enableVideo = false,
   }) async {
-    // This is for test purposes, this should be moved
-    // to the cloud function that generates a new session at
-    // a specific time - this is using a predefined test token that is short lived
     _sessionImage = sessionImage;
     _handler = handler;
     _session = session;
@@ -73,7 +71,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     );
     _updateState(CommunicationState.joining);
     try {
-      await _assertEngine();
+      await _assertEngine(enableVideo);
       // TODO - Call SessionProvider to get token for current session
       // This will hit the server which will generate a token for the user
       // this is currently using the test token
@@ -151,7 +149,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     return false;
   }
 
-  Future<void> _assertEngine() async {
+  Future<void> _assertEngine(bool enableVideo) async {
     if (_engine == null) {
       try {
         PermissionStatus statusValue = await Permission.microphone.request();
@@ -163,6 +161,10 @@ class AgoraCommunicationProvider extends CommunicationProvider {
           await _engine!.setDefaultAudioRoutetoSpeakerphone(true);
           await _engine!.enableDeepLearningDenoise(true);
           await _engine!.enableAudioVolumeIndication(200, 3, true);
+          if (enableVideo) {
+            await _engine!.enableVideo();
+            await _engine!.startPreview();
+          }
           // setup event handlers that will let us know about connections
           // and other events
           _engine!.setEventHandler(
@@ -396,5 +398,15 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   @override
   Stream<CommunicationAudioVolumeIndication> get audioIndicatorStream {
     return _audioIndicatorStreamController!.stream;
+  }
+
+  @override
+  Future<void> startPreview() async {
+    await _engine?.startPreview();
+  }
+
+  @override
+  Future<void> stopPreview() async {
+    await _engine?.stopPreview();
   }
 }
