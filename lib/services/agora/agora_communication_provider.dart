@@ -10,6 +10,11 @@ import 'package:totem/services/index.dart';
 class AgoraCommunicationProvider extends CommunicationProvider {
   static const String appId = "4880737da9bf47e290f46d847cd1c3b1";
 
+  // These are used as default values for the video preview, modify
+  // as needed to define a different default as these get set on the engine
+  static const int videoHeight = 180;
+  static const int videoWidth = 180;
+
   AgoraCommunicationProvider(
       {required this.sessionProvider, required this.userId}) {
     sessionProvider.addListener(_updateCommunicationFromSession);
@@ -54,10 +59,8 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     required Session session,
     required CommunicationHandler handler,
     String? sessionImage,
+    bool enableVideo = false,
   }) async {
-    // This is for test purposes, this should be moved
-    // to the cloud function that generates a new session at
-    // a specific time - this is using a predefined test token that is short lived
     _sessionImage = sessionImage;
     _handler = handler;
     _session = session;
@@ -73,7 +76,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     );
     _updateState(CommunicationState.joining);
     try {
-      await _assertEngine();
+      await _assertEngine(enableVideo);
       // TODO - Call SessionProvider to get token for current session
       // This will hit the server which will generate a token for the user
       // this is currently using the test token
@@ -151,7 +154,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     return false;
   }
 
-  Future<void> _assertEngine() async {
+  Future<void> _assertEngine(bool enableVideo) async {
     if (_engine == null) {
       try {
         PermissionStatus statusValue = await Permission.microphone.request();
@@ -163,6 +166,14 @@ class AgoraCommunicationProvider extends CommunicationProvider {
           await _engine!.setDefaultAudioRoutetoSpeakerphone(true);
           await _engine!.enableDeepLearningDenoise(true);
           await _engine!.enableAudioVolumeIndication(200, 3, true);
+          if (enableVideo) {
+            await _engine!.setVideoEncoderConfiguration(
+                VideoEncoderConfiguration(
+                    dimensions: VideoDimensions(
+                        width: videoWidth, height: videoHeight)));
+            await _engine!.enableVideo();
+            await _engine!.startPreview();
+          }
           // setup event handlers that will let us know about connections
           // and other events
           _engine!.setEventHandler(
@@ -182,6 +193,8 @@ class AgoraCommunicationProvider extends CommunicationProvider {
               userJoined: _handleUserJoined,
               userOffline: _handleUserOffline,
               audioVolumeIndication: _handleAudioVolumeIndication,
+              videoPublishStateChanged: _handleVideoPublishStateChanged,
+              remoteVideoStateChanged: _handleRemoteVideoStateChanged,
             ),
           );
         } else {
@@ -232,6 +245,19 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     }
   }
 
+  void _handleVideoPublishStateChanged(String channel,
+      StreamPublishState oldState, StreamPublishState newState, int elapsed) {
+    debugPrint('video state changed: ' +
+        oldState.toString() +
+        " > " +
+        newState.toString());
+    bool _muteVideo = newState == StreamPublishState.NoPublished;
+    if (videoMuted != _muteVideo) {
+      videoMuted = _muteVideo;
+      notifyListeners();
+    }
+  }
+
   void _handleLocalAudioStateChanged(
       AudioLocalState state, AudioLocalError error) {
     // handles local changes to audio
@@ -250,6 +276,28 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     } else if (state == AudioRemoteState.Decoding &&
         reason == AudioRemoteStateReason.RemoteUnmuted) {
       sessionProvider.activeSession?.updateMutedStateForUser(
+          sessionUserId: uid.toString(), muted: false);
+    }
+    debugPrint('Remote audio state change for user: ' +
+        uid.toString() +
+        ' state: ' +
+        state.toString() +
+        ' reason: ' +
+        reason.toString());
+  }
+
+  void _handleRemoteVideoStateChanged(int uid, VideoRemoteState state,
+      VideoRemoteStateReason reason, int elapsed) {
+    // handle changes to the audio state for a given user. This will be called
+    // when people are muted so that we can register the audio status of that
+    // user for display
+    if (state == VideoRemoteState.Stopped &&
+        reason == VideoRemoteStateReason.RemoteMuted) {
+      sessionProvider.activeSession?.updateVideoMutedStateForUser(
+          sessionUserId: uid.toString(), muted: true);
+    } else if (state == VideoRemoteState.Decoding &&
+        reason == VideoRemoteStateReason.RemoteUnmuted) {
+      sessionProvider.activeSession?.updateVideoMutedStateForUser(
           sessionUserId: uid.toString(), muted: false);
     }
     debugPrint('Remote audio state change for user: ' +
@@ -396,5 +444,24 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   @override
   Stream<CommunicationAudioVolumeIndication> get audioIndicatorStream {
     return _audioIndicatorStreamController!.stream;
+  }
+
+  @override
+  Future<void> startPreview() async {
+    await _engine?.startPreview();
+  }
+
+  @override
+  Future<void> stopPreview() async {
+    await _engine?.stopPreview();
+  }
+
+  @override
+  Future<void> muteVideo(bool mute) async {
+    if (state == CommunicationState.active) {
+      if (mute != videoMuted) {
+        await _engine?.muteLocalVideoStream(mute);
+      }
+    }
   }
 }

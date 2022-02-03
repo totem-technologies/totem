@@ -53,7 +53,7 @@ class App extends StatelessWidget {
       statusBarColor: Colors.transparent,
       systemNavigationBarIconBrightness: Brightness.dark,
       statusBarIconBrightness: Brightness.dark,
-      statusBarBrightness: Brightness.dark,
+      statusBarBrightness: Brightness.light,
     ));
     return MaterialApp(
       localizationsDelegates: const [
@@ -114,7 +114,6 @@ class App extends StatelessWidget {
         systemOverlayStyle: SystemUiOverlayStyle.dark,
         iconTheme: IconThemeData(color: themeColors.primaryText),
       ),
-      brightness: Brightness.light,
       primaryColor: themeColors.primary,
       scaffoldBackgroundColor: themeColors.screenBackground,
       fontFamily: 'Raleway',

@@ -233,6 +233,25 @@ class ActiveSession extends ChangeNotifier {
     return participant.muted;
   }
 
+  void updateVideoMutedStateForUser(
+      {required String sessionUserId, required bool muted}) {
+    SessionParticipant? participant = activeParticipants
+        .firstWhereOrNull((element) => element.sessionUserId == sessionUserId);
+    if (participant != null) {
+      participant.videoMuted = muted;
+    }
+  }
+
+  bool videoMutedStateForUser({required String sessionUserId}) {
+    SessionParticipant? participant = activeParticipants
+        .firstWhereOrNull((element) => element.sessionUserId == sessionUserId);
+    if (participant == null) {
+      // not in the active list
+      return false;
+    }
+    return participant.videoMuted;
+  }
+
   bool participantInSession(String uid) {
     return activeParticipants
             .firstWhereOrNull((participant) => participant.uid == uid) !=

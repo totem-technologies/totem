@@ -104,6 +104,8 @@ flutter:
     - assets/view_circle.svg
     - assets/circle_check.svg
     - assets/active_sharing.svg
+    - assets/video.svg
+    - assets/video_stop.svg
 
   fonts:
     - family: Raleway

@@ -69,6 +69,16 @@ class _CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
             debugPrint('mute pressed');
           },
         ),
+        ThemedControlButton(
+          label: communications.videoMuted ? t.startVideo : t.stopVideo,
+          svgImage: !communications.videoMuted
+              ? 'assets/video.svg'
+              : 'assets/video_stop.svg',
+          onPressed: () {
+            communications.muteVideo(communications.videoMuted ? false : true);
+            debugPrint('video pressed');
+          },
+        ),
         if (role == Role.keeper)
           ThemedControlButton(
             label: t.start,

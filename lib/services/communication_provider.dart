@@ -13,14 +13,20 @@ class CommunicationErrors {
 abstract class CommunicationProvider extends ChangeNotifier {
   CommunicationState state = CommunicationState.disconnected;
   bool muted = false;
+  bool videoMuted = false;
   Future<bool> joinSession(
       {required Session session,
       required CommunicationHandler handler,
-      String? sessionImage});
+      String? sessionImage,
+      bool enableVideo});
   Future<void> leaveSession({bool requested = true});
   Future<void> endSession();
   String? get lastError;
 
+  Future<void> startPreview();
+  Future<void> stopPreview();
+
+  Future<void> muteVideo(bool mute);
   Future<void> muteAudio(bool mute);
   Future<bool> receiveActiveSessionTotem({required String sessionUserId});
   Future<bool> passActiveSessionTotem({required String sessionUserId});
