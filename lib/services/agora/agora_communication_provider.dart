@@ -10,6 +10,11 @@ import 'package:totem/services/index.dart';
 class AgoraCommunicationProvider extends CommunicationProvider {
   static const String appId = "4880737da9bf47e290f46d847cd1c3b1";
 
+  // These are used as default values for the video preview, modify
+  // as needed to define a different default as these get set on the engine
+  static const int videoHeight = 180;
+  static const int videoWidth = 180;
+
   AgoraCommunicationProvider(
       {required this.sessionProvider, required this.userId}) {
     sessionProvider.addListener(_updateCommunicationFromSession);
@@ -162,6 +167,10 @@ class AgoraCommunicationProvider extends CommunicationProvider {
           await _engine!.enableDeepLearningDenoise(true);
           await _engine!.enableAudioVolumeIndication(200, 3, true);
           if (enableVideo) {
+            await _engine!.setVideoEncoderConfiguration(
+                VideoEncoderConfiguration(
+                    dimensions: VideoDimensions(
+                        width: videoWidth, height: videoHeight)));
             await _engine!.enableVideo();
             await _engine!.startPreview();
           }
