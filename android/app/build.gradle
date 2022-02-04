@@ -70,8 +70,8 @@ flutter {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation "io.grpc:grpc-okhttp:1.43.2"
-    implementation 'com.google.firebase:firebase-appcheck-debug:16.0.0-beta01'
+    implementation "io.grpc:grpc-okhttp:1.44.0"
+    implementation 'com.google.firebase:firebase-appcheck-debug:16.0.0-beta04'
 }
 
 apply plugin: 'com.google.gms.google-services'
