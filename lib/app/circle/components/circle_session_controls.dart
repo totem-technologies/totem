@@ -122,14 +122,13 @@ class _CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
                 debugPrint('mute pressed');
               },
             ),
-            if (role == Role.member)
-              ThemedControlButton(
-                label: t.info,
-                svgImage: 'assets/info.svg',
-                onPressed: () {
-                  debugPrint('info pressed');
-                },
-              ),
+            ThemedControlButton(
+              label: t.info,
+              svgImage: 'assets/info.svg',
+              onPressed: () {
+                debugPrint('info pressed');
+              },
+            ),
             if (role == Role.keeper)
               ThemedControlButton(
                 label: !_more ? t.more : t.less,
@@ -145,13 +144,6 @@ class _CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              ThemedControlButton(
-                label: t.info,
-                svgImage: 'assets/info.svg',
-                onPressed: () {
-                  debugPrint('info pressed');
-                },
-              ),
               ThemedControlButton(
                 label: t.openFloor,
                 svgImage: 'assets/unlock.svg',

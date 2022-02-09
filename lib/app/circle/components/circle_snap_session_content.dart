@@ -33,7 +33,6 @@ class _CircleSnapSessionContentState
 
   late bool _validSession;
   bool _retry = false;
-
   @override
   void initState() {
     _validSession = widget.circle.activeSession != null;
@@ -143,29 +142,32 @@ class _CircleSnapSessionContentState
     final themeData = Theme.of(context);
     final themeColors = themeData.themeColors;
     final textStyles = themeData.textStyles;
-    return Row(
-      children: [
-        SizedBox(width: themeData.pageHorizontalPadding),
-        Expanded(
-          child: Text(widget.circle.name, style: textStyles.headline1),
-        ),
-        IconButton(
-          onPressed: (commProvider.state != CommunicationState.disconnecting)
-              ? () async {
-                  if (commProvider.state != CommunicationState.active) {
-                    Navigator.of(context).pop();
-                  } else {
-                    await _exitPrompt(context);
-                  }
-                }
-              : null,
-          icon: Icon(
-            Icons.close,
-            color: themeColors.primaryText,
+    return Padding(
+      padding: EdgeInsets.only(top: themeData.titleTopPadding),
+      child: Row(
+        children: [
+          SizedBox(width: themeData.pageHorizontalPadding),
+          Expanded(
+            child: Text(widget.circle.name, style: textStyles.headline1),
           ),
-        ),
-        const SizedBox(width: 8),
-      ],
+          IconButton(
+            onPressed: (commProvider.state != CommunicationState.disconnecting)
+                ? () async {
+                    if (commProvider.state != CommunicationState.active) {
+                      Navigator.of(context).pop();
+                    } else {
+                      await _exitPrompt(context);
+                    }
+                  }
+                : null,
+            icon: Icon(
+              Icons.close,
+              color: themeColors.primaryText,
+            ),
+          ),
+          const SizedBox(width: 8),
+        ],
+      ),
     );
   }
 
