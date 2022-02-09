@@ -82,6 +82,8 @@ class _CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
         if (role == Role.keeper)
           ThemedControlButton(
             label: t.start,
+            size: 48,
+            iconHeight: 20,
             svgImage: activeSession.state == SessionState.waiting
                 ? 'assets/view_circle.svg'
                 : 'assets/view_circle.svg',
