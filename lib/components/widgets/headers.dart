@@ -9,7 +9,7 @@ class TotemHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final textStyles = Theme.of(context).textTheme;
     return Padding(
-      padding: const EdgeInsets.only(bottom: 40, left: 24),
+      padding: const EdgeInsets.only(left: 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
