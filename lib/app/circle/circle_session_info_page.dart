@@ -114,49 +114,51 @@ class _CircleSessionInfoPageState extends ConsumerState<CircleSessionInfoPage> {
                     const SizedBox(width: 8),
                   ],
                 ),
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: Theme.of(context).pageHorizontalPadding),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Text(
-                        widget.session.circle.name,
-                        style: textStyles.dialogTitle,
-                      ),
-                      if (widget.session.topic.isNotEmpty) ...[
-                        const SizedBox(height: 8),
-                        Text(
-                          t.circleWeeksSession,
-                          style: textStyles.headline3,
-                        ),
-                        const SizedBox(height: 4),
-                        Text(widget.session.topic),
-                      ],
-                      if (widget.session.circle.description != null &&
-                          widget.session.circle.description!.isNotEmpty) ...[
-                        const SizedBox(height: 24),
-                        Text(
-                          t.circleDescription,
-                          style: textStyles.headline3,
-                        ),
-                        const SizedBox(height: 4),
-                        Text(widget.session.circle.description!),
-                      ],
-                      const SizedBox(height: 24),
-                      Divider(
-                        thickness: 1,
-                        height: 1,
-                        color: themeColors.divider,
-                      ),
-                      const SizedBox(height: 24),
-                    ],
-                  ),
-                ),
                 Expanded(
-                  child: (me == null || me!.role != Role.keeper)
-                      ? _contentList(context, _participants)
-                      : _keeperContentList(context, _participants),
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.only(
+                        left: Theme.of(context).pageHorizontalPadding,
+                        right: Theme.of(context).pageHorizontalPadding,
+                        bottom: 20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Text(
+                          widget.session.circle.name,
+                          style: textStyles.dialogTitle,
+                        ),
+                        if (widget.session.topic.isNotEmpty) ...[
+                          const SizedBox(height: 8),
+                          Text(
+                            t.circleWeeksSession,
+                            style: textStyles.headline3,
+                          ),
+                          const SizedBox(height: 4),
+                          Text(widget.session.topic),
+                        ],
+                        if (widget.session.circle.description != null &&
+                            widget.session.circle.description!.isNotEmpty) ...[
+                          const SizedBox(height: 24),
+                          Text(
+                            t.circleDescription,
+                            style: textStyles.headline3,
+                          ),
+                          const SizedBox(height: 4),
+                          Text(widget.session.circle.description!),
+                        ],
+                        const SizedBox(height: 24),
+                        Divider(
+                          thickness: 1,
+                          height: 1,
+                          color: themeColors.divider,
+                        ),
+                        const SizedBox(height: 24),
+                        (me == null || me!.role != Role.keeper)
+                            ? _contentList(context, _participants)
+                            : _keeperContentList(context, _participants),
+                      ],
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -169,9 +171,10 @@ class _CircleSessionInfoPageState extends ConsumerState<CircleSessionInfoPage> {
   Widget _contentList(
       BuildContext context, List<SessionParticipant> participants) {
     return ListView.separated(
+        shrinkWrap: true,
         itemBuilder: (context, index) {
           return CircleSessionParticipantListItem(
-              participant: participants[index]);
+              horizontalPadding: 0, participant: participants[index]);
         },
         separatorBuilder: (context, index) {
           return const SizedBox(
@@ -214,6 +217,7 @@ class _CircleSessionInfoPageState extends ConsumerState<CircleSessionInfoPage> {
             repo.activeSession!.reorderParticipants(_participants));
       },
       child: ListView.separated(
+          shrinkWrap: true,
           itemBuilder: (context, index) {
             SessionParticipant participant = participants[index];
             return ReorderableItem(
@@ -222,6 +226,7 @@ class _CircleSessionInfoPageState extends ConsumerState<CircleSessionInfoPage> {
                 return CircleSessionParticipantListItem(
                   participant: participants[index],
                   reorder: true,
+                  horizontalPadding: 0,
                 );
               },
             );

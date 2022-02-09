@@ -19,3 +19,4 @@ export 'themed_input_decoration.dart';
 export 'themed_raised_button.dart';
 export 'themed_text_field.dart';
 export 'themed_text_form_field.dart';
+export 'trimmed_text.dart';

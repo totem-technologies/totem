@@ -3,14 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:totem/app/circle/circle_session_page.dart';
+import 'package:totem/app/circle/index.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
-
-import 'circle_session_content.dart';
-import 'circle_session_controls.dart';
 
 class CircleSnapSessionContent extends ConsumerStatefulWidget {
   const CircleSnapSessionContent({
@@ -105,7 +102,27 @@ class _CircleSnapSessionContentState
                         const SizedBox(
                           height: 4,
                         ),
-                        Text(widget.circle.description!),
+                        //Text(widget.circle.description!),
+                        TrimmedText(
+                          widget.circle.description!,
+                          trimLines: 3,
+                          style: textStyles.bodyText1,
+                          more: Row(
+                            children: [
+                              TextButton(
+                                style: TextButton.styleFrom(
+                                    padding: EdgeInsets.zero,
+                                    alignment: Alignment.centerLeft),
+                                onPressed: () async {
+                                  await CircleSessionInfoPage.showDialog(
+                                      context,
+                                      session: widget.circle.activeSession!);
+                                },
+                                child: Text(t.moreInfo),
+                              )
+                            ],
+                          ),
+                        ),
                         Divider(
                           height: 48,
                           thickness: 1,

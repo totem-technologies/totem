@@ -12,8 +12,8 @@ class StdAppTextStyles extends AppTextStyles {
               color: themeColors.secondaryText),
           body: TextStyle(
               fontFamily: 'Raleway',
-              fontSize: 16,
-              fontWeight: FontWeight.normal,
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
               color: themeColors.primaryText),
           button: TextStyle(
               fontFamily: 'Raleway',
