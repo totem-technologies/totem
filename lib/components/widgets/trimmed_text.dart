@@ -82,19 +82,6 @@ class _TrimmedTextState extends State<TrimmedText> {
           text: widget.text,
         );
 
-        // Layout and measure link
-        /* TextPainter textPainter = TextPainter(
-          text: link,
-          textAlign: textAlign,
-          textDirection: textDirection,
-          textScaleFactor: textScaleFactor,
-          maxLines: widget.trimLines,
-          ellipsis: overflow == TextOverflow.ellipsis ? widget.delimiter : null,
-          locale: locale,
-        );
-        textPainter.layout(minWidth: 0, maxWidth: maxWidth);
-        final linkSize = textPainter.size;*/
-
         // Layout and measure delimiter
         TextPainter textPainter = TextPainter(
           text: _delimiter,
