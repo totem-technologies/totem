@@ -12,27 +12,30 @@ class SubPageHeader extends StatelessWidget {
     final themeData = Theme.of(context);
     final textStyles = themeData.textTheme;
     final themeColors = themeData.themeColors;
-    return Row(
-      children: [
-        SizedBox(width: themeData.pageHorizontalPadding),
-        Expanded(
-          child: Text(title, style: textStyles.headline6),
-        ),
-        IconButton(
-          onPressed: () {
-            if (onClose == null) {
-              Navigator.of(context).pop();
-            } else {
-              onClose!();
-            }
-          },
-          icon: Icon(
-            Icons.close,
-            color: themeColors.primaryText,
+    return Padding(
+      padding: EdgeInsets.only(top: themeData.titleTopPadding),
+      child: Row(
+        children: [
+          SizedBox(width: themeData.pageHorizontalPadding),
+          Expanded(
+            child: Text(title, style: textStyles.headline6),
           ),
-        ),
-        const SizedBox(width: 8),
-      ],
+          IconButton(
+            onPressed: () {
+              if (onClose == null) {
+                Navigator.of(context).pop();
+              } else {
+                onClose!();
+              }
+            },
+            icon: Icon(
+              Icons.close,
+              color: themeColors.primaryText,
+            ),
+          ),
+          const SizedBox(width: 8),
+        ],
+      ),
     );
   }
 }

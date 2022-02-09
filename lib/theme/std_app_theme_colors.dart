@@ -6,9 +6,11 @@ import 'package:totem/theme/index.dart';
 class StdThemePalette {
   static const yellow = Color(0xffffcc59);
   static const lightYellow = Color(0xfffde4a4);
+  static const lightYellow2 = Color(0xfffdedc9);
   static const baseBlack = Color(0xff16182a);
   static const baseWhite = Color(0xffffffff);
   static const offWhite = Color(0xffefefef);
+  static const offWhite2 = Color(0xfffffdf9);
   static const dirtyWhite = Color.fromRGBO(255, 255, 255, 0.75);
   static const welcomeGradient = [Color(0xfffff9ec), Color(0xffffd472)];
   static const mainGradient = [Color(0xfffffdf9), Color(0xfffeeecc)];
@@ -53,5 +55,7 @@ class StdAppThemeColors extends AppThemeColors {
           blurBackground: StdThemePalette.baseBlack.withAlpha(40),
           participantBorder: StdThemePalette.lighterGrey,
           sliderBackground: StdThemePalette.lightYellow,
+          altBackground: StdThemePalette.lightYellow2,
+          containerBackground: StdThemePalette.offWhite2,
         );
 }

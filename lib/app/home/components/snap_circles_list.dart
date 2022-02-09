@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:totem/app/circle/circle_join_dialog.dart';
 import 'package:totem/app/circle/circle_session_page.dart';
 import 'package:totem/app/home/components/index.dart';
-import 'package:totem/app/home/components/snap_circle_item.dart';
 import 'package:totem/components/widgets/busy_indicator.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
 
 class SnapCirclesList extends ConsumerStatefulWidget {
-  const SnapCirclesList({Key? key}) : super(key: key);
+  const SnapCirclesList({Key? key, this.topPadding = 140}) : super(key: key);
+  final double topPadding;
 
   @override
   _SnapCirclesListState createState() => _SnapCirclesListState();
@@ -58,7 +59,8 @@ class _SnapCirclesListState extends ConsumerState<SnapCirclesList> {
 
           if (list.isNotEmpty) {
             return ListView.builder(
-              padding: EdgeInsets.only(bottom: bottomPadding),
+              padding: EdgeInsets.only(
+                  bottom: bottomPadding, top: widget.topPadding),
               itemCount: list.length,
               itemBuilder: (c, i) => SnapCircleItem(
                 circle: list[i],
@@ -77,16 +79,33 @@ class _SnapCirclesListState extends ConsumerState<SnapCirclesList> {
       padding: EdgeInsets.only(
           left: themeData.pageHorizontalPadding,
           right: themeData.pageHorizontalPadding,
-          bottom: bottomPadding + 20),
+          bottom: bottomPadding),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
-            t.noSnapCirclesMessage,
-            style: const TextStyle(fontWeight: FontWeight.bold),
+            t.ooh,
+            style: themeData.textStyles.headline2,
             textAlign: TextAlign.center,
           ),
+          const SizedBox(
+            height: 16,
+          ),
+          SvgPicture.asset('assets/face.svg'),
+          const SizedBox(
+            height: 16,
+          ),
+          Text(
+            t.noSnapCirclesMessage,
+            style: TextStyle(
+                color: themeData.themeColors.secondaryText, fontSize: 16),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(
+            height: 24,
+          ),
+          const CreateCircleButton(),
         ],
       ),
     );
