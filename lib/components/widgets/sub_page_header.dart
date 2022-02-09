@@ -18,7 +18,7 @@ class SubPageHeader extends StatelessWidget {
         children: [
           SizedBox(width: themeData.pageHorizontalPadding),
           Expanded(
-            child: Text(title, style: textStyles.headline6),
+            child: Text(title, style: textStyles.headline2),
           ),
           IconButton(
             onPressed: () {

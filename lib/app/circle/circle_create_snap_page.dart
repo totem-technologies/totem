@@ -32,6 +32,7 @@ class _CircleCreatePageState extends ConsumerState<CircleCreateSnapPage> {
   @override
   Widget build(BuildContext context) {
     final themeData = Theme.of(context);
+    final textStyles = themeData.textStyles;
     final t = AppLocalizations.of(context)!;
     return GradientBackground(
       child: Scaffold(
@@ -49,7 +50,7 @@ class _CircleCreatePageState extends ConsumerState<CircleCreateSnapPage> {
                 bottom: false,
                 child: Column(
                   children: [
-                    SubPageHeader(title: t.createCircle),
+                    SubPageHeader(title: t.createNewCircle),
                     Expanded(
                       child: SingleChildScrollView(
                         child: Padding(
@@ -58,9 +59,13 @@ class _CircleCreatePageState extends ConsumerState<CircleCreateSnapPage> {
                           child: Form(
                             key: _formKey,
                             child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
+                                const SizedBox(
+                                  height: 46,
+                                ),
+                                Text(t.circleName, style: textStyles.headline3),
                                 ThemedTextFormField(
-                                  labelText: t.name,
                                   controller: _nameController,
                                   autofocus: true,
                                   textCapitalization:
@@ -75,24 +80,27 @@ class _CircleCreatePageState extends ConsumerState<CircleCreateSnapPage> {
                                     return null;
                                   },
                                 ),
-                                const SizedBox(height: 20),
+                                const SizedBox(height: 32),
+                                Text(t.description,
+                                    style: textStyles.headline3),
                                 ThemedTextFormField(
                                   focusNode: _focusNodeDescription,
                                   controller: _descriptionController,
-                                  labelText: t.description,
                                   textCapitalization:
                                       TextCapitalization.sentences,
                                   maxLines: 0,
                                   textInputAction: TextInputAction.done,
                                 ),
                                 const SizedBox(height: 30),
-                                ThemedRaisedButton(
-                                  label: t.createCircle,
-                                  onPressed: !_busy
-                                      ? () {
-                                          _saveCircle();
-                                        }
-                                      : null,
+                                Center(
+                                  child: ThemedRaisedButton(
+                                    label: t.createCircle,
+                                    onPressed: !_busy
+                                        ? () {
+                                            _saveCircle();
+                                          }
+                                        : null,
+                                  ),
                                 ),
                                 const SizedBox(height: 50)
                               ],
