@@ -27,6 +27,8 @@ class AppThemeColors {
     required this.controlButtonBackground,
     required this.participantBorder,
     required this.sliderBackground,
+    required this.altBackground,
+    required this.containerBackground,
   });
 
   final Color blurBackground;
@@ -50,6 +52,8 @@ class AppThemeColors {
   final Color divider;
   final Color participantBorder;
   final Color sliderBackground;
+  final Color altBackground;
+  final Color containerBackground;
   final List<Color> primaryGradient;
   final List<Color> secondaryGradient;
   final List<Color> welcomeGradient;

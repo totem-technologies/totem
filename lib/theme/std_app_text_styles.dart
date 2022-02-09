@@ -7,7 +7,7 @@ class StdAppTextStyles extends AppTextStyles {
           headline1: TextStyle(
               fontFamily: 'Recoleta',
               fontSize: 32,
-              fontWeight: FontWeight.normal,
+              fontWeight: FontWeight.bold,
               height: 43.52 / 32,
               color: themeColors.secondaryText),
           body: TextStyle(
@@ -17,7 +17,7 @@ class StdAppTextStyles extends AppTextStyles {
               color: themeColors.primaryText),
           button: TextStyle(
               fontFamily: 'Raleway',
-              fontSize: 14,
+              fontSize: 16,
               fontWeight: FontWeight.w600,
               color: themeColors.primaryText),
           pinInput: TextStyle(
