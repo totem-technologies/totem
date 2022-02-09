@@ -5,7 +5,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:totem/app/circle/circle_join_dialog.dart';
 import 'package:totem/app/circle/circle_session_page.dart';
 import 'package:totem/app/home/components/index.dart';
-import 'package:totem/app/home/components/snap_circle_item.dart';
 import 'package:totem/components/widgets/busy_indicator.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
