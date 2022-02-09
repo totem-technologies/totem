@@ -101,7 +101,7 @@ class _CircleSessionParticipantDialogState
                       children: [
                         Text(
                           widget.participant.name,
-                          style: textStyles.headline6,
+                          style: textStyles.headline2,
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 33),
