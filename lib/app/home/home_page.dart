@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:simple_shadow/simple_shadow.dart';
 import 'package:totem/app/home/components/index.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/theme/index.dart';
@@ -52,58 +51,49 @@ class HomePage extends StatelessWidget {
   Widget _homeHeader(BuildContext context) {
     final t = AppLocalizations.of(context)!;
     final themeColors = Theme.of(context).themeColors;
-    return Stack(
-      children: [
-        // header background
-        SimpleShadow(
-          opacity: 1.0,
-          offset: const Offset(0, 8),
-          sigma: 24,
-          color: themeColors.shadow,
-          child: Stack(
-            children: [
-              Container(
-                height: 60,
-                color: themeColors.containerBackground,
-              ),
-              SafeArea(
-                top: true,
-                bottom: false,
-                child: SvgPicture.asset(
-                  'assets/home_header.svg',
-                  fit: BoxFit.fill,
-                ),
-              ),
-            ],
-          ),
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: const BorderRadius.only(
+          bottomLeft: Radius.circular(50),
+          bottomRight: Radius.circular(30),
         ),
-        // Header details
-        SafeArea(
-          top: true,
-          bottom: false,
-          child: Padding(
-            padding: const EdgeInsets.only(top: 20),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: TotemHeader(text: t.circles),
-                ),
-                InkWell(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 10),
-                    child: SvgPicture.asset('assets/profile.svg'),
+        color: themeColors.containerBackground,
+        boxShadow: [
+          BoxShadow(
+              color: themeColors.shadow,
+              offset: const Offset(0, 8),
+              blurRadius: 24),
+        ],
+      ),
+      child: SafeArea(
+        top: true,
+        bottom: false,
+        child: Wrap(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 20, bottom: 46),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: TotemHeader(text: t.circles),
                   ),
-                  onTap: () {
-                    _showProfile(context);
-                  },
-                )
-              ],
+                  InkWell(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 10),
+                      child: SvgPicture.asset('assets/profile.svg'),
+                    ),
+                    onTap: () {
+                      _showProfile(context);
+                    },
+                  ),
+                ],
+              ),
             ),
-          ),
+          ],
         ),
-      ],
+      ),
     );
   }
 

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:totem/theme/index.dart';
 
 class SnapCircleItem extends StatelessWidget {
@@ -46,7 +46,12 @@ class SnapCircleItem extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const SizedBox(height: 2),
-                          Text(circle.name, style: textStyles.headline3),
+                          Text(
+                            circle.name,
+                            style: textStyles.headline3,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                           const SizedBox(height: 8),
                           _sessionInfo(context),
                         ],
@@ -85,7 +90,11 @@ class SnapCircleItem extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         if (circle.description != null && circle.description!.isNotEmpty) ...[
-          Text(circle.description!),
+          Text(
+            circle.description!,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
           const SizedBox(
             height: 8,
           ),
