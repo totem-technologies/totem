@@ -6,19 +6,21 @@ import 'package:totem/models/index.dart';
 import 'package:totem/theme/index.dart';
 
 class CircleSessionParticipantListItem extends StatelessWidget {
-  const CircleSessionParticipantListItem({
-    Key? key,
-    required this.participant,
-    this.reorder = false,
-  }) : super(key: key);
+  const CircleSessionParticipantListItem(
+      {Key? key,
+      required this.participant,
+      this.reorder = false,
+      this.horizontalPadding})
+      : super(key: key);
   final SessionParticipant participant;
   final bool reorder;
-
+  final double? horizontalPadding;
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(
-        horizontal: Theme.of(context).pageHorizontalPadding,
+        horizontal:
+            horizontalPadding ?? Theme.of(context).pageHorizontalPadding,
       ),
       child: Row(
         children: [

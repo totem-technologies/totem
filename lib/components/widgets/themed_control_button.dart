@@ -13,11 +13,13 @@ class ThemedControlButton extends StatelessWidget {
     this.backgroundColor,
     this.size = 40,
     this.iconPadding = const EdgeInsets.all(0),
+    this.iconHeight,
   }) : super(key: key);
   final String label;
   final String svgImage;
   final bool enabled;
   final double size;
+  final double? iconHeight;
   final Color? imageColor;
   final Color? backgroundColor;
   final VoidCallback? onPressed;
@@ -47,6 +49,7 @@ class ThemedControlButton extends StatelessWidget {
                     svgImage,
                     color: imageColor,
                     fit: BoxFit.contain,
+                    height: iconHeight,
                   ),
                 ),
               ),
