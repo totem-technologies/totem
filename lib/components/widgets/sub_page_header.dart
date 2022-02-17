@@ -15,10 +15,16 @@ class SubPageHeader extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.only(top: themeData.titleTopPadding),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(width: themeData.pageHorizontalPadding),
           Expanded(
-            child: Text(title, style: textStyles.headline2),
+            child: Text(
+              title,
+              style: textStyles.headline2,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
           IconButton(
             onPressed: () {

@@ -17,6 +17,7 @@ class ThemedTextField extends StatelessWidget {
     this.textCapitalization = TextCapitalization.none,
     this.autocorrect = false,
     this.obscureText = false,
+    this.maxLength,
   }) : super(key: key);
   final String? labelText;
   final TextEditingController? controller;
@@ -30,6 +31,7 @@ class ThemedTextField extends StatelessWidget {
   final TextCapitalization textCapitalization;
   final FocusNode? focusNode;
   final TextInputAction? textInputAction;
+  final int? maxLength;
   @override
   Widget build(BuildContext context) {
     final themeData = Theme.of(context);
@@ -51,6 +53,8 @@ class ThemedTextField extends StatelessWidget {
       textCapitalization: textCapitalization,
       focusNode: focusNode,
       textInputAction: textInputAction,
+      maxLength: maxLength,
+      buildCounter: (maxLength ?? 0) > 0 ? InputCounter.counterWidget : null,
     );
   }
 }

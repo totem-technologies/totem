@@ -8,6 +8,12 @@
     "cancel": "Cancel",
     "changesProfilePrompt": "You have changes to your profile, do you want to save?",
     "changesTitle": "Save Changes?",
+    "characterCount": "{count, plural, =1{{count} character remaining} other{{count} characters remaining}}",
+    "@characterCount": {
+        "placeholders": {
+            "count": {}
+        }
+    },
     "circleDescription": "Circle Description",
     "circlesDone": "Circles done",
     "circleEnding": "Circle is ending",

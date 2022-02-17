@@ -80,6 +80,6 @@ class StdAppTextStyles extends AppTextStyles {
               fontFamily: 'Raleway',
               fontSize: 14,
               color: themeColors.secondaryText,
-              fontWeight: FontWeight.normal),
+              fontWeight: FontWeight.w500),
         );
 }
