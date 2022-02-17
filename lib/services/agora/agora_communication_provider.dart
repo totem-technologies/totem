@@ -157,7 +157,17 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   Future<void> _assertEngine(bool enableVideo) async {
     if (_engine == null) {
       try {
-        PermissionStatus statusValue = await Permission.microphone.request();
+        PermissionStatus statusValue = await Permission.bluetooth.request();
+        if (statusValue != PermissionStatus.granted &&
+            statusValue != PermissionStatus.limited) {
+          debugPrint('Failed requesting bluetooth!');
+        }
+        statusValue = await Permission.bluetoothConnect.request();
+        if (statusValue != PermissionStatus.granted &&
+            statusValue != PermissionStatus.limited) {
+          debugPrint('Failed requesting bluetooth connect!');
+        }
+        statusValue = await Permission.microphone.request();
         if (statusValue == PermissionStatus.granted ||
             statusValue == PermissionStatus.limited) {
           _engine = await RtcEngine.create(appId);
