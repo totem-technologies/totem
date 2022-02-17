@@ -1,3 +1,4 @@
+import 'package:cupertino_will_pop_scope/cupertino_will_pop_scope.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -126,6 +127,12 @@ class App extends StatelessWidget {
         style: TextButton.styleFrom(
             primary: themeColors.linkText,
             textStyle: textStyles.textLinkButton),
+      ),
+      pageTransitionsTheme: const PageTransitionsTheme(
+        builders: {
+          TargetPlatform.android: ZoomPageTransitionsBuilder(),
+          TargetPlatform.iOS: CupertinoWillPopScopePageTransionsBuilder(),
+        },
       ),
       //,
     );

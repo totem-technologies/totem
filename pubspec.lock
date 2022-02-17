@@ -176,6 +176,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.4"
+  cupertino_will_pop_scope:
+    dependency: "direct main"
+    description:
+      name: cupertino_will_pop_scope
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.2.0"
   datetime_picker_formfield:
     dependency: "direct main"
     description:
