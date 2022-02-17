@@ -91,7 +91,7 @@ class _CircleCreatePageState extends ConsumerState<CircleCreateSnapPage> {
                                   textCapitalization:
                                       TextCapitalization.sentences,
                                   maxLines: 0,
-                                  textInputAction: TextInputAction.done,
+                                  textInputAction: TextInputAction.newline,
                                   maxLength: 1500,
                                 ),
                                 const SizedBox(height: 30),
