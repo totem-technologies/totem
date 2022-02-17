@@ -79,6 +79,8 @@ class _CircleCreatePageState extends ConsumerState<CircleCreateSnapPage> {
                                     }
                                     return null;
                                   },
+                                  maxLines: 0,
+                                  maxLength: 50,
                                 ),
                                 const SizedBox(height: 32),
                                 Text(t.description,
@@ -90,6 +92,7 @@ class _CircleCreatePageState extends ConsumerState<CircleCreateSnapPage> {
                                       TextCapitalization.sentences,
                                   maxLines: 0,
                                   textInputAction: TextInputAction.done,
+                                  maxLength: 1500,
                                 ),
                                 const SizedBox(height: 30),
                                 Center(
