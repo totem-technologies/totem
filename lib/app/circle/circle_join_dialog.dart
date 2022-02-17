@@ -111,6 +111,8 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
                                   widget.session.circle.name,
                                   style: textStyles.dialogTitle,
                                   textAlign: TextAlign.center,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                                 const SizedBox(height: 24),
                                 Divider(
