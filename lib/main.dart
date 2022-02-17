@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:flutter/foundation.dart' show kDebugMode;
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
@@ -94,9 +97,13 @@ class App extends StatelessWidget {
                 builder: (_) =>
                     LoggedinGuard(builder: (_) => const SettingsPage()));
           case '/profile':
-            return MaterialPageRoute(
-                builder: (_) =>
-                    LoggedinGuard(builder: (_) => const UserProfilePage()));
+            return (kIsWeb || Platform.isAndroid)
+                ? MaterialPageRoute(
+                    builder: (_) =>
+                        LoggedinGuard(builder: (_) => const UserProfilePage()))
+                : CupertinoPageRoute(
+                    builder: (_) =>
+                        LoggedinGuard(builder: (_) => const UserProfilePage()));
           default:
             return null;
         }
