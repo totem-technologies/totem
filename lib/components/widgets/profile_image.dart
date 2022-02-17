@@ -10,17 +10,18 @@ import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
 
 class ProfileImage extends ConsumerWidget {
-  const ProfileImage(
-      {Key? key,
-      this.size = 64,
-      this.fillColor,
-      this.textColor,
-      this.textSize = 30,
-      this.useIcon = true,
-      this.localImage,
-      this.shape = BoxShape.rectangle,
-      this.profile})
-      : super(key: key);
+  const ProfileImage({
+    Key? key,
+    this.size = 64,
+    this.fillColor,
+    this.textColor,
+    this.textSize = 30,
+    this.useIcon = true,
+    this.localImage,
+    this.shape = BoxShape.rectangle,
+    this.profile,
+    this.borderRadius,
+  }) : super(key: key);
   final double size;
   final Color? fillColor;
   final Color? textColor;
@@ -29,6 +30,7 @@ class ProfileImage extends ConsumerWidget {
   final File? localImage;
   final BoxShape shape;
   final UserProfile? profile;
+  final double? borderRadius;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -60,7 +62,8 @@ class ProfileImage extends ConsumerWidget {
       return Container(
         decoration: imageProvider != null
             ? BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(size / 4)),
+                borderRadius:
+                    BorderRadius.all(Radius.circular(borderRadius ?? size / 4)),
                 image: DecorationImage(
                   image: ResizeImage(imageProvider, width: 168),
                   fit: BoxFit.contain,
