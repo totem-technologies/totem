@@ -620,6 +620,15 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
       _saveForm();
       return false;
     }
-    return result == 1;
+    if (result == 1) {
+      setState(() {
+        _hasChanged = false;
+      });
+      // set a delay to process on next cycle after _hasChange has been set
+      Future.delayed(const Duration(milliseconds: 0), () {
+        Navigator.of(context).pop();
+      });
+    }
+    return false;
   }
 }
