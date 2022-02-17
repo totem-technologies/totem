@@ -350,7 +350,7 @@ PODS:
   - BoringSSL-GRPC/Interface (0.0.7)
   - camera (0.0.1):
     - Flutter
-  - cloud_firestore (3.1.7):
+  - cloud_firestore (3.1.8):
     - Firebase/Firestore (= 8.11.0)
     - firebase_core
     - Flutter
@@ -383,7 +383,7 @@ PODS:
     - firebase_core
     - FirebaseAppCheck (~> 8.11.0-beta)
     - Flutter
-  - firebase_auth (3.3.6):
+  - firebase_auth (3.3.7):
     - Firebase/Auth (= 8.11.0)
     - firebase_core
     - Flutter
@@ -627,11 +627,11 @@ SPEC CHECKSUMS:
   AgoraRtcEngine_iOS: 3d13806d67e401298558c9a6fb09340a4299afa2
   BoringSSL-GRPC: 8edf627ee524575e2f8d19d56f068b448eea3879
   camera: 9993f92f2c793e87b65e35f3a23c70582afb05b1
-  cloud_firestore: 86f87680a19c805cb0c80b75ecb17ca2d18085f9
+  cloud_firestore: 8bd22e19f6ccf3a0d1976ea298e0ce37c9ad5839
   cloud_functions: c024d02ed3046e5ee7f8cd03e6c306c56044678c
   Firebase: 44dd9724c84df18b486639e874f31436eaa9a20c
   firebase_app_check: b8a70895e0686640e68f1c786541518ccd30fdfd
-  firebase_auth: ccdb84a0d52a2d7897898ae8121689da6e13d71f
+  firebase_auth: 20bf788012988ef04ce608fada5b8d8cd1069302
   firebase_core: 443bccfd6aa6b42f07be365b500773dc69db2d87
   firebase_crashlytics: 0df152ee2d96f5a4aeddf2288fb277bbd0833b18
   firebase_storage: 627bc138c31654fc1320b262e16e3fad770dea6f

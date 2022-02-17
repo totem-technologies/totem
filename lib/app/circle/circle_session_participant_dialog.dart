@@ -22,7 +22,7 @@ class CircleSessionParticipantDialog extends ConsumerStatefulWidget {
     required SessionParticipant participant,
   }) async {
     return showModalBottomSheet<String>(
-      enableDrag: false,
+      enableDrag: true,
       isScrollControlled: true,
       isDismissible: false,
       context: context,
@@ -61,7 +61,7 @@ class _CircleSessionParticipantDialogState
     final t = AppLocalizations.of(context)!;
 
     return BackdropFilter(
-      filter: ImageFilter.blur(sigmaX: 2.5, sigmaY: 2.5),
+      filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
       child: SafeArea(
         top: true,
         bottom: false,
@@ -129,8 +129,9 @@ class _CircleSessionParticipantDialogState
                                     Center(
                                       child: ProfileImage(
                                         size: 100,
-                                        shape: BoxShape.circle,
+                                        shape: BoxShape.rectangle,
                                         profile: profile,
+                                        borderRadius: 8,
                                       ),
                                     ),
                                     const SizedBox(height: 40),
@@ -145,8 +146,10 @@ class _CircleSessionParticipantDialogState
                                         const SizedBox(
                                           width: 10,
                                         ),
-                                        Text(timeFormat
-                                            .format(profile.createdOn))
+                                        Text(
+                                            timeFormat
+                                                .format(profile.createdOn),
+                                            style: textStyles.bodyText1)
                                       ],
                                     ),
                                     Divider(
@@ -165,9 +168,12 @@ class _CircleSessionParticipantDialogState
                                         const SizedBox(
                                           width: 10,
                                         ),
-                                        Text(profile.completedCircles
-                                                ?.toString() ??
-                                            "0"),
+                                        Text(
+                                          profile.completedCircles
+                                                  ?.toString() ??
+                                              "0",
+                                          style: textStyles.bodyText1,
+                                        ),
                                       ],
                                     ),
                                     const SizedBox(height: 24),
