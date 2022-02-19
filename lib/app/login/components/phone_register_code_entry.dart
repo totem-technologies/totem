@@ -61,72 +61,75 @@ class _PhoneRegisterCodeEntryState
     final authService = ref.watch(authServiceProvider);
     return Padding(
       padding: const EdgeInsets.only(left: 35, right: 35),
-      child: Column(
-        children: [
-          const SizedBox(height: 40),
-          Text(t.signup, style: textStyles.headline1),
-          const ContentDivider(),
-          const SizedBox(height: 20),
-          FutureBuilder<String>(
-            future: _formatPhoneNumber(authService.authRequestNumber ?? ""),
-            builder: (context, asyncSnapshot) {
-              return Text(
-                t.textSentTo(asyncSnapshot.data ?? ""),
-                style: textStyles.bodyText1!
-                    .merge(const TextStyle(fontWeight: FontWeight.w600)),
-              );
-            },
-          ),
-          const SizedBox(height: 8),
-          Text(
-            t.enterTheCodeDetail,
-            style: textStyles.bodyText1!,
-          ),
-          const SizedBox(
-            height: 50,
-          ),
-          Form(
-            key: _formKey,
-            autovalidateMode: _autoValidate,
-            child: PinCodeWidget(
-              onChanged: (v) {
-                setState(() => error = '');
-                pinValue = v;
-              },
-              onComplete: (v) {
-                pinValue = v;
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: Theme.of(context).maxRenderWidth),
+        child: Column(
+          children: [
+            const SizedBox(height: 40),
+            Text(t.signup, style: textStyles.headline1),
+            const ContentDivider(),
+            const SizedBox(height: 20),
+            FutureBuilder<String>(
+              future: _formatPhoneNumber(authService.authRequestNumber ?? ""),
+              builder: (context, asyncSnapshot) {
+                return Text(
+                  t.textSentTo(asyncSnapshot.data ?? ""),
+                  style: textStyles.bodyText1!
+                      .merge(const TextStyle(fontWeight: FontWeight.w600)),
+                );
               },
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 10.0),
-            child: Text(
-              error,
-              style: TextStyle(color: themeColors.error),
-              maxLines: 2,
+            const SizedBox(height: 8),
+            Text(
+              t.enterTheCodeDetail,
+              style: textStyles.bodyText1!,
             ),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          ThemedRaisedButton(
-            label: t.getStarted,
-            busy: _busy,
-            width: 294,
-            onPressed: pinValue.length == 6 && int.tryParse(pinValue) != null
-                ? () {
-                    signInWithPhoneNumber();
-                  }
-                : null,
-          ),
-          const SizedBox(height: 20),
-          TextButton(
-              onPressed: _backToNumber,
+            const SizedBox(
+              height: 50,
+            ),
+            Form(
+              key: _formKey,
+              autovalidateMode: _autoValidate,
+              child: PinCodeWidget(
+                onChanged: (v) {
+                  setState(() => error = '');
+                  pinValue = v;
+                },
+                onComplete: (v) {
+                  pinValue = v;
+                },
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 10.0),
               child: Text(
-                t.retryPhone,
-                textAlign: TextAlign.center,
-              ))
-        ],
+                error,
+                style: TextStyle(color: themeColors.error),
+                maxLines: 2,
+              ),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            ThemedRaisedButton(
+              label: t.getStarted,
+              busy: _busy,
+              width: 294,
+              onPressed: pinValue.length == 6 && int.tryParse(pinValue) != null
+                  ? () {
+                      signInWithPhoneNumber();
+                    }
+                  : null,
+            ),
+            const SizedBox(height: 20),
+            TextButton(
+                onPressed: _backToNumber,
+                child: Text(
+                  t.retryPhone,
+                  textAlign: TextAlign.center,
+                ))
+          ],
+        ),
       ),
     );
   }

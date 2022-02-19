@@ -1,7 +1,9 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:camera/camera.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -42,8 +44,13 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
   late Future<UserProfile?> _userProfileFetch;
   final GlobalKey<FileUploaderState> _uploader = GlobalKey();
 
-  File? _selectedImage;
+  File? _selectedImageFile;
   bool _uploading = false;
+  XFile? _selectedImage;
+  Uint8List? _selectedImageBytes;
+  bool get hasImage {
+    return _selectedImage != null;
+  }
 
   @override
   void initState() {
@@ -53,7 +60,9 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
 
   @override
   void dispose() {
-    _selectedImage?.delete();
+    if (!kIsWeb) {
+      _selectedImageFile?.delete();
+    }
     super.dispose();
   }
 
@@ -154,7 +163,7 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
         if (asyncSnapshot.hasData) {
           UserProfile user = asyncSnapshot.data!;
           return Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
                 user.name,
@@ -167,72 +176,81 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 20),
-              Stack(
-                children: [
-                  AspectRatio(
-                    aspectRatio: 1.0,
-                    child: ClipRRect(
-                      borderRadius: const BorderRadius.all(Radius.circular(24)),
-                      child: Container(
-                        color: themeColors.primaryText,
-                        child: AnimatedSwitcher(
-                          duration: const Duration(milliseconds: 300),
-                          child: _selectedImage == null
-                              ? CameraCapture(
-                                  captureMode: CaptureMode.photoOnly,
-                                  onImageTaken: (imageFile) {
-                                    _handleImage(imageFile);
-                                  },
-                                )
-                              : _takenImage(context),
+              ConstrainedBox(
+                  constraints: BoxConstraints(
+                      maxWidth: Theme.of(context).maxRenderWidth),
+                  child: Column(
+                    children: [
+                      Stack(
+                        children: [
+                          AspectRatio(
+                            aspectRatio: 1.0,
+                            child: ClipRRect(
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(24)),
+                              child: Container(
+                                color: themeColors.primaryText,
+                                child: AnimatedSwitcher(
+                                  duration: const Duration(milliseconds: 300),
+                                  child: !hasImage
+                                      ? CameraCapture(
+                                          captureMode: CaptureMode.photoOnly,
+                                          onImageTaken: (imageFile) {
+                                            _handleImage(imageFile);
+                                          },
+                                        )
+                                      : _takenImage(context),
+                                ),
+                              ),
+                            ),
+                          ),
+                          if (hasImage)
+                            Positioned.fill(
+                              child: FileUploader(
+                                key: _uploader,
+                                assignProfile: false,
+                                onComplete: (uploadedFileUrl, error) {
+                                  if (uploadedFileUrl != null) {
+                                    Navigator.of(context).pop(uploadedFileUrl);
+                                  } else {
+                                    _showUploadError(context, error);
+                                  }
+                                },
+                              ),
+                            ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      if (hasImage) ...[
+                        TextButton(
+                          onPressed: !_uploading
+                              ? () async {
+                                  await _selectedImageFile?.delete();
+                                  setState(() {
+                                    _selectedImage = null;
+                                  });
+                                }
+                              : null,
+                          child: Text(
+                            t.edit,
+                            style: TextStyle(
+                                color: themeColors.linkText, fontSize: 14),
+                          ),
                         ),
-                      ),
-                    ),
-                  ),
-                  if (_selectedImage != null)
-                    Positioned.fill(
-                      child: FileUploader(
-                        key: _uploader,
-                        assignProfile: false,
-                        onComplete: (uploadedFileUrl, error) {
-                          if (uploadedFileUrl != null) {
-                            Navigator.of(context).pop(uploadedFileUrl);
-                          } else {
-                            _showUploadError(context, error);
-                          }
-                        },
-                      ),
-                    ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              if (_selectedImage != null) ...[
-                TextButton(
-                  onPressed: !_uploading
-                      ? () async {
-                          await _selectedImage!.delete();
-                          setState(() {
-                            _selectedImage = null;
-                          });
-                        }
-                      : null,
-                  child: Text(
-                    t.edit,
-                    style: TextStyle(color: themeColors.linkText, fontSize: 14),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Center(
-                  child: ThemedRaisedButton(
-                    onPressed: _selectedImage != null && !_uploading
-                        ? () {
-                            _uploadImage(context);
-                          }
-                        : null,
-                    label: t.joinCircle,
-                  ),
-                ),
-              ]
+                        const SizedBox(height: 8),
+                        Center(
+                          child: ThemedRaisedButton(
+                            onPressed: hasImage && !_uploading
+                                ? () {
+                                    _uploadImage(context);
+                                  }
+                                : null,
+                            label: t.joinCircle,
+                          ),
+                        ),
+                      ],
+                    ],
+                  )),
             ],
           );
         }
@@ -242,10 +260,17 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
   }
 
   Widget _takenImage(BuildContext context) {
-    return Image.file(
-      _selectedImage!,
-      fit: BoxFit.cover,
-    );
+    if (!kIsWeb) {
+      return Image.file(
+        _selectedImageFile!,
+        fit: BoxFit.cover,
+      );
+    } else {
+      return Image.memory(
+        _selectedImageBytes!,
+        fit: BoxFit.cover,
+      );
+    }
   }
 
   Future<void> _uploadImage(BuildContext context) async {
@@ -257,8 +282,14 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
   }
 
   Future<void> _handleImage(XFile imageFile) async {
+    if (kIsWeb) {
+      _selectedImageBytes = await imageFile.readAsBytes();
+    }
     setState(() {
-      _selectedImage = File(imageFile.path);
+      _selectedImage = imageFile;
+      if (!kIsWeb) {
+        _selectedImageFile = File(imageFile.path);
+      }
     });
   }
 

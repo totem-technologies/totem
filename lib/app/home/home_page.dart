@@ -21,7 +21,6 @@ class HomePage extends StatelessWidget {
               top: true,
               bottom: false,
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: const [
                   Expanded(
                     child: SnapCirclesList(),

@@ -1,5 +1,7 @@
 import 'dart:io';
+import 'dart:typed_data';
 
+import 'package:camera/camera.dart';
 import 'package:firebase_core/firebase_core.dart' as firebase_core;
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
@@ -31,7 +33,6 @@ class FileUploaderState extends ConsumerState<FileUploader> {
   final firebase_storage.FirebaseStorage _storage =
       firebase_storage.FirebaseStorage.instance;
   firebase_storage.UploadTask? _uploadTask;
-  File? _uploadFile;
   Map<String, dynamic>? upload;
   String? uploadContext;
 
@@ -57,15 +58,16 @@ class FileUploaderState extends ConsumerState<FileUploader> {
     }
   }
 
-  Future<void> profileImageUpload(File upload, AuthUser user) async {
+  Future<void> profileImageUpload(XFile upload, AuthUser user) async {
     const uuid = Uuid();
     try {
       firebase_storage.Reference ref =
           _storage.ref().child('user').child(user.uid).child(uuid.v1());
+      Uint8List bytes = await upload.readAsBytes();
 
       setState(() {
-        _uploadFile = upload;
-        _uploadTask = ref.putFile(_uploadFile!);
+        _uploadTask = ref.putData(bytes,
+            firebase_storage.SettableMetadata(contentType: upload.mimeType));
       });
       firebase_storage.TaskSnapshot? snapshot = await _uploadTask;
       if (snapshot != null) {
@@ -84,7 +86,7 @@ class FileUploaderState extends ConsumerState<FileUploader> {
     }
   }
 
-  Future<void> _completeUpload(File upload, {String url = ''}) async {
+  Future<void> _completeUpload(XFile? upload, {String url = ''}) async {
     if (url.isNotEmpty && widget.assignProfile) {
       var repo = ref.read(repositoryProvider);
       repo.updateUserProfileImage(url);

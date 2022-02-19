@@ -74,6 +74,7 @@
     "helpSessionProfileImage": "You can take an updated profile picture before the circle",
     "home": "Home",
     "info": "Info",
+    "initializingCamera": "Initializing Camera...",
     "joinCircle": "Join Circle",
     "joiningCircle": "Joining Circle",
     "joinSession": "Join Session",

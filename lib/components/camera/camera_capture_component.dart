@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:after_layout/after_layout.dart';
 import 'package:camera/camera.dart';
@@ -45,16 +46,17 @@ class CameraCaptureScreenState extends State<CameraCapture>
 
   Future<void> _initCamera() async {
     // check camera permissions here
-    PermissionStatus status = await Permission.camera.request();
-    if (status != PermissionStatus.granted) {
-      setState(() {
-        _permissionError = status;
-        _error = true;
-        _retry = false;
-      });
-      return;
+    if (!kIsWeb) {
+      PermissionStatus status = await Permission.camera.request();
+      if (status != PermissionStatus.granted) {
+        setState(() {
+          _permissionError = status;
+          _error = true;
+          _retry = false;
+        });
+        return;
+      }
     }
-
     _cameras = await availableCameras();
     if (_cameras!.isNotEmpty) {
       int startIndex = 0;
@@ -77,9 +79,11 @@ class CameraCaptureScreenState extends State<CameraCapture>
       setState(() {
         _initialized = true;
       });
-      _controller!.startImageStream((image) {
-        _savedImage = image;
-      });
+      if (!kIsWeb) {
+        _controller!.startImageStream((image) {
+          _savedImage = image;
+        });
+      }
     } else {
       setState(() {
         _initialized = true;
@@ -106,9 +110,21 @@ class CameraCaptureScreenState extends State<CameraCapture>
         return _buildCameraError(context);
       }
     } else if (!_initialized) {
+      final t = AppLocalizations.of(context)!;
       return Center(
-        child: BusyIndicator(
-          color: themeColor.reversedText,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            BusyIndicator(
+              color: themeColor.reversedText,
+            ),
+            const SizedBox(height: 20),
+            Text(
+              t.initializingCamera,
+              style: TextStyle(color: themeColor.reversedText, fontSize: 16),
+              textAlign: TextAlign.center,
+            ),
+          ],
         ),
       );
     }
@@ -130,7 +146,8 @@ class CameraCaptureScreenState extends State<CameraCapture>
             ),
           ),
         if (!_saving) _buildCameraControl(context),
-        if (!_saving) _buildCameraSelectorControl(context),
+        if (!_saving && _cameras != null && _cameras!.length > 1)
+          _buildCameraSelectorControl(context),
       ],
     );
   }
@@ -305,9 +322,11 @@ class CameraCaptureScreenState extends State<CameraCapture>
     if (mounted) {
       setState(() {});
       _initialized = true;
-      _controller!.startImageStream((image) {
-        _savedImage = image;
-      });
+      if (!kIsWeb) {
+        _controller!.startImageStream((image) {
+          _savedImage = image;
+        });
+      }
     }
   }
 
@@ -317,31 +336,44 @@ class CameraCaptureScreenState extends State<CameraCapture>
       debugPrint('About to pause preview');
       await _controller!.pausePreview();
       debugPrint('Pause Preview to take picture');
-      if (_savedImage != null) {
-        setState(() => _saving = true);
-        final Directory extDir = await getTemporaryDirectory();
-        const uuid = Uuid();
-        final path = extDir.path + "/" + uuid.v1() + ".jpg";
-        final result = await compute(processImage, {
-          'image': _savedImage!,
-          'path': path,
-          'mirror': (widget.mirrorFrontImage && _frontCamera),
-          'crop': widget.cropImage,
-          'rotation': _controller!.value.aspectRatio > 1
-              ? (_frontCamera ? 270 : 90)
-              : 0,
-        });
-        if (result != null) {
-          XFile file = XFile(result);
-          widget.onImageTaken(file);
-        } else {
-          setState(() {
-            _saving = false;
+      if (!kIsWeb) {
+        if (_savedImage != null) {
+          setState(() => _saving = true);
+          final Directory extDir = await getTemporaryDirectory();
+          const uuid = Uuid();
+          final path = extDir.path + "/" + uuid.v1() + ".jpg";
+          final result = await compute(processImage, {
+            'image': _savedImage!,
+            'path': path,
+            'mirror': (widget.mirrorFrontImage && _frontCamera),
+            'crop': widget.cropImage,
+            'rotation': _controller!.value.aspectRatio > 1
+                ? (_frontCamera ? 270 : 90)
+                : 0,
           });
-          showInSnackBar('Camera error, unrecognized format');
+          if (result != null) {
+            XFile file = XFile(result);
+            widget.onImageTaken(file);
+          } else {
+            setState(() {
+              _saving = false;
+            });
+            showInSnackBar('Camera error, unrecognized format');
+          }
+        } else {
+          showInSnackBar('Camera error, unable to capture image');
         }
       } else {
-        showInSnackBar('Camera error, unable to capture image');
+        setState(() => _saving = true);
+        XFile file = await _controller!.takePicture();
+        List<int> bytes = await file.readAsBytes();
+        List<int>? processedBytes = await compute(processLandscapePhoto, bytes);
+        if (processedBytes != null) {
+          file = XFile.fromData(Uint8List.fromList(processedBytes),
+              mimeType: file.mimeType);
+        }
+        widget.onImageTaken(file);
+        setState(() => _saving = false);
       }
     }
   }
@@ -443,6 +475,20 @@ Future<String?> processImage(Map<String, dynamic> data) async {
     return path;
   } catch (e) {
     debugPrint("image processing error:" + e.toString());
+  }
+  return null;
+}
+
+// run as isolate in background
+Future<List<int>?> processLandscapePhoto(List<int> imageBytes) async {
+  imglib.Image? originalImage = imglib.decodeImage(imageBytes);
+  if (originalImage != null) {
+    // crop to a square
+    int left = (originalImage.width / 2 - originalImage.height / 2).toInt();
+    originalImage = imglib.copyCrop(
+        originalImage, left, 0, originalImage.height, originalImage.height);
+    List<int> bytes = imglib.encodePng(originalImage);
+    return bytes;
   }
   return null;
 }

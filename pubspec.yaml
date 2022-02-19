@@ -26,7 +26,10 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   after_layout: ^1.1.0
-  agora_rtc_engine: ^4.2.0-rc.2
+  agora_rtc_engine:
+    git:
+      url: https://github.com/AgoraIO/Agora-Flutter-SDK
+      ref: littlegnal/update-dependecies
   auto_size_text: ^3.0.0-nullsafety.0
   cached_network_image: ^3.1.0
   camera: ^0.9.4+5

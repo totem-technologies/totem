@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:camera/camera.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,7 +12,7 @@ import 'package:totem/theme/index.dart';
 import 'file_uploader.dart';
 
 class FilePromptSave extends ConsumerStatefulWidget {
-  final File uploadTarget;
+  final XFile uploadTarget;
 
   const FilePromptSave({
     Key? key,
@@ -25,12 +27,15 @@ class _FilePromptSaveState extends ConsumerState<FilePromptSave> {
   static const double padding = 20;
   static const double imageRadius = 80;
   bool _uploading = false;
-  bool _exists = false;
+  bool _exists = true;
   final GlobalKey<FileUploaderState> _uploader = GlobalKey();
 
   @override
   void initState() {
-    _exists = widget.uploadTarget.existsSync();
+    if (!kIsWeb) {
+      File file = File(widget.uploadTarget.path);
+      _exists = file.existsSync();
+    }
     super.initState();
   }
 
@@ -84,11 +89,15 @@ class _FilePromptSaveState extends ConsumerState<FilePromptSave> {
                     CircleAvatar(
                       radius: imageRadius,
                       child: ClipOval(
-                          child: SizedBox(
-                              width: imageRadius * 2,
-                              height: imageRadius * 2,
-                              child: Image.file(widget.uploadTarget,
-                                  fit: BoxFit.cover))),
+                        child: SizedBox(
+                          width: imageRadius * 2,
+                          height: imageRadius * 2,
+                          child: !kIsWeb
+                              ? Image.file(File(widget.uploadTarget.path),
+                                  fit: BoxFit.cover)
+                              : Image.network(widget.uploadTarget.path),
+                        ),
+                      ),
                     ),
                     const SizedBox(
                       height: 22,

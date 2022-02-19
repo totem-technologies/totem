@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -43,66 +44,71 @@ class _PhoneRegisterNumberEntryState
     final t = AppLocalizations.of(context)!;
     return Padding(
       padding: const EdgeInsets.only(left: 35, right: 35),
-      child: Column(
-        children: [
-          const PhoneRegisterNumberHeader(),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: Theme.of(context).maxRenderWidth),
+        child: Column(
+          children: [
+            const PhoneRegisterNumberHeader(),
 
-          ///Country Picker and textField
-          Form(
-            key: formKey,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                InternationalPhoneNumberInput(
-                  autofillHints: const [AutofillHints.telephoneNumberNational],
-                  autoFocus: true,
-                  onInputChanged: (PhoneNumber number) {
-                    debugPrint(number.phoneNumber);
-                  },
-                  onInputValidated: (bool value) {
-                    debugPrint("$value");
-                  },
-                  selectorConfig: const SelectorConfig(
-                    setSelectorButtonAsPrefixIcon: true,
-                    selectorType: PhoneInputSelectorType.BOTTOM_SHEET,
-                    showFlags: true,
-                    trailingSpace: false,
-                  ),
-                  ignoreBlank: false,
-                  initialValue: numberController,
-                  textFieldController: _phoneNumberController,
-                  //formatInput: true,
-                  hintText: t.phoneNumber,
-                  errorMessage: t.errorInvalidPhoneNumber,
-                  inputDecoration: InputDecoration(
+            ///Country Picker and textField
+            Form(
+              key: formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  InternationalPhoneNumberInput(
+                    autofillHints: const [
+                      AutofillHints.telephoneNumberNational
+                    ],
+                    autoFocus: true,
+                    onInputChanged: (PhoneNumber number) {
+                      debugPrint(number.phoneNumber);
+                    },
+                    onInputValidated: (bool value) {
+                      debugPrint("$value");
+                    },
+                    selectorConfig: const SelectorConfig(
+                      setSelectorButtonAsPrefixIcon: true,
+                      selectorType: PhoneInputSelectorType.BOTTOM_SHEET,
+                      showFlags: true,
+                      trailingSpace: false,
+                    ),
+                    ignoreBlank: false,
+                    initialValue: numberController,
+                    textFieldController: _phoneNumberController,
+                    //formatInput: true,
                     hintText: t.phoneNumber,
-                    enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: themeColors.primaryText),
+                    errorMessage: t.errorInvalidPhoneNumber,
+                    inputDecoration: InputDecoration(
+                      hintText: t.phoneNumber,
+                      enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: themeColors.primaryText),
+                      ),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: themeColors.primaryText),
+                      ),
+                      border: UnderlineInputBorder(
+                        borderSide: BorderSide(color: themeColors.primaryText),
+                      ),
                     ),
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: themeColors.primaryText),
-                    ),
-                    border: UnderlineInputBorder(
-                      borderSide: BorderSide(color: themeColors.primaryText),
-                    ),
+                    keyboardType: TextInputType.phone,
+                    onSaved: (PhoneNumber number) {
+                      debugPrint('On Saved: $number');
+                      numberController = number;
+                    },
                   ),
-                  keyboardType: TextInputType.phone,
-                  onSaved: (PhoneNumber number) {
-                    debugPrint('On Saved: $number');
-                    numberController = number;
-                  },
-                ),
-                const SizedBox(height: 30),
-                ThemedRaisedButton(
-                  label: t.sendCode,
-                  busy: _busy,
-                  onPressed: onSubmit,
-                  width: Theme.of(context).standardButtonWidth,
-                ),
-              ],
+                  const SizedBox(height: 30),
+                  ThemedRaisedButton(
+                    label: t.sendCode,
+                    busy: _busy,
+                    onPressed: onSubmit,
+                    width: Theme.of(context).standardButtonWidth,
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -120,12 +126,14 @@ class _PhoneRegisterNumberEntryState
         });
       } else {
         // try reading from sim card
-        String? platformVersion = await FlutterSimCountryCode.simCountryCode;
-        if (platformVersion != null && platformVersion.isNotEmpty) {
-          setState(() {
-            numberController = PhoneNumber(
-                isoCode: platformVersion.toUpperCase(), phoneNumber: number);
-          });
+        if (!kIsWeb) {
+          String? platformVersion = await FlutterSimCountryCode.simCountryCode;
+          if (platformVersion != null && platformVersion.isNotEmpty) {
+            setState(() {
+              numberController = PhoneNumber(
+                  isoCode: platformVersion.toUpperCase(), phoneNumber: number);
+            });
+          }
         }
       }
     } on PlatformException catch (e) {
