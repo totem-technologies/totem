@@ -51,3 +51,6 @@ totem.ipa
 totem.app.dSYM.zip
 report.xml
 play-deploy-key.json
+
+# Firebase
+.firebase
