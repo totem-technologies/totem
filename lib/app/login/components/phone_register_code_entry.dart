@@ -1,9 +1,11 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:libphonenumber_plugin/libphonenumber_plugin.dart';
 import 'package:totem/app/login/components/pin_code_widget.dart';
+import 'package:totem/app_routes.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
@@ -34,7 +36,7 @@ class _PhoneRegisterCodeEntryState
       setState(() => _busy = false);
       await Navigator.pushReplacementNamed(
         context,
-        '/login/guideline',
+        AppRoutes.loginGuideline,
       );
     } on AuthException catch (e) {
       setState(() {
@@ -97,6 +99,9 @@ class _PhoneRegisterCodeEntryState
                 },
                 onComplete: (v) {
                   pinValue = v;
+                  if (kIsWeb && int.tryParse(pinValue) != null) {
+                    signInWithPhoneNumber();
+                  }
                 },
               ),
             ),

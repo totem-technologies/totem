@@ -16,32 +16,32 @@ class PhoneRegisterNumberError extends ConsumerWidget {
     final themeColors = Theme.of(context).themeColors;
     final t = AppLocalizations.of(context)!;
     return Padding(
-      padding: const EdgeInsets.only(left: 35, right: 35),
-      child: ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: Theme.of(context).maxRenderWidth),
-        child: Column(
-          children: [
-            const PhoneRegisterNumberHeader(),
-            Text(t.errorRegister,
-                style: textTheme.bodyText1!.merge(TextStyle(
-                    color: themeColors.error, fontWeight: FontWeight.bold))),
-            const SizedBox(
-              height: 10,
-            ),
-            Text(auth.lastRegisterError ?? t.errorRegisterUnknown),
-            const SizedBox(
-              height: 30,
-            ),
-            ThemedRaisedButton(
-              label: t.retrySignin,
-              onPressed: () {
-                auth.resetAuthError();
-              },
-              width: 294,
-            ),
-          ],
-        ),
-      ),
-    );
+        padding: const EdgeInsets.only(left: 35, right: 35),
+        child: ConstrainedBox(
+          constraints:
+              BoxConstraints(maxWidth: Theme.of(context).maxRenderWidth),
+          child: Column(
+            children: [
+              const PhoneRegisterNumberHeader(),
+              Text(t.errorRegister,
+                  style: textTheme.bodyText1!.merge(TextStyle(
+                      color: themeColors.error, fontWeight: FontWeight.bold))),
+              const SizedBox(
+                height: 10,
+              ),
+              Text(auth.lastRegisterError ?? t.errorRegisterUnknown),
+              const SizedBox(
+                height: 30,
+              ),
+              ThemedRaisedButton(
+                label: t.retrySignin,
+                onPressed: () {
+                  auth.resetAuthError();
+                },
+                width: 294,
+              ),
+            ],
+          ),
+        ));
   }
 }

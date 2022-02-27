@@ -90,7 +90,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
         await _engine!.joinChannelWithUserAccount(
             _sessionToken.token, session.id, userId);
       } else {
-        int uid = Random().nextInt(10000);
+        int uid = Random().nextInt(100000);
         _sessionToken = await sessionProvider.requestSessionTokenWithUID(
             session: session, uid: uid);
         await _engine!.joinChannel(_sessionToken.token, session.id, null, uid);
@@ -189,7 +189,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
           await _engine!.enableAudio();
           await _engine!.setDefaultAudioRoutetoSpeakerphone(true);
           await _engine!.enableDeepLearningDenoise(true);
-          if (!kIsWeb) {
+          if (true) {
             await _engine!.enableAudioVolumeIndication(200, 3, true);
           }
           if (enableVideo) {
@@ -474,10 +474,13 @@ class AgoraCommunicationProvider extends CommunicationProvider {
 
   void _handleAudioVolumeIndication(
       List<AudioVolumeInfo> speakers, int totalVolume) {
+    debugPrint('Audio volume: ${totalVolume.toString()}');
     if (!_isIndicatorStreamOpen) {
       return;
     }
+
     var infos = speakers.map((info) {
+      debugPrint('speaker: ${info.uid.toString()} ${info.vad.toString()}');
       return CommunicationAudioVolumeInfo(
           uid: info.uid, volume: info.volume, speaking: info.vad == 1);
     }).toList();

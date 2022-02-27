@@ -96,6 +96,9 @@ class _PhoneRegisterNumberEntryState
                       debugPrint('On Saved: $number');
                       numberController = number;
                     },
+                    onFieldSubmitted: (value) {
+                      onSubmit();
+                    },
                   ),
                   const SizedBox(height: 30),
                   ThemedRaisedButton(

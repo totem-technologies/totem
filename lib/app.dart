@@ -3,19 +3,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:totem/app/guideline_screen.dart';
-import 'package:totem/app/profile/index.dart';
-import 'package:totem/app/profile/onboarding_profile_page.dart';
-import 'package:totem/components/fade_route.dart';
+import 'package:totem/app_routes.dart';
 import 'package:totem/theme/index.dart';
 
 import 'app/auth.dart';
-import 'app/circle/circle_create_page.dart';
-import 'app/circle/circle_create_snap_page.dart';
 import 'app/home/home_page.dart';
 import 'app/login/login_page.dart';
-import 'app/login/phone_register_page.dart';
-import 'app/settings/settings_page.dart';
 
 class App extends StatelessWidget {
   const App({Key? key}) : super(key: key);
@@ -49,33 +42,7 @@ class App extends StatelessWidget {
           signedInBuilder: (_) => const HomePage(),
         ),
       ),
-      onGenerateRoute: (settings) {
-        switch (settings.name) {
-          case '/login':
-            return MaterialPageRoute(builder: (_) => const LoginPage());
-          case '/login/phone':
-            return FadeRoute(page: const RegisterPage());
-          case '/login/guideline':
-            return FadeRoute(page: const GuidelineScreen());
-          case '/login/onboarding':
-            return FadeRoute(page: const OnboardingProfilePage());
-          case '/circle/create':
-            return MaterialPageRoute(builder: (_) => const CircleCreatePage());
-          case '/snap_circle/create':
-            return MaterialPageRoute(
-                builder: (_) => const CircleCreateSnapPage());
-          case '/settings':
-            return MaterialPageRoute(
-                builder: (_) =>
-                    LoggedinGuard(builder: (_) => const SettingsPage()));
-          case '/profile':
-            return MaterialPageRoute(
-                builder: (_) =>
-                    LoggedinGuard(builder: (_) => const UserProfilePage()));
-          default:
-            return null;
-        }
-      },
+      onGenerateRoute: AppRoutes.generateRoute,
     );
   }
 

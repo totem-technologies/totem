@@ -3,8 +3,8 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:totem/app/circle/circle_join_dialog.dart';
-import 'package:totem/app/circle/circle_session_page.dart';
 import 'package:totem/app/home/components/index.dart';
+import 'package:totem/app_routes.dart';
 import 'package:totem/components/widgets/busy_indicator.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
@@ -121,12 +121,10 @@ class _SnapCirclesListState extends ConsumerState<SnapCirclesList> {
         session: circle.activeSession!,
       );
       Future.delayed(const Duration(milliseconds: 300), () async {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) => CircleSessionPage(
-                session: circle.snapSession, sessionImage: sessionImage),
-          ),
-        );
+        Navigator.of(context).pushNamed(AppRoutes.circle, arguments: {
+          'session': circle.snapSession,
+          'image': sessionImage,
+        });
       });
     }
   }

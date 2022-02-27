@@ -107,6 +107,9 @@ class FirebaseAuthService implements AuthService {
         final UserCredential credential =
             await _confirmationResult!.confirm(code);
         _handleUserAuth(credential);
+      } on FirebaseAuthException catch (fe) {
+        debugPrint('Auth Error: ${fe.message}');
+        throw AuthException(code: fe.code, message: fe.message);
       } catch (ex) {
         throw AuthException(code: "invalid", message: ex.toString());
       }
