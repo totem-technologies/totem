@@ -189,9 +189,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
           await _engine!.enableAudio();
           await _engine!.setDefaultAudioRoutetoSpeakerphone(true);
           await _engine!.enableDeepLearningDenoise(true);
-          if (true) {
-            await _engine!.enableAudioVolumeIndication(200, 3, true);
-          }
+          await _engine!.enableAudioVolumeIndication(200, 3, true);
           if (enableVideo) {
             await _engine!.setVideoEncoderConfiguration(
                 VideoEncoderConfiguration(
