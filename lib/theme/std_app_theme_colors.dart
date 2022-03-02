@@ -11,7 +11,7 @@ class StdThemePalette {
   static const baseWhite = Color(0xffffffff);
   static const offWhite = Color(0xffefefef);
   static const offWhite2 = Color(0xfffffdf9);
-  static const dirtyWhite = Color.fromRGBO(255, 255, 255, 0.75);
+  static const dirtyWhite = Color.fromRGBO(255, 255, 255, 0.8);
   static const welcomeGradient = [Color(0xfffff9ec), Color(0xffffd472)];
   static const mainGradient = [Color(0xfffffdf9), Color(0xfffeeecc)];
   static const homeGradient = [Color(0xfffffdf9), Color(0xfffef7e8)];

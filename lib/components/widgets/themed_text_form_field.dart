@@ -28,6 +28,7 @@ class ThemedTextFormField extends StatelessWidget {
     this.contentPadding,
     this.isDense = true,
     this.autofillHints,
+    this.onChanged,
     this.maxLength,
     this.onFieldSubmitted,
   }) : super(key: key);
@@ -55,6 +56,7 @@ class ThemedTextFormField extends StatelessWidget {
   final bool isDense;
   final Iterable<String>? autofillHints;
   final int? maxLength;
+  final void Function(String)? onChanged;
   final Function(String)? onFieldSubmitted;
 
   @override
@@ -89,6 +91,7 @@ class ThemedTextFormField extends StatelessWidget {
       autovalidateMode: autovalidateMode,
       autofocus: autofocus,
       onEditingComplete: onEditingComplete,
+      onChanged: onChanged,
       maxLength: maxLength,
       buildCounter: (maxLength ?? 0) > 0 ? InputCounter.counterWidget : null,
       onFieldSubmitted: onFieldSubmitted,

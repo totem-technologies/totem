@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:camera/camera.dart';
+import 'package:cupertino_will_pop_scope/cupertino_will_pop_scope.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -34,6 +35,7 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
   XFile? _pendingImageChange;
   File? _pendingImageChangeFile;
   bool _pendingClose = false;
+  bool _hasChanged = false;
 
   bool get hasChanged {
     return (_userProfile != null &&
@@ -64,7 +66,7 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         backgroundColor: Colors.transparent,
-        body: WillPopScope(
+        body: ConditionalWillPopScope(
           onWillPop: () async {
             if (_busy) {
               return false;
@@ -73,6 +75,7 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
             }
             return true;
           },
+          shouldAddCallback: _hasChanged,
           child: GestureDetector(
               behavior: HitTestBehavior.translucent,
               onTap: () {
@@ -254,15 +257,13 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
                                                       _promptSignOut(context);
                                                     }
                                                   : null,
-                                              child: Text(t.signOut,
-                                                  style: const TextStyle(
-                                                      fontSize: 12)),
+                                              child: Text(t.signOut),
                                             ),
                                           ],
                                         ),
                                         const SizedBox(height: 4),
                                         const VersionInfo(),
-                                        const SizedBox(height: 20),
+                                        const SizedBox(height: 40),
                                       ],
                                     ),
                                   ),
@@ -295,6 +296,7 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
       _pendingImageChangeFile?.delete();
       setState(() {
         _pendingImageChange = imagePath;
+        _hasChanged = true;
         if (!kIsWeb) {
           _pendingImageChangeFile = File(imagePath.path);
         }
@@ -527,6 +529,7 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
                   }
                   return null;
                 },
+                onChanged: _checkHasChanged,
               ),
               const SizedBox(height: 22),
               _profileLabelItem(context,
@@ -540,6 +543,7 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
                 keyboardType: TextInputType.emailAddress,
                 autovalidateMode: AutovalidateMode.onUserInteraction,
                 autocorrect: false,
+                onChanged: _checkHasChanged,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return t.errorEnterEmail;
@@ -564,6 +568,13 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
         );
       },
     );
+  }
+
+  void _checkHasChanged(String val) {
+    bool changed = hasChanged;
+    if (changed != _hasChanged) {
+      setState(() => _hasChanged = changed);
+    }
   }
 
   Future<String> _formatPhoneNumber(String phoneNumber) async {
@@ -619,6 +630,15 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
       _saveForm();
       return false;
     }
-    return result == 1;
+    if (result == 1) {
+      setState(() {
+        _hasChanged = false;
+      });
+      // set a delay to process on next cycle after _hasChange has been set
+      Future.delayed(const Duration(milliseconds: 0), () {
+        Navigator.of(context).pop();
+      });
+    }
+    return false;
   }
 }
