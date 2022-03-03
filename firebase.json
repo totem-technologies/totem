@@ -8,7 +8,11 @@
     ],
     "rewrites": [
       {
-        "source": "**",
+        "source": "/c/**",
+        "dynamicLinks": true
+      },
+      {
+        "source": "!/c/**",
         "destination": "/index.html"
       }
     ]
