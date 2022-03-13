@@ -21,4 +21,5 @@ RELEASE=`grep 'version:' pubspec.yaml | sed 's/version: //'`
 TAG=v$RELEASE
 log "Tagging version $TAG..."
 git tag $TAG
+git push origin
 git push origin $TAG
