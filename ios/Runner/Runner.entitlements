@@ -8,6 +8,8 @@
 	<array>
 		<string>webcredentials:app.heytotem.com</string>
 		<string>applinks:app.heytotem.com</string>
+		<string>webcredentials:c.heytotem.com</string>
+		<string>applinks:c.heytotem.com</string>
 	</array>
 </dict>
 </plist>
