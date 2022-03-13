@@ -369,6 +369,9 @@ PODS:
   - Firebase/Crashlytics (8.11.0):
     - Firebase/CoreOnly
     - FirebaseCrashlytics (~> 8.11.0)
+  - Firebase/DynamicLinks (8.11.0):
+    - Firebase/CoreOnly
+    - FirebaseDynamicLinks (~> 8.11.0)
   - Firebase/Firestore (8.11.0):
     - Firebase/CoreOnly
     - FirebaseFirestore (~> 8.11.0)
@@ -392,6 +395,10 @@ PODS:
     - Flutter
   - firebase_crashlytics (2.5.3):
     - Firebase/Crashlytics (= 8.11.0)
+    - firebase_core
+    - Flutter
+  - firebase_dynamic_links (4.0.8):
+    - Firebase/DynamicLinks (= 8.11.0)
     - firebase_core
     - Flutter
   - firebase_storage (10.2.9):
@@ -423,6 +430,8 @@ PODS:
     - GoogleUtilities/Environment (~> 7.7)
     - nanopb (~> 2.30908.0)
     - PromisesObjC (< 3.0, >= 1.2)
+  - FirebaseDynamicLinks (8.11.0):
+    - FirebaseCore (~> 8.0)
   - FirebaseFirestore (8.11.0):
     - abseil/algorithm (= 0.20200225.0)
     - abseil/base (= 0.20200225.0)
@@ -540,6 +549,7 @@ DEPENDENCIES:
   - firebase_auth (from `.symlinks/plugins/firebase_auth/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - firebase_crashlytics (from `.symlinks/plugins/firebase_crashlytics/ios`)
+  - firebase_dynamic_links (from `.symlinks/plugins/firebase_dynamic_links/ios`)
   - firebase_storage (from `.symlinks/plugins/firebase_storage/ios`)
   - Flutter (from `Flutter`)
   - flutter_foreground_task (from `.symlinks/plugins/flutter_foreground_task/ios`)
@@ -564,6 +574,7 @@ SPEC REPOS:
     - FirebaseCore
     - FirebaseCoreDiagnostics
     - FirebaseCrashlytics
+    - FirebaseDynamicLinks
     - FirebaseFirestore
     - FirebaseFunctions
     - FirebaseInstallations
@@ -596,6 +607,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/firebase_core/ios"
   firebase_crashlytics:
     :path: ".symlinks/plugins/firebase_crashlytics/ios"
+  firebase_dynamic_links:
+    :path: ".symlinks/plugins/firebase_dynamic_links/ios"
   firebase_storage:
     :path: ".symlinks/plugins/firebase_storage/ios"
   Flutter:
@@ -634,12 +647,14 @@ SPEC CHECKSUMS:
   firebase_auth: 99c9cdc8cc2e59f6fd4960b6e183f5430d237838
   firebase_core: 08f6a85f62060111de5e98d6a214810d11365de9
   firebase_crashlytics: 28149c943342a73fefe1afef224d345cfb35e1ee
+  firebase_dynamic_links: e552f478d686275a68c7a62444c1ab4e069a276d
   firebase_storage: 5b964cad5f351e9c35f8b0e0b878cdd095f30d09
   FirebaseAppCheck: 533dc5089466b73349aa63ffdf468a387a67fd26
   FirebaseAuth: d96d73aba85d192d7a7aa0b86dd6d7f8ec170b4b
   FirebaseCore: 2f4f85b453cc8fea4bb2b37e370007d2bcafe3f0
   FirebaseCoreDiagnostics: 3b40dfadef5b90433a60ae01f01e90fe87aa76aa
   FirebaseCrashlytics: 62268addefae79601057818156e8bc69d71fee41
+  FirebaseDynamicLinks: f506c83eb7eba0f9861f84cd6b65c38b3bd5ff6f
   FirebaseFirestore: 3b2e4b532c68809b3df5f8d39d28b3398ffc196b
   FirebaseFunctions: 2bad3e4365dee72a85a6baa6ccd684f024d14696
   FirebaseInstallations: 25764cf322e77f99449395870a65b2bef88e1545

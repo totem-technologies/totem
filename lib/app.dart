@@ -1,4 +1,5 @@
 import 'package:cupertino_will_pop_scope/cupertino_will_pop_scope.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
@@ -11,8 +12,30 @@ import 'app/auth.dart';
 import 'app/home/home_page.dart';
 import 'app/login/login_page.dart';
 
-class App extends StatelessWidget {
+class App extends StatefulWidget {
   const App({Key? key}) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() => _AppState();
+}
+
+class _AppState extends State<App> {
+  FirebaseDynamicLinks dynamicLinks = FirebaseDynamicLinks.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    initDynamicLinks();
+  }
+
+  Future<void> initDynamicLinks() async {
+    dynamicLinks.onLink.listen((dynamicLinkData) {
+      _handleDynamicLink(dynamicLinkData.link);
+    }).onError((error) {
+      debugPrint('onLink error');
+      debugPrint(error.message);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,5 +100,9 @@ class App extends StatelessWidget {
         },
       ),
     );
+  }
+
+  Future<void> _handleDynamicLink(Uri link) async {
+    debugPrint('Handling dynamic link: ${link.path}');
   }
 }

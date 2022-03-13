@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/foundation.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/circles_provider.dart';
@@ -133,13 +134,28 @@ class FirebaseCirclesProvider extends CirclesProvider {
     };
     data["activeSession"] = snapSession;
     try {
-      DocumentReference ref = await FirebaseFirestore.instance
-          .collection(Paths.snapCircles)
-          .add(data);
-      // return circle
-      SnapCircle circle = SnapCircle.fromJson(data, id: ref.id, ref: ref.path);
-      circle.createdBy = await _userFromRef(userRef);
-      return circle;
+      HttpsCallable callable =
+          FirebaseFunctions.instance.httpsCallable('createSnapCircle');
+      final data = {
+        "name": name,
+      };
+      if (description != null) {
+        data["description"] = description;
+      }
+      final result = await callable(data);
+      final String id = result.data['id'];
+      debugPrint('completed startSnapSession with result $id');
+      DocumentReference ref =
+          FirebaseFirestore.instance.collection(Paths.snapCircles).doc(id);
+      DocumentSnapshot circleSnapshot = await ref.get();
+      if (circleSnapshot.exists) {
+        SnapCircle circle = SnapCircle.fromJson(
+            circleSnapshot.data() as Map<String, dynamic>,
+            id: ref.id,
+            ref: ref.path);
+        circle.createdBy = await _userFromRef(userRef);
+        return circle;
+      }
     } on FirebaseException catch (e) {
       // TODO: throw specific exception here
       throw (ServiceException(code: e.code, message: e.message));
