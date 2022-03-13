@@ -164,6 +164,19 @@ class FirebaseSessionProvider extends SessionProvider {
   }
 
   @override
+  Future<SessionToken> requestSessionTokenWithUID(
+      {required Session session, required int uid}) async {
+    try {
+      HttpsCallable callable =
+          FirebaseFunctions.instance.httpsCallable('getTokenWithUserId');
+      final result = await callable({"channelName": session.id, "userId": uid});
+      return SessionToken.fromJson(result.data);
+    } catch (ex) {
+      throw ServiceException(code: "token_error", reference: session.ref);
+    }
+  }
+
+  @override
   Future<void> endActiveSession() async {
     if (_activeSession != null) {
       bool complete = _activeSession!.state == SessionState.live;

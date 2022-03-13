@@ -29,6 +29,7 @@ class CircleParticipantVideo extends ConsumerWidget {
             rtc_local_view.SurfaceView(),
           if (!participant.me && !participant.videoMuted)
             rtc_remote_view.SurfaceView(
+              channelId: commProvider.channelId,
               uid: int.parse(participant.sessionUserId!),
             ),
           if ((participant.me && commProvider.videoMuted) ||
@@ -147,16 +148,19 @@ class CircleParticipantVideo extends ConsumerWidget {
     }
     return CachedNetworkImage(
       imageUrl: participant.sessionImage!,
-      errorWidget: (context, url, error) => _genericUserImage(context),
+      errorWidget: (context, url, error) {
+        return _genericUserImage(context);
+      },
     );
   }
 
   Widget _genericUserImage(BuildContext context) {
-    return Icon(
+    return Center(
+        child: Icon(
       Icons.account_circle_rounded,
       size: 80,
       color: Theme.of(context).themeColors.primaryText,
-    );
+    ));
   }
 
   Widget _gradientLayer(BuildContext context) {

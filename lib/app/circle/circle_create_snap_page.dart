@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:totem/components/fade_route.dart';
+import 'package:totem/app_routes.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
 
 import 'circle_join_dialog.dart';
-import 'circle_session_page.dart';
 
 class CircleCreateSnapPage extends ConsumerStatefulWidget {
   const CircleCreateSnapPage({Key? key}) : super(key: key);
@@ -79,7 +78,7 @@ class _CircleCreatePageState extends ConsumerState<CircleCreateSnapPage> {
                                     }
                                     return null;
                                   },
-                                  maxLines: 0,
+                                  maxLines: 1,
                                   maxLength: 50,
                                 ),
                                 const SizedBox(height: 32),
@@ -148,15 +147,10 @@ class _CircleCreatePageState extends ConsumerState<CircleCreateSnapPage> {
           // Create the active session
           await repo.createActiveSession(session: circle.activeSession!);
           // prompt user for image
-          Navigator.pushReplacement(
-            context,
-            FadeRoute(
-              page: CircleSessionPage(
-                session: circle.snapSession,
-                sessionImage: sessionImage,
-              ),
-            ),
-          );
+          Navigator.pushReplacementNamed(context, AppRoutes.circle, arguments: {
+            'session': circle.snapSession,
+            'image': sessionImage,
+          });
           return;
         } else {
           // leave session in place or cancel?

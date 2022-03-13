@@ -17,7 +17,8 @@ class ProfileImage extends ConsumerWidget {
     this.textColor,
     this.textSize = 30,
     this.useIcon = true,
-    this.localImage,
+    this.localImageFile,
+    this.localImagePath,
     this.shape = BoxShape.rectangle,
     this.profile,
     this.borderRadius,
@@ -27,10 +28,15 @@ class ProfileImage extends ConsumerWidget {
   final Color? textColor;
   final double textSize;
   final bool useIcon;
-  final File? localImage;
+  final File? localImageFile;
+  final String? localImagePath;
   final BoxShape shape;
   final UserProfile? profile;
   final double? borderRadius;
+
+  bool get hasLocalImage {
+    return localImagePath != null || localImageFile != null;
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -40,7 +46,7 @@ class ProfileImage extends ConsumerWidget {
         width: size,
         height: size,
         child: userProfileChanges.when(
-          data: (userProfile) => (localImage != null)
+          data: (userProfile) => (hasLocalImage)
               ? _localProfileImage(context)
               : _component(context, userProfile),
           loading: () => _userPlaceholder(context),
@@ -95,7 +101,10 @@ class ProfileImage extends ConsumerWidget {
   }
 
   Widget _localProfileImage(BuildContext context) {
-    return _container(context, imageProvider: FileImage(localImage!));
+    if (localImageFile != null) {
+      return _container(context, imageProvider: FileImage(localImageFile!));
+    }
+    return _container(context, imageProvider: NetworkImage(localImagePath!));
   }
 
   Widget _component(BuildContext context, UserProfile? userProfile) {
@@ -117,7 +126,7 @@ class ProfileImage extends ConsumerWidget {
                       ),
                     ),
                   ))
-            : Container());
+            : null);
   }
 
   Widget _userPlaceholder(BuildContext context, {UserProfile? userProfile}) {

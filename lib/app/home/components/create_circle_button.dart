@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:totem/app_routes.dart';
 import 'package:totem/components/widgets/index.dart';
 
 class CreateCircleButton extends StatelessWidget {
@@ -13,7 +14,7 @@ class CreateCircleButton extends StatelessWidget {
       height: 52,
       onPressed: () {
         // build new circle
-        Navigator.of(context).pushNamed('/snap_circle/create');
+        Navigator.of(context).pushNamed(AppRoutes.snapCircleCreate);
       },
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
       child: Wrap(

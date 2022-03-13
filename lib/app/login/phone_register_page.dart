@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:totem/app/login/components/phone_register_code_entry.dart';
 import 'package:totem/app/login/components/phone_register_number_entry.dart';
 import 'package:totem/app/login/components/phone_register_number_error.dart';
+import 'package:totem/app_routes.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
@@ -27,7 +28,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
       if (event == AuthRequestState.complete) {
         Navigator.pushReplacementNamed(
           context,
-          '/login/guideline',
+          AppRoutes.loginGuideline,
         );
       }
     });

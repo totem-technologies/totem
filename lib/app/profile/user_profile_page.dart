@@ -1,7 +1,9 @@
 import 'dart:io';
 
+import 'package:camera/camera.dart';
 import 'package:cupertino_will_pop_scope/cupertino_will_pop_scope.dart';
 import 'package:email_validator/email_validator.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -30,7 +32,8 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
   UserProfile? _userProfile;
   bool _busy = false;
   final GlobalKey<FileUploaderState> _uploader = GlobalKey();
-  File? _pendingImageChange;
+  XFile? _pendingImageChange;
+  File? _pendingImageChangeFile;
   bool _pendingClose = false;
   bool _hasChanged = false;
 
@@ -50,7 +53,7 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
 
   @override
   void dispose() async {
-    _pendingImageChange?.delete();
+    _pendingImageChangeFile?.delete();
     super.dispose();
   }
 
@@ -139,8 +142,11 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
                                                   onTap: () =>
                                                       _getUserImage(context),
                                                   child: ProfileImage(
-                                                    localImage:
-                                                        _pendingImageChange,
+                                                    localImagePath:
+                                                        _pendingImageChange
+                                                            ?.path,
+                                                    localImageFile:
+                                                        _pendingImageChangeFile,
                                                   ),
                                                 ),
                                                 if (_pendingImageChange != null)
@@ -284,13 +290,16 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
     if (_busy) {
       return;
     }
-    String? imagePath = await ProfileImageDialog.showDialog(context,
+    XFile? imagePath = await ProfileImageDialog.showDialog(context,
         userProfile: _userProfile!);
     if (imagePath != null) {
-      _pendingImageChange?.delete();
+      _pendingImageChangeFile?.delete();
       setState(() {
-        _pendingImageChange = File(imagePath);
+        _pendingImageChange = imagePath;
         _hasChanged = true;
+        if (!kIsWeb) {
+          _pendingImageChangeFile = File(imagePath.path);
+        }
       });
     }
   }
@@ -299,7 +308,8 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
     if (uploadedUrl != null) {
       _userProfile!.image = uploadedUrl;
       // delete pending image
-      _pendingImageChange?.delete();
+      _pendingImageChangeFile?.delete();
+      _pendingImageChangeFile = null;
       _pendingImageChange = null;
       await ref.read(repositoryProvider).updateUserProfile(_userProfile!);
       setState(() => _busy = false);

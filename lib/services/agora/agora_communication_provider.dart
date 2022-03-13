@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:agora_rtc_engine/rtc_engine.dart';
 import 'package:flutter/foundation.dart';
@@ -35,6 +36,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   bool _isIndicatorStreamOpen = false;
   StreamController<CommunicationAudioVolumeIndication>?
       _audioIndicatorStreamController;
+  dynamic _channel;
 
   @override
   String? get lastError {
@@ -43,6 +45,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
 
   @override
   void dispose() {
+    _channel = null;
     try {
       sessionProvider.removeListener(_updateCommunicationFromSession);
       _engine?.destroy();
@@ -80,10 +83,18 @@ class AgoraCommunicationProvider extends CommunicationProvider {
       // TODO - Call SessionProvider to get token for current session
       // This will hit the server which will generate a token for the user
       // this is currently using the test token
-      _sessionToken =
-          await sessionProvider.requestSessionToken(session: session);
-      await _engine!
-          .joinChannelWithUserAccount(_sessionToken.token, session.id, userId);
+      if (!kIsWeb) {
+        await _engine!.registerLocalUserAccount(appId, userId);
+        _sessionToken =
+            await sessionProvider.requestSessionToken(session: session);
+        await _engine!.joinChannelWithUserAccount(
+            _sessionToken.token, session.id, userId);
+      } else {
+        int uid = Random().nextInt(100000);
+        _sessionToken = await sessionProvider.requestSessionTokenWithUID(
+            session: session, uid: uid);
+        await _engine!.joinChannel(_sessionToken.token, session.id, null, uid);
+      }
     } catch (ex) {
       debugPrint('unable to activate agora session: ' + ex.toString());
       _updateState(CommunicationState.failed);
@@ -157,17 +168,20 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   Future<void> _assertEngine(bool enableVideo) async {
     if (_engine == null) {
       try {
-        PermissionStatus statusValue = await Permission.bluetooth.request();
-        if (statusValue != PermissionStatus.granted &&
-            statusValue != PermissionStatus.limited) {
-          debugPrint('Failed requesting bluetooth!');
+        PermissionStatus statusValue = PermissionStatus.granted;
+        if (!kIsWeb) {
+          statusValue = await Permission.bluetooth.request();
+          if (statusValue != PermissionStatus.granted &&
+              statusValue != PermissionStatus.limited) {
+            debugPrint('Failed requesting bluetooth!');
+          }
+          statusValue = await Permission.bluetoothConnect.request();
+          if (statusValue != PermissionStatus.granted &&
+              statusValue != PermissionStatus.limited) {
+            debugPrint('Failed requesting bluetooth connect!');
+          }
+          statusValue = await Permission.microphone.request();
         }
-        statusValue = await Permission.bluetoothConnect.request();
-        if (statusValue != PermissionStatus.granted &&
-            statusValue != PermissionStatus.limited) {
-          debugPrint('Failed requesting bluetooth connect!');
-        }
-        statusValue = await Permission.microphone.request();
         if (statusValue == PermissionStatus.granted ||
             statusValue == PermissionStatus.limited) {
           _engine = await RtcEngine.create(appId);
@@ -310,7 +324,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
       sessionProvider.activeSession?.updateVideoMutedStateForUser(
           sessionUserId: uid.toString(), muted: false);
     }
-    debugPrint('Remote audio state change for user: ' +
+    debugPrint('Remote video state change for user: ' +
         uid.toString() +
         ' state: ' +
         state.toString() +
@@ -329,6 +343,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
 
   Future<void> _handleJoinSession(channel, uid, elapsed) async {
     commUid = uid;
+    _channel = channel;
     // Update the session to add user information to session display
     await sessionProvider.joinSession(
         session: _session!,
@@ -350,7 +365,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
 
     // for android, start a foreground service to keep the process running
     // to prevent drops in connection
-    if (Platform.isAndroid) {
+    if (!kIsWeb && Platform.isAndroid) {
       SessionForeground.instance.startSessionTask();
     }
   }
@@ -358,7 +373,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   Future<void> _handleLeaveSession(stats) async {
     // for android, start a foreground service to keep the process running
     // to prevent drops in connection
-    if (Platform.isAndroid) {
+    if (!kIsWeb && Platform.isAndroid) {
       SessionForeground.instance.stopSessionTask();
     }
 
@@ -380,6 +395,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
       _handler!.leaveCircle!();
     }
     _handler = null;
+    _channel = null;
     // only notify if the user didn't request to leave
     _updateState(CommunicationState.disconnected,
         notify: !_pendingRequestLeave);
@@ -413,6 +429,22 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     if (state == CommunicationState.active) {
       if (mute != muted) {
         _engine?.muteLocalAudioStream(mute);
+        if (kIsWeb) {
+          // FIXME - TEMP - Right now it seems that the
+          // audio publishing changes made locally are
+          // not coming, so to work around this,
+          // call the callback directly to simulate the
+          // callback that should come and trigger the state change
+          _handleAudioPublishStateChanged(
+              _channel,
+              mute
+                  ? StreamPublishState.Published
+                  : StreamPublishState.NoPublished,
+              mute
+                  ? StreamPublishState.NoPublished
+                  : StreamPublishState.Published,
+              0);
+        }
       }
     }
   }
@@ -440,10 +472,13 @@ class AgoraCommunicationProvider extends CommunicationProvider {
 
   void _handleAudioVolumeIndication(
       List<AudioVolumeInfo> speakers, int totalVolume) {
+    debugPrint('Audio volume: ${totalVolume.toString()}');
     if (!_isIndicatorStreamOpen) {
       return;
     }
+
     var infos = speakers.map((info) {
+      debugPrint('speaker: ${info.uid.toString()} ${info.vad.toString()}');
       return CommunicationAudioVolumeInfo(
           uid: info.uid, volume: info.volume, speaking: info.vad == 1);
     }).toList();
@@ -471,7 +506,26 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     if (state == CommunicationState.active) {
       if (mute != videoMuted) {
         await _engine?.muteLocalVideoStream(mute);
+        // FIXME - TEMP - Right now it seems that the
+        // video publishing changes made locally are
+        // not coming, so to work around this,
+        // call the callback directly to simulate the
+        // callback that should come and trigger the state change
+        _handleVideoPublishStateChanged(
+            _channel,
+            mute
+                ? StreamPublishState.Published
+                : StreamPublishState.NoPublished,
+            mute
+                ? StreamPublishState.NoPublished
+                : StreamPublishState.Published,
+            0);
       }
     }
+  }
+
+  @override
+  dynamic get channelId {
+    return _channel;
   }
 }

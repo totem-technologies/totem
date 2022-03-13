@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:totem/app_routes.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/auth_user.dart';
 import 'package:totem/services/index.dart';
@@ -100,7 +101,7 @@ class GuidelineScreen extends ConsumerWidget {
               if (authUser != null && authUser.isNewUser) {
                 Navigator.pushReplacementNamed(
                   context,
-                  '/login/onboarding',
+                  AppRoutes.loginOnboarding,
                 );
               } else {
                 Navigator.of(context).pop();

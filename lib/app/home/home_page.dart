@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:totem/app/home/components/index.dart';
+import 'package:totem/app_routes.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/theme/index.dart';
 
@@ -21,7 +22,6 @@ class HomePage extends StatelessWidget {
               top: true,
               bottom: false,
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: const [
                   Expanded(
                     child: SnapCirclesList(),
@@ -98,6 +98,6 @@ class HomePage extends StatelessWidget {
   }
 
   void _showProfile(BuildContext context) {
-    Navigator.of(context).pushNamed('/profile');
+    Navigator.of(context).pushNamed(AppRoutes.userProfile);
   }
 }

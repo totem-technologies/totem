@@ -1,8 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/theme/index.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CircleParticipant extends StatelessWidget {
   const CircleParticipant(
@@ -152,10 +152,12 @@ class CircleParticipant extends StatelessWidget {
   }
 
   Widget _genericUserImage(BuildContext context) {
-    return Icon(
-      Icons.account_circle_rounded,
-      size: 80,
-      color: Theme.of(context).themeColors.primaryText,
+    return Center(
+      child: Icon(
+        Icons.account_circle_rounded,
+        size: 80,
+        color: Theme.of(context).themeColors.primaryText,
+      ),
     );
   }
 

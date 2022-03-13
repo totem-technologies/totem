@@ -30,6 +30,7 @@ class ThemedTextFormField extends StatelessWidget {
     this.autofillHints,
     this.onChanged,
     this.maxLength,
+    this.onFieldSubmitted,
   }) : super(key: key);
   final String? labelText;
   final TextEditingController? controller;
@@ -56,6 +57,7 @@ class ThemedTextFormField extends StatelessWidget {
   final Iterable<String>? autofillHints;
   final int? maxLength;
   final void Function(String)? onChanged;
+  final Function(String)? onFieldSubmitted;
 
   @override
   Widget build(BuildContext context) {
@@ -92,6 +94,7 @@ class ThemedTextFormField extends StatelessWidget {
       onChanged: onChanged,
       maxLength: maxLength,
       buildCounter: (maxLength ?? 0) > 0 ? InputCounter.counterWidget : null,
+      onFieldSubmitted: onFieldSubmitted,
     );
   }
 }

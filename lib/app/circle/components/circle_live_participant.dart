@@ -76,6 +76,8 @@ class CircleLiveParticipant extends StatelessWidget {
   }
 
   Widget _genericUserImage(BuildContext context) {
-    return SvgPicture.asset('assets/profile.svg');
+    return Center(
+      child: SvgPicture.asset('assets/profile.svg'),
+    );
   }
 }

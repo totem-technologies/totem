@@ -1,5 +1,6 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
+import * as dynamicLinks from "firebase-dynamic-links";
 
 // The Firebase Admin SDK to access the Firebase Realtime Database.
 // make sure that this initializeApp call hasn't already
@@ -9,6 +10,8 @@ try {
 } catch (e) {
   console.log("re-initializing admin");
 }
+
+const firebaseDynamicLinks = new dynamicLinks.FirebaseDynamicLinks(functions.config().applinks.key);
 
 const SessionState = {
   cancelled: "cancelled",
@@ -75,4 +78,74 @@ export const startSnapSession = functions.https.onCall(async ({circleId}, {auth}
   }
   return false;
 });
+
+export const createSnapCircle = functions.https.onCall(async ({name, description}, {auth}) => {
+  if (!auth || !auth.uid) {
+    throw new functions.https.HttpsError("failed-precondition", "The function must be called while authenticated.");
+  }
+  if (!name) {
+    throw new functions.https.HttpsError("failed-precondition", "Missing name for snap circle");
+  }
+  // Get the user ref
+  const userRef = admin.firestore().collection("users").doc(auth.uid);
+
+  // Enable this block eventually to check for the proper permission for the user trying to create
+  // the circle, currently anyone can create a snap circle
+  /*
+  const userSnapshot = await userRef.get();
+  const { role } = (userSnapshot.exists ? (user.data() ?? {}) : {};
+  if (!role  || role != 'keeper') {
+      throw new functions.https.HttpsError("failed-precondition", "No permission to create snap circle");
+  } */
+  const created = admin.firestore.Timestamp.fromDate(new Date());
+  const data : {name: string;
+    createdOn: admin.firestore.Timestamp,
+    updatedOn: admin.firestore.Timestamp,
+    createdBy: admin.firestore.DocumentReference,
+    state: string,
+    activeSession: {started: admin.firestore.Timestamp},
+    description?: string,
+    link?: string
+  } = {
+    name,
+    createdOn: created,
+    updatedOn: created,
+    createdBy: userRef,
+    state: SessionState.waiting,
+    activeSession: {
+      started: created,
+    },
+  };
+  if (description) {
+    data.description = description;
+  }
+  const ref = await admin.firestore().collection("snapCircles").add(data);
+  // Generate a dynamic link for this circle
+  console.log("Created circle with ref: " + ref.id);
+  try {
+    const {shortLink, previewLink} = await firebaseDynamicLinks.createLink({
+      dynamicLinkInfo: {
+        domainUriPrefix: functions.config().applinks.link,
+        link: "https://app.heytotem.com/circlesession/" + ref.id,
+        androidInfo: {
+          androidPackageName: "io.kbl.totem",
+        },
+        iosInfo: {
+          iosBundleId: "io.kbl.totem",
+        },
+      },
+      suffix: {
+        option: "UNGUESSABLE",
+      },
+    });
+    console.log("Created circle link: " + shortLink + " preview: " + previewLink);
+    // update with the link
+    await admin.firestore().collection("snapCircles").doc(ref.id).update({link: shortLink, previewLink});
+  } catch (ex) {
+    console.log("Unable to create dynamic link for circle: " + ex);
+  }
+  // return information
+  return {id: ref.id};
+});
+
 

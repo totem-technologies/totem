@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:camera/camera.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -15,9 +16,9 @@ class ProfileImageDialog extends ConsumerStatefulWidget {
       : super(key: key);
   final UserProfile userProfile;
 
-  static Future<String?> showDialog(BuildContext context,
+  static Future<XFile?> showDialog(BuildContext context,
       {required UserProfile userProfile}) async {
-    return showModalBottomSheet<String>(
+    return showModalBottomSheet<XFile?>(
       enableDrag: false,
       isScrollControlled: true,
       isDismissible: false,
@@ -36,7 +37,8 @@ class ProfileImageDialog extends ConsumerStatefulWidget {
 }
 
 class _ProfileImageDialogState extends ConsumerState<ProfileImageDialog> {
-  File? _selectedImage;
+  XFile? _selectedImage;
+  File? _selectedImageFile;
 
   @override
   void dispose() {
@@ -92,7 +94,7 @@ class _ProfileImageDialogState extends ConsumerState<ProfileImageDialog> {
                               BoxConstraints(minHeight: constraint.maxHeight),
                           child: IntrinsicHeight(
                             child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Text(
                                   t.profilePicture,
@@ -106,7 +108,14 @@ class _ProfileImageDialogState extends ConsumerState<ProfileImageDialog> {
                                   color: themeColors.divider,
                                 ),
                                 const SizedBox(height: 24),
-                                Expanded(child: _userImage(context)),
+                                Expanded(
+                                  child: ConstrainedBox(
+                                    constraints: BoxConstraints(
+                                        maxWidth:
+                                            Theme.of(context).maxRenderWidth),
+                                    child: _userImage(context),
+                                  ),
+                                ),
                               ],
                             ),
                           ),
@@ -161,9 +170,12 @@ class _ProfileImageDialogState extends ConsumerState<ProfileImageDialog> {
             children: [
               TextButton(
                 onPressed: () async {
-                  await _selectedImage!.delete();
+                  if (_selectedImageFile != null) {
+                    await _selectedImageFile!.delete();
+                  }
                   setState(() {
                     _selectedImage = null;
+                    _selectedImageFile = null;
                   });
                 },
                 child: Text(
@@ -192,19 +204,26 @@ class _ProfileImageDialogState extends ConsumerState<ProfileImageDialog> {
   }
 
   Widget _takenImage(BuildContext context) {
-    return Image.file(
-      _selectedImage!,
-      fit: BoxFit.cover,
-    );
+    if (_selectedImageFile != null) {
+      return Image.file(
+        _selectedImageFile!,
+        fit: BoxFit.cover,
+      );
+    } else {
+      return Image.network(_selectedImage!.path, fit: BoxFit.cover);
+    }
   }
 
   Future<void> _selectImage(BuildContext context) async {
-    Navigator.of(context).pop(_selectedImage?.path);
+    Navigator.of(context).pop(_selectedImage);
   }
 
   Future<void> _handleImage(XFile imageFile) async {
     setState(() {
-      _selectedImage = File(imageFile.path);
+      _selectedImage = imageFile;
+      if (!kIsWeb) {
+        _selectedImageFile = File(imageFile.path);
+      }
     });
   }
 }

@@ -14,6 +14,7 @@ abstract class CommunicationProvider extends ChangeNotifier {
   CommunicationState state = CommunicationState.disconnected;
   bool muted = false;
   bool videoMuted = false;
+  dynamic get channelId;
   Future<bool> joinSession(
       {required Session session,
       required CommunicationHandler handler,

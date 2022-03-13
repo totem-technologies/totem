@@ -1,6 +1,8 @@
 import 'dart:io';
 
+import 'package:camera/camera.dart';
 import 'package:email_validator/email_validator.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -25,7 +27,8 @@ class _OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage> {
   UserProfile? _userProfile;
   bool _busy = false;
   final GlobalKey<FileUploaderState> _uploader = GlobalKey();
-  File? _pendingImageChange;
+  File? _pendingImageChangeFile;
+  XFile? _pendingImageChange;
 
   bool get hasChanged {
     return (_userProfile!.name != _nameController.text ||
@@ -145,11 +148,14 @@ class _OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage> {
   }
 
   Future<void> _getUserImage(BuildContext context) async {
-    String? imagePath = await ProfileImageDialog.showDialog(context,
+    XFile? imagePath = await ProfileImageDialog.showDialog(context,
         userProfile: _userProfile!);
     if (imagePath != null) {
       setState(() {
-        _pendingImageChange = File(imagePath);
+        _pendingImageChange = imagePath;
+        if (!kIsWeb) {
+          _pendingImageChangeFile = File(imagePath.path);
+        }
       });
     }
   }
@@ -245,7 +251,8 @@ class _OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage> {
                                 _pendingImageChange != null)
                             ? ProfileImage(
                                 size: 100,
-                                localImage: _pendingImageChange,
+                                localImagePath: _pendingImageChange?.path,
+                                localImageFile: _pendingImageChangeFile,
                                 shape: BoxShape.circle,
                               )
                             : _emptyProfileImage(context),

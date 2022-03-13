@@ -19,6 +19,8 @@ class FirebaseAuthService implements AuthService {
   BehaviorSubject<AuthRequestState>? _authRequestStateStreamController;
   bool newUser = false;
   String? _authRequestNumber;
+  ConfirmationResult? _confirmationResult;
+  bool _pendingSignIn = false;
 
   AuthUser? _userFromFirebase(User? user, {bool isNewUser = false}) {
     if (user == null) {
@@ -53,10 +55,17 @@ class FirebaseAuthService implements AuthService {
       if (user == null) {
         _currentUser = null;
         streamController?.add(_currentUser);
-      } else if (_currentUser != null) {
-        // this is a load event
-        streamController?.add(_currentUser);
+      } else {
+        if (_currentUser == null && !_pendingSignIn) {
+          debugPrint('loading currently cached user at startup: ');
+          _currentUser = _userFromFirebase(_firebaseAuth.currentUser);
+        }
+        if (_currentUser != null) {
+          // this is a load event
+          streamController?.add(_currentUser);
+        }
       }
+      _pendingSignIn = false;
     });
     return streamController!.stream;
   }
@@ -93,6 +102,17 @@ class FirebaseAuthService implements AuthService {
         debugPrint('Error:' + e.toString());
         throw AuthException(code: e.code, message: e.message);
       }
+    } else if (_confirmationResult != null) {
+      try {
+        final UserCredential credential =
+            await _confirmationResult!.confirm(code);
+        _handleUserAuth(credential);
+      } on FirebaseAuthException catch (fe) {
+        debugPrint('Auth Error: ${fe.message}');
+        throw AuthException(code: fe.code, message: fe.message);
+      } catch (ex) {
+        throw AuthException(code: "invalid", message: ex.toString());
+      }
     } else {
       throw AuthException(
         code: AuthException.errorCodeRetrievalTimeout,
@@ -106,39 +126,50 @@ class FirebaseAuthService implements AuthService {
     _pendingVerificationId = null;
     _lastRegisterError = null;
     _authRequestNumber = phoneNumber;
+    _pendingSignIn = true;
     try {
-      await _firebaseAuth.verifyPhoneNumber(
-        phoneNumber: phoneNumber,
-        verificationCompleted: (PhoneAuthCredential credential) async {
-          // Android only
-          debugPrint('verificationCompleted');
-          // should trigger auth state change
-          try {
-            _handleUserAuth(
-                await _firebaseAuth.signInWithCredential(credential));
-          } on FirebaseAuthException catch (e) {
-            debugPrint('Error:' + e.toString());
-            throw AuthException(code: e.code, message: e.message);
-          }
-          _authRequestStateStreamController!.add(AuthRequestState.complete);
-        },
-        verificationFailed: (FirebaseAuthException e) {
-          debugPrint('verificationFailed');
-          _lastRegisterError = "code: " + e.code; //e.message;
-          _authRequestStateStreamController!.add(AuthRequestState.failed);
-        },
-        codeSent: (String verificationId, int? resendToken) {
-          debugPrint('codeSent');
-          _pendingVerificationId = verificationId;
-          _authRequestStateStreamController!.add(AuthRequestState.pending);
-        },
-        codeAutoRetrievalTimeout: (String verificationId) {
-          debugPrint('codeAutoRetrievalTimeout');
-        },
-      );
+      if (!kIsWeb) {
+        await _firebaseAuth.verifyPhoneNumber(
+          phoneNumber: phoneNumber,
+          verificationCompleted: (PhoneAuthCredential credential) async {
+            // Android only
+            debugPrint('verificationCompleted');
+            // should trigger auth state change
+            try {
+              _handleUserAuth(
+                  await _firebaseAuth.signInWithCredential(credential));
+            } on FirebaseAuthException catch (e) {
+              debugPrint('Error:' + e.toString());
+              throw AuthException(code: e.code, message: e.message);
+            }
+            _authRequestStateStreamController!.add(AuthRequestState.complete);
+          },
+          verificationFailed: (FirebaseAuthException e) {
+            debugPrint('verificationFailed');
+            _lastRegisterError = "code: " + e.code; //e.message;
+            _authRequestStateStreamController!.add(AuthRequestState.failed);
+          },
+          codeSent: (String verificationId, int? resendToken) {
+            debugPrint('codeSent');
+            _pendingVerificationId = verificationId;
+            _authRequestStateStreamController!.add(AuthRequestState.pending);
+          },
+          codeAutoRetrievalTimeout: (String verificationId) {
+            debugPrint('codeAutoRetrievalTimeout');
+          },
+        );
+      } else {
+        _confirmationResult = await _firebaseAuth.signInWithPhoneNumber(
+          phoneNumber,
+        );
+        _authRequestStateStreamController!.add(AuthRequestState.pending);
+      }
     } on FirebaseAuthException catch (e) {
       debugPrint('Error:' + e.toString());
       throw AuthException(code: e.code, message: e.message);
+    } catch (e) {
+      debugPrint('Error:' + e.toString());
+      throw AuthException(code: "unknown", message: e.toString());
     }
   }
 

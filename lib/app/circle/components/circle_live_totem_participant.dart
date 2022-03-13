@@ -65,7 +65,9 @@ class _CircleLiveTotemParticipantState
           height: size - 10,
           child: participant.hasImage
               ? CachedNetworkImage(
-                  imageUrl: participant.sessionImage!, fit: BoxFit.cover)
+                  imageUrl: participant.sessionImage!,
+                  fit: BoxFit.cover,
+                )
               : Container(),
         ),
       ),

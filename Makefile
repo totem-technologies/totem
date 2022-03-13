@@ -12,6 +12,16 @@ build-ios:
 publish-ios:
 	fastlane ios internal
 
+build-web:
+	rm -rf build/web
+	flutter build web --release
+
+publish-web:
+	firebase deploy --only hosting
+
+run-web:
+	firebase emulators:start
+
 release:
 	./scripts/tag_release.sh
 

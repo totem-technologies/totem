@@ -15,6 +15,7 @@ class PinCodeWidget extends StatelessWidget {
     final themeColors = Theme.of(context).themeColors;
     final textStyles = Theme.of(context).textStyles;
     return PinCodeTextField(
+      enablePinAutofill: false,
       autoFocus: true,
       appContext: context,
       autoDismissKeyboard: true,
