@@ -163,6 +163,7 @@ class FirebaseCirclesProvider extends CirclesProvider {
       throw (ServiceException(
           code: ServiceException.errorCodeUnknown, message: e.toString()));
     }
+    return null;
   }
 
   @override
