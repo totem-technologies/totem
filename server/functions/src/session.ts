@@ -1,7 +1,7 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 import * as dynamicLinks from "firebase-dynamic-links";
-import { isAuthenticated } from "./auth";
+import {isAuthenticated} from "./auth";
 
 // The Firebase Admin SDK to access the Firebase Realtime Database.
 // make sure that this initializeApp call hasn't already
@@ -77,12 +77,12 @@ export const startSnapSession = functions.https.onCall(async ({circleId}, {auth}
 });
 
 export const createSnapCircle = functions.https.onCall(async ({name, description}, {auth}) => {
-  isAuthenticated(auth);
+  auth = isAuthenticated(auth);
   if (!name) {
     throw new functions.https.HttpsError("failed-precondition", "Missing name for snap circle");
   }
   // Get the user ref
-  const userRef = admin.firestore().collection("users").doc(auth!.uid);
+  const userRef = admin.firestore().collection("users").doc(auth.uid);
 
   // Enable this block eventually to check for the proper permission for the user trying to create
   // the circle, currently anyone can create a snap circle

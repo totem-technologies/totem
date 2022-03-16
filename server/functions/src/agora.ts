@@ -1,6 +1,6 @@
 import {RtcTokenBuilder, RtcRole} from "agora-access-token";
 import * as functions from "firebase-functions";
-import { isAuthenticated } from "./auth";
+import {isAuthenticated} from "./auth";
 
 const appId = functions.config().agora.appid;
 const appCertificate = functions.config().agora.certificate;
@@ -12,10 +12,10 @@ export const getToken = functions.https.onCall(({channelName, expirationInSecond
   const expirationTimeInSeconds = expirationInSeconds || defaultExpirationInSeconds;
   const expiration = currentTimestamp + expirationTimeInSeconds;
 
-  isAuthenticated(auth);
+  auth = isAuthenticated(auth);
 
   // TODO: Might want to validate channelName and user's inclusion in the channel before generating a token
-  const token = RtcTokenBuilder.buildTokenWithAccount(appId, appCertificate, channelName, auth!.uid, role, expiration);
+  const token = RtcTokenBuilder.buildTokenWithAccount(appId, appCertificate, channelName, auth.uid, role, expiration);
 
   return {token, expiration};
 });
