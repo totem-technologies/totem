@@ -14,14 +14,14 @@ packages:
       name: agora_rtc_engine
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "5.0.0"
+    version: "5.0.1"
   archive:
     dependency: transitive
     description:
       name: archive
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.2.1"
+    version: "3.2.2"
   async:
     dependency: transitive
     description:
@@ -70,7 +70,7 @@ packages:
       name: camera
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.9.4+14"
+    version: "0.9.4+16"
   camera_platform_interface:
     dependency: transitive
     description:
@@ -133,7 +133,7 @@ packages:
       name: cloud_functions
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.2.9"
+    version: "3.2.10"
   cloud_functions_platform_interface:
     dependency: transitive
     description:
@@ -259,7 +259,7 @@ packages:
       name: firebase_auth
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.3.9"
+    version: "3.3.11"
   firebase_auth_platform_interface:
     dependency: transitive
     description:
@@ -315,14 +315,14 @@ packages:
       name: firebase_dynamic_links
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.0.8"
+    version: "4.1.1"
   firebase_dynamic_links_platform_interface:
     dependency: transitive
     description:
       name: firebase_dynamic_links_platform_interface
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.2.1+1"
+    version: "0.2.2+1"
   firebase_storage:
     dependency: "direct main"
     description:
@@ -392,12 +392,10 @@ packages:
   flutter_reorderable_list:
     dependency: "direct main"
     description:
-      path: "."
-      ref: HEAD
-      resolved-ref: dae1e8ad2c2343a91e1bb1bac41b1c7e322776bf
-      url: "https://github.com/Phase2Industries/flutter_reorderable_list.git"
-    source: git
-    version: "1.1.0"
+      name: flutter_reorderable_list
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.2.0"
   flutter_riverpod:
     dependency: "direct main"
     description:
@@ -881,7 +879,7 @@ packages:
       name: sqflite_common
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.2.0"
+    version: "2.2.1"
   stack_trace:
     dependency: transitive
     description:

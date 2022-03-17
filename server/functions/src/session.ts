@@ -1,6 +1,6 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
-import * as dynamicLinks from "firebase-dynamic-links";
+import * as dynamicLinks from "./dynamic-links";
 
 // The Firebase Admin SDK to access the Firebase Realtime Database.
 // make sure that this initializeApp call hasn't already
@@ -126,7 +126,7 @@ export const createSnapCircle = functions.https.onCall(async ({name, description
     const {shortLink, previewLink} = await firebaseDynamicLinks.createLink({
       dynamicLinkInfo: {
         domainUriPrefix: functions.config().applinks.link,
-        link: "https://app.heytotem.com/circlesession/" + ref.id,
+        link: "https://app.heytotem.com/?snap=" + ref.id,
         androidInfo: {
           androidPackageName: "io.kbl.totem",
         },
@@ -137,12 +137,12 @@ export const createSnapCircle = functions.https.onCall(async ({name, description
       suffix: {
         option: "UNGUESSABLE",
       },
-    });
+    }, "createSnapCircle");
     console.log("Created circle link: " + shortLink + " preview: " + previewLink);
     // update with the link
     await admin.firestore().collection("snapCircles").doc(ref.id).update({link: shortLink, previewLink});
   } catch (ex) {
-    console.log("Unable to create dynamic link for circle: " + ex);
+    console.log(ex);
   }
   // return information
   return {id: ref.id};

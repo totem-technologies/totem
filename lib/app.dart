@@ -1,40 +1,31 @@
 import 'package:cupertino_will_pop_scope/cupertino_will_pop_scope.dart';
-import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:totem/app_routes.dart';
+import 'package:totem/services/applinks/index.dart';
 import 'package:totem/theme/index.dart';
 
 import 'app/auth.dart';
 import 'app/home/home_page.dart';
 import 'app/login/login_page.dart';
 
-class App extends StatefulWidget {
+class App extends ConsumerStatefulWidget {
   const App({Key? key}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _AppState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _AppState();
 }
 
-class _AppState extends State<App> {
-  FirebaseDynamicLinks dynamicLinks = FirebaseDynamicLinks.instance;
-
+class _AppState extends ConsumerState<App> {
   @override
   void initState() {
     super.initState();
-    initDynamicLinks();
-  }
-
-  Future<void> initDynamicLinks() async {
-    dynamicLinks.onLink.listen((dynamicLinkData) {
-      _handleDynamicLink(dynamicLinkData.link);
-    }).onError((error) {
-      debugPrint('onLink error');
-      debugPrint(error.message);
-    });
+    AppLinks.instance.initialize();
   }
 
   @override
@@ -100,9 +91,5 @@ class _AppState extends State<App> {
         },
       ),
     );
-  }
-
-  Future<void> _handleDynamicLink(Uri link) async {
-    debugPrint('Handling dynamic link: ${link.path}');
   }
 }

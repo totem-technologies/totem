@@ -163,6 +163,7 @@ class FirebaseCirclesProvider extends CirclesProvider {
       throw (ServiceException(
           code: ServiceException.errorCodeUnknown, message: e.toString()));
     }
+    return null;
   }
 
   @override
@@ -416,5 +417,26 @@ class FirebaseCirclesProvider extends CirclesProvider {
       debugPrint(ex.toString());
     }
     return false;
+  }
+
+  @override
+  Future<SnapCircle?> circleFromId(String id) async {
+    try {
+      final DocumentReference circleRef =
+          FirebaseFirestore.instance.collection(Paths.snapCircles).doc(id);
+      DocumentSnapshot circleSnapshot = await circleRef.get();
+      Map<String, dynamic> data = circleSnapshot.data() as Map<String, dynamic>;
+      SnapCircle circle =
+          SnapCircle.fromJson(data, id: id, ref: circleRef.path);
+      DocumentReference ref = data["createdBy"] as DocumentReference;
+      circle.createdBy = await _userFromRef(ref);
+      if (data['activeSession'] != null) {
+        SnapSession.fromJson(data['activeSession'], circle: circle);
+      }
+      return circle;
+    } catch (ex) {
+      debugPrint(ex.toString());
+    }
+    return null;
   }
 }
