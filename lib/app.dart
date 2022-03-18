@@ -1,5 +1,4 @@
 import 'package:cupertino_will_pop_scope/cupertino_will_pop_scope.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';

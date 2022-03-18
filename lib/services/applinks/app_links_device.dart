@@ -21,6 +21,10 @@ class AppLinks {
     _stream = BehaviorSubject<AppLink?>();
   }
 
+  void dispose() {
+    _subscription.cancel();
+  }
+
   Future<void> initialize() async {
     final PendingDynamicLinkData? initialLink =
         await FirebaseDynamicLinks.instance.getInitialLink();

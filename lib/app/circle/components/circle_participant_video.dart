@@ -26,7 +26,7 @@ class CircleParticipantVideo extends ConsumerWidget {
       child: Stack(
         children: [
           if (participant.me && !commProvider.videoMuted)
-            rtc_local_view.SurfaceView(),
+            const rtc_local_view.SurfaceView(),
           if (!participant.me && !participant.videoMuted)
             rtc_remote_view.SurfaceView(
               channelId: commProvider.channelId,
