@@ -1,6 +1,7 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 import * as dynamicLinks from "./dynamic-links";
+import {isAuthenticated} from "./auth";
 
 // The Firebase Admin SDK to access the Firebase Realtime Database.
 // make sure that this initializeApp call hasn't already
@@ -23,9 +24,7 @@ const SessionState = {
 };
 
 export const endSnapSession = functions.https.onCall(async ({circleId}, {auth}) => {
-  if (!auth || !auth.uid) {
-    throw new functions.https.HttpsError("failed-precondition", "The function must be called while authenticated.");
-  }
+  isAuthenticated(auth);
   if (circleId) {
     const ref = admin.firestore().collection("snapCircles").doc(circleId);
     const circleSnapshot = await ref.get();
@@ -55,9 +54,7 @@ export const endSnapSession = functions.https.onCall(async ({circleId}, {auth}) 
 });
 
 export const startSnapSession = functions.https.onCall(async ({circleId}, {auth}) => {
-  if (!auth || !auth.uid) {
-    throw new functions.https.HttpsError("failed-precondition", "The function must be called while authenticated.");
-  }
+  isAuthenticated(auth);
   if (circleId) {
     const ref = admin.firestore().collection("snapCircles").doc(circleId);
     const circleSnapshot = await ref.get();
@@ -80,9 +77,7 @@ export const startSnapSession = functions.https.onCall(async ({circleId}, {auth}
 });
 
 export const createSnapCircle = functions.https.onCall(async ({name, description}, {auth}) => {
-  if (!auth || !auth.uid) {
-    throw new functions.https.HttpsError("failed-precondition", "The function must be called while authenticated.");
-  }
+  auth = isAuthenticated(auth);
   if (!name) {
     throw new functions.https.HttpsError("failed-precondition", "Missing name for snap circle");
   }
@@ -121,7 +116,6 @@ export const createSnapCircle = functions.https.onCall(async ({name, description
   }
   const ref = await admin.firestore().collection("snapCircles").add(data);
   // Generate a dynamic link for this circle
-  console.log("Created circle with ref: " + ref.id);
   try {
     const {shortLink, previewLink} = await firebaseDynamicLinks.createLink({
       dynamicLinkInfo: {
@@ -138,7 +132,6 @@ export const createSnapCircle = functions.https.onCall(async ({name, description
         option: "UNGUESSABLE",
       },
     }, "createSnapCircle");
-    console.log("Created circle link: " + shortLink + " preview: " + previewLink);
     // update with the link
     await admin.firestore().collection("snapCircles").doc(ref.id).update({link: shortLink, previewLink});
   } catch (ex) {

@@ -14,7 +14,7 @@ jobs:
     - name: Install Flutter
       uses: subosito/flutter-action@v2
       with:
-        flutter-version: '2.8.x'
+        flutter-version: '2.10.x'
         cache: true
     - uses: webfactory/ssh-agent@v0.5.4
       with:
@@ -37,7 +37,7 @@ jobs:
       - name: Install Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '2.8.x'
+          flutter-version: '2.10.x'
           cache: true
       - name: Setup secrets
         run: |
