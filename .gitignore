@@ -54,3 +54,4 @@ play-deploy-key.json
 
 # Firebase
 .firebase
+server/functions/build/.last_build_id

@@ -1,7 +1,6 @@
-import 'dart:html';
-
 import 'package:flutter/foundation.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:universal_html/html.dart';
 
 import 'app_link_type.dart';
 

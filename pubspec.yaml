@@ -67,6 +67,7 @@ dependencies:
   state_notifier: ^0.7.0
   simple_shadow: ^0.3.0
   cupertino_will_pop_scope: ^1.2.0
+  universal_html: ^2.0.8
 
 dev_dependencies:
   flutter_test:
