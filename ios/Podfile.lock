@@ -338,7 +338,7 @@ PODS:
     - abseil/base/base_internal
     - abseil/base/config
     - abseil/meta/type_traits
-  - agora_rtc_engine (5.0.0):
+  - agora_rtc_engine (5.0.1):
     - AgoraIrisRTC_iOS (= 3.5.2)
     - Flutter
   - AgoraIrisRTC_iOS (3.5.2)
@@ -386,7 +386,7 @@ PODS:
     - firebase_core
     - FirebaseAppCheck (~> 8.11.0-beta)
     - Flutter
-  - firebase_auth (3.3.10):
+  - firebase_auth (3.3.11):
     - Firebase/Auth (= 8.11.0)
     - firebase_core
     - Flutter
@@ -397,7 +397,7 @@ PODS:
     - Firebase/Crashlytics (= 8.11.0)
     - firebase_core
     - Flutter
-  - firebase_dynamic_links (4.1.0):
+  - firebase_dynamic_links (4.1.1):
     - Firebase/DynamicLinks (= 8.11.0)
     - firebase_core
     - Flutter
@@ -636,7 +636,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   abseil: 6c8eb7892aefa08d929b39f9bb108e5367e3228f
-  agora_rtc_engine: 34dc4ddbafc3c7c70e3153245196cadb72235a53
+  agora_rtc_engine: f474a52832424f75b691fb5b8ba6a351c15b8615
   AgoraIrisRTC_iOS: e9462cb708d91cc1b6aa56e8c1cc2d2cb9fb3b76
   BoringSSL-GRPC: 8edf627ee524575e2f8d19d56f068b448eea3879
   camera: 9993f92f2c793e87b65e35f3a23c70582afb05b1
@@ -644,10 +644,10 @@ SPEC CHECKSUMS:
   cloud_functions: 8415560122ac43e9edc2efd070ae14e664aa2fd3
   Firebase: 44dd9724c84df18b486639e874f31436eaa9a20c
   firebase_app_check: 5b8fb97535109b82da55de8f85d2ac8add087172
-  firebase_auth: fa562bf84ce3e872cc4225374cb687edb32e8d26
+  firebase_auth: bdfbd5b10da1db6d5eb6ae7dbda5d81365b9cc9d
   firebase_core: 08f6a85f62060111de5e98d6a214810d11365de9
   firebase_crashlytics: 28149c943342a73fefe1afef224d345cfb35e1ee
-  firebase_dynamic_links: 167a78046c09ba772adcad7147ba967c24c39f41
+  firebase_dynamic_links: 1b6e3aeb743c0a0df1dab3543bd9dec6aab4de58
   firebase_storage: 5b964cad5f351e9c35f8b0e0b878cdd095f30d09
   FirebaseAppCheck: 533dc5089466b73349aa63ffdf468a387a67fd26
   FirebaseAuth: d96d73aba85d192d7a7aa0b86dd6d7f8ec170b4b

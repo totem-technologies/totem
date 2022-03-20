@@ -1,10 +1,16 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:totem/app_routes.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
+import 'package:totem/services/applinks/index.dart';
 import 'package:totem/services/index.dart';
 
-class AuthWidget extends ConsumerWidget {
+import 'circle/circle_join_dialog.dart';
+
+class AuthWidget extends ConsumerStatefulWidget {
   const AuthWidget({
     Key? key,
     required this.signedInBuilder,
@@ -14,7 +20,30 @@ class AuthWidget extends ConsumerWidget {
   final WidgetBuilder signedInBuilder;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ConsumerStatefulWidget> createState() => _AuthWidget();
+}
+
+class _AuthWidget extends ConsumerState<AuthWidget> {
+  late AppLinks _appLinks;
+  late StreamSubscription _streamSubscription;
+
+  @override
+  void initState() {
+    super.initState();
+    _appLinks = AppLinks.instance;
+    _streamSubscription = _appLinks.linkStream.listen((link) {
+      _handleAppLink(link);
+    });
+  }
+
+  @override
+  void dispose() {
+    _streamSubscription.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final authStateChanges = ref.watch(authStateChangesProvider);
     final repo = ref.watch(repositoryProvider);
     return authStateChanges.when(
@@ -37,10 +66,36 @@ class AuthWidget extends ConsumerWidget {
     if (user != null && !user.isAnonymous) {
       repo.user = user;
 
-      return signedInBuilder(context);
+      return widget.signedInBuilder(context);
     }
     repo.user = null;
-    return nonSignedInBuilder(context);
+    return widget.nonSignedInBuilder(context);
+  }
+
+  void _handleAppLink(AppLink? link) async {
+    if (link != null) {
+      Future.delayed(const Duration(milliseconds: 2000), () async {
+        if (link.type == AppLinkType.snapSession) {
+          var repo = ref.read(repositoryProvider);
+          SnapCircle? circle = await repo.circleFromId(link.value);
+          if (circle != null) {
+            String? sessionImage = await CircleJoinDialog.showDialog(context,
+                session: circle.snapSession);
+            if (sessionImage != null && sessionImage.isNotEmpty) {
+              await repo.createActiveSession(
+                session: circle.activeSession!,
+              );
+              Future.delayed(const Duration(milliseconds: 300), () async {
+                Navigator.of(context).pushNamed(AppRoutes.circle, arguments: {
+                  'session': circle.snapSession,
+                  'image': sessionImage,
+                });
+              });
+            }
+          }
+        }
+      });
+    }
   }
 }
 

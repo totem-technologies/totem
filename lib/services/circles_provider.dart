@@ -21,4 +21,5 @@ abstract class CirclesProvider {
   Future<bool> removeSnapCircle(
       {required SnapCircle circle, required String uid});
   Stream<ScheduledCircle> scheduledCircle(String circleId, String uid);
+  Future<SnapCircle?> circleFromId(String id);
 }

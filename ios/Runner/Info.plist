@@ -74,7 +74,7 @@
 	<false/>
     <key>FirebaseDynamicLinksCustomDomains</key>
     <array>
-      <string>https://app.heytotem.com/c</string>
+      <string>https://c.heytotem.com</string>
     </array>
 </dict>
 </plist>

@@ -418,4 +418,25 @@ class FirebaseCirclesProvider extends CirclesProvider {
     }
     return false;
   }
+
+  @override
+  Future<SnapCircle?> circleFromId(String id) async {
+    try {
+      final DocumentReference circleRef =
+          FirebaseFirestore.instance.collection(Paths.snapCircles).doc(id);
+      DocumentSnapshot circleSnapshot = await circleRef.get();
+      Map<String, dynamic> data = circleSnapshot.data() as Map<String, dynamic>;
+      SnapCircle circle =
+          SnapCircle.fromJson(data, id: id, ref: circleRef.path);
+      DocumentReference ref = data["createdBy"] as DocumentReference;
+      circle.createdBy = await _userFromRef(ref);
+      if (data['activeSession'] != null) {
+        SnapSession.fromJson(data['activeSession'], circle: circle);
+      }
+      return circle;
+    } catch (ex) {
+      debugPrint(ex.toString());
+    }
+    return null;
+  }
 }

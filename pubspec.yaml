@@ -43,9 +43,9 @@ dependencies:
   firebase_storage: ^10.0.1
   firebase_dynamic_links: ^4.0.8
   flutter_foreground_task: ^3.5.4
-  flutter_reorderable_list:
-    git:
-      url: https://github.com/Phase2Industries/flutter_reorderable_list.git
+  flutter_reorderable_list: ^1.2.0
+#    git:
+#      url: https://github.com/Phase2Industries/flutter_reorderable_list.git
   flutter_riverpod: ^1.0.0
   flutter_sim_country_code: ^0.1.2
   flutter_spinbox: ^0.8.0
@@ -67,6 +67,7 @@ dependencies:
   state_notifier: ^0.7.0
   simple_shadow: ^0.3.0
   cupertino_will_pop_scope: ^1.2.0
+  universal_html: ^2.0.8
 
 dev_dependencies:
   flutter_test:

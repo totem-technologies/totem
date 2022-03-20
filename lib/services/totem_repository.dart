@@ -79,6 +79,8 @@ class TotemRepository {
   Stream<List<SnapCircle>> snapCircles() => _circlesProvider.snapCircles();
   Stream<ScheduledCircle> scheduledCircle({required String circleId}) =>
       _circlesProvider.scheduledCircle(circleId, user!.uid);
+  Future<SnapCircle?> circleFromId(String id) =>
+      _circlesProvider.circleFromId(id);
 
   // Sessions
   Future<ActiveSession> activateSession({required ScheduledSession session}) =>
