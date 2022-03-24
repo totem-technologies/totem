@@ -125,3 +125,7 @@ flutter:
     - family: Recoleta
       fonts:
         - asset: fonts/Recoleta-Regular.ttf
+        - asset: fonts/Recoleta-Black.ttf
+          weight: 900
+        - asset: fonts/Recoleta-Bold.ttf
+          weight: 700

@@ -4,6 +4,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/theme/index.dart';
 
+import 'circle_live_session_video.dart';
+
 class CircleLiveParticipant extends StatelessWidget {
   const CircleLiveParticipant({
     Key? key,
@@ -46,14 +48,18 @@ class CircleLiveParticipant extends StatelessWidget {
               ),
               child: ClipRRect(
                 borderRadius: const BorderRadius.all(Radius.circular(8)),
-                child: (!participant.hasImage)
-                    ? Container(
-                        color: participant.me
-                            ? themeColors.primary.withAlpha(80)
-                            : themeColors.profileBackground,
-                        child: _genericUserImage(context),
-                      )
-                    : _renderUserImage(context),
+                child: hasTotem
+                    ? ((!participant.hasImage)
+                        ? Container(
+                            color: participant.me
+                                ? themeColors.primary.withAlpha(80)
+                                : themeColors.profileBackground,
+                            child: _genericUserImage(context),
+                          )
+                        : _renderUserImage(context))
+                    : CircleLiveSessionVideo(
+                        participant: participant,
+                      ),
               ),
             ),
           ),
