@@ -23,22 +23,20 @@ class CircleLiveSessionUsers extends ConsumerWidget {
     if (participants.isNotEmpty) {
       return LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
-          final maxSize = maxDimension;
-          final minSize = minDimension;
           final width = constraints.maxWidth;
           final height = constraints.maxHeight;
-          final minColumns = (width / (maxSize)).floor();
-          final maxColumns = (width / (minSize)).floor();
+          final minColumns = (width / (maxDimension)).floor();
+          final maxColumns = (width / (minDimension)).floor();
           int minRows =
-              (height / (maxSize + (!DeviceType.isPhone() ? spacing : 0)))
+              (height / (maxDimension + (!DeviceType.isPhone() ? spacing : 0)))
                   .floor();
           int maxRows =
-              (height / (minSize + (!DeviceType.isPhone() ? spacing : 0)))
+              (height / (minDimension + (!DeviceType.isPhone() ? spacing : 0)))
                   .floor();
-          double dimension = maxSize;
+          double dimension = maxDimension;
           if (minRows == 0 || maxRows == 0) {
             minRows = maxRows = 1;
-            dimension = max(minSize, min(height, maxSize));
+            dimension = max(minDimension, min(height, maxDimension));
           }
           final maxedSizeCount = max(1, (minRows * minColumns));
           final minSizeCount = max(1, (maxRows * maxColumns));

@@ -21,33 +21,40 @@ class CirclePendingSessionUsers extends ConsumerWidget {
     if (participants.isNotEmpty) {
       return LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
-          final maxSize = !DeviceType.isPhone()
-              ? maxDimension
-              : min(maxDimension, constraints.maxWidth);
-          final minSize = !DeviceType.isPhone()
-              ? minDimension
-              : ((constraints.maxWidth - spacing) / 2).floorToDouble();
           final width = constraints.maxWidth;
-          final height = !DeviceType.isPhone()
-              ? constraints.maxHeight - 50
-              : constraints.maxHeight;
-          final minColumns = (width / (maxSize)).floor();
-          final maxColumns = (width / (minSize)).floor();
-          int minRows = (height / (maxSize + (kIsWeb ? spacing : 0))).floor();
-          int maxRows = (height / (minSize + (kIsWeb ? spacing : 0))).floor();
-          double dimension = maxSize;
+          final height = constraints.maxHeight;
+          final minColumns = (width / (maxDimension)).floor();
+          final maxColumns = (width / (minDimension)).floor();
+          int minRows =
+              (height / (maxDimension + (!DeviceType.isPhone() ? spacing : 0)))
+                  .floor();
+          int maxRows =
+              (height / (minDimension + (!DeviceType.isPhone() ? spacing : 0)))
+                  .floor();
+          double dimension = maxDimension;
           if (minRows == 0 || maxRows == 0) {
             minRows = maxRows = 1;
-            dimension = max(minSize, min(height, maxSize));
+            dimension = max(minDimension, min(height, maxDimension));
           }
           final maxedSizeCount = max(1, (minRows * minColumns));
-          //final maxedVisibleCount = maxRows * maxColumns;
-          int participantCount = participants.length + 11;
+          final minSizeCount = max(1, (maxRows * maxColumns));
+          int participantCount = participants.length;
           if (participantCount > maxedSizeCount &&
-              participantCount < maxedSizeCount) {
-            dimension =
-                min(dimension, (height - spacing * (maxRows - 1)) / maxRows);
-          } else {
+              participantCount < minSizeCount) {
+            int h0 = (sqrt((width * height) / participantCount)).ceil();
+            int value = (width / h0).floor() * (height / h0).floor();
+            while (participantCount > value) {
+              h0--;
+              value = (width / h0).floor() * (height / h0).floor();
+            }
+            if ((width / h0).floor() == 1) {
+              // use min of 2
+              dimension = min(
+                  dimension, (width - spacing * (maxColumns - 1)) / maxColumns);
+            } else {
+              dimension = min(dimension, h0.toDouble());
+            }
+          } else if (participantCount >= minSizeCount) {
             dimension = min(
                 dimension, (width - spacing * (maxColumns - 1)) / maxColumns);
           }
