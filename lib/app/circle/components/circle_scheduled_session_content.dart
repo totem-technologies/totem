@@ -283,7 +283,7 @@ class _CircleScheduledSessionContentState
     final provider = ref.read(communicationsProvider);
     provider.joinSession(
       session: widget.session,
-      fullScreenSize: MediaQuery.of(context).size,
+      fullScreenSize: const Size(600, 600),
       handler: CommunicationHandler(
           joinedCircle: (String sessionId, String sessionUserId) {
         debugPrint("joined circle as: " + sessionUserId);

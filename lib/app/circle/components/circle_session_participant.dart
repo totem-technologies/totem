@@ -7,12 +7,20 @@ import 'package:totem/models/index.dart';
 import 'package:totem/theme/index.dart';
 
 class CircleSessionParticipant extends ConsumerWidget {
-  const CircleSessionParticipant({Key? key, required this.participantId})
+  const CircleSessionParticipant(
+      {Key? key,
+      required this.participantId,
+      required this.dimension,
+      this.hasTotem = false,
+      this.annotate = true})
       : super(key: key);
   final String participantId;
-
+  final double dimension;
+  final bool hasTotem;
+  final bool annotate;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final themeColors = Theme.of(context).themeColors;
     final participant = ref.watch(participantProvider(participantId));
     final commProvider = ref.watch(communicationsProvider);
     return GestureDetector(
@@ -22,46 +30,52 @@ class CircleSessionParticipant extends ConsumerWidget {
           participant: participant,
         );
       },
-      child: Stack(
-        children: [
-          StreamBuilder<CommunicationAudioVolumeIndication>(
-            stream: commProvider.audioIndicatorStream
-                .throttleTime(const Duration(milliseconds: 100)),
-            builder: (context, snapshot) {
-              var speaking = false;
-              if (snapshot.hasData) {
-                final audioIndicator = snapshot.data!;
-                var speaker = audioIndicator.getSpeaker(
-                    participant.sessionUserId, participant.me);
-                if (speaker != null) {
-                  speaking = speaker.speaking;
+      child: SizedBox(
+        width: dimension,
+        height: dimension,
+        child: Stack(
+          children: [
+            StreamBuilder<CommunicationAudioVolumeIndication>(
+              stream: commProvider.audioIndicatorStream
+                  .throttleTime(const Duration(milliseconds: 100)),
+              builder: (context, snapshot) {
+                var speaking = false;
+                if (snapshot.hasData) {
+                  final audioIndicator = snapshot.data!;
+                  var speaker = audioIndicator.getSpeaker(
+                      participant.sessionUserId, participant.me);
+                  if (speaker != null) {
+                    speaking = speaker.speaking;
+                  }
                 }
-              }
-              var color = Theme.of(context).themeColors.primary;
-              return AnimatedContainer(
-                decoration: BoxDecoration(
-                  color: speaking ? color : color.withOpacity(0),
-                  borderRadius: BorderRadius.circular(24),
-                ),
-                duration: speaking
-                    ? const Duration(milliseconds: 0)
-                    : const Duration(milliseconds: 500),
-                curve: Curves.easeInCubic,
-              );
-            },
-          ),
-          Padding(
-            padding: const EdgeInsets.all(4.0),
-            child: CircleParticipantVideo(
-              participant: participant,
+                var color = Theme.of(context).themeColors.primary;
+                return AnimatedContainer(
+                  decoration: BoxDecoration(
+                    color: speaking ? color : color.withOpacity(0),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  duration: speaking
+                      ? const Duration(milliseconds: 0)
+                      : const Duration(milliseconds: 500),
+                  curve: Curves.easeInCubic,
+                );
+              },
             ),
-          ),
-          PositionedDirectional(
-            top: 5,
-            end: 5,
-            child: _muteIndicator(context, participant),
-          ),
-        ],
+            Padding(
+              padding: const EdgeInsets.all(4.0),
+              child: CircleParticipantVideo(
+                participantId: participant.uid,
+                hasTotem: hasTotem,
+                annotate: annotate,
+              ),
+            ),
+            PositionedDirectional(
+              top: 5,
+              end: 5,
+              child: _muteIndicator(context, participant),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -25,19 +25,37 @@ class _CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
     final authUser = ref.read(authServiceProvider).currentUser()!;
     final activeSession = ref.watch(activeSessionProvider);
     final role = activeSession.participantRole(authUser.uid);
-    return BottomTrayContainer(
-      child: SafeArea(
-        top: false,
-        bottom: true,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
-          child: activeSession.state == SessionState.waiting
-              ? waitingControls(context, ref, activeSession, role, authUser.uid)
-              : activeSession.state == SessionState.live
-                  ? liveControls(context, ref, activeSession, role)
-                  : emptyControls(context),
+    return Stack(
+      children: [
+        BottomTrayContainer(
+          backgroundColor:
+              activeSession.state == SessionState.live ? Colors.black : null,
+          child: SafeArea(
+            top: false,
+            bottom: true,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+              child: activeSession.state == SessionState.waiting
+                  ? waitingControls(
+                      context, ref, activeSession, role, authUser.uid)
+                  : activeSession.state == SessionState.live
+                      ? liveControls(context, ref, activeSession, role)
+                      : emptyControls(context),
+            ),
+          ),
         ),
-      ),
+        Positioned(
+          bottom: 0,
+          left: 0,
+          right: 0,
+          child: Container(
+            height: 1,
+            color: activeSession.state == SessionState.live
+                ? Colors.black
+                : Theme.of(context).themeColors.trayBackground,
+          ),
+        ),
+      ],
     );
   }
 
@@ -108,6 +126,7 @@ class _CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
   Widget liveControls(BuildContext context, WidgetRef ref,
       ActiveSession activeSession, Role role) {
     final t = AppLocalizations.of(context)!;
+    final themeColors = Theme.of(context).themeColors;
     final communications = ref.watch(communicationsProvider);
     return Column(
       children: [
@@ -116,6 +135,7 @@ class _CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
           children: [
             ThemedControlButton(
               label: communications.muted ? t.forceUnMute : t.mute,
+              labelColor: themeColors.reversedText,
               svgImage: communications.muted
                   ? 'assets/microphone_force.svg'
                   : 'assets/microphone.svg',
@@ -125,15 +145,21 @@ class _CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
               },
             ),
             ThemedControlButton(
-              label: t.info,
-              svgImage: 'assets/info.svg',
+              label: communications.videoMuted ? t.startVideo : t.stopVideo,
+              labelColor: themeColors.reversedText,
+              svgImage: !communications.videoMuted
+                  ? 'assets/video.svg'
+                  : 'assets/video_stop.svg',
               onPressed: () {
-                debugPrint('info pressed');
+                communications
+                    .muteVideo(communications.videoMuted ? false : true);
+                debugPrint('video pressed');
               },
             ),
             if (role == Role.keeper)
               ThemedControlButton(
                 label: !_more ? t.more : t.less,
+                labelColor: themeColors.reversedText,
                 svgImage: !_more ? 'assets/more.svg' : 'assets/less.svg',
                 onPressed: () {
                   setState(() => _more = !_more);
@@ -148,6 +174,7 @@ class _CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
             children: [
               ThemedControlButton(
                 label: t.openFloor,
+                labelColor: themeColors.reversedText,
                 svgImage: 'assets/unlock.svg',
                 onPressed: () {
                   debugPrint('lock pressed');
@@ -155,6 +182,7 @@ class _CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
               ),
               ThemedControlButton(
                 label: t.skip,
+                labelColor: themeColors.reversedText,
                 svgImage: 'assets/fast_forward.svg',
                 onPressed: () {
                   debugPrint('mute pressed');
@@ -162,6 +190,7 @@ class _CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
               ),
               ThemedControlButton(
                 label: t.endSession,
+                labelColor: themeColors.reversedText,
                 svgImage: 'assets/leave.svg',
                 onPressed: () {
                   _endSessionPrompt(context, ref);

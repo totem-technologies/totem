@@ -14,8 +14,8 @@ class AgoraCommunicationProvider extends CommunicationProvider {
 
   // These are used as default values for the video preview, modify
   // as needed to define a different default as these get set on the engine
-  static const int videoHeight = 180;
-  static const int videoWidth = 180;
+  static const int videoHeight = 350;
+  static const int videoWidth = 350;
 
   AgoraCommunicationProvider(
       {required this.sessionProvider, required this.userId}) {
@@ -220,7 +220,8 @@ class AgoraCommunicationProvider extends CommunicationProvider {
               userInfoUpdated: _handleUserInfoUpdated,
               userJoined: _handleUserJoined,
               userOffline: _handleUserOffline,
-              audioVolumeIndication: _handleAudioVolumeIndication,
+              audioVolumeIndication:
+                  !kIsWeb ? _handleAudioVolumeIndication : null,
               videoPublishStateChanged: _handleVideoPublishStateChanged,
               remoteVideoStateChanged: _handleRemoteVideoStateChanged,
             ),
