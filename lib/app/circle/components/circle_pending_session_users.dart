@@ -13,7 +13,7 @@ class CirclePendingSessionUsers extends ConsumerWidget {
   const CirclePendingSessionUsers({Key? key}) : super(key: key);
   static const double maxDimension = 380;
   static const double minDimension = 200;
-  static const double spacing = 8;
+  static const double spacing = 0;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final session = ref.watch(activeSessionProvider);
@@ -24,13 +24,13 @@ class CirclePendingSessionUsers extends ConsumerWidget {
           final width = constraints.maxWidth;
           final height = constraints.maxHeight;
           final minColumns = (width / (maxDimension)).floor();
-          final maxColumns = (width / (minDimension)).floor();
+          final maxColumns = max(2, (width / minDimension).floor());
           int minRows =
               (height / (maxDimension + (!DeviceType.isPhone() ? spacing : 0)))
                   .floor();
-          int maxRows =
-              (height / (minDimension + (!DeviceType.isPhone() ? spacing : 0)))
-                  .floor();
+          int maxRows = (height / min(height, minDimension) +
+                  (!DeviceType.isPhone() ? spacing : 0))
+              .floor();
           double dimension = maxDimension;
           if (minRows == 0 || maxRows == 0) {
             minRows = maxRows = 1;
@@ -60,8 +60,8 @@ class CirclePendingSessionUsers extends ConsumerWidget {
           }
           return SingleChildScrollView(
             child: Wrap(
-              runSpacing: 8,
-              spacing: 8,
+              runSpacing: spacing,
+              spacing: spacing,
               alignment: WrapAlignment.center,
               children: List.generate(participantCount, (index) {
                 if (index < participants.length) {

@@ -23,6 +23,10 @@ final communicationsProvider =
 final participantProvider = ChangeNotifierProvider.autoDispose
     .family<SessionParticipant, String>((ref, uid) {
   final activeSession = ref.read(activeSessionProvider);
+  ref.onDispose(() {
+    debugPrint('Disposing: ' + uid);
+  });
+
   return activeSession.participantWithID(uid)!;
 });
 
