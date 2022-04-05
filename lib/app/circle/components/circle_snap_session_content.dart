@@ -497,7 +497,7 @@ class _CircleSnapSessionContentState
   @override
   void afterFirstLayout(BuildContext context) {
     // join the session once the page is ready
-    _joinSession(MediaQuery.of(context).size);
+    _joinSession(const Size(600, 600));
   }
 
   void _joinSession(Size fullscreenSize) {

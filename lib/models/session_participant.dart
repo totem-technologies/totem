@@ -28,8 +28,6 @@ class SessionParticipant extends ChangeNotifier {
     sessionImage = json["sessionImage"];
   }
 
-  void updateWith(SessionParticipant participant) {}
-
   bool get muted {
     return _muted;
   }
@@ -54,6 +52,11 @@ class SessionParticipant extends ChangeNotifier {
       _videoMuted = isMuted;
       notifyListeners();
     }
+  }
+
+  void updateFromParticipant(SessionParticipant participant) {
+    sessionImage = participant.sessionImage;
+    notifyListeners();
   }
 
   Map<String, dynamic> toJson() {

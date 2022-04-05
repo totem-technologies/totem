@@ -77,6 +77,10 @@ class _CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
+        Expanded(
+          flex: 1,
+          child: Container(),
+        ),
         ThemedControlButton(
           label: communications.muted ? t.unmute : t.mute,
           svgImage: communications.muted
@@ -86,6 +90,9 @@ class _CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
             communications.muteAudio(communications.muted ? false : true);
             debugPrint('mute pressed');
           },
+        ),
+        const SizedBox(
+          width: 20,
         ),
         ThemedControlButton(
           label: communications.videoMuted ? t.startVideo : t.stopVideo,
@@ -97,7 +104,10 @@ class _CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
             debugPrint('video pressed');
           },
         ),
-        if (role == Role.keeper)
+        if (role == Role.keeper) ...[
+          const SizedBox(
+            width: 20,
+          ),
           ThemedControlButton(
             label: t.start,
             size: 48,
@@ -111,6 +121,10 @@ class _CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
               _startSession(context, ref);
             },
           ),
+        ],
+        const SizedBox(
+          width: 20,
+        ),
         ThemedControlButton(
           label: t.info,
           svgImage: 'assets/info.svg',
@@ -118,6 +132,10 @@ class _CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
             debugPrint('info pressed');
             _showCircleInfo(context);
           },
+        ),
+        Expanded(
+          flex: 1,
+          child: Container(),
         ),
       ],
     );
@@ -133,6 +151,10 @@ class _CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
+            Expanded(
+              flex: 1,
+              child: Container(),
+            ),
             ThemedControlButton(
               label: communications.muted ? t.forceUnMute : t.mute,
               labelColor: themeColors.reversedText,
@@ -143,6 +165,9 @@ class _CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
                 communications.muteAudio(communications.muted ? false : true);
                 debugPrint('mute pressed');
               },
+            ),
+            const SizedBox(
+              width: 20,
             ),
             ThemedControlButton(
               label: communications.videoMuted ? t.startVideo : t.stopVideo,
@@ -156,7 +181,10 @@ class _CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
                 debugPrint('video pressed');
               },
             ),
-            if (role == Role.keeper)
+            if (role == Role.keeper) ...[
+              const SizedBox(
+                width: 20,
+              ),
               ThemedControlButton(
                 label: !_more ? t.more : t.less,
                 labelColor: themeColors.reversedText,
@@ -165,6 +193,11 @@ class _CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
                   setState(() => _more = !_more);
                 },
               ),
+            ],
+            Expanded(
+              flex: 1,
+              child: Container(),
+            ),
           ],
         ),
         if (role == Role.keeper && _more) ...[
@@ -172,6 +205,10 @@ class _CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
+              Expanded(
+                flex: 1,
+                child: Container(),
+              ),
               ThemedControlButton(
                 label: t.openFloor,
                 labelColor: themeColors.reversedText,
@@ -179,6 +216,9 @@ class _CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
                 onPressed: () {
                   debugPrint('lock pressed');
                 },
+              ),
+              const SizedBox(
+                width: 20,
               ),
               ThemedControlButton(
                 label: t.skip,
@@ -188,6 +228,9 @@ class _CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
                   debugPrint('mute pressed');
                 },
               ),
+              const SizedBox(
+                width: 20,
+              ),
               ThemedControlButton(
                 label: t.endSession,
                 labelColor: themeColors.reversedText,
@@ -195,6 +238,10 @@ class _CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
                 onPressed: () {
                   _endSessionPrompt(context, ref);
                 },
+              ),
+              Expanded(
+                flex: 1,
+                child: Container(),
               ),
             ],
           ),

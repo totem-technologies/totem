@@ -38,6 +38,12 @@ class ActiveSession extends ChangeNotifier {
   bool locked = true;
   ActiveSessionChange lastChange = ActiveSessionChange.none;
 
+  @override
+  void dispose() {
+    activeParticipants = [];
+    super.dispose();
+  }
+
   String? get totemUser {
     if (_totemUser != null && _totemUser!.isNotEmpty) {
       return _totemUser;
@@ -147,15 +153,27 @@ class ActiveSession extends ChangeNotifier {
     if (session.state != SessionState.complete ||
         session.state != SessionState.cancelled) {
       if (data['activeParticipants'] != null) {
-        activeParticipants =
+        List<SessionParticipant> participants = [];
+        // find the items not already in the list of active participants
+        List<SessionParticipant> sessionParticipants =
             data['activeParticipants'] as List<SessionParticipant>;
+        for (SessionParticipant participant in sessionParticipants) {
+          SessionParticipant? existing = activeParticipants.firstWhereOrNull(
+              (activeUser) => activeUser.uid == participant.uid);
+          if (existing == null) {
+            participants.add(participant);
+          } else {
+            participants.add(existing);
+          }
+        }
+        activeParticipants = participants;
       } else {
         // update the active users
         for (var participant in participants) {
           var activeParticipant = activeParticipants
               .firstWhereOrNull((element) => element.uid == participant.uid);
           if (activeParticipant != null) {
-            activeParticipant.updateWith(participant);
+            activeParticipant.updateFromParticipant(participant);
           }
         }
       }

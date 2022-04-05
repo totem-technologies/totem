@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:totem/app/circle/index.dart';
-import 'package:totem/services/utils/device_type_device.dart';
+import 'package:totem/services/utils/device_type.dart';
 import 'package:totem/theme/index.dart';
 
 class CircleLiveSessionUsers extends ConsumerWidget {
@@ -51,8 +51,8 @@ class CircleLiveSessionUsers extends ConsumerWidget {
             }
             if ((width / h0).floor() == 1) {
               // use min of 2
-              dimension = min(
-                  dimension, (width - spacing * (maxColumns - 1)) / maxColumns);
+              int cols = min(participantCount, maxColumns);
+              dimension = min(dimension, (width - spacing * (cols - 1)) / cols);
             } else {
               dimension = min(dimension, h0.toDouble());
             }

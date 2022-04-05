@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:provider/provider.dart' as prov;
 import 'package:totem/app/circle/index.dart';
+import 'package:totem/models/index.dart';
 import 'package:totem/theme/index.dart';
 
 class CircleLiveSessionParticipant extends ConsumerWidget {
@@ -13,24 +15,33 @@ class CircleLiveSessionParticipant extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final participant = ref.watch(participantProvider(participantId));
-    return GestureDetector(
-      onTap: () {
-        CircleSessionParticipantDialog.showDialog(
-          context,
-          participant: participant,
-        );
-      },
-      child: Stack(
-        children: [
-          CircleLiveParticipant(
-            participant: participant,
-            hasTotem: hasTotem,
-          ),
-          if (participant.me && !hasTotem) _renderMe(context, hasTotem),
-        ],
-      ),
-    );
+    final activeSession = ref.watch(activeSessionProvider);
+    final sessionParticipant = activeSession.participantWithID(participantId);
+    if (sessionParticipant != null) {
+      return prov.ChangeNotifierProvider.value(
+        value: sessionParticipant,
+        child: prov.Consumer<SessionParticipant>(builder: (_, participant, __) {
+          return GestureDetector(
+            onTap: () {
+              CircleSessionParticipantDialog.showDialog(
+                context,
+                participant: participant,
+              );
+            },
+            child: Stack(
+              children: [
+                CircleLiveParticipant(
+                  participant: participant,
+                  hasTotem: hasTotem,
+                ),
+                if (participant.me && !hasTotem) _renderMe(context, hasTotem),
+              ],
+            ),
+          );
+        }),
+      );
+    }
+    return Container();
   }
 
   Widget _renderMe(BuildContext context, bool hasTotem) {
