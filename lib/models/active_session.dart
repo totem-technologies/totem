@@ -31,16 +31,17 @@ class ActiveSession extends ChangeNotifier {
   final bool isSnap;
   late List<SessionParticipant> participants = [];
   DateTime? started;
-  List<SessionParticipant> activeParticipants = [];
+  List<SessionParticipant> _activeParticipants = [];
   final List<String> _pendingUserAdded = [];
   String? _totemUser;
   bool totemReceived = false;
   bool locked = true;
   ActiveSessionChange lastChange = ActiveSessionChange.none;
+  final List<String> _connectedUsers = [];
 
   @override
   void dispose() {
-    activeParticipants = [];
+    _activeParticipants = [];
     super.dispose();
   }
 
@@ -49,6 +50,13 @@ class ActiveSession extends ChangeNotifier {
       return _totemUser;
     }
     return null;
+  }
+
+  List<SessionParticipant> get activeParticipants {
+    List<SessionParticipant> activeUsers = _activeParticipants
+        .where((element) => _connectedUsers.contains(element.sessionUserId))
+        .toList();
+    return activeUsers;
   }
 
   SessionState get state {
@@ -64,7 +72,7 @@ class ActiveSession extends ChangeNotifier {
 
   Map<String, dynamic>? receiveUserTotem() {
     List<Map<String, dynamic>> updatedParticipants = [];
-    for (SessionParticipant participant in activeParticipants) {
+    for (SessionParticipant participant in _activeParticipants) {
       updatedParticipants.add(participant.toJson());
     }
     return _toJson(
@@ -79,25 +87,33 @@ class ActiveSession extends ChangeNotifier {
     // the sort order of participants
     int nextIndex = -1;
     if (nextSessionId == null) {
-      if (activeParticipants.length > 1) {
-        nextSessionId = activeParticipants[1].sessionUserId;
+      if (_activeParticipants.length > 1) {
         nextIndex = 1;
+        nextSessionId = _activeParticipants[nextIndex].sessionUserId;
+        while (!_connectedUsers.contains(nextSessionId)) {
+          if (nextIndex < _activeParticipants.length - 1) {
+            nextIndex++;
+          } else {
+            nextIndex = 0;
+          }
+          nextSessionId = _activeParticipants[nextIndex].sessionUserId;
+        }
       } else {
         // This would be a test session with a single participant
         nextIndex = 0;
-        nextSessionId = activeParticipants[0].sessionUserId;
+        nextSessionId = _activeParticipants[0].sessionUserId;
       }
     } else {
-      nextIndex = activeParticipants
+      nextIndex = _activeParticipants
           .indexWhere((element) => element.sessionUserId == nextSessionId);
     }
     if (nextIndex != -1) {
       List<SessionParticipant> usersToMove =
-          activeParticipants.sublist(0, nextIndex);
-      activeParticipants.removeRange(0, nextIndex);
-      activeParticipants.addAll(usersToMove);
+          _activeParticipants.sublist(0, nextIndex);
+      _activeParticipants.removeRange(0, nextIndex);
+      _activeParticipants.addAll(usersToMove);
       List<Map<String, dynamic>> updatedParticipants = [];
-      for (SessionParticipant participant in activeParticipants) {
+      for (SessionParticipant participant in _activeParticipants) {
         updatedParticipants.add(participant.toJson());
       }
       return _toJson(
@@ -110,15 +126,23 @@ class ActiveSession extends ChangeNotifier {
   }
 
   SessionParticipant? me() {
-    return activeParticipants.firstWhereOrNull((element) => element.me);
+    return _activeParticipants.firstWhereOrNull((element) => element.me);
   }
 
   SessionParticipant? participantWithID(String id) {
-    return activeParticipants.firstWhereOrNull((element) => element.uid == id);
+    SessionParticipant? participant =
+        _activeParticipants.firstWhereOrNull((element) => element.uid == id);
+    if (participant != null) {
+      int index = _activeParticipants.indexOf(participant);
+      SessionParticipant newParticipant = SessionParticipant.from(participant);
+      _activeParticipants[index] = newParticipant;
+      return newParticipant;
+    }
+    return null;
   }
 
   SessionParticipant? participantWithSessionID(String sessionId) {
-    return activeParticipants
+    return _activeParticipants
         .firstWhereOrNull((element) => element.sessionUserId == sessionId);
   }
 
@@ -158,7 +182,7 @@ class ActiveSession extends ChangeNotifier {
         List<SessionParticipant> sessionParticipants =
             data['activeParticipants'] as List<SessionParticipant>;
         for (SessionParticipant participant in sessionParticipants) {
-          SessionParticipant? existing = activeParticipants.firstWhereOrNull(
+          SessionParticipant? existing = _activeParticipants.firstWhereOrNull(
               (activeUser) => activeUser.uid == participant.uid);
           if (existing == null) {
             participants.add(participant);
@@ -166,11 +190,11 @@ class ActiveSession extends ChangeNotifier {
             participants.add(existing);
           }
         }
-        activeParticipants = participants;
+        _activeParticipants = participants;
       } else {
         // update the active users
         for (var participant in participants) {
-          var activeParticipant = activeParticipants
+          var activeParticipant = _activeParticipants
               .firstWhereOrNull((element) => element.uid == participant.uid);
           if (activeParticipant != null) {
             activeParticipant.updateFromParticipant(participant);
@@ -188,9 +212,14 @@ class ActiveSession extends ChangeNotifier {
   }
 
   bool userJoined({required String sessionUserId, bool pending = false}) {
-    SessionParticipant? participant = activeParticipants
+    if (_connectedUsers
+            .firstWhereOrNull((element) => element == sessionUserId) !=
+        null) {
+      return true;
+    }
+    _connectedUsers.add(sessionUserId);
+    SessionParticipant? participant = _activeParticipants
         .firstWhereOrNull((element) => element.sessionUserId == sessionUserId);
-
     // a user has joined the call, add them to the list of session participants
     if (participant != null) {
       // already in the active list
@@ -200,7 +229,7 @@ class ActiveSession extends ChangeNotifier {
         .firstWhereOrNull((element) => element.sessionUserId == sessionUserId);
     bool found = false;
     if (participant != null) {
-      activeParticipants.add(participant);
+      _activeParticipants.add(participant);
       _pendingUserAdded.remove(sessionUserId);
       found = true;
     } else if (!pending) {
@@ -218,23 +247,22 @@ class ActiveSession extends ChangeNotifier {
   bool userOffline({required String sessionUserId}) {
     // if pending, just remove
     _pendingUserAdded.remove(sessionUserId);
-
-    // make sure the user is already in the active participants list
-    SessionParticipant? participant = activeParticipants
-        .firstWhereOrNull((element) => element.sessionUserId == sessionUserId);
-    if (participant == null) {
-      // not in the active list
-      return false;
+    _connectedUsers.remove(sessionUserId);
+    if (state == SessionState.waiting) {
+      // make sure the user is already in the active participants list
+      SessionParticipant? participant = _activeParticipants.firstWhereOrNull(
+          (element) => element.sessionUserId == sessionUserId);
+      if (participant != null) {
+        _activeParticipants.remove(participant);
+      }
     }
-    participant.status = "offline";
-    activeParticipants.remove(participant);
     notifyListeners();
     return true;
   }
 
   void updateMutedStateForUser(
       {required String sessionUserId, required bool muted}) {
-    SessionParticipant? participant = activeParticipants
+    SessionParticipant? participant = _activeParticipants
         .firstWhereOrNull((element) => element.sessionUserId == sessionUserId);
     if (participant != null) {
       participant.muted = muted;
@@ -242,7 +270,7 @@ class ActiveSession extends ChangeNotifier {
   }
 
   bool mutedStateForUser({required String sessionUserId}) {
-    SessionParticipant? participant = activeParticipants
+    SessionParticipant? participant = _activeParticipants
         .firstWhereOrNull((element) => element.sessionUserId == sessionUserId);
     if (participant == null) {
       // not in the active list
@@ -253,7 +281,7 @@ class ActiveSession extends ChangeNotifier {
 
   void updateVideoMutedStateForUser(
       {required String sessionUserId, required bool muted}) {
-    SessionParticipant? participant = activeParticipants
+    SessionParticipant? participant = _activeParticipants
         .firstWhereOrNull((element) => element.sessionUserId == sessionUserId);
     if (participant != null) {
       participant.videoMuted = muted;
@@ -261,7 +289,7 @@ class ActiveSession extends ChangeNotifier {
   }
 
   bool videoMutedStateForUser({required String sessionUserId}) {
-    SessionParticipant? participant = activeParticipants
+    SessionParticipant? participant = _activeParticipants
         .firstWhereOrNull((element) => element.sessionUserId == sessionUserId);
     if (participant == null) {
       // not in the active list
@@ -271,7 +299,7 @@ class ActiveSession extends ChangeNotifier {
   }
 
   bool participantInSession(String uid) {
-    return activeParticipants
+    return _activeParticipants
             .firstWhereOrNull((participant) => participant.uid == uid) !=
         null;
   }
@@ -279,7 +307,7 @@ class ActiveSession extends ChangeNotifier {
   Role participantRole(String participantId) {
     SessionParticipant? participant = participants
         .firstWhereOrNull((element) => element.uid == participantId);
-    participant ??= activeParticipants
+    participant ??= _activeParticipants
         .firstWhereOrNull((element) => element.uid == participantId);
     if (participant != null) {
       return participant.role;
@@ -316,7 +344,7 @@ class ActiveSession extends ChangeNotifier {
       ActiveSessionChange? sessionChange}) {
     List<Map<String, dynamic>> updatedParticipants = [];
     for (SessionParticipant participant
-        in (participants ?? activeParticipants)) {
+        in (participants ?? _activeParticipants)) {
       updatedParticipants.add(participant.toJson());
     }
     Map<String, dynamic> data = {

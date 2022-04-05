@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:provider/provider.dart' as prov;
 import 'package:totem/app/circle/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/theme/index.dart';
@@ -28,73 +27,66 @@ class CircleParticipantVideo extends ConsumerWidget {
     final themeData = Theme.of(context);
     final textStyles = themeData.textTheme;
     final commProvider = ref.watch(communicationsProvider);
-    final activeSession = ref.watch(activeSessionProvider);
-    final sessionParticipant = activeSession.participantWithID(participantId);
-    if (sessionParticipant != null) {
-      return prov.ChangeNotifierProvider.value(
-        value: sessionParticipant,
-        child: prov.Consumer<SessionParticipant>(builder: (_, participant, __) {
-          return Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(
-                  color: hasTotem
-                      ? Theme.of(context).themeColors.primary
-                      : Colors.transparent,
-                  width: 1),
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Stack(
-                children: [
-                  if (!hasTotem && participant.me && !commProvider.videoMuted)
-                    const rtc_local_view.SurfaceView(),
-                  if (!hasTotem && !participant.me && !participant.videoMuted)
-                    rtc_remote_view.SurfaceView(
-                      channelId: commProvider.channelId,
-                      uid: int.parse(participant.sessionUserId!),
-                    ),
-                  if (hasTotem ||
-                      (participant.me && commProvider.videoMuted) ||
-                      (!participant.me && participant.videoMuted))
-                    _renderUserImage(context, participant),
-                  if (annotate)
+    final participant = ref.watch(participantProvider(participantId));
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+            color: hasTotem
+                ? Theme.of(context).themeColors.primary
+                : Colors.transparent,
+            width: 1),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: Stack(
+          children: [
+            if (!hasTotem && participant.me && !commProvider.videoMuted)
+              const rtc_local_view.SurfaceView(),
+            if (!hasTotem && !participant.me && !participant.videoMuted)
+              rtc_remote_view.SurfaceView(
+                channelId: commProvider.channelId,
+                uid: int.parse(participant.sessionUserId!),
+              ),
+            if (hasTotem ||
+                (participant.me && commProvider.videoMuted) ||
+                (!participant.me && participant.videoMuted))
+              _renderUserImage(context, participant),
+            if (annotate)
+              PositionedDirectional(
+                child: Stack(
+                  children: [
+                    _gradientLayer(context),
                     PositionedDirectional(
-                      child: Stack(
-                        children: [
-                          _gradientLayer(context),
-                          PositionedDirectional(
-                            bottom: 0,
-                            start: 0,
-                            end: 0,
-                            child: Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 12, right: 12, bottom: 8),
-                              child: Text(
-                                participant.name,
-                                style: textStyles.headline5,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
                       bottom: 0,
                       start: 0,
                       end: 0,
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                            left: 12, right: 12, bottom: 8),
+                        child: Text(
+                          participant.name,
+                          style: textStyles.headline5,
+                        ),
+                      ),
                     ),
-                  if (participant.me) renderMe(context),
-                  if (annotate &&
-                      participant.role == Role.keeper &&
-                      !participant.me)
-                    renderKeeperLabel(context)
-                ],
+                  ],
+                ),
+                bottom: 0,
+                start: 0,
+                end: 0,
               ),
-            ),
-          );
-        }),
+            if (participant.me) renderMe(context),
+            if (annotate && participant.role == Role.keeper && !participant.me)
+              renderKeeperLabel(context)
+          ],
+        ),
+      ),
+    );
+/*        }),
       );
     }
-    return Container();
+    return Container(); */
   }
 
   Widget renderMe(BuildContext context) {

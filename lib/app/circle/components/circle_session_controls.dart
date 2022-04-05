@@ -75,7 +75,7 @@ class _CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
     final t = AppLocalizations.of(context)!;
     final communications = ref.watch(communicationsProvider);
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Expanded(
           flex: 1,
@@ -91,9 +91,6 @@ class _CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
             debugPrint('mute pressed');
           },
         ),
-        const SizedBox(
-          width: 20,
-        ),
         ThemedControlButton(
           label: communications.videoMuted ? t.startVideo : t.stopVideo,
           svgImage: !communications.videoMuted
@@ -105,9 +102,6 @@ class _CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
           },
         ),
         if (role == Role.keeper) ...[
-          const SizedBox(
-            width: 20,
-          ),
           ThemedControlButton(
             label: t.start,
             size: 48,
@@ -122,9 +116,6 @@ class _CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
             },
           ),
         ],
-        const SizedBox(
-          width: 20,
-        ),
         ThemedControlButton(
           label: t.info,
           svgImage: 'assets/info.svg',

@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:provider/provider.dart' as prov;
 import 'package:slide_to_act/slide_to_act.dart';
 import 'package:totem/app/circle/index.dart';
 import 'package:totem/models/index.dart';
@@ -31,82 +30,77 @@ class _CircleLiveVideoSessionState
     final themeColors = themeData.themeColors;
     final textStyles = themeData.textStyles;
     final totemParticipant = activeSession.totemParticipant;
-    if (totemParticipant != null &&
-        activeSession.participantWithID(totemParticipant.uid) != null) {
-      return prov.ChangeNotifierProvider.value(
-        value: activeSession.participantWithID(totemParticipant.uid),
-        child: Container(
-          color: Colors.black,
-          child: SafeArea(
-            top: true,
-            bottom: false,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: themeData.pageHorizontalPadding),
-                    child: Stack(
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Text(
-                              activeSession.session.circle.name,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: textStyles.headline2!.merge(
-                                TextStyle(
-                                    fontWeight: FontWeight.w900,
-                                    color: themeColors.reversedText),
-                              ),
+    if (totemParticipant != null) {
+      return Container(
+        color: Colors.black,
+        child: SafeArea(
+          top: true,
+          bottom: false,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                      horizontal: themeData.pageHorizontalPadding),
+                  child: Stack(
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Text(
+                            activeSession.session.circle.name,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: textStyles.headline2!.merge(
+                              TextStyle(
+                                  fontWeight: FontWeight.w900,
+                                  color: themeColors.reversedText),
                             ),
-                            const SizedBox(
-                              height: 14,
-                            ),
-                            Expanded(
-                              child: participants.isNotEmpty
-                                  ? AnimatedSwitcher(
-                                      duration:
-                                          const Duration(milliseconds: 500),
-                                      child: activeSession.totemReceived &&
-                                              (totemParticipant.me)
-                                          ? _speakerUserView(
-                                              context,
-                                              activeSession: activeSession,
-                                              participants: participants,
-                                            )
-                                          : _listeningView(
-                                              context,
-                                              activeSession: activeSession,
-                                              participants: participants,
-                                            ))
-                                  : Center(
-                                      child: Text(
-                                        t.noParticipantsActiveSession,
-                                        style: textStyles.headline3,
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    ),
-                            ),
-                          ],
-                        ),
-                        if (totemParticipant.me)
-                          _speakerControlsView(
-                            context,
-                            participants: participants,
-                            activeSession: activeSession,
                           ),
-                      ],
-                    ),
+                          const SizedBox(
+                            height: 14,
+                          ),
+                          Expanded(
+                            child: participants.isNotEmpty
+                                ? AnimatedSwitcher(
+                                    duration: const Duration(milliseconds: 500),
+                                    child: activeSession.totemReceived &&
+                                            (totemParticipant.me)
+                                        ? _speakerUserView(
+                                            context,
+                                            activeSession: activeSession,
+                                            participants: participants,
+                                          )
+                                        : _listeningView(
+                                            context,
+                                            activeSession: activeSession,
+                                            participants: participants,
+                                          ))
+                                : Center(
+                                    child: Text(
+                                      t.noParticipantsActiveSession,
+                                      style: textStyles.headline3,
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                          ),
+                        ],
+                      ),
+                      if (totemParticipant.me)
+                        _speakerControlsView(
+                          context,
+                          participants: participants,
+                          activeSession: activeSession,
+                        ),
+                    ],
                   ),
                 ),
-                CircleSessionControls(
-                  session: activeSession.session,
-                ),
-              ],
-            ),
+              ),
+              CircleSessionControls(
+                session: activeSession.session,
+              ),
+            ],
           ),
         ),
       );
@@ -118,19 +112,18 @@ class _CircleLiveVideoSessionState
     if (activeSession.totemParticipant != null &&
         (!activeSession.totemReceived ||
             !(activeSession.totemParticipant!.me))) {
-      return prov.Consumer<SessionParticipant>(builder: (_, participant, __) {
-        return LayoutBuilder(
-          builder: (BuildContext context, BoxConstraints constraints) {
-            final sizeOfVideo =
-                min(constraints.maxWidth, constraints.maxHeight);
-            return SizedBox(
-              width: sizeOfVideo,
-              height: sizeOfVideo,
-              child: CircleLiveSessionVideo(participant: participant),
-            );
-          },
-        );
-      });
+      final participant =
+          ref.watch(participantProvider(activeSession.totemParticipant!.uid));
+      return LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+          final sizeOfVideo = min(constraints.maxWidth, constraints.maxHeight);
+          return SizedBox(
+            width: sizeOfVideo,
+            height: sizeOfVideo,
+            child: CircleLiveSessionVideo(participant: participant),
+          );
+        },
+      );
     }
     return Container();
   }

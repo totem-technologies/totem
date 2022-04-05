@@ -11,8 +11,20 @@ class SessionParticipant extends ChangeNotifier {
   late String uid;
   Role role = Role.member;
   DateTime? joined;
-  bool me;
+  late bool me;
 
+  SessionParticipant.from(SessionParticipant participant) {
+    me = participant.me;
+    joined = participant.joined;
+    role = participant.role;
+    _muted = participant._muted;
+    _videoMuted = participant._videoMuted;
+    sessionUserId = participant.sessionUserId;
+    name = participant.name;
+    uid = participant.uid;
+    sessionImage = participant.sessionImage;
+    status = participant.status;
+  }
   SessionParticipant.fromJson(Map<String, dynamic> json, {this.me = false}) {
     uid = json['uid'] ?? "";
     name = json['name'] ?? "";
