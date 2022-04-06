@@ -29,6 +29,7 @@ class AppThemeColors {
     required this.sliderBackground,
     required this.altBackground,
     required this.containerBackground,
+    required this.titleBarGradient,
   });
 
   final Color blurBackground;
@@ -58,4 +59,5 @@ class AppThemeColors {
   final List<Color> secondaryGradient;
   final List<Color> welcomeGradient;
   final List<Color> profileGradient;
+  final List<Color> titleBarGradient;
 }

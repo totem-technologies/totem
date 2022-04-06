@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:totem/app/circle/components/circle_live_video_session.dart';
 import 'package:totem/app/circle/index.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
@@ -48,8 +49,8 @@ class _CircleSnapSessionContentState
         (ActiveSession? previous, ActiveSession next) {
       if (next.state == SessionState.starting) {
         // stop video & preview for now when starting.
-        commProvider.muteVideo(true);
-        commProvider.stopPreview();
+        //    commProvider.muteVideo(true);
+        //    commProvider.stopPreview();
       }
     });
     return GradientBackground(
@@ -59,97 +60,129 @@ class _CircleSnapSessionContentState
           onWillPop: () async {
             return await _exitPrompt(context);
           },
-          child: SafeArea(
-            top: true,
-            bottom: false,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                if (sessionProvider.state != SessionState.live &&
-                    sessionProvider.state != SessionState.complete &&
-                    sessionProvider.state != SessionState.ending)
-                  SubPageHeader(
-                    title: widget.circle.name,
-                    onClose:
-                        (commProvider.state != CommunicationState.disconnecting)
-                            ? () async {
-                                if (commProvider.state !=
-                                    CommunicationState.active) {
-                                  Navigator.of(context).pop();
-                                } else {
-                                  await _exitPrompt(context);
-                                }
-                              }
-                            : null,
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 300),
+            child: (sessionProvider.state == SessionState.live)
+                ? const CircleLiveVideoSession()
+                : Stack(
+                    children: [
+                      SafeArea(
+                        top: true,
+                        bottom: false,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  if (sessionProvider.state !=
+                                          SessionState.live &&
+                                      sessionProvider.state !=
+                                          SessionState.complete &&
+                                      sessionProvider.state !=
+                                          SessionState.ending)
+                                    SubPageHeader(
+                                      title: widget.circle.name,
+                                      onClose: (commProvider.state !=
+                                              CommunicationState.disconnecting)
+                                          ? () async {
+                                              if (commProvider.state !=
+                                                  CommunicationState.active) {
+                                                Navigator.of(context).pop();
+                                              } else {
+                                                await _exitPrompt(context);
+                                              }
+                                            }
+                                          : null,
+                                    ),
+                                  if (sessionProvider.state ==
+                                          SessionState.live ||
+                                      sessionProvider.state ==
+                                          SessionState.complete ||
+                                      sessionProvider.state ==
+                                          SessionState.ending)
+                                    _altHeader(context, commProvider),
+                                  if (sessionProvider.state ==
+                                          SessionState.waiting &&
+                                      widget.circle.description != null &&
+                                      widget.circle.description!.isNotEmpty)
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: Theme.of(context)
+                                              .pageHorizontalPadding,
+                                          vertical: 12),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.stretch,
+                                        children: [
+                                          Text(
+                                            t.circleDescription,
+                                            style: textStyles.headline3,
+                                          ),
+                                          const SizedBox(
+                                            height: 4,
+                                          ),
+                                          //Text(widget.circle.description!),
+                                          TrimmedText(
+                                            widget.circle.description!,
+                                            trimLines: 3,
+                                            style: textStyles.bodyText1,
+                                            more: Row(
+                                              children: [
+                                                TextButton(
+                                                  style: TextButton.styleFrom(
+                                                      padding: EdgeInsets.zero,
+                                                      alignment:
+                                                          Alignment.centerLeft),
+                                                  onPressed: () async {
+                                                    await CircleSessionInfoPage
+                                                        .showDialog(context,
+                                                            session: widget
+                                                                .circle
+                                                                .activeSession!);
+                                                  },
+                                                  child: Text(t.moreInfo),
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                          Divider(
+                                            height: 48,
+                                            thickness: 1,
+                                            color: themeColors.divider,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  if (sessionProvider.state !=
+                                      SessionState.live)
+                                    Expanded(
+                                      child: _validSession
+                                          ? AnimatedSwitcher(
+                                              duration: const Duration(
+                                                  milliseconds: 200),
+                                              child: _sessionContent(
+                                                  context,
+                                                  commProvider,
+                                                  sessionProvider),
+                                            )
+                                          : _invalidSession(context),
+                                    ),
+                                ],
+                              ),
+                            ),
+                            if (commProvider.state ==
+                                    CommunicationState.active &&
+                                sessionProvider.state != SessionState.live)
+                              CircleSessionControls(
+                                session: widget.circle.snapSession,
+                              ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                if (sessionProvider.state == SessionState.live ||
-                    sessionProvider.state == SessionState.complete ||
-                    sessionProvider.state == SessionState.ending)
-                  _altHeader(context, commProvider),
-                if (sessionProvider.state == SessionState.waiting &&
-                    widget.circle.description != null &&
-                    widget.circle.description!.isNotEmpty)
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: Theme.of(context).pageHorizontalPadding,
-                        vertical: 12),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Text(
-                          t.circleDescription,
-                          style: textStyles.headline3,
-                        ),
-                        const SizedBox(
-                          height: 4,
-                        ),
-                        //Text(widget.circle.description!),
-                        TrimmedText(
-                          widget.circle.description!,
-                          trimLines: 3,
-                          style: textStyles.bodyText1,
-                          more: Row(
-                            children: [
-                              TextButton(
-                                style: TextButton.styleFrom(
-                                    padding: EdgeInsets.zero,
-                                    alignment: Alignment.centerLeft),
-                                onPressed: () async {
-                                  await CircleSessionInfoPage.showDialog(
-                                      context,
-                                      session: widget.circle.activeSession!);
-                                },
-                                child: Text(t.moreInfo),
-                              )
-                            ],
-                          ),
-                        ),
-                        Divider(
-                          height: 48,
-                          thickness: 1,
-                          color: themeColors.divider,
-                        ),
-                      ],
-                    ),
-                  ),
-                Expanded(
-                  child: _validSession
-                      ? AnimatedSwitcher(
-                          duration: const Duration(milliseconds: 200),
-                          child: _sessionContent(
-                              context, commProvider, sessionProvider),
-                        )
-                      : _invalidSession(context),
-                ),
-                if (commProvider.state == CommunicationState.active)
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: CircleSessionControls(
-                      session: widget.circle.snapSession,
-                    ),
-                  ),
-              ],
-            ),
           ),
         ),
       ),
@@ -330,7 +363,7 @@ class _CircleSnapSessionContentState
                     } else {
                       setState(() => _retry = false);
                       // user says they have reset, retry
-                      _joinSession();
+                      _joinSession(MediaQuery.of(context).size);
                     }
                   },
                 ),
@@ -464,28 +497,28 @@ class _CircleSnapSessionContentState
   @override
   void afterFirstLayout(BuildContext context) {
     // join the session once the page is ready
-    _joinSession();
+    _joinSession(const Size(600, 600));
   }
 
-  void _joinSession() {
+  void _joinSession(Size fullscreenSize) {
     if (widget.circle.activeSession != null) {
       final provider = ref.read(communicationsProvider);
       provider.joinSession(
-        session: widget.circle.activeSession!,
-        sessionImage: widget.sessionImage,
-        enableVideo: true,
-        handler: CommunicationHandler(
-          joinedCircle: (String sessionId, String sessionUserId) {
-            debugPrint("joined circle as: " + sessionUserId);
-          },
-          leaveCircle: () {
-            // prompt?
-            Future.delayed(const Duration(milliseconds: 0), () {
-              // Navigator.of(context).pop();
-            });
-          },
-        ),
-      );
+          session: widget.circle.activeSession!,
+          sessionImage: widget.sessionImage,
+          enableVideo: true,
+          handler: CommunicationHandler(
+            joinedCircle: (String sessionId, String sessionUserId) {
+              debugPrint("joined circle as: " + sessionUserId);
+            },
+            leaveCircle: () {
+              // prompt?
+              Future.delayed(const Duration(milliseconds: 0), () {
+                // Navigator.of(context).pop();
+              });
+            },
+          ),
+          fullScreenSize: fullscreenSize);
     }
   }
 }

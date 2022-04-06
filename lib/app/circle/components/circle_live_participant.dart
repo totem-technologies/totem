@@ -1,8 +1,12 @@
+import 'dart:ui';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/theme/index.dart';
+
+import 'circle_live_session_video.dart';
 
 class CircleLiveParticipant extends StatelessWidget {
   const CircleLiveParticipant({
@@ -46,14 +50,18 @@ class CircleLiveParticipant extends StatelessWidget {
               ),
               child: ClipRRect(
                 borderRadius: const BorderRadius.all(Radius.circular(8)),
-                child: (!participant.hasImage)
-                    ? Container(
-                        color: participant.me
-                            ? themeColors.primary.withAlpha(80)
-                            : themeColors.profileBackground,
-                        child: _genericUserImage(context),
-                      )
-                    : _renderUserImage(context),
+                child: hasTotem
+                    ? ((!participant.hasImage)
+                        ? Container(
+                            color: participant.me
+                                ? themeColors.primary.withAlpha(80)
+                                : themeColors.profileBackground,
+                            child: _genericUserImage(context),
+                          )
+                        : _renderUserImage(context))
+                    : CircleLiveSessionVideo(
+                        participant: participant,
+                      ),
               ),
             ),
           ),
@@ -63,16 +71,36 @@ class CircleLiveParticipant extends StatelessWidget {
   }
 
   Widget _renderUserImage(BuildContext context) {
-    if (participant.sessionImage!.toLowerCase().contains("assets/")) {
-      return Image.asset(
-        participant.sessionImage!,
-        fit: BoxFit.cover,
-      );
-    }
-    return CachedNetworkImage(
-      imageUrl: participant.sessionImage!,
-      errorWidget: (context, url, error) => _genericUserImage(context),
-    );
+    return Stack(children: [
+      if (participant.sessionImage!.toLowerCase().contains("assets/"))
+        Image.asset(
+          participant.sessionImage!,
+          fit: BoxFit.cover,
+        ),
+      if (!participant.sessionImage!.toLowerCase().contains("assets/"))
+        CachedNetworkImage(
+          imageUrl: participant.sessionImage!,
+          errorWidget: (context, url, error) => _genericUserImage(context),
+        ),
+      if (participant.videoMuted) ..._videoMutedLayer(context),
+    ]);
+  }
+
+  List<Widget> _videoMutedLayer(BuildContext context) {
+    return [
+      Positioned.fill(
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 7.0, sigmaY: 7.0),
+          child: Container(
+            color: Colors.white10,
+          ),
+        ),
+      ),
+      Align(
+        alignment: Alignment.center,
+        child: SvgPicture.asset('assets/cam.svg'),
+      ),
+    ];
   }
 
   Widget _genericUserImage(BuildContext context) {

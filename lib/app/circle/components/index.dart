@@ -1,6 +1,7 @@
 export 'circle_live_participant.dart';
 export 'circle_live_session_participant.dart';
 export 'circle_live_session_users.dart';
+export 'circle_live_session_video.dart';
 export 'circle_live_totem_participant.dart';
 export 'circle_participant.dart';
 export 'circle_participant_video.dart';

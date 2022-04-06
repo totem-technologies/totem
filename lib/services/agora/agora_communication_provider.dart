@@ -4,6 +4,7 @@ import 'dart:math';
 
 import 'package:agora_rtc_engine/rtc_engine.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
@@ -13,14 +14,14 @@ class AgoraCommunicationProvider extends CommunicationProvider {
 
   // These are used as default values for the video preview, modify
   // as needed to define a different default as these get set on the engine
-  static const int videoHeight = 180;
-  static const int videoWidth = 180;
+  static const int videoHeight = 350;
+  static const int videoWidth = 350;
 
   AgoraCommunicationProvider(
       {required this.sessionProvider, required this.userId}) {
     sessionProvider.addListener(_updateCommunicationFromSession);
   }
-
+  bool _hasTotem = false;
   RtcEngine? _engine;
   CommunicationHandler? _handler;
   int commUid = 0;
@@ -37,6 +38,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   StreamController<CommunicationAudioVolumeIndication>?
       _audioIndicatorStreamController;
   dynamic _channel;
+  late Size _fullscreenSize;
 
   @override
   String? get lastError {
@@ -63,7 +65,9 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     required CommunicationHandler handler,
     String? sessionImage,
     bool enableVideo = false,
+    required Size fullScreenSize,
   }) async {
+    _fullscreenSize = fullScreenSize;
     _sessionImage = sessionImage;
     _handler = handler;
     _session = session;
@@ -216,7 +220,8 @@ class AgoraCommunicationProvider extends CommunicationProvider {
               userInfoUpdated: _handleUserInfoUpdated,
               userJoined: _handleUserJoined,
               userOffline: _handleUserOffline,
-              audioVolumeIndication: _handleAudioVolumeIndication,
+              audioVolumeIndication:
+                  !kIsWeb ? _handleAudioVolumeIndication : null,
               videoPublishStateChanged: _handleVideoPublishStateChanged,
               remoteVideoStateChanged: _handleRemoteVideoStateChanged,
             ),
@@ -462,6 +467,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
             session.lastChange == ActiveSessionChange.totemReceive) {
           SessionParticipant? participant = session.totemParticipant;
           if (participant != null) {
+            setHasTotem(participant.me);
             muteAudio(!participant.me || !session.totemReceived);
           }
         }
@@ -527,5 +533,17 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   @override
   dynamic get channelId {
     return _channel;
+  }
+
+  @override
+  Future<void> setHasTotem(bool hasTotem) async {
+    if (_hasTotem != hasTotem) {
+      _hasTotem = hasTotem;
+      await _engine!.setVideoEncoderConfiguration(VideoEncoderConfiguration(
+          dimensions: VideoDimensions(
+              width: _hasTotem ? _fullscreenSize.width.toInt() : videoWidth,
+              height:
+                  _hasTotem ? _fullscreenSize.height.toInt() : videoHeight)));
+    }
   }
 }

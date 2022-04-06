@@ -11,6 +11,7 @@ class ThemedControlButton extends StatelessWidget {
     this.enabled = true,
     this.imageColor,
     this.backgroundColor,
+    this.labelColor,
     this.size = 40,
     this.iconPadding = const EdgeInsets.all(0),
     this.iconHeight,
@@ -22,6 +23,7 @@ class ThemedControlButton extends StatelessWidget {
   final double? iconHeight;
   final Color? imageColor;
   final Color? backgroundColor;
+  final Color? labelColor;
   final VoidCallback? onPressed;
   final EdgeInsets iconPadding;
 
@@ -62,7 +64,8 @@ class ThemedControlButton extends StatelessWidget {
             ),
             child: Text(
               label,
-              style: const TextStyle(fontSize: 12),
+              style: TextStyle(
+                  fontSize: 12, color: labelColor ?? themeColors.primaryText),
               textAlign: TextAlign.center,
             ),
           ),

@@ -42,6 +42,7 @@ dependencies:
   firebase_crashlytics: ^2.4.4
   firebase_storage: ^10.0.1
   firebase_dynamic_links: ^4.0.8
+  flutter_device_type: ^0.4.0
   flutter_foreground_task: ^3.5.4
   flutter_reorderable_list: ^1.2.0
 #    git:
@@ -88,6 +89,7 @@ flutter:
     - assets/alert.svg
     - assets/arrow_next.svg
     - assets/background_shape.svg
+    - assets/cam.svg
     - assets/check.svg
     - assets/close.svg
     - assets/face.svg
@@ -125,3 +127,7 @@ flutter:
     - family: Recoleta
       fonts:
         - asset: fonts/Recoleta-Regular.ttf
+        - asset: fonts/Recoleta-Black.ttf
+          weight: 900
+        - asset: fonts/Recoleta-Bold.ttf
+          weight: 700

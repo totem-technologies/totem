@@ -31,6 +31,10 @@ class CircleLiveSessionParticipant extends ConsumerWidget {
         ],
       ),
     );
+/*        }),
+      );
+    }
+    return Container(); */
   }
 
   Widget _renderMe(BuildContext context, bool hasTotem) {

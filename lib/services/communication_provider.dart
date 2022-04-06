@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
 
@@ -15,11 +15,13 @@ abstract class CommunicationProvider extends ChangeNotifier {
   bool muted = false;
   bool videoMuted = false;
   dynamic get channelId;
-  Future<bool> joinSession(
-      {required Session session,
-      required CommunicationHandler handler,
-      String? sessionImage,
-      bool enableVideo});
+  Future<bool> joinSession({
+    required Session session,
+    required CommunicationHandler handler,
+    String? sessionImage,
+    bool enableVideo,
+    required Size fullScreenSize,
+  });
   Future<void> leaveSession({bool requested = true});
   Future<void> endSession();
   String? get lastError;
@@ -32,5 +34,6 @@ abstract class CommunicationProvider extends ChangeNotifier {
   Future<bool> receiveActiveSessionTotem({required String sessionUserId});
   Future<bool> passActiveSessionTotem({required String sessionUserId});
   Future<bool> doneActiveSessionTotem({required String sessionUserId});
+  Future<void> setHasTotem(bool hasTotem);
   Stream<CommunicationAudioVolumeIndication> get audioIndicatorStream;
 }
