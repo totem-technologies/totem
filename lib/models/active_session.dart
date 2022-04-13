@@ -212,17 +212,15 @@ class ActiveSession extends ChangeNotifier {
   }
 
   bool userJoined({required String sessionUserId, bool pending = false}) {
-    if (_connectedUsers
-            .firstWhereOrNull((element) => element == sessionUserId) !=
-        null) {
-      return true;
-    }
-    _connectedUsers.add(sessionUserId);
+    bool added = _assertUser(sessionUserId);
     SessionParticipant? participant = _activeParticipants
         .firstWhereOrNull((element) => element.sessionUserId == sessionUserId);
     // a user has joined the call, add them to the list of session participants
     if (participant != null) {
       // already in the active list
+      if (added) {
+        notifyListeners();
+      }
       return true;
     }
     participant = participants
@@ -258,6 +256,20 @@ class ActiveSession extends ChangeNotifier {
     }
     notifyListeners();
     return true;
+  }
+
+  void updateStateForUser(
+      {required String sessionUserId, bool? muted, bool? videoMuted}) {
+    bool added = _assertUser(sessionUserId);
+    SessionParticipant? participant = _activeParticipants
+        .firstWhereOrNull((element) => element.sessionUserId == sessionUserId);
+    if (participant != null) {
+      participant.muted = muted ?? participant.muted;
+      participant.videoMuted = videoMuted ?? participant.videoMuted;
+    }
+    if (added) {
+      notifyListeners();
+    }
   }
 
   void updateMutedStateForUser(
@@ -355,5 +367,13 @@ class ActiveSession extends ChangeNotifier {
           sessionChange != null ? sessionChange.name : lastChange.name,
     };
     return data;
+  }
+
+  bool _assertUser(String sessionUserId) {
+    if (!_connectedUsers.contains(sessionUserId)) {
+      _connectedUsers.add(sessionUserId);
+      return true;
+    }
+    return false;
   }
 }

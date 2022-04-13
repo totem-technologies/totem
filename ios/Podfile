@@ -45,7 +45,7 @@ post_install do |installer|
         ## dart: PermissionGroup.microphone
         'PERMISSION_MICROPHONE=1',
       ]
-      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.3'
+      config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "arm64 i386"
     end
   end
 end
