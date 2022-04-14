@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:math';
+import 'dart:typed_data';
 
 import 'package:agora_rtc_engine/rtc_engine.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -16,6 +18,9 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   // as needed to define a different default as these get set on the engine
   static const int videoHeight = 350;
   static const int videoWidth = 350;
+  // Communication streams
+  static const int statsStream = 0;
+  static const int notifyDuration = 10; // seconds
 
   AgoraCommunicationProvider(
       {required this.sessionProvider, required this.userId}) {
@@ -39,6 +44,8 @@ class AgoraCommunicationProvider extends CommunicationProvider {
       _audioIndicatorStreamController;
   dynamic _channel;
   late Size _fullscreenSize;
+  Timer? _updateTimer;
+  int? _statsStreamId;
 
   @override
   String? get lastError {
@@ -47,6 +54,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
 
   @override
   void dispose() {
+    _cancelStateUpdates();
     _channel = null;
     try {
       sessionProvider.removeListener(_updateCommunicationFromSession);
@@ -119,6 +127,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
           sessionUserId: sessionProvider.activeSession!.totemUser!);
     }
     await _engine?.leaveChannel();
+    _updateTimer?.cancel();
     // update list of participants
   }
 
@@ -169,6 +178,18 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     return false;
   }
 
+  void _cancelStateUpdates() {
+    _updateTimer?.cancel();
+    _updateTimer = null;
+  }
+
+  void _startStateUpdates() {
+    _updateTimer ??=
+        Timer.periodic(const Duration(seconds: notifyDuration), (timer) {
+      notifyState();
+    });
+  }
+
   Future<void> _assertEngine(bool enableVideo) async {
     if (_engine == null) {
       try {
@@ -188,7 +209,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
         }
         if (statusValue == PermissionStatus.granted ||
             statusValue == PermissionStatus.limited) {
-          _engine = await RtcEngine.create(appId);
+          _engine = await RtcEngine.createWithContext(RtcEngineContext(appId));
           // enable audio and fancy noise cancelling
           await _engine!.enableAudio();
           await _engine!.setDefaultAudioRoutetoSpeakerphone(true);
@@ -224,6 +245,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
                   !kIsWeb ? _handleAudioVolumeIndication : null,
               videoPublishStateChanged: _handleVideoPublishStateChanged,
               remoteVideoStateChanged: _handleRemoteVideoStateChanged,
+              streamMessage: _handleStreamMessage,
             ),
           );
         } else {
@@ -248,9 +270,43 @@ class AgoraCommunicationProvider extends CommunicationProvider {
         userInfo.userAccount);
   }
 
-  void _handleSessionError(error) {
+  void _handleSessionError(ErrorCode error) {
     _lastError = error.toString();
-    _updateState(CommunicationState.failed);
+    switch (error) {
+      case ErrorCode.AdmGeneralError:
+        debugPrint('error: ${error.name}');
+        break;
+      default:
+        // all other errors are fatal for now
+        if (!kIsWeb) {
+          FirebaseCrashlytics.instance.recordError(error.name, null,
+              reason: 'error from agora session');
+        }
+        _updateState(CommunicationState.failed);
+        break;
+    }
+  }
+
+  void _handleStreamMessage(int uid, int streamId, Uint8List data) {
+    if (uid != commUid) {
+      final List<int> state = data.toList(growable: false);
+      debugPrint('Got stream for user: $uid for stream: $streamId');
+      // update state for user
+      bool? muted;
+      bool? videoMuted;
+      int dataStreamId = -1;
+      if (state.length == 3) {
+        dataStreamId = state[0];
+        muted = state[1] == 1;
+        videoMuted = state[2] == 1;
+      }
+      if (dataStreamId == statsStream) {
+        sessionProvider.activeSession?.updateStateForUser(
+            sessionUserId: uid.toString(),
+            muted: muted,
+            videoMuted: videoMuted);
+      }
+    }
   }
 
   void _handleActiveSpeaker(int uid) {
@@ -361,7 +417,10 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     if (onSpeaker != true) {
       await _engine!.setEnableSpeakerphone(true);
     }
-
+    _statsStreamId = await _engine
+        ?.createDataStreamWithConfig(DataStreamConfig(false, false));
+    debugPrint(
+        'Created Stats Stream: ${_statsStreamId?.toString() ?? 'failed'}');
     // notify any callbacks that the user has joined the session
     if (_handler != null && _handler!.joinedCircle != null) {
       _handler!.joinedCircle!(_session!.id, uid.toString());
@@ -373,10 +432,14 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     if (!kIsWeb && Platform.isAndroid) {
       SessionForeground.instance.startSessionTask();
     }
+    // notify of state to others
+    notifyState();
+    _startStateUpdates();
   }
 
   Future<void> _handleLeaveSession(stats) async {
-    // for android, start a foreground service to keep the process running
+    _cancelStateUpdates();
+    // for android, stop the foreground service to keep the process running
     // to prevent drops in connection
     if (!kIsWeb && Platform.isAndroid) {
       SessionForeground.instance.stopSessionTask();
@@ -478,13 +541,13 @@ class AgoraCommunicationProvider extends CommunicationProvider {
 
   void _handleAudioVolumeIndication(
       List<AudioVolumeInfo> speakers, int totalVolume) {
-    debugPrint('Audio volume: ${totalVolume.toString()}');
+    //debugPrint('Audio volume: ${totalVolume.toString()}');
     if (!_isIndicatorStreamOpen) {
       return;
     }
 
     var infos = speakers.map((info) {
-      debugPrint('speaker: ${info.uid.toString()} ${info.vad.toString()}');
+      //debugPrint('speaker: ${info.uid.toString()} ${info.vad.toString()}');
       return CommunicationAudioVolumeInfo(
           uid: info.uid, volume: info.volume, speaking: info.vad == 1);
     }).toList();
@@ -545,5 +608,20 @@ class AgoraCommunicationProvider extends CommunicationProvider {
               height:
                   _hasTotem ? _fullscreenSize.height.toInt() : videoHeight)));
     }
+  }
+
+  void notifyState() async {
+    if (_statsStreamId == null) {
+      _statsStreamId = await _engine
+          ?.createDataStreamWithConfig(DataStreamConfig(false, false));
+      debugPrint(
+          'Tried to re-create stream in notifyState: ${_statsStreamId.toString()}');
+      if (_statsStreamId == null) {
+        return;
+      }
+    }
+    List<int> state = [statsStream, muted ? 1 : 0, videoMuted ? 1 : 0];
+    debugPrint('Notify State: ${state.toString()}');
+    _engine?.sendStreamMessage(_statsStreamId!, Uint8List.fromList(state));
   }
 }
