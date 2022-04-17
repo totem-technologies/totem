@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart' as prov;
 import 'package:slide_to_act/slide_to_act.dart';
 import 'package:totem/app/circle/index.dart';
 import 'package:totem/models/index.dart';
@@ -111,17 +112,22 @@ class _CircleLiveVideoSessionState
     if (activeSession.totemParticipant != null &&
         (!activeSession.totemReceived ||
             !(activeSession.totemParticipant!.me))) {
-      final participant = ref.watch(
-          participantProvider(activeSession.totemParticipant!.sessionUserId!));
-      return LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints) {
-          final sizeOfVideo = min(constraints.maxWidth, constraints.maxHeight);
-          return SizedBox(
-            width: sizeOfVideo,
-            height: sizeOfVideo,
-            child: CircleLiveSessionVideo(participant: participant),
-          );
-        },
+      return prov.ChangeNotifierProvider<SessionParticipant>.value(
+        value: activeSession.totemParticipant!,
+        child: LayoutBuilder(
+          builder: (BuildContext context, BoxConstraints constraints) {
+            final sizeOfVideo =
+                min(constraints.maxWidth, constraints.maxHeight);
+            return SizedBox(
+              width: sizeOfVideo,
+              height: sizeOfVideo,
+              child: prov.Consumer<SessionParticipant>(
+                  builder: (_, participant, __) {
+                return CircleLiveSessionVideo(participant: participant);
+              }),
+            );
+          },
+        ),
       );
     }
     return Container();

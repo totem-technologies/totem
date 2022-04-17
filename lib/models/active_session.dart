@@ -38,6 +38,7 @@ class ActiveSession extends ChangeNotifier {
   final List<String> _connectedUsers = [];
   List<String> _speakingOrder = [];
   SessionState _state = SessionState.waiting;
+  bool _userStatus = false;
 
   @override
   void dispose() {
@@ -50,6 +51,10 @@ class ActiveSession extends ChangeNotifier {
       return _totemUser;
     }
     return null;
+  }
+
+  bool get userStatus {
+    return _userStatus;
   }
 
   List<SessionParticipant> get activeParticipants {
@@ -174,6 +179,7 @@ class ActiveSession extends ChangeNotifier {
     if (data['lastChange'] != null) {
       lastChange = ActiveSessionChange.values.byName(data['lastChange']);
     }
+    _userStatus = data['userStatus'] ?? false;
     if (_state != SessionState.complete || _state != SessionState.cancelled) {
       if (data['participants'] != null) {
         Map<String, SessionParticipant> participants = {};

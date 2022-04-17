@@ -282,6 +282,7 @@ class FirebaseSessionProvider extends SessionProvider {
             for (String key in update.keys) {
               data[key] = update[key];
             }
+            data["userStatus"] = false;
             transaction.update(activeCircleRef, data);
           });
         } else {
@@ -308,7 +309,10 @@ class FirebaseSessionProvider extends SessionProvider {
           await FirebaseFirestore.instance.runTransaction((transaction) async {
             DocumentReference ref =
                 FirebaseFirestore.instance.doc(_activeSession!.circle.ref);
-            Map<String, dynamic> data = {"state": state.name};
+            Map<String, dynamic> data = {
+              "state": state.name,
+              "userStatus": false
+            };
             transaction.update(ref, data);
           });
           return true;
@@ -440,6 +444,7 @@ class FirebaseSessionProvider extends SessionProvider {
               sessionData["speakingOrder"] = speakers;
             }
             sessionData['participants'] = participants;
+            sessionData['userStatus'] = false;
             transaction.update(ref, sessionData);
             int count = participants.length;
             transaction.update(circleRef, {'participantCount': count});
@@ -541,6 +546,7 @@ class FirebaseSessionProvider extends SessionProvider {
         activeSession["lastChange"] =
             ActiveSessionChange.participantsChange.name;
         activeSession["speakingOrder"] = speakingOrder;
+        activeSession["userStatus"] = false;
         transaction.update(activeCircleRef, activeSession);
 
         int count = (participants.length);
@@ -551,10 +557,12 @@ class FirebaseSessionProvider extends SessionProvider {
   }
 
   @override
-  Future<bool> notifyUserStatus(
-      {required String sessionUserId,
-      required bool muted,
-      required bool videoMuted}) async {
+  Future<bool> notifyUserStatus({
+    required String sessionUserId,
+    required bool muted,
+    required bool videoMuted,
+    required bool userChange,
+  }) async {
     if (_activeSession != null) {
       SessionParticipant? participant =
           _activeSession!.participantWithSessionID(sessionUserId);
@@ -572,7 +580,8 @@ class FirebaseSessionProvider extends SessionProvider {
             Map<String, dynamic> participants =
                 activeSession['participants'] ?? {};
             participants[sessionUserId] = participant.toJson();
-            transaction.update(ref, {"participants": participants});
+            transaction.update(
+                ref, {"participants": participants, "userStatus": userChange});
           });
           return true;
         } on FirebaseException catch (ex) {

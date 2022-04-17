@@ -69,7 +69,7 @@ class CircleLiveSessionUsers extends ConsumerWidget {
                 if (index < participants.length) {
                   return CircleSessionParticipant(
                     dimension: dimension,
-                    sessionUserId: participants[index].sessionUserId!,
+                    participant: participants[index],
                     hasTotem: activeSession.totemUser ==
                         participants[index].sessionUserId,
                     annotate: false,

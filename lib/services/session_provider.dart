@@ -25,5 +25,6 @@ abstract class SessionProvider extends ChangeNotifier {
   Future<bool> notifyUserStatus(
       {required String sessionUserId,
       required bool muted,
-      required bool videoMuted});
+      required bool videoMuted,
+      required bool userChange});
 }

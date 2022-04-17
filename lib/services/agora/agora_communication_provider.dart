@@ -47,6 +47,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   late Size _fullscreenSize;
   Timer? _updateTimer;
   int? _statsStreamId;
+  bool _stateUpdate = false;
 
   @override
   String? get lastError {
@@ -273,18 +274,21 @@ class AgoraCommunicationProvider extends CommunicationProvider {
 
   void _handleSessionError(ErrorCode error) {
     _lastError = error.toString();
-    switch (error) {
-      case ErrorCode.AdmGeneralError:
-        debugPrint('error: ${error.name}');
-        break;
-      default:
-        // all other errors are fatal for now
-        if (!kIsWeb) {
-          FirebaseCrashlytics.instance.recordError(error.name, null,
-              reason: 'error from agora session');
-        }
-        _updateState(CommunicationState.failed);
-        break;
+    if (state != CommunicationState.disconnected) {
+      debugPrint('Error handler: ${state.name} - error: ${error.name}');
+      switch (error) {
+        case ErrorCode.AdmGeneralError:
+          debugPrint('error: ${error.name}');
+          break;
+        default:
+          // all other errors are fatal for now
+          if (!kIsWeb) {
+            FirebaseCrashlytics.instance.recordError(error.name, null,
+                reason: 'error from agora session');
+          }
+          _updateState(CommunicationState.failed);
+          break;
+      }
     }
   }
 
@@ -330,6 +334,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
       notifyListeners();
       notifyState(directChange: true);
     }
+    _stateUpdate = false;
   }
 
   void _handleVideoPublishStateChanged(String channel,
@@ -516,6 +521,8 @@ class AgoraCommunicationProvider extends CommunicationProvider {
                   : StreamPublishState.Published,
               0);
         }
+      } else {
+        _stateUpdate = false;
       }
     }
   }
@@ -524,7 +531,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     // check the session state
     ActiveSession? session = sessionProvider.activeSession;
     if (session != null) {
-      if (session.state == SessionState.live) {
+      if (session.state == SessionState.live && !session.userStatus) {
         // have to manage mute state based on changes to the state
         bool started = (_lastState == SessionState.starting &&
             session.state == SessionState.live);
@@ -533,9 +540,16 @@ class AgoraCommunicationProvider extends CommunicationProvider {
             session.lastChange == ActiveSessionChange.totemReceive) {
           SessionParticipant? participant = session.totemParticipant;
           if (participant != null) {
+            _stateUpdate = true;
             setHasTotem(participant.me);
             muteAudio(!participant.me || !session.totemReceived);
           }
+        }
+      } else if (session.state == SessionState.cancelled ||
+          session.state == SessionState.complete) {
+        if (_channel != null) {
+          debugPrint('leaving channel after complete/cancel');
+          _engine?.leaveChannel();
         }
       }
       _lastState = session.state;
@@ -630,6 +644,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     }
     if (directChange) {
       sessionProvider.notifyUserStatus(
+          userChange: !_stateUpdate,
           sessionUserId: commUid.toString(),
           muted: muted,
           videoMuted: videoMuted);

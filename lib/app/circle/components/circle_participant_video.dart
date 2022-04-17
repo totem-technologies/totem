@@ -14,11 +14,11 @@ import 'package:totem/theme/index.dart';
 class CircleParticipantVideo extends ConsumerWidget {
   const CircleParticipantVideo({
     Key? key,
-    required this.sessionUserId,
+    required this.participant,
     this.hasTotem = false,
     this.annotate = true,
   }) : super(key: key);
-  final String sessionUserId;
+  final SessionParticipant participant;
   final bool hasTotem;
   final bool annotate;
 
@@ -27,7 +27,6 @@ class CircleParticipantVideo extends ConsumerWidget {
     final themeData = Theme.of(context);
     final textStyles = themeData.textTheme;
     final commProvider = ref.watch(communicationsProvider);
-    final participant = ref.watch(participantProvider(sessionUserId));
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
@@ -41,7 +40,7 @@ class CircleParticipantVideo extends ConsumerWidget {
         borderRadius: BorderRadius.circular(8),
         child: Stack(
           children: [
-            if (!hasTotem && participant.me && !commProvider.videoMuted)
+            if (!hasTotem && participant.me && !participant.videoMuted)
               const rtc_local_view.SurfaceView(),
             if (!hasTotem && !participant.me && !participant.videoMuted)
               rtc_remote_view.SurfaceView(
@@ -49,7 +48,7 @@ class CircleParticipantVideo extends ConsumerWidget {
                 uid: int.parse(participant.sessionUserId!),
               ),
             if (hasTotem ||
-                (participant.me && commProvider.videoMuted) ||
+                (participant.me && participant.videoMuted) ||
                 (!participant.me && participant.videoMuted))
               _renderUserImage(context, participant),
             if (annotate)

@@ -79,6 +79,7 @@ export const startSnapSession = functions.https.onCall(async ({circleId}, {auth}
           if (Object.keys(participants).length > 0 && speakingOrder.length > 0) {
             activeSession["totemUser"] = participants[speakingOrder[0]].sessionUserId;
           }
+          activeSession["userStatus"] = false;
           // update the active session
           transaction.update(activeRef, activeSession);
           circleParticipants = participants;
