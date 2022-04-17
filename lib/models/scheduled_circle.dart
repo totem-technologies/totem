@@ -3,7 +3,7 @@ import 'package:totem/models/index.dart';
 
 class ScheduledCircle extends Circle {
   List<ScheduledSession> sessions = [];
-  SessionState _state = SessionState.idle;
+  final SessionState _state = SessionState.idle;
   List<Participant> participants = [];
   bool hasActiveSession = false;
 
@@ -18,6 +18,7 @@ class ScheduledCircle extends Circle {
   }
 
   ScheduledSession? get nextSession {
+    /* Review this later when scheduled sessions become a thing
     DateTime now = DateTime.now();
     _state = SessionState.idle;
     if (sessions.isNotEmpty) {
@@ -40,10 +41,8 @@ class ScheduledCircle extends Circle {
         _state = SessionState.complete;
       }
     } else if (activeSession != null) {
-      _state = activeSession!.state == SessionState.waiting
-          ? SessionState.waiting
-          : _state = SessionState.live;
-    }
+      _state = SessionState.live;
+    } */
     return null;
   }
 

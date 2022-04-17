@@ -14,11 +14,11 @@ import 'package:totem/theme/index.dart';
 class CircleParticipantVideo extends ConsumerWidget {
   const CircleParticipantVideo({
     Key? key,
-    required this.participantId,
+    required this.sessionUserId,
     this.hasTotem = false,
     this.annotate = true,
   }) : super(key: key);
-  final String participantId;
+  final String sessionUserId;
   final bool hasTotem;
   final bool annotate;
 
@@ -27,7 +27,7 @@ class CircleParticipantVideo extends ConsumerWidget {
     final themeData = Theme.of(context);
     final textStyles = themeData.textTheme;
     final commProvider = ref.watch(communicationsProvider);
-    final participant = ref.watch(participantProvider(participantId));
+    final participant = ref.watch(participantProvider(sessionUserId));
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),

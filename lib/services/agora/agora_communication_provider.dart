@@ -21,6 +21,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   // Communication streams
   static const int statsStream = 0;
   static const int notifyDuration = 10; // seconds
+  static const bool useAgoraStream = false;
 
   AgoraCommunicationProvider(
       {required this.sessionProvider, required this.userId}) {
@@ -126,8 +127,8 @@ class AgoraCommunicationProvider extends CommunicationProvider {
       await passActiveSessionTotem(
           sessionUserId: sessionProvider.activeSession!.totemUser!);
     }
+    _cancelStateUpdates();
     await _engine?.leaveChannel();
-    _updateTimer?.cancel();
     // update list of participants
   }
 
@@ -212,7 +213,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
           _engine = await RtcEngine.createWithContext(RtcEngineContext(appId));
           // enable audio and fancy noise cancelling
           await _engine!.enableAudio();
-          await _engine!.setDefaultAudioRoutetoSpeakerphone(true);
+          await _engine!.setDefaultAudioRouteToSpeakerphone(true);
           await _engine!.enableDeepLearningDenoise(true);
           await _engine!.enableAudioVolumeIndication(200, 3, true);
           if (enableVideo) {
@@ -327,6 +328,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
       sessionProvider.activeSession?.updateMutedStateForUser(
           sessionUserId: commUid.toString(), muted: muted);
       notifyListeners();
+      notifyState(directChange: true);
     }
   }
 
@@ -340,6 +342,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     if (videoMuted != _muteVideo) {
       videoMuted = _muteVideo;
       notifyListeners();
+      notifyState(directChange: true);
     }
   }
 
@@ -610,18 +613,26 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     }
   }
 
-  void notifyState() async {
-    if (_statsStreamId == null) {
-      _statsStreamId = await _engine
-          ?.createDataStreamWithConfig(DataStreamConfig(false, false));
-      debugPrint(
-          'Tried to re-create stream in notifyState: ${_statsStreamId.toString()}');
+  void notifyState({bool directChange = false}) async {
+    if (useAgoraStream) {
       if (_statsStreamId == null) {
-        return;
+        _statsStreamId = await _engine
+            ?.createDataStreamWithConfig(DataStreamConfig(false, false));
+        debugPrint(
+            'Tried to re-create stream in notifyState: ${_statsStreamId.toString()}');
+        if (_statsStreamId == null) {
+          return;
+        }
       }
+      List<int> state = [statsStream, muted ? 1 : 0, videoMuted ? 1 : 0];
+      debugPrint('Notify State: ${state.toString()}');
+      _engine?.sendStreamMessage(_statsStreamId!, Uint8List.fromList(state));
     }
-    List<int> state = [statsStream, muted ? 1 : 0, videoMuted ? 1 : 0];
-    debugPrint('Notify State: ${state.toString()}');
-    _engine?.sendStreamMessage(_statsStreamId!, Uint8List.fromList(state));
+    if (directChange) {
+      sessionProvider.notifyUserStatus(
+          sessionUserId: commUid.toString(),
+          muted: muted,
+          videoMuted: videoMuted);
+    }
   }
 }

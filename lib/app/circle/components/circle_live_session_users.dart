@@ -17,7 +17,7 @@ class CircleLiveSessionUsers extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final activeSession = ref.watch(activeSessionProvider);
     final totemId = activeSession.totemParticipant?.uid;
-    final participants = activeSession.activeParticipants
+    final participants = activeSession.speakOrderParticipants
         .where((element) => element.uid != totemId || !element.me)
         .toList();
     if (participants.isNotEmpty) {
@@ -69,7 +69,7 @@ class CircleLiveSessionUsers extends ConsumerWidget {
                 if (index < participants.length) {
                   return CircleSessionParticipant(
                     dimension: dimension,
-                    participantId: participants[index].uid,
+                    sessionUserId: participants[index].sessionUserId!,
                     hasTotem: activeSession.totemUser ==
                         participants[index].sessionUserId,
                     annotate: false,

@@ -5,4 +5,5 @@ class Paths {
   static const String snapCircles = "snapCircles";
   static const String topics = "topics";
   static const String users = "users";
+  static const String activeCircles = "activeCircles";
 }

@@ -66,7 +66,7 @@ class CirclePendingSessionUsers extends ConsumerWidget {
                 if (index < participants.length) {
                   return CircleSessionParticipant(
                       dimension: dimension,
-                      participantId: participants[index].uid);
+                      sessionUserId: participants[index].sessionUserId!);
                 }
                 return Container(
                   width: dimension,

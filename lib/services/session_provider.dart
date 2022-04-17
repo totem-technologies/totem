@@ -8,11 +8,11 @@ abstract class SessionProvider extends ChangeNotifier {
       {required Session session,
       required String uid,
       String? sessionImage,
-      String? sessionUserId});
+      required String sessionUserId});
   Future<void> leaveSession(
       {required Session session, required String sessionUid});
   Future<ActiveSession> createActiveSession(
-      {required Session session, required String uid});
+      {required Circle circle, required String uid});
   Future<void> startActiveSession();
   Future<void> endActiveSession();
   void clear();
@@ -22,4 +22,8 @@ abstract class SessionProvider extends ChangeNotifier {
       {required Session session, required int uid});
   Future<bool> updateActiveSession(Map<String, dynamic> update);
   Future<bool> updateActiveSessionState(SessionState state);
+  Future<bool> notifyUserStatus(
+      {required String sessionUserId,
+      required bool muted,
+      required bool videoMuted});
 }

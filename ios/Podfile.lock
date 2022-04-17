@@ -350,11 +350,11 @@ PODS:
   - BoringSSL-GRPC/Interface (0.0.7)
   - camera (0.0.1):
     - Flutter
-  - cloud_firestore (3.1.11):
+  - cloud_firestore (3.1.12):
     - Firebase/Firestore (= 8.14.0)
     - firebase_core
     - Flutter
-  - cloud_functions (3.2.11):
+  - cloud_functions (3.2.12):
     - Firebase/Functions (= 8.14.0)
     - firebase_core
     - Flutter
@@ -381,27 +381,27 @@ PODS:
   - Firebase/Storage (8.14.0):
     - Firebase/CoreOnly
     - FirebaseStorage (~> 8.14.0)
-  - firebase_app_check (0.0.6-8):
+  - firebase_app_check (0.0.6-9):
     - Firebase/CoreOnly (~> 8.14.0)
     - firebase_core
     - FirebaseAppCheck (~> 8.14.0-beta)
     - Flutter
-  - firebase_auth (3.3.12):
+  - firebase_auth (3.3.14):
     - Firebase/Auth (= 8.14.0)
     - firebase_core
     - Flutter
-  - firebase_core (1.14.0):
+  - firebase_core (1.14.1):
     - Firebase/CoreOnly (= 8.14.0)
     - Flutter
-  - firebase_crashlytics (2.6.0):
+  - firebase_crashlytics (2.6.2):
     - Firebase/Crashlytics (= 8.14.0)
     - firebase_core
     - Flutter
-  - firebase_dynamic_links (4.1.2):
+  - firebase_dynamic_links (4.1.3):
     - Firebase/DynamicLinks (= 8.14.0)
     - firebase_core
     - Flutter
-  - firebase_storage (10.2.10):
+  - firebase_storage (10.2.12):
     - Firebase/Storage (= 8.14.0)
     - firebase_core
     - Flutter
@@ -640,15 +640,15 @@ SPEC CHECKSUMS:
   AgoraIrisRTC_iOS: e9462cb708d91cc1b6aa56e8c1cc2d2cb9fb3b76
   BoringSSL-GRPC: 8edf627ee524575e2f8d19d56f068b448eea3879
   camera: 9993f92f2c793e87b65e35f3a23c70582afb05b1
-  cloud_firestore: dd4c0ed7d60794e3890f0cf6566d749838fe9ee0
-  cloud_functions: 0003e860a2af12e1a2baf9a804a681b76f5d58b5
+  cloud_firestore: 6894050fe57f80e72d84d5d6c57392f3d1615c19
+  cloud_functions: d91235916581754322cf43a52a6775ab82e8576d
   Firebase: 7e8fe528c161b9271d365217a74c16aaf834578e
-  firebase_app_check: f3d81db2fb31d5c5e2036b9e3be15155a1077144
-  firebase_auth: 363370737d33bad09a838cd109f7589bc48533cd
-  firebase_core: b0b382f1497ab407aceb25e41e3036c8798c1609
-  firebase_crashlytics: 44fdfdce12407bf110628ca79d77c7cadb4b89d5
-  firebase_dynamic_links: ed3c57ba25ee5e856806ece8b0d233d9e7fcdee8
-  firebase_storage: aa68bef4cb41e2acd3bc6abccfe86ec0607470d1
+  firebase_app_check: 299a485df7d1f6fe418421f46bd7612b242dc318
+  firebase_auth: db3557d178b86a0d2ccdb7a878a1d1c2fe70de4e
+  firebase_core: cdef02fcf55872191eb0568d4c31a7a700e38582
+  firebase_crashlytics: 6c0450e99d20c62d0cd868f287a12aeffbe9b010
+  firebase_dynamic_links: 51a6db3c87f1d788cdb94a65db1229f77ae2f6f6
+  firebase_storage: 4a9711df9392778a9f8641d5ce4cb7a228c0472c
   FirebaseAppCheck: cac662ac9a3f85c6505639782d3248535f2661e0
   FirebaseAuth: c5fde343630090253d3af7e2d35697b414b40202
   FirebaseCore: b84a44ee7ba999e0f9f76d198a9c7f60a797b848

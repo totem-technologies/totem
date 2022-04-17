@@ -115,10 +115,10 @@ class _SnapCirclesListState extends ConsumerState<SnapCirclesList> {
       BuildContext context, SnapCircle circle) async {
     var repo = ref.read(repositoryProvider);
     String? sessionImage =
-        await CircleJoinDialog.showDialog(context, session: circle.snapSession);
+        await CircleJoinDialog.showDialog(context, circle: circle);
     if (sessionImage != null && sessionImage.isNotEmpty) {
       await repo.createActiveSession(
-        session: circle.activeSession!,
+        circle: circle,
       );
       Future.delayed(const Duration(milliseconds: 300), () async {
         Navigator.of(context).pushNamed(AppRoutes.circle, arguments: {

@@ -21,6 +21,7 @@ class _CircleLiveVideoSessionState
     extends ConsumerState<CircleLiveVideoSession> {
   final GlobalKey _sliderPass = GlobalKey();
   final GlobalKey _sliderReceive = GlobalKey();
+
   @override
   Widget build(BuildContext context) {
     final activeSession = ref.watch(activeSessionProvider);
@@ -49,7 +50,7 @@ class _CircleLiveVideoSessionState
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           Text(
-                            activeSession.session.circle.name,
+                            activeSession.circle.name,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: textStyles.headline2!.merge(
@@ -97,9 +98,7 @@ class _CircleLiveVideoSessionState
                   ),
                 ),
               ),
-              CircleSessionControls(
-                session: activeSession.session,
-              ),
+              const CircleSessionControls(),
             ],
           ),
         ),
@@ -112,8 +111,8 @@ class _CircleLiveVideoSessionState
     if (activeSession.totemParticipant != null &&
         (!activeSession.totemReceived ||
             !(activeSession.totemParticipant!.me))) {
-      final participant =
-          ref.watch(participantProvider(activeSession.totemParticipant!.uid));
+      final participant = ref.watch(
+          participantProvider(activeSession.totemParticipant!.sessionUserId!));
       return LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
           final sizeOfVideo = min(constraints.maxWidth, constraints.maxHeight);

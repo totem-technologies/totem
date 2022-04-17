@@ -6,14 +6,14 @@ import 'package:totem/theme/index.dart';
 
 class CircleLiveSessionParticipant extends ConsumerWidget {
   const CircleLiveSessionParticipant(
-      {Key? key, required this.participantId, this.hasTotem = false})
+      {Key? key, required this.sessionUserId, this.hasTotem = false})
       : super(key: key);
-  final String participantId;
+  final String sessionUserId;
   final bool hasTotem;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final participant = ref.watch(participantProvider(participantId));
+    final participant = ref.watch(participantProvider(sessionUserId));
     return GestureDetector(
       onTap: () {
         CircleSessionParticipantDialog.showDialog(
@@ -31,10 +31,6 @@ class CircleLiveSessionParticipant extends ConsumerWidget {
         ],
       ),
     );
-/*        }),
-      );
-    }
-    return Container(); */
   }
 
   Widget _renderMe(BuildContext context, bool hasTotem) {

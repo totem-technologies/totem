@@ -24,14 +24,14 @@ class SnapCircle extends Circle {
       state = SessionState.waiting;
     }
     if (json['activeSession'] != null) {
-      activeSession = SnapSession.fromJson(json['activeSession'], circle: this);
+      activeSession = json['activeSession'];
     }
     started = DateTimeEx.fromMapValue(json['started']);
     completed = DateTimeEx.fromMapValue(json['completed']);
   }
 
   SnapSession get snapSession {
-    return activeSession! as SnapSession;
+    return SnapSession.fromJson({}, circle: this);
   }
 
   @override
@@ -47,8 +47,7 @@ class SnapCircle extends Circle {
     Map<String, dynamic> data = super.toJson();
     data["state"] = state.name;
     if (activeSession != null) {
-      data['activeSession'] = (activeSession! as SnapSession)
-          .toJson(includeParticipants: includeParticipants);
+      data['activeSession'] = activeSession;
     }
     return data;
   }

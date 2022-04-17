@@ -21,9 +21,9 @@ final communicationsProvider =
 });
 
 final participantProvider = ChangeNotifierProvider.autoDispose
-    .family<SessionParticipant, String>((ref, uid) {
+    .family<SessionParticipant, String>((ref, sessionUserId) {
   final activeSession = ref.watch(activeSessionProvider.notifier);
-  return activeSession.participantWithID(uid)!;
+  return activeSession.participantWithWatchableSessionId(sessionUserId)!;
 });
 
 class CircleSessionPage extends ConsumerStatefulWidget {

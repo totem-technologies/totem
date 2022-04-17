@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:totem/app/circle/components/circle_participant.dart';
 import 'package:totem/components/fade_route.dart';
@@ -6,7 +7,6 @@ import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'circle_session_page.dart';
 import 'components/scheduled_session_item.dart';
@@ -199,12 +199,13 @@ class CirclePageState extends ConsumerState<CirclePage> {
     final repo = ref.read(repositoryProvider);
     // Generate an instance of the live session before
     // going to the live page
-    await repo.createActiveSession(session: circle.activeSession!);
-    Navigator.pushReplacement(
+    await repo.createActiveSession(circle: circle);
+    /* FIXME
+        Navigator.pushReplacement(
       context,
       FadeRoute(
         page: CircleSessionPage(session: circle.activeSession!),
       ),
-    );
+    ); */
   }
 }

@@ -9,19 +9,19 @@ import 'package:totem/theme/index.dart';
 class CircleSessionParticipant extends ConsumerWidget {
   const CircleSessionParticipant(
       {Key? key,
-      required this.participantId,
+      required this.sessionUserId,
       required this.dimension,
       this.hasTotem = false,
       this.annotate = true})
       : super(key: key);
-  final String participantId;
+  final String sessionUserId;
   final double dimension;
   final bool hasTotem;
   final bool annotate;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final commProvider = ref.watch(communicationsProvider);
-    final participant = ref.watch(participantProvider(participantId));
+    final participant = ref.watch(participantProvider(sessionUserId));
     return GestureDetector(
       onTap: () {
         CircleSessionParticipantDialog.showDialog(
@@ -63,7 +63,7 @@ class CircleSessionParticipant extends ConsumerWidget {
             Padding(
               padding: const EdgeInsets.all(4.0),
               child: CircleParticipantVideo(
-                participantId: participantId,
+                sessionUserId: sessionUserId,
                 hasTotem: hasTotem,
                 annotate: annotate,
               ),
