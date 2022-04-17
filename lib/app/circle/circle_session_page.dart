@@ -20,12 +20,6 @@ final communicationsProvider =
   return repo.createCommunicationProvider();
 });
 
-/*final participantProvider = ChangeNotifierProvider.autoDispose
-    .family<SessionParticipant, String>((ref, sessionUserId) {
-  final activeSession = ref.watch(activeSessionProvider.notifier);
-  return activeSession.participantWithWatchableSessionId(sessionUserId)!;
-}); */
-
 class CircleSessionPage extends ConsumerStatefulWidget {
   const CircleSessionPage({Key? key, required this.session, this.sessionImage})
       : super(key: key);

@@ -139,18 +139,6 @@ class ActiveSession extends ChangeNotifier {
     return _activeParticipants.values.firstWhereOrNull((element) => element.me);
   }
 
-  SessionParticipant? participantWithWatchableSessionId(String sessionUserId) {
-    SessionParticipant? participant = _activeParticipants.values
-        .firstWhereOrNull((element) => element.sessionUserId == sessionUserId);
-    if (participant != null) {
-      debugPrint("Creating particpant: " + sessionUserId);
-      SessionParticipant newParticipant = SessionParticipant.from(participant);
-      _activeParticipants[newParticipant.sessionUserId!] = newParticipant;
-      return newParticipant;
-    }
-    return null;
-  }
-
   SessionParticipant? participantWithSessionID(String sessionId) {
     return _activeParticipants.values
         .firstWhereOrNull((element) => element.sessionUserId == sessionId);
