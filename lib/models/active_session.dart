@@ -68,10 +68,17 @@ class ActiveSession extends ChangeNotifier {
     List<SessionParticipant> activeUsers = _activeParticipants.values
         .where((element) => _connectedUsers.contains(element.sessionUserId))
         .toList();
-    return _speakingOrder
-        .map<SessionParticipant>((sessionId) => activeUsers
-            .firstWhereOrNull((element) => sessionId == element.sessionUserId)!)
-        .toList();
+    List<SessionParticipant> order = [];
+    if (_speakingOrder.isNotEmpty && activeUsers.isNotEmpty) {
+      for (String sessionId in _speakingOrder) {
+        SessionParticipant? participant = activeUsers
+            .firstWhereOrNull((element) => sessionId == element.sessionUserId);
+        if (participant != null) {
+          order.add(participant);
+        }
+      }
+    }
+    return order;
   }
 
   SessionState get state {
