@@ -186,7 +186,6 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
   }
 
   Widget _userInfo(BuildContext context) {
-    final textStyles = Theme.of(context).textStyles;
     final themeColors = Theme.of(context).themeColors;
     final t = AppLocalizations.of(context)!;
 
@@ -199,7 +198,7 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
           );
         }
         if (asyncSnapshot.hasData) {
-          UserProfile user = asyncSnapshot.data!;
+          //  UserProfile user = asyncSnapshot.data!;
           return Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
