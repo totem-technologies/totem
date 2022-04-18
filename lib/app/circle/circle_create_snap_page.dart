@@ -137,15 +137,15 @@ class _CircleCreatePageState extends ConsumerState<CircleCreateSnapPage> {
       final circle = await repo.createSnapCircle(
           name: _nameController.text, description: _descriptionController.text);
       if (circle != null) {
-        String? sessionImage = await CircleJoinDialog.showDialog(context,
-            session: circle.snapSession);
+        String? sessionImage =
+            await CircleJoinDialog.showDialog(context, circle: circle);
         if (sessionImage != null && sessionImage.isNotEmpty) {
           // Setup foreground service provider with notification values
           final t = AppLocalizations.of(context)!;
           SessionForeground.instance.notificationTitle = t.circleInProgress;
           SessionForeground.instance.notificationMessage = t.circleReturnToApp;
           // Create the active session
-          await repo.createActiveSession(session: circle.activeSession!);
+          await repo.createActiveSession(circle: circle);
           // prompt user for image
           Navigator.pushReplacementNamed(context, AppRoutes.circle, arguments: {
             'session': circle.snapSession,

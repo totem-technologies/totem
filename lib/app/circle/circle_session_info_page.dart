@@ -13,12 +13,9 @@ import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
 
 class CircleSessionInfoPage extends ConsumerStatefulWidget {
-  const CircleSessionInfoPage({Key? key, required this.session})
-      : super(key: key);
-  final Session session;
+  const CircleSessionInfoPage({Key? key}) : super(key: key);
 
-  static Future<String?> showDialog(BuildContext context,
-      {required Session session}) async {
+  static Future<String?> showDialog(BuildContext context) async {
     return showModalBottomSheet<String>(
       enableDrag: false,
       isScrollControlled: true,
@@ -26,9 +23,7 @@ class CircleSessionInfoPage extends ConsumerStatefulWidget {
       context: context,
       backgroundColor: Colors.transparent,
       barrierColor: Theme.of(context).themeColors.blurBackground,
-      builder: (_) => CircleSessionInfoPage(
-        session: session,
-      ),
+      builder: (_) => const CircleSessionInfoPage(),
     );
   }
 
@@ -39,13 +34,14 @@ class CircleSessionInfoPage extends ConsumerStatefulWidget {
 class _CircleSessionInfoPageState extends ConsumerState<CircleSessionInfoPage> {
   SessionParticipant? me;
   late List<SessionParticipant> _participants;
+  late ActiveSession _activeSession;
 
   @override
   void initState() {
-    final activeSession = ref.read(activeSessionProvider);
+    _activeSession = ref.read(activeSessionProvider);
     _participants =
-        List<SessionParticipant>.from(activeSession.activeParticipants);
-    me = activeSession.me();
+        List<SessionParticipant>.from(_activeSession.speakOrderParticipants);
+    me = _activeSession.me();
     super.initState();
   }
 
@@ -58,7 +54,7 @@ class _CircleSessionInfoPageState extends ConsumerState<CircleSessionInfoPage> {
         (ActiveSession? previous, ActiveSession next) {
       bool updated = false;
       final result = diff_util
-          .calculateListDiff(_participants, next.activeParticipants)
+          .calculateListDiff(_participants, next.speakOrderParticipants)
           .getUpdatesWithData();
       for (var change in result) {
         change.when(insert: (pos, data) {
@@ -124,27 +120,27 @@ class _CircleSessionInfoPageState extends ConsumerState<CircleSessionInfoPage> {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         Text(
-                          widget.session.circle.name,
+                          _activeSession.circle.name,
                           style: textStyles.dialogTitle,
                         ),
-                        if (widget.session.topic.isNotEmpty) ...[
+                        if (_activeSession.topic.isNotEmpty) ...[
                           const SizedBox(height: 8),
                           Text(
                             t.circleWeeksSession,
                             style: textStyles.headline3,
                           ),
                           const SizedBox(height: 4),
-                          Text(widget.session.topic),
+                          Text(_activeSession.topic),
                         ],
-                        if (widget.session.circle.description != null &&
-                            widget.session.circle.description!.isNotEmpty) ...[
+                        if (_activeSession.circle.description != null &&
+                            _activeSession.circle.description!.isNotEmpty) ...[
                           const SizedBox(height: 24),
                           Text(
                             t.circleDescription,
                             style: textStyles.headline3,
                           ),
                           const SizedBox(height: 4),
-                          Text(widget.session.circle.description!),
+                          Text(_activeSession.circle.description!),
                         ],
                         const SizedBox(height: 24),
                         Divider(
@@ -213,8 +209,10 @@ class _CircleSessionInfoPageState extends ConsumerState<CircleSessionInfoPage> {
         // sorted, save
         // update the list of users
         final repo = ref.read(repositoryProvider);
-        repo.updateActiveSession(
-            repo.activeSession!.reorderParticipants(_participants));
+        repo.updateActiveSession(repo.activeSession!.reorderParticipants(
+            _participants
+                .map((element) => element.uid)
+                .toList(growable: false)));
       },
       child: ListView.separated(
           shrinkWrap: true,

@@ -15,13 +15,13 @@ import 'package:totem/theme/index.dart';
 
 class CircleJoinDialog extends ConsumerStatefulWidget {
   const CircleJoinDialog(
-      {Key? key, required this.session, this.cropEnabled = false})
+      {Key? key, required this.circle, this.cropEnabled = false})
       : super(key: key);
-  final Session session;
+  final Circle circle;
   final bool cropEnabled;
 
   static Future<String?> showDialog(BuildContext context,
-      {required Session session}) async {
+      {required Circle circle}) async {
     return showModalBottomSheet<String>(
       enableDrag: false,
       isScrollControlled: true,
@@ -30,7 +30,7 @@ class CircleJoinDialog extends ConsumerStatefulWidget {
       backgroundColor: Colors.transparent,
       barrierColor: Theme.of(context).themeColors.blurBackground,
       builder: (_) => CircleJoinDialog(
-        session: session,
+        circle: circle,
       ),
     );
   }
@@ -117,7 +117,7 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
                                 Text(
-                                  widget.session.circle.name,
+                                  widget.circle.name,
                                   style: textStyles.dialogTitle,
                                   textAlign: TextAlign.center,
                                   maxLines: 2,

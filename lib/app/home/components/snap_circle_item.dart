@@ -116,7 +116,7 @@ class SnapCircleItem extends StatelessWidget {
               ),
             ),
             Text(
-              t.participantCount(circle.snapSession.participantCount),
+              t.participantCount(circle.participantCount),
             ),
           ],
         ),

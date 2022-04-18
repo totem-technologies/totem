@@ -150,9 +150,10 @@ class FirebaseCirclesProvider extends CirclesProvider {
       DocumentSnapshot circleSnapshot = await ref.get();
       if (circleSnapshot.exists) {
         SnapCircle circle = SnapCircle.fromJson(
-            circleSnapshot.data() as Map<String, dynamic>,
-            id: ref.id,
-            ref: ref.path);
+          circleSnapshot.data() as Map<String, dynamic>,
+          id: ref.id,
+          ref: ref.path,
+        );
         circle.createdBy = await _userFromRef(userRef);
         return circle;
       }
@@ -242,10 +243,11 @@ class FirebaseCirclesProvider extends CirclesProvider {
     final circle = ScheduledCircle.fromJson(circleData,
         id: circleSnapshot.id, ref: circleSnapshot.reference.path);
     // Check for the active session
+    /* FIXME - SCHEDULE SESSION
     String? activeSessionId;
     if (circleData["activeSession"] != null) {
       activeSessionId = (circleData["activeSession"] as DocumentReference).id;
-    }
+    } */
     // resolve users participating in the circle
     if (resolveUsers && circleData['participants'] != null) {
       final List<Map<String, dynamic>>? participantsRef =
@@ -282,9 +284,10 @@ class FirebaseCirclesProvider extends CirclesProvider {
       List<ScheduledSession> sessions = result.docs.map((session) {
         ScheduledSession sessionItem = ScheduledSession.fromJson(session.data(),
             id: session.id, ref: session.reference.path, circle: circle);
+        /* TODO - SCHEDULED SESSION
         if (sessionItem.id == activeSessionId) {
           circle.activeSession = sessionItem;
-        }
+        } */
         return sessionItem;
       }).toList();
       sessions.sort((a, b) => a.scheduledDate.compareTo(b.scheduledDate));
@@ -411,7 +414,11 @@ class FirebaseCirclesProvider extends CirclesProvider {
       final DocumentReference circleRef = FirebaseFirestore.instance
           .collection(Paths.snapCircles)
           .doc(circle.id);
-      circleRef.delete();
+      await circleRef.delete();
+      final DocumentReference activeCircleRef = FirebaseFirestore.instance
+          .collection(Paths.activeCircles)
+          .doc(circle.id);
+      await activeCircleRef.delete();
       return true;
     } catch (ex) {
       debugPrint(ex.toString());

@@ -99,11 +99,9 @@ class _CircleScheduledSessionContentState
                   ],
                 ),
                 if (commProvider.state == CommunicationState.active)
-                  Align(
+                  const Align(
                     alignment: Alignment.bottomCenter,
-                    child: CircleSessionControls(
-                      session: widget.session,
-                    ),
+                    child: CircleSessionControls(),
                   ),
               ],
             ),

@@ -9,21 +9,30 @@ abstract class Circle {
   UserProfile? createdBy;
   late DateTime createdOn;
   DateTime? updatedOn;
-  Session? activeSession;
+  String? activeSession;
+  int participantCount = 0;
 
   Circle.fromJson(Map<String, dynamic> json,
-      {required this.id, required this.ref, UserProfile? createdUser}) {
+      {required this.id,
+      required this.ref,
+      UserProfile? createdUser,
+      this.activeSession}) {
     name = json['name'] ?? "";
     description = json['description'];
     createdBy = createdUser;
     createdOn = DateTimeEx.fromMapValue(json['createdOn']) ?? DateTime.now();
     updatedOn = DateTimeEx.fromMapValue(json['updatedOn']);
+    participantCount = json['participantCount'] ?? 0;
   }
 
   Role participantRole(String participantId);
 
   Map<String, dynamic> toJson() {
-    Map<String, dynamic> data = {"name": name, "createdOn": createdOn};
+    Map<String, dynamic> data = {
+      "name": name,
+      "createdOn": createdOn,
+      "participantCount": participantCount
+    };
     if (description != null) {
       data["description"] = description!;
     }

@@ -35,7 +35,8 @@ class SessionParticipant extends ChangeNotifier {
       }
       role = Role.values.byName(json['role']);
     }
-    _videoMuted = json['videoMuted'] ?? false;
+    _muted = json['muted'] ?? _muted;
+    _videoMuted = json['videoMuted'] ?? _videoMuted;
     sessionUserId = json["sessionUserId"];
     sessionImage = json["sessionImage"];
   }
@@ -66,9 +67,42 @@ class SessionParticipant extends ChangeNotifier {
     }
   }
 
+  void updateFromData(Map<String, dynamic> data) {
+    bool changed = false;
+    if (sessionImage != data['sessionImage']) {
+      changed = true;
+      sessionImage = data['sessionImage'];
+    }
+    if (_muted != data['muted']) {
+      _muted = data['muted'];
+      changed = true;
+    }
+    if (_videoMuted != data['videoMuted']) {
+      _videoMuted = data['videoMuted'];
+      changed = true;
+    }
+    if (changed) {
+      notifyListeners();
+    }
+  }
+
   void updateFromParticipant(SessionParticipant participant) {
-    sessionImage = participant.sessionImage;
-    notifyListeners();
+    bool changed = false;
+    if (sessionImage != participant.sessionImage) {
+      changed = true;
+      sessionImage = participant.sessionImage;
+    }
+    if (_muted != participant.muted) {
+      _muted = participant.muted;
+      changed = true;
+    }
+    if (_videoMuted != participant.videoMuted) {
+      _videoMuted = participant.videoMuted;
+      changed = true;
+    }
+    if (changed) {
+      notifyListeners();
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -76,6 +110,8 @@ class SessionParticipant extends ChangeNotifier {
       "name": name,
       "uid": uid,
       "role": role.name,
+      "muted": _muted,
+      "videoMuted": _videoMuted,
     };
     if (joined != null) {
       data["joined"] = joined;

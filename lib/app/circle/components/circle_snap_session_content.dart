@@ -33,7 +33,7 @@ class _CircleSnapSessionContentState
   bool _retry = false;
   @override
   void initState() {
-    _validSession = widget.circle.activeSession != null;
+    _validSession = true; //widget.circle.activeSession != null;
     super.initState();
   }
 
@@ -45,14 +45,6 @@ class _CircleSnapSessionContentState
     final t = AppLocalizations.of(context)!;
     final commProvider = ref.watch(communicationsProvider);
     final sessionProvider = ref.watch(activeSessionProvider);
-    ref.listen(activeSessionProvider,
-        (ActiveSession? previous, ActiveSession next) {
-      if (next.state == SessionState.starting) {
-        // stop video & preview for now when starting.
-        //    commProvider.muteVideo(true);
-        //    commProvider.stopPreview();
-      }
-    });
     return GradientBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
@@ -137,10 +129,7 @@ class _CircleSnapSessionContentState
                                                           Alignment.centerLeft),
                                                   onPressed: () async {
                                                     await CircleSessionInfoPage
-                                                        .showDialog(context,
-                                                            session: widget
-                                                                .circle
-                                                                .activeSession!);
+                                                        .showDialog(context);
                                                   },
                                                   child: Text(t.moreInfo),
                                                 )
@@ -175,9 +164,7 @@ class _CircleSnapSessionContentState
                             if (commProvider.state ==
                                     CommunicationState.active &&
                                 sessionProvider.state != SessionState.live)
-                              CircleSessionControls(
-                                session: widget.circle.snapSession,
-                              ),
+                              const CircleSessionControls(),
                           ],
                         ),
                       ),
@@ -363,7 +350,7 @@ class _CircleSnapSessionContentState
                     } else {
                       setState(() => _retry = false);
                       // user says they have reset, retry
-                      _joinSession(MediaQuery.of(context).size);
+                      _joinSession();
                     }
                   },
                 ),
@@ -497,28 +484,29 @@ class _CircleSnapSessionContentState
   @override
   void afterFirstLayout(BuildContext context) {
     // join the session once the page is ready
-    _joinSession(const Size(600, 600));
+    _joinSession();
   }
 
-  void _joinSession(Size fullscreenSize) {
-    if (widget.circle.activeSession != null) {
-      final provider = ref.read(communicationsProvider);
-      provider.joinSession(
-          session: widget.circle.activeSession!,
-          sessionImage: widget.sessionImage,
-          enableVideo: true,
-          handler: CommunicationHandler(
-            joinedCircle: (String sessionId, String sessionUserId) {
-              debugPrint("joined circle as: " + sessionUserId);
-            },
-            leaveCircle: () {
-              // prompt?
-              Future.delayed(const Duration(milliseconds: 0), () {
-                // Navigator.of(context).pop();
-              });
-            },
-          ),
-          fullScreenSize: fullscreenSize);
-    }
+  void _joinSession() {
+    Size fullscreenSize = const Size(600, 600);
+//    if (widget.circle != null) {
+    final provider = ref.read(communicationsProvider);
+    provider.joinSession(
+        session: SnapSession.fromJson({}, circle: widget.circle),
+        sessionImage: widget.sessionImage,
+        enableVideo: true,
+        handler: CommunicationHandler(
+          joinedCircle: (String sessionId, String sessionUserId) {
+            debugPrint("joined circle as: " + sessionUserId);
+          },
+          leaveCircle: () {
+            // prompt?
+            Future.delayed(const Duration(milliseconds: 0), () {
+              // Navigator.of(context).pop();
+            });
+          },
+        ),
+        fullScreenSize: fullscreenSize);
   }
+//  }
 }

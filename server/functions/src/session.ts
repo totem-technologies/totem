@@ -26,8 +26,8 @@ const SessionState = {
 export const endSnapSession = functions.https.onCall(async ({circleId}, {auth}) => {
   isAuthenticated(auth);
   if (circleId) {
-    const ref = admin.firestore().collection("snapCircles").doc(circleId);
-    const circleSnapshot = await ref.get();
+    const circleRef = admin.firestore().collection("snapCircles").doc(circleId);
+    const circleSnapshot = await circleRef.get();
     if (circleSnapshot.exists) {
       const {participants, state} = circleSnapshot.data() ?? {};
       const completedDate = admin.firestore.Timestamp.fromDate(new Date());
@@ -35,17 +35,23 @@ export const endSnapSession = functions.https.onCall(async ({circleId}, {auth}) 
       let endState = SessionState.cancelled;
       if (state === SessionState.ending) {
         endState = SessionState.complete;
-        const entry = {ref, completedDate};
+        const entry = {circleRef, completedDate};
         // moving from current state of 'active' to complete means the session is done
         // only cache the circle in users list if it was active
         if (participants) {
-          participants.forEach(({uid, role} : {uid: string; role: string }) => {
-            const entryRef = admin.firestore().collection("users").doc(uid).collection("snapCircles").doc();
+          Object.keys(participants).forEach((key)=>{
+            const {role} = participants[key];
+            const entryRef = admin.firestore().collection("users").doc(key).collection("snapCircles").doc();
             batch.set(entryRef, {...entry, role, completedDate});
           });
         }
       }
-      batch.update(ref, {state: endState, completedDate, activeSession: {}});
+      // delete active circle reference
+      const activeRef = admin.firestore().collection("activeCircles").doc(circleId);
+      batch.delete(activeRef);
+
+      // update the circle reference to completed state
+      batch.update(circleRef, {state: endState, completedDate});
       await batch.commit();
       return true;
     }
@@ -59,16 +65,30 @@ export const startSnapSession = functions.https.onCall(async ({circleId}, {auth}
     const ref = admin.firestore().collection("snapCircles").doc(circleId);
     const circleSnapshot = await ref.get();
     if (circleSnapshot.exists) {
-      const {activeSession, activeSession: {participants}, state} = circleSnapshot.data() ?? {};
+      const {state} = circleSnapshot.data() ?? {};
       if (state === SessionState.starting) {
-        const startedDate = admin.firestore.Timestamp.fromDate(new Date());
-        activeSession["totemReceived"] = false;
-        if (participants.length > 0) {
-          activeSession["totemUser"] = participants[0].sessionUserId;
-        }
+        let circleParticipants = {};
+
+        // start the session
+        await admin.firestore().runTransaction(async (transaction) => {
+          const activeRef = admin.firestore().collection("activeCircles").doc(circleId);
+          const activeCircleSnapshot = await transaction.get(activeRef);
+          const activeSession = activeCircleSnapshot.data() ?? {};
+          const {participants, speakingOrder} = activeSession;
+          activeSession["totemReceived"] = false;
+          if (Object.keys(participants).length > 0 && speakingOrder.length > 0) {
+            activeSession["totemUser"] = participants[speakingOrder[0]].sessionUserId;
+          }
+          activeSession["userStatus"] = false;
+          // update the active session
+          transaction.update(activeRef, activeSession);
+          circleParticipants = participants;
+        });
+
         // cache the participants at the circle level as an archive of the users that
         // are part of the started session
-        ref.update({state: SessionState.live, startedDate, participants, activeSession});
+        const startedDate = admin.firestore.Timestamp.fromDate(new Date());
+        ref.update({state: SessionState.live, startedDate, circleParticipants});
         return true;
       }
     }
@@ -98,7 +118,6 @@ export const createSnapCircle = functions.https.onCall(async ({name, description
     updatedOn: admin.firestore.Timestamp,
     createdBy: admin.firestore.DocumentReference,
     state: string,
-    activeSession: {started: admin.firestore.Timestamp},
     description?: string,
     link?: string
   } = {
@@ -107,14 +126,12 @@ export const createSnapCircle = functions.https.onCall(async ({name, description
     updatedOn: created,
     createdBy: userRef,
     state: SessionState.waiting,
-    activeSession: {
-      started: created,
-    },
   };
   if (description) {
     data.description = description;
   }
   const ref = await admin.firestore().collection("snapCircles").add(data);
+  await admin.firestore().collection("activeCircles").doc(ref.id).set({participants: {}});
   // Generate a dynamic link for this circle
   try {
     const {shortLink, previewLink} = await firebaseDynamicLinks.createLink({

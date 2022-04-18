@@ -9,9 +9,7 @@ import 'package:totem/services/providers.dart';
 import 'package:totem/theme/index.dart';
 
 class CircleSessionControls extends ConsumerStatefulWidget {
-  const CircleSessionControls({Key? key, required this.session})
-      : super(key: key);
-  final Session session;
+  const CircleSessionControls({Key? key}) : super(key: key);
 
   @override
   _CircleSessionControlsState createState() => _CircleSessionControlsState();
@@ -248,7 +246,7 @@ class _CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
   }
 
   Future<void> _showCircleInfo(BuildContext context) async {
-    await CircleSessionInfoPage.showDialog(context, session: widget.session);
+    await CircleSessionInfoPage.showDialog(context);
   }
 
   Future<void> _endSessionPrompt(BuildContext context, WidgetRef ref) async {
