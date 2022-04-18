@@ -364,7 +364,9 @@ class CameraCaptureScreenState extends State<CameraCapture>
             : _cameras![0];
     _frontCamera = cameraDescription.lensDirection == CameraLensDirection.front;
     CameraController? _oldController = _controller;
-    await _oldController?.stopImageStream();
+    if (!kIsWeb && widget.captureMode != CaptureMode.preview) {
+      await _oldController?.stopImageStream();
+    }
     _controller = CameraController(cameraDescription, ResolutionPreset.medium);
     await _oldController?.dispose();
     _controller!.addListener(() {
