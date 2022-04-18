@@ -29,4 +29,7 @@ test:
 	flutter analyze
 	flutter test
 
+clean:
+	flutter clean
+
 .PHONY: build test
