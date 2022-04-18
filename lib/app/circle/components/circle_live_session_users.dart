@@ -18,7 +18,7 @@ class CircleLiveSessionUsers extends ConsumerWidget {
     final activeSession = ref.watch(activeSessionProvider);
     final totemId = activeSession.totemParticipant?.uid;
     final participants = activeSession.speakOrderParticipants
-        .where((element) => element.uid != totemId || !element.me)
+        .where((element) => element.uid != totemId)
         .toList();
     if (participants.isNotEmpty) {
       return LayoutBuilder(
