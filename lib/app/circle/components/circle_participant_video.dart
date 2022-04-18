@@ -51,7 +51,7 @@ class CircleParticipantVideo extends ConsumerWidget {
                 (participant.me && participant.videoMuted) ||
                 (!participant.me && participant.videoMuted))
               _renderUserImage(context, participant), */
-            if (!annotate)
+            if (annotate)
               PositionedDirectional(
                 child: Stack(
                   children: [
