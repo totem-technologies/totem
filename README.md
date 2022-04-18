@@ -11,7 +11,7 @@
 1. Edit `pubspec.yaml` to increase the version number. At minimum bump the build number (after the `+`).
 1. Create a commit with your changes.
 1. Run `make release`.
-1. Then, when happy with it, you need to promote the Android build in the Play console 
+1. Then, when happy with it, you need to promote the Android build in the Play console (https://play.google.com/console/u/0/developers/6048825475784314007/app-list)
 
 ## Release Web
 
