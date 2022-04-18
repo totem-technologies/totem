@@ -4,11 +4,14 @@ import 'package:totem/models/index.dart';
 abstract class SessionProvider extends ChangeNotifier {
   Future<ActiveSession> activateSession(
       {required ScheduledSession session, required String uid});
-  Future<void> joinSession(
-      {required Session session,
-      required String uid,
-      String? sessionImage,
-      required String sessionUserId});
+  Future<void> joinSession({
+    required Session session,
+    required String uid,
+    String? sessionImage,
+    required String sessionUserId,
+    bool muted = false,
+    bool videoMuted = false,
+  });
   Future<void> leaveSession(
       {required Session session, required String sessionUid});
   Future<ActiveSession> createActiveSession(

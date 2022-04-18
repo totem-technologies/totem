@@ -1,2 +1,3 @@
 export 'camera_capture_component.dart';
+export 'camera_muted.dart';
 export 'profile_image_dialog.dart';

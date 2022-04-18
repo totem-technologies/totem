@@ -68,6 +68,8 @@ class FirebaseSessionProvider extends SessionProvider {
     required String uid,
     String? sessionImage,
     required String sessionUserId,
+    bool muted = false,
+    bool videoMuted = false,
   }) async {
     // For security reasons, this might be better in a cloud function
     // so as not to give direct write permission to a session from a
@@ -75,8 +77,9 @@ class FirebaseSessionProvider extends SessionProvider {
     try {
       bool result = false;
       if (session is SnapSession) {
-        result =
-            await _joinSnapSession(session, uid, sessionUserId, sessionImage);
+        result = await _joinSnapSession(
+            session, uid, sessionUserId, sessionImage,
+            muted: muted, videoMuted: videoMuted);
       } else {
         result = await _joinScheduledSession(
             session as ScheduledSession, uid, sessionUserId, sessionImage);
@@ -427,7 +430,7 @@ class FirebaseSessionProvider extends SessionProvider {
             circleDataSnapshot.data()! as Map<String, dynamic>;
         Map<String, dynamic> sessionData =
             activeDataSnapshot.data()! as Map<String, dynamic>;
-        if (circleData['state'] == SessionState.waiting) {
+        if (circleData['state'] == SessionState.waiting.name) {
           // only remove people if they leave before the session is over,
           Map<String, Map<String, dynamic>> participants =
               Map<String, Map<String, dynamic>>.from(
@@ -490,7 +493,8 @@ class FirebaseSessionProvider extends SessionProvider {
   }
 
   Future<bool> _joinSnapSession(SnapSession session, String uid,
-      String sessionUserId, String? sessionImage) async {
+      String sessionUserId, String? sessionImage,
+      {bool muted = false, bool videoMuted = false}) async {
     await FirebaseFirestore.instance.runTransaction((transaction) async {
       DocumentReference circleRef =
           FirebaseFirestore.instance.doc(session.circle.ref);
@@ -532,12 +536,16 @@ class FirebaseSessionProvider extends SessionProvider {
             sessionUserId: sessionUserId,
             sessionImage: sessionImage,
             role: session.circle.participantRole(uid).name,
+            muted: muted,
+            videoMuted: videoMuted,
           );
         } else {
           existingUser['sessionUserId'] = sessionUserId;
           if (sessionImage != null) {
             existingUser['sessionImage'] = sessionImage;
           }
+          existingUser['muted'] = muted;
+          existingUser['videoMuted'] = videoMuted;
         }
         if (!speakingOrder.contains(sessionUserId)) {
           speakingOrder.add(sessionUserId);

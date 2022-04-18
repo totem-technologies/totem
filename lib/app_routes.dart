@@ -58,12 +58,12 @@ class AppRoutes {
             settings.arguments as Map<String, dynamic>?;
         if (data != null) {
           SnapSession session = data['session'];
-          String image = data['image'];
+          Map<String, bool> state = data['state'];
           return MaterialPageRoute(
               fullscreenDialog: true,
               builder: (_) => CircleSessionPage(
                     session: session,
-                    sessionImage: image,
+                    state: state,
                   ),
               settings: settings);
         }

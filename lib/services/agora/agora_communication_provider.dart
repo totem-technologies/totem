@@ -48,6 +48,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   Timer? _updateTimer;
   int? _statsStreamId;
   bool _stateUpdate = false;
+  Map<String, bool>? _initialState;
 
   @override
   String? get lastError {
@@ -73,15 +74,15 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   Future<bool> joinSession({
     required Session session,
     required CommunicationHandler handler,
-    String? sessionImage,
+    Map<String, bool>? state,
     bool enableVideo = false,
     required Size fullScreenSize,
   }) async {
     _fullscreenSize = fullScreenSize;
-    _sessionImage = sessionImage;
     _handler = handler;
     _session = session;
     _lastError = null;
+    _initialState = state;
     _audioIndicatorStreamController =
         StreamController<CommunicationAudioVolumeIndication>.broadcast(
       onListen: () {
@@ -414,16 +415,30 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     commUid = uid;
     _channel = channel;
     // Update the session to add user information to session display
+    bool initialMuted = _initialState?['muted'] ?? false;
+    bool initialVideoMuted = _initialState?['videoMuted'] ?? false;
     await sessionProvider.joinSession(
-        session: _session!,
-        uid: userId,
-        sessionUserId: commUid.toString(),
-        sessionImage: _sessionImage);
+      session: _session!,
+      uid: userId,
+      sessionUserId: commUid.toString(),
+      sessionImage: _sessionImage,
+      muted: initialMuted,
+      videoMuted: initialVideoMuted,
+    );
     sessionProvider.activeSession
         ?.userJoined(sessionUserId: commUid.toString());
     bool? onSpeaker = await _engine!.isSpeakerphoneEnabled();
     if (onSpeaker != true) {
       await _engine!.setEnableSpeakerphone(true);
+    }
+    if (initialVideoMuted) {
+      await _engine?.muteLocalVideoStream(true);
+      await _engine?.stopPreview();
+      videoMuted = true;
+    }
+    if (initialMuted) {
+      await _engine?.muteLocalAudioStream(true);
+      muted = true;
     }
     _statsStreamId = await _engine
         ?.createDataStreamWithConfig(DataStreamConfig(false, false));
@@ -592,6 +607,12 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     if (state == CommunicationState.active) {
       if (mute != videoMuted) {
         await _engine?.muteLocalVideoStream(mute);
+/*        if (mute) {
+          _engine?.stopPreview();
+        } else {
+          _engine?.startPreview();
+        } */
+        _engine?.enableLocalVideo(!mute);
         // FIXME - TEMP - Right now it seems that the
         // video publishing changes made locally are
         // not coming, so to work around this,

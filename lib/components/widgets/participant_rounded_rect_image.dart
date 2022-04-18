@@ -7,10 +7,12 @@ import 'package:totem/theme/index.dart';
 class ParticipantRoundedRectImage extends StatelessWidget {
   const ParticipantRoundedRectImage({
     Key? key,
+    this.userProfile,
     required this.participant,
     this.size = 64,
     this.borderRadius = 12,
   }) : super(key: key);
+  final UserProfile? userProfile;
   final SessionParticipant participant;
   final double size;
   final double borderRadius;
@@ -20,7 +22,7 @@ class ParticipantRoundedRectImage extends StatelessWidget {
     final themeColors = Theme.of(context).themeColors;
     return ClipRRect(
       borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
-      child: (!participant.hasImage)
+      child: (userProfile == null || !userProfile!.hasImage)
           ? Container(
               color: participant.me
                   ? themeColors.primary.withAlpha(80)
@@ -32,14 +34,14 @@ class ParticipantRoundedRectImage extends StatelessWidget {
   }
 
   Widget _renderUserImage(BuildContext context) {
-    if (participant.sessionImage!.toLowerCase().contains("assets/")) {
+    if (userProfile!.image!.toLowerCase().contains("assets/")) {
       return Image.asset(
         participant.sessionImage!,
         fit: BoxFit.cover,
       );
     }
     return CachedNetworkImage(
-      imageUrl: participant.sessionImage!,
+      imageUrl: userProfile!.image!,
       errorWidget: (context, url, error) => _genericUserImage(context),
     );
   }

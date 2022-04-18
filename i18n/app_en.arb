@@ -76,6 +76,7 @@
     "info": "Info",
     "initializingCamera": "Initializing Camera...",
     "joinCircle": "Join Circle",
+    "joinCircleMessage": "Welcome to Totem, you were invited to be part of a Circle, before starting you can enter a name or alias.",
     "joiningCircle": "Joining Circle",
     "joinSession": "Join Session",
     "keeper": "Keeper",

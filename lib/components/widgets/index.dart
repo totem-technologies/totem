@@ -4,6 +4,7 @@ export 'busy_indicator.dart';
 export 'circular_layout_delegate.dart';
 export 'content_divider.dart';
 export 'day_of_week_form_field.dart';
+export 'dialog_container.dart';
 export 'file_prompt_save.dart';
 export 'file_uploader.dart';
 export 'frosted_panel_widget.dart';
