@@ -103,7 +103,9 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
                                     children: [
                                       Text(
                                         widget.circle.name,
-                                        style: textStyles.dialogTitle,
+                                        style: textStyles.headline1!.merge(
+                                            const TextStyle(
+                                                fontWeight: FontWeight.w400)),
                                         textAlign: TextAlign.center,
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis,
@@ -202,13 +204,7 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                user.name,
-                style: textStyles.headline3,
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                t.helpSessionProfileImage,
+                t.joinCircleMessage,
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 20),

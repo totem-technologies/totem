@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_reorderable_list/flutter_reorderable_list.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:totem/components/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/theme/index.dart';
 
-class CircleSessionParticipantListItem extends StatelessWidget {
+import '../../../services/providers.dart';
+
+class CircleSessionParticipantListItem extends ConsumerWidget {
   const CircleSessionParticipantListItem(
       {Key? key,
       required this.participant,
@@ -16,7 +19,7 @@ class CircleSessionParticipantListItem extends StatelessWidget {
   final bool reorder;
   final double? horizontalPadding;
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Padding(
       padding: EdgeInsets.symmetric(
         horizontal:
@@ -26,13 +29,31 @@ class CircleSessionParticipantListItem extends StatelessWidget {
         children: [
           SizedBox(
             width: 64,
-            child: Stack(
-              children: [
-                ParticipantRoundedRectImage(participant: participant),
-                if (participant.me) _renderLabel(context, true),
-                if (!participant.me && participant.role == Role.keeper)
-                  _renderLabel(context, false),
-              ],
+            height: 64,
+            child: FutureBuilder<UserProfile?>(
+              future: ref
+                  .read(repositoryProvider)
+                  .userProfileWithId(uid: participant.uid),
+              builder:
+                  (BuildContext context, AsyncSnapshot<UserProfile?> snapshot) {
+                if (snapshot.connectionState != ConnectionState.waiting) {
+                  return Stack(
+                    children: [
+                      ParticipantRoundedRectImage(
+                        participant: participant,
+                        userProfile: snapshot.data,
+                      ),
+                      if (participant.me) _renderLabel(context, true),
+                      if (!participant.me && participant.role == Role.keeper)
+                        _renderLabel(context, false),
+                    ],
+                  );
+                }
+                return const Center(
+                    child: BusyIndicator(
+                  size: 40,
+                ));
+              },
             ),
           ),
           const SizedBox(
