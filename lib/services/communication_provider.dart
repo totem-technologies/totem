@@ -18,7 +18,7 @@ abstract class CommunicationProvider extends ChangeNotifier {
   Future<bool> joinSession({
     required Session session,
     required CommunicationHandler handler,
-    String? sessionImage,
+    Map<String, bool>? state,
     bool enableVideo,
     required Size fullScreenSize,
   });

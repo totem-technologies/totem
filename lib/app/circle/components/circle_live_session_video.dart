@@ -1,12 +1,10 @@
-import 'dart:ui';
-
 import 'package:agora_rtc_engine/rtc_local_view.dart' as rtc_local_view;
 import 'package:agora_rtc_engine/rtc_remote_view.dart' as rtc_remote_view;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:totem/app/circle/index.dart';
+import 'package:totem/components/camera/camera_muted.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/theme/index.dart';
 
@@ -18,11 +16,11 @@ class CircleLiveSessionVideo extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final commProvider = ref.watch(communicationsProvider);
-    if (participant.me && !commProvider.videoMuted) {
+    if (participant.me) {
       return Container(
           color: Colors.black, child: const rtc_local_view.SurfaceView());
     }
-    if (!participant.me && !participant.videoMuted) {
+    if (!participant.me) {
       return Container(
         color: Colors.black,
         child: rtc_remote_view.SurfaceView(
@@ -56,18 +54,7 @@ class CircleLiveSessionVideo extends ConsumerWidget {
                   },
                 ),
         ),
-        Positioned.fill(
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 7.0, sigmaY: 7.0),
-            child: Container(
-              color: Colors.white10,
-            ),
-          ),
-        ),
-        Align(
-          alignment: Alignment.center,
-          child: SvgPicture.asset('assets/cam.svg'),
-        ),
+        const Positioned.fill(child: CameraMuted())
       ],
     );
   }

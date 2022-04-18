@@ -1,16 +1,14 @@
-import 'dart:io';
-import 'dart:typed_data';
 import 'dart:ui';
 
-import 'package:camera/camera.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:totem/components/camera/camera_capture_component.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/providers.dart';
+import 'package:totem/services/utils/device_type.dart';
 import 'package:totem/theme/index.dart';
 
 class CircleJoinDialog extends ConsumerStatefulWidget {
@@ -20,9 +18,9 @@ class CircleJoinDialog extends ConsumerStatefulWidget {
   final Circle circle;
   final bool cropEnabled;
 
-  static Future<String?> showDialog(BuildContext context,
+  static Future<Map<String, bool>?> showDialog(BuildContext context,
       {required Circle circle}) async {
-    return showModalBottomSheet<String>(
+    return showModalBottomSheet<Map<String, bool>?>(
       enableDrag: false,
       isScrollControlled: true,
       isDismissible: false,
@@ -42,15 +40,8 @@ class CircleJoinDialog extends ConsumerStatefulWidget {
 
 class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
   late Future<UserProfile?> _userProfileFetch;
-  final GlobalKey<FileUploaderState> _uploader = GlobalKey();
-
-  File? _selectedImageFile;
-  bool _uploading = false;
-  XFile? _selectedImage;
-  Uint8List? _selectedImageBytes;
-  bool get hasImage {
-    return _selectedImage != null;
-  }
+  final GlobalKey<CameraCaptureScreenState> _captureKey =
+      GlobalKey<CameraCaptureScreenState>();
 
   @override
   void initState() {
@@ -59,92 +50,137 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
   }
 
   @override
-  void dispose() {
-    if (!kIsWeb) {
-      _selectedImageFile?.delete();
-    }
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final themeColors = Theme.of(context).themeColors;
     final textStyles = Theme.of(context).textStyles;
-    return BackdropFilter(
-      filter: ImageFilter.blur(sigmaX: 2.5, sigmaY: 2.5),
-      child: SafeArea(
-        top: true,
-        bottom: false,
-        child: Padding(
-          padding: const EdgeInsets.only(
-            top: 50,
-          ),
-          child: BottomTrayContainer(
-            fullScreen: true,
-            padding: const EdgeInsets.symmetric(
-              vertical: 10,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Row(
-                  children: [
-                    Expanded(child: Container()),
-                    IconButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      icon: Icon(
-                        Icons.close,
-                        color: themeColors.primaryText,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                  ],
+    return (DeviceType.isPhone())
+        ? BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 2.5, sigmaY: 2.5),
+            child: SafeArea(
+              top: true,
+              bottom: false,
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  top: 50,
                 ),
-                Expanded(
-                  child: LayoutBuilder(
-                    builder: (context, constraint) {
-                      return SingleChildScrollView(
-                        padding: EdgeInsets.symmetric(
-                            horizontal:
-                                Theme.of(context).pageHorizontalPadding),
-                        child: ConstrainedBox(
-                          constraints:
-                              BoxConstraints(minHeight: constraint.maxHeight),
-                          child: IntrinsicHeight(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                Text(
-                                  widget.circle.name,
-                                  style: textStyles.dialogTitle,
-                                  textAlign: TextAlign.center,
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                const SizedBox(height: 24),
-                                Divider(
-                                  thickness: 1,
-                                  height: 1,
-                                  color: themeColors.divider,
-                                ),
-                                const SizedBox(height: 24),
-                                Expanded(child: _userInfo(context)),
-                              ],
+                child: BottomTrayContainer(
+                  fullScreen: true,
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 10,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(child: Container()),
+                          IconButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            icon: Icon(
+                              Icons.close,
+                              color: themeColors.primaryText,
                             ),
                           ),
+                          const SizedBox(width: 8),
+                        ],
+                      ),
+                      Expanded(
+                        child: LayoutBuilder(
+                          builder: (context, constraint) {
+                            return SingleChildScrollView(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal:
+                                      Theme.of(context).pageHorizontalPadding),
+                              child: ConstrainedBox(
+                                constraints: BoxConstraints(
+                                    minHeight: constraint.maxHeight),
+                                child: IntrinsicHeight(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.stretch,
+                                    children: [
+                                      Text(
+                                        widget.circle.name,
+                                        style: textStyles.dialogTitle,
+                                        textAlign: TextAlign.center,
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      const SizedBox(height: 24),
+                                      Divider(
+                                        thickness: 1,
+                                        height: 1,
+                                        color: themeColors.divider,
+                                      ),
+                                      const SizedBox(height: 24),
+                                      Expanded(child: _userInfo(context)),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
                         ),
-                      );
-                    },
+                      ),
+                    ],
                   ),
                 ),
-              ],
+              ),
             ),
-          ),
-        ),
-      ),
-    );
+          )
+        : BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 2.5, sigmaY: 2.5),
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 1000),
+                child: DialogContainer(
+                  padding: const EdgeInsets.only(
+                      top: 50, bottom: 80, left: 40, right: 40),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Stack(
+                        children: [
+                          Align(
+                            alignment: Alignment.topCenter,
+                            child: Text(
+                              widget.circle.name,
+                              style: textStyles.headline1!.merge(
+                                  const TextStyle(fontWeight: FontWeight.w400)),
+                              textAlign: TextAlign.center,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          Align(
+                            alignment: Alignment.topRight,
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 5, right: 5, top: 5, bottom: 5),
+                                child: SvgPicture.asset('assets/close.svg'),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      const ContentDivider(),
+                      const SizedBox(height: 24),
+                      Center(
+                        child: _desktopUserInfo(context),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
   }
 
   Widget _userInfo(BuildContext context) {
@@ -177,80 +213,39 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
               ),
               const SizedBox(height: 20),
               ConstrainedBox(
-                  constraints: BoxConstraints(
-                      maxWidth: Theme.of(context).maxRenderWidth),
-                  child: Column(
-                    children: [
-                      Stack(
-                        children: [
-                          AspectRatio(
-                            aspectRatio: 1.0,
-                            child: ClipRRect(
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(24)),
-                              child: Container(
-                                color: themeColors.primaryText,
-                                child: AnimatedSwitcher(
-                                  duration: const Duration(milliseconds: 300),
-                                  child: !hasImage
-                                      ? CameraCapture(
-                                          captureMode: CaptureMode.photoOnly,
-                                          onImageTaken: (imageFile) {
-                                            _handleImage(imageFile);
-                                          },
-                                        )
-                                      : _takenImage(context),
-                                ),
-                              ),
+                constraints:
+                    BoxConstraints(maxWidth: Theme.of(context).maxRenderWidth),
+                child: Column(
+                  children: [
+                    AspectRatio(
+                      aspectRatio: 1.0,
+                      child: ClipRRect(
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(24)),
+                        child: Container(
+                          color: themeColors.primaryText,
+                          child: AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 300),
+                            child: CameraCapture(
+                              key: _captureKey,
+                              captureMode: CaptureMode.preview,
                             ),
                           ),
-                          if (hasImage)
-                            Positioned.fill(
-                              child: FileUploader(
-                                key: _uploader,
-                                assignProfile: false,
-                                onComplete: (uploadedFileUrl, error) {
-                                  if (uploadedFileUrl != null) {
-                                    Navigator.of(context).pop(uploadedFileUrl);
-                                  } else {
-                                    _showUploadError(context, error);
-                                  }
-                                },
-                              ),
-                            ),
-                        ],
+                        ),
                       ),
-                      const SizedBox(height: 10),
-                      if (hasImage) ...[
-                        TextButton(
-                          onPressed: !_uploading
-                              ? () async {
-                                  await _selectedImageFile?.delete();
-                                  setState(() {
-                                    _selectedImage = null;
-                                  });
-                                }
-                              : null,
-                          child: Text(
-                            t.edit,
-                            style: TextStyle(
-                                color: themeColors.linkText, fontSize: 14),
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Center(
-                          child: ThemedRaisedButton(
-                            onPressed: hasImage && !_uploading
-                                ? () {
-                                    _uploadImage(context);
-                                  }
-                                : null,
-                            label: t.joinCircle,
-                          ),
-                        ),
-                      ],
-                    ],
-                  )),
+                    ),
+                    const SizedBox(height: 20),
+                    Center(
+                      child: ThemedRaisedButton(
+                        onPressed: () {
+                          _join();
+                        },
+                        label: t.joinCircle,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ],
           );
         }
@@ -259,64 +254,95 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
     );
   }
 
-  Widget _takenImage(BuildContext context) {
-    if (!kIsWeb) {
-      return Image.file(
-        _selectedImageFile!,
-        fit: BoxFit.cover,
-      );
-    } else {
-      return Image.memory(
-        _selectedImageBytes!,
-        fit: BoxFit.cover,
-      );
-    }
-  }
-
-  Future<void> _uploadImage(BuildContext context) async {
-    setState(() {
-      _uploading = true;
-    });
-    final authUser = ref.read(authServiceProvider).currentUser()!;
-    _uploader.currentState!.profileImageUpload(_selectedImage!, authUser);
-  }
-
-  Future<void> _handleImage(XFile imageFile) async {
-    if (kIsWeb) {
-      _selectedImageBytes = await imageFile.readAsBytes();
-    }
-    setState(() {
-      _selectedImage = imageFile;
-      if (!kIsWeb) {
-        _selectedImageFile = File(imageFile.path);
-      }
-    });
-  }
-
-  Future<void> _showUploadError(BuildContext context, String? error) async {
+  Widget _desktopUserInfo(BuildContext context) {
+    final themeColors = Theme.of(context).themeColors;
     final t = AppLocalizations.of(context)!;
-    await showDialog<bool>(
-      context: context,
-      /*it shows a popup with few options which you can select, for option we
-        created enums which we can use with switch statement, in this first switch
-        will wait for the user to select the option which it can use with switch cases*/
-      builder: (BuildContext context) {
-        final actions = [
-          TextButton(
-            child: Text(t.ok),
-            onPressed: () {
-              Navigator.of(context).pop(true);
-            },
-          ),
-        ];
-        return AlertDialog(
-          title: Text(
-            t.uploadErrorTitle,
-          ),
-          content: Text(error ?? t.uploadErrorGeneric),
-          actions: actions,
-        );
+
+    return FutureBuilder<UserProfile?>(
+      future: _userProfileFetch,
+      builder: (context, asyncSnapshot) {
+        if (asyncSnapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: BusyIndicator(),
+          );
+        }
+        if (asyncSnapshot.hasData) {
+          // UserProfile user = asyncSnapshot.data!;
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 500),
+                child: Text(
+                  t.joinCircleMessage,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxWidth: Theme.of(context).maxRenderWidth,
+                      ),
+                      child: AspectRatio(
+                        aspectRatio: 1.0,
+                        child: ClipRRect(
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(24)),
+                          child: Container(
+                            color: themeColors.primaryText,
+                            child: AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 300),
+                              child: CameraCapture(
+                                key: _captureKey,
+                                captureMode: CaptureMode.preview,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 40,
+                  ),
+                  Expanded(
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxWidth: Theme.of(context).maxRenderWidth,
+                      ),
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 8),
+                          Center(
+                            child: ThemedRaisedButton(
+                              onPressed: () {
+                                _join();
+                              },
+                              label: t.joinCircle,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ],
+          );
+        }
+        return Container();
       },
     );
+  }
+
+  void _join() {
+    Navigator.of(context).pop({
+      'muted': _captureKey.currentState!.muted,
+      'videoMuted': _captureKey.currentState!.videoMuted
+    });
   }
 }

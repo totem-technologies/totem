@@ -10,11 +10,12 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:image/image.dart' as imglib;
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:totem/components/camera/camera_muted.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/theme/index.dart';
 import 'package:uuid/uuid.dart';
 
-enum CaptureMode { videoAndPhoto, videoOnly, photoOnly }
+enum CaptureMode { videoAndPhoto, videoOnly, photoOnly, preview }
 
 class CameraCapture extends StatefulWidget {
   const CameraCapture({
@@ -22,12 +23,12 @@ class CameraCapture extends StatefulWidget {
     this.captureMode = CaptureMode.videoAndPhoto,
     this.mirrorFrontImage = true,
     this.cropImage = true,
-    required this.onImageTaken,
+    this.onImageTaken,
   }) : super(key: key);
   final CaptureMode captureMode;
   final bool mirrorFrontImage;
   final bool cropImage;
-  final void Function(XFile) onImageTaken;
+  final void Function(XFile)? onImageTaken;
   @override
   CameraCaptureScreenState createState() => CameraCaptureScreenState();
 }
@@ -41,8 +42,18 @@ class CameraCaptureScreenState extends State<CameraCapture>
   bool _frontCamera = false;
   bool _saving = false;
   bool _retry = false;
+  bool _muted = false;
+  bool _videoMuted = false;
   CameraImage? _savedImage;
   PermissionStatus? _permissionError;
+
+  bool get muted {
+    return _muted;
+  }
+
+  bool get videoMuted {
+    return _videoMuted;
+  }
 
   Future<void> _initCamera() async {
     // check camera permissions here
@@ -79,7 +90,7 @@ class CameraCaptureScreenState extends State<CameraCapture>
       setState(() {
         _initialized = true;
       });
-      if (!kIsWeb) {
+      if (!kIsWeb && widget.captureMode != CaptureMode.preview) {
         _controller!.startImageStream((image) {
           _savedImage = image;
         });
@@ -137,6 +148,7 @@ class CameraCaptureScreenState extends State<CameraCapture>
           color: themeColor.primaryText,
         ),
         if (_initialized) _buildCameraPreview(context),
+        if (!_saving && _videoMuted) const CameraMuted(),
         if (_saving)
           Positioned.fill(
             child: Center(
@@ -145,7 +157,10 @@ class CameraCaptureScreenState extends State<CameraCapture>
               ),
             ),
           ),
-        if (!_saving) _buildCameraControl(context),
+        if (!_saving && widget.captureMode != CaptureMode.preview)
+          _buildCameraControl(context),
+        if (!_saving && widget.captureMode == CaptureMode.preview)
+          _buildCameraPreviewControls(context),
         if (!_saving && _cameras != null && _cameras!.length > 1)
           _buildCameraSelectorControl(context),
       ],
@@ -261,6 +276,51 @@ class CameraCaptureScreenState extends State<CameraCapture>
     );
   }
 
+  Widget _buildCameraPreviewControls(BuildContext context) {
+    final themeColors = Theme.of(context).themeColors;
+    final t = AppLocalizations.of(context)!;
+
+    return Positioned(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          ThemedControlButton(
+            label: _muted ? t.unmute : t.mute,
+            labelColor: themeColors.reversedText,
+            svgImage:
+                _muted ? 'assets/microphone_mute.svg' : 'assets/microphone.svg',
+            onPressed: () {
+              setState(() => _muted = !_muted);
+              debugPrint('mute pressed');
+            },
+          ),
+          const SizedBox(
+            width: 20,
+          ),
+          ThemedControlButton(
+            label: _videoMuted ? t.startVideo : t.stopVideo,
+            labelColor: themeColors.reversedText,
+            svgImage:
+                _videoMuted ? 'assets/video.svg' : 'assets/video_stop.svg',
+            onPressed: () {
+              if (!_videoMuted) {
+                _controller!.pausePreview();
+              } else {
+                _controller!.resumePreview();
+              }
+              setState(() => _videoMuted = !_videoMuted);
+
+              debugPrint('video pressed');
+            },
+          ),
+        ],
+      ),
+      left: 0,
+      right: 0,
+      bottom: 8,
+    );
+  }
+
   Widget _buildCameraControl(BuildContext context) {
     final themeColors = Theme.of(context).themeColors;
     return Positioned(
@@ -322,7 +382,7 @@ class CameraCaptureScreenState extends State<CameraCapture>
     if (mounted) {
       setState(() {});
       _initialized = true;
-      if (!kIsWeb) {
+      if (!kIsWeb && widget.captureMode != CaptureMode.preview) {
         _controller!.startImageStream((image) {
           _savedImage = image;
         });
@@ -351,9 +411,9 @@ class CameraCaptureScreenState extends State<CameraCapture>
                 ? (_frontCamera ? 270 : 90)
                 : 0,
           });
-          if (result != null) {
+          if (result != null && widget.onImageTaken != null) {
             XFile file = XFile(result);
-            widget.onImageTaken(file);
+            widget.onImageTaken!(file);
           } else {
             setState(() {
               _saving = false;
@@ -372,7 +432,9 @@ class CameraCaptureScreenState extends State<CameraCapture>
           file = XFile.fromData(Uint8List.fromList(processedBytes),
               mimeType: file.mimeType);
         }
-        widget.onImageTaken(file);
+        if (widget.onImageTaken != null) {
+          widget.onImageTaken!(file);
+        }
         setState(() => _saving = false);
       }
     }

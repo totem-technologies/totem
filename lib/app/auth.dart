@@ -79,16 +79,16 @@ class _AuthWidget extends ConsumerState<AuthWidget> {
           var repo = ref.read(repositoryProvider);
           SnapCircle? circle = await repo.circleFromId(link.value);
           if (circle != null) {
-            String? sessionImage =
+            Map<String, bool>? state =
                 await CircleJoinDialog.showDialog(context, circle: circle);
-            if (sessionImage != null && sessionImage.isNotEmpty) {
+            if (state != null) {
               await repo.createActiveSession(
                 circle: circle,
               );
               Future.delayed(const Duration(milliseconds: 300), () async {
                 Navigator.of(context).pushNamed(AppRoutes.circle, arguments: {
                   'session': circle.snapSession,
-                  'image': sessionImage,
+                  'state': state,
                 });
               });
             }

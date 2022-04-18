@@ -21,10 +21,10 @@ final communicationsProvider =
 });
 
 class CircleSessionPage extends ConsumerStatefulWidget {
-  const CircleSessionPage({Key? key, required this.session, this.sessionImage})
+  const CircleSessionPage({Key? key, required this.session, this.state})
       : super(key: key);
   final Session session;
-  final String? sessionImage;
+  final Map<String, bool>? state;
 
   @override
   _CircleSessionPageState createState() => _CircleSessionPageState();
@@ -52,8 +52,7 @@ class _CircleSessionPageState extends ConsumerState<CircleSessionPage> {
   Widget build(BuildContext context) {
     if (widget.session is SnapSession) {
       return CircleSnapSessionContent(
-          circle: widget.session.circle as SnapCircle,
-          sessionImage: widget.sessionImage);
+          circle: widget.session.circle as SnapCircle, state: widget.state);
     } else {
       return CircleScheduledSessionContent(session: widget.session);
     }
