@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart' as prov;
 import 'package:rxdart/rxdart.dart';
 import 'package:totem/app/circle/index.dart';
+import 'package:totem/components/camera/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/theme/index.dart';
 
@@ -87,24 +87,9 @@ class CircleSessionParticipant extends ConsumerWidget {
   }
 
   Widget _muteIndicator(BuildContext context, SessionParticipant participant) {
-    final themeColors = Theme.of(context).themeColors;
     final bool muted = participant.muted;
     if (muted) {
-      return Container(
-        width: 32,
-        height: 32,
-        decoration: ShapeDecoration(
-          color: muted ? themeColors.primaryText : themeColors.primary,
-          shape: const CircleBorder(),
-        ),
-        child: Center(
-          child: SvgPicture.asset(
-            'assets/microphone_mute.svg',
-            color: themeColors.primary,
-            fit: BoxFit.contain,
-          ),
-        ),
-      );
+      return const MuteIndicator();
     }
     return Container();
   }
