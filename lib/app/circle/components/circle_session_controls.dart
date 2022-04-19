@@ -198,7 +198,7 @@ class _CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
                 flex: 1,
                 child: Container(),
               ),
-              ThemedControlButton(
+              /* ThemedControlButton(
                 label: t.openFloor,
                 labelColor: themeColors.reversedText,
                 svgImage: 'assets/unlock.svg',
@@ -208,13 +208,13 @@ class _CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
               ),
               const SizedBox(
                 width: 20,
-              ),
+              ),*/
               ThemedControlButton(
-                label: t.skip,
+                label: t.next,
                 labelColor: themeColors.reversedText,
                 svgImage: 'assets/fast_forward.svg',
                 onPressed: () {
-                  debugPrint('mute pressed');
+                  _nextUser(context, ref);
                 },
               ),
               const SizedBox(
@@ -237,6 +237,11 @@ class _CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
         ],
       ],
     );
+  }
+
+  void _nextUser(BuildContext context, WidgetRef ref) async {
+    final commProvider = ref.read(communicationsProvider);
+    await commProvider.forceNextActiveSessionTotem();
   }
 
   void _startSession(BuildContext context, WidgetRef ref) async {
