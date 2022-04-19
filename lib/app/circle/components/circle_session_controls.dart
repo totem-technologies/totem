@@ -25,7 +25,7 @@ class _CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
 
   @override
   void dispose() {
-    _noiseSubscription?.cancel();
+    stop();
     super.dispose();
   }
 
@@ -44,10 +44,8 @@ class _CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
   }
 
   void stop() {
-    if (_noiseSubscription != null) {
-      _noiseSubscription!.cancel();
-      _noiseSubscription = null;
-    }
+    _noiseSubscription?.cancel();
+    _noiseSubscription = null;
   }
 
   @override
