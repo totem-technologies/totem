@@ -184,10 +184,10 @@ class _CircleSessionInfoPageState extends ConsumerState<CircleSessionInfoPage> {
       BuildContext context, List<SessionParticipant> participants) {
     return ReorderableList(
       onReorder: (Key item, Key newPosition) {
-        int draggingIndex = participants
-            .indexWhere((element) => element.uid == (item as ValueKey).value);
-        int newPositionIndex = participants.indexWhere(
-            (element) => element.uid == (newPosition as ValueKey).value);
+        int draggingIndex = participants.indexWhere(
+            (element) => element.sessionUserId == (item as ValueKey).value);
+        int newPositionIndex = participants.indexWhere((element) =>
+            element.sessionUserId == (newPosition as ValueKey).value);
 
         final draggedItem = participants[draggingIndex];
         participants.removeAt(draggingIndex);
@@ -211,7 +211,7 @@ class _CircleSessionInfoPageState extends ConsumerState<CircleSessionInfoPage> {
         final repo = ref.read(repositoryProvider);
         repo.updateActiveSession(repo.activeSession!.reorderParticipants(
             _participants
-                .map((element) => element.uid)
+                .map((element) => element.sessionUserId!)
                 .toList(growable: false)));
       },
       child: ListView.separated(
@@ -219,7 +219,7 @@ class _CircleSessionInfoPageState extends ConsumerState<CircleSessionInfoPage> {
           itemBuilder: (context, index) {
             SessionParticipant participant = participants[index];
             return ReorderableItem(
-              key: ValueKey(participant.uid),
+              key: ValueKey(participant.sessionUserId!),
               childBuilder: (BuildContext context, ReorderableItemState state) {
                 return CircleSessionParticipantListItem(
                   participant: participants[index],
