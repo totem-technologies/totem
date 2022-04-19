@@ -7,6 +7,9 @@ import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/providers.dart';
 import 'package:totem/theme/index.dart';
+import 'package:noise_meter/noise_meter.dart';
+import 'package:rxdart/rxdart.dart';
+import 'dart:async';
 
 class CircleSessionControls extends ConsumerStatefulWidget {
   const CircleSessionControls({Key? key}) : super(key: key);
@@ -16,7 +19,34 @@ class CircleSessionControls extends ConsumerStatefulWidget {
 }
 
 class _CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
+  StreamSubscription<NoiseReading>? _noiseSubscription;
+  late NoiseMeter _noiseMeter;
   bool _more = false;
+
+  @override
+  void dispose() {
+    stop();
+    super.dispose();
+  }
+
+  void onError(Object error) {
+    debugPrint(error.toString());
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _noiseMeter = NoiseMeter(onError);
+  }
+
+  void start() {
+    _noiseSubscription = _noiseMeter.noiseStream.listen(null);
+  }
+
+  void stop() {
+    _noiseSubscription?.cancel();
+    _noiseSubscription = null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -144,15 +174,34 @@ class _CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
               flex: 1,
               child: Container(),
             ),
-            ThemedControlButton(
-              label: communications.muted ? t.forceUnMute : t.mute,
-              labelColor: themeColors.reversedText,
-              svgImage: communications.muted
-                  ? 'assets/microphone_force.svg'
-                  : 'assets/microphone.svg',
-              onPressed: () {
-                communications.muteAudio(communications.muted ? false : true);
-                debugPrint('mute pressed');
+            StreamBuilder<NoiseReading>(
+              stream: _noiseMeter.noiseStream
+                  .throttleTime(const Duration(milliseconds: 500)),
+              builder: (context, noise) {
+                var speaking = false;
+                var color = Theme.of(context).themeColors.primary;
+                if (noise.hasData) {
+                  speaking =
+                      !communications.muted && noise.data!.meanDecibel > 40;
+                }
+                return ThemedControlButton(
+                  label: communications.muted ? t.unmute : t.mute,
+                  labelColor: themeColors.reversedText,
+                  svgImage: communications.muted
+                      ? 'assets/microphone_mute.svg'
+                      : 'assets/microphone.svg',
+                  onPressed: () {
+                    if (communications.muted) {
+                      communications.muteAudio(false);
+                      stop();
+                    } else {
+                      communications.muteAudio(true);
+                      start();
+                    }
+                    debugPrint('mute pressed');
+                  },
+                  backgroundColor: speaking ? color : null,
+                );
               },
             ),
             const SizedBox(
