@@ -34,6 +34,7 @@ abstract class CommunicationProvider extends ChangeNotifier {
   Future<bool> receiveActiveSessionTotem({required String sessionUserId});
   Future<bool> passActiveSessionTotem({required String sessionUserId});
   Future<bool> doneActiveSessionTotem({required String sessionUserId});
+  Future<bool> forceNextActiveSessionTotem();
   Future<void> setHasTotem(bool hasTotem);
   Stream<CommunicationAudioVolumeIndication> get audioIndicatorStream;
 }

@@ -181,6 +181,16 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     return false;
   }
 
+  @override
+  Future<bool> forceNextActiveSessionTotem() async {
+    Map<String, dynamic>? update =
+        sessionProvider.activeSession?.requestNextUserTotem();
+    if (update != null) {
+      return await sessionProvider.updateActiveSession(update);
+    }
+    return false;
+  }
+
   void _cancelStateUpdates() {
     _updateTimer?.cancel();
     _updateTimer = null;
