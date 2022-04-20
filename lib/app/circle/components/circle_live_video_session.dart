@@ -8,6 +8,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart' as prov;
 import 'package:slide_to_act/slide_to_act.dart';
 import 'package:totem/app/circle/index.dart';
+import 'package:totem/components/camera/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/theme/index.dart';
 
@@ -123,9 +124,27 @@ class _CircleLiveVideoSessionState
               width: sizeOfVideo,
               height: sizeOfVideo,
               child: prov.Consumer<SessionParticipant>(
-                  builder: (_, participant, __) {
-                return CircleLiveSessionVideo(participant: participant);
-              }),
+                builder: (_, participant, __) {
+                  return ClipRRect(
+                    borderRadius: const BorderRadius.all(Radius.circular(8)),
+                    child: Stack(
+                      children: [
+                        CircleLiveSessionVideo(participant: participant),
+                        if (participant.videoMuted)
+                          const Positioned.fill(
+                            child: CameraMuted(),
+                          ),
+                        if (participant.muted)
+                          const PositionedDirectional(
+                            top: 5,
+                            end: 5,
+                            child: MuteIndicator(),
+                          ),
+                      ],
+                    ),
+                  );
+                },
+              ),
             );
           },
         ),
