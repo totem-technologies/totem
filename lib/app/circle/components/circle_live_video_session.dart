@@ -1,10 +1,12 @@
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:keybinder/keybinder.dart';
 import 'package:provider/provider.dart' as prov;
 import 'package:slide_to_act/slide_to_act.dart';
 import 'package:totem/app/circle/index.dart';
@@ -24,6 +26,28 @@ class _CircleLiveVideoSessionState
     extends ConsumerState<CircleLiveVideoSession> {
   final GlobalKey _sliderPass = GlobalKey();
   final GlobalKey _sliderReceive = GlobalKey();
+  bool _myTurn = false;
+  @override
+  void initState() {
+    if (kIsWeb) {
+      Keybinder.bind(Keybinding.from({LogicalKeyboardKey.space}), (pressed) {
+        // handle keyboard space event
+        if (!pressed) {
+          // space key was released
+          _handleSpace();
+        }
+      });
+    }
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    if (kIsWeb) {
+      Keybinder.dispose();
+    }
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,6 +58,7 @@ class _CircleLiveVideoSessionState
     final themeColors = themeData.themeColors;
     final textStyles = themeData.textStyles;
     final totemParticipant = activeSession.totemParticipant;
+    _myTurn = totemParticipant != null && totemParticipant.me;
     if (totemParticipant != null) {
       return Container(
         color: Colors.black,
@@ -227,23 +252,9 @@ class _CircleLiveVideoSessionState
       final textStyles = Theme.of(context).textStyles;
       final t = AppLocalizations.of(context)!;
       {
-        return Focus(
-          autofocus: true,
-          onKey: (FocusNode node, RawKeyEvent event) {
-            debugPrint('Got Key: ${event.logicalKey.debugName}');
-            if (event.logicalKey == LogicalKeyboardKey.space) {
-              if (activeSession.totemReceived) {
-                _endTurn(context, participant);
-              } else {
-                _receiveTurn(context, participant);
-              }
-              return KeyEventResult.handled;
-            }
-            return KeyEventResult.ignored;
-          },
-          child: Center(
-            child: (activeSession.totemReceived)
-                ? /*InkWell(
+        return Center(
+          child: (activeSession.totemReceived)
+              ? /*InkWell(
                       onTap: () {
                         _endTurn(context, participant);
                       },
@@ -260,106 +271,56 @@ class _CircleLiveVideoSessionState
                         ),
                       ),
                     )*/
-                SizedBox(
-                    key: _sliderPass,
-                    width: 250,
-                    height: 60,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(30),
-                        border:
-                            Border.all(width: 1, color: themeColors.primary),
-                      ),
-                      child: SlideAction(
-                        borderRadius: 30,
-                        elevation: 0,
-                        height: 60,
-                        sliderRotate: false,
-                        innerColor: themeColors.profileBackground,
-                        outerColor: Colors.transparent,
-                        sliderButtonIconPadding: 0,
-                        sliderButtonIcon: Container(
-                          width: 48,
-                          height: 48,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: themeColors.primary,
-                          ),
-                          child: Center(
-                            child: SvgPicture.asset('assets/circle_check.svg'),
-                          ),
-                        ),
-                        submittedIcon: const SizedBox(height: 48, width: 48),
-                        onSubmit: () {
-                          // delay to allow for animation to complete
-                          Future.delayed(const Duration(milliseconds: 300), () {
-                            _endTurn(context, participant);
-                          });
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.all(1),
-                          child: Container(
-                            decoration: BoxDecoration(
-                                color:
-                                    themeColors.sliderBackground.withAlpha(120),
-                                borderRadius: BorderRadius.circular(30)),
-                            child: Center(
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 40,
-                                ),
-                                child: Text(
-                                  t.slideToPass,
-                                  style: textStyles.headline3,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
+              SizedBox(
+                  key: _sliderPass,
+                  width: 250,
+                  height: 60,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                      border: Border.all(width: 1, color: themeColors.primary),
                     ),
-                  )
-                : SizedBox(
-                    key: _sliderReceive,
-                    width: 250,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(30),
-                        border:
-                            Border.all(width: 1, color: themeColors.primary),
+                    child: SlideAction(
+                      borderRadius: 30,
+                      elevation: 0,
+                      height: 60,
+                      sliderRotate: false,
+                      innerColor: themeColors.profileBackground,
+                      outerColor: Colors.transparent,
+                      sliderButtonIconPadding: 0,
+                      sliderButtonIcon: Container(
+                        width: 48,
+                        height: 48,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: themeColors.primary,
+                        ),
+                        child: Center(
+                          child: SvgPicture.asset('assets/circle_check.svg'),
+                        ),
                       ),
-                      child: SlideAction(
-                        borderRadius: 30,
-                        elevation: 0,
-                        height: 60,
-                        innerColor: themeColors.profileBackground,
-                        outerColor: Colors.transparent,
-                        sliderButtonIconPadding: 0,
-                        sliderButtonIcon: const SizedBox(height: 48, width: 48),
-                        submittedIcon:
-                            SvgPicture.asset('assets/circle_check.svg'),
-                        onSubmit: () {
-                          // delay to allow for animation to complete
-                          Future.delayed(const Duration(milliseconds: 300), () {
-                            _receiveTurn(context, participant);
-                          });
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.all(1),
-                          child: Container(
-                            decoration: BoxDecoration(
-                                color:
-                                    themeColors.sliderBackground.withAlpha(120),
-                                borderRadius: BorderRadius.circular(30)),
-                            child: Center(
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 40,
-                                ),
-                                child: Text(
-                                  t.slideToReceive,
-                                  style: textStyles.headline3,
-                                ),
+                      submittedIcon: const SizedBox(height: 48, width: 48),
+                      onSubmit: () {
+                        // delay to allow for animation to complete
+                        Future.delayed(const Duration(milliseconds: 300), () {
+                          _endTurn(context, participant);
+                        });
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(1),
+                        child: Container(
+                          decoration: BoxDecoration(
+                              color:
+                                  themeColors.sliderBackground.withAlpha(120),
+                              borderRadius: BorderRadius.circular(30)),
+                          child: Center(
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                left: 40,
+                              ),
+                              child: Text(
+                                t.slideToPass,
+                                style: textStyles.headline3,
                               ),
                             ),
                           ),
@@ -367,7 +328,54 @@ class _CircleLiveVideoSessionState
                       ),
                     ),
                   ),
-          ),
+                )
+              : SizedBox(
+                  key: _sliderReceive,
+                  width: 250,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                      border: Border.all(width: 1, color: themeColors.primary),
+                    ),
+                    child: SlideAction(
+                      borderRadius: 30,
+                      elevation: 0,
+                      height: 60,
+                      innerColor: themeColors.profileBackground,
+                      outerColor: Colors.transparent,
+                      sliderButtonIconPadding: 0,
+                      sliderButtonIcon: const SizedBox(height: 48, width: 48),
+                      submittedIcon:
+                          SvgPicture.asset('assets/circle_check.svg'),
+                      onSubmit: () {
+                        // delay to allow for animation to complete
+                        Future.delayed(const Duration(milliseconds: 300), () {
+                          _receiveTurn(context, participant);
+                        });
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(1),
+                        child: Container(
+                          decoration: BoxDecoration(
+                              color:
+                                  themeColors.sliderBackground.withAlpha(120),
+                              borderRadius: BorderRadius.circular(30)),
+                          child: Center(
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                left: 40,
+                              ),
+                              child: Text(
+                                t.slideToReceive,
+                                style: textStyles.headline3,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
         );
       }
     }
@@ -388,5 +396,17 @@ class _CircleLiveVideoSessionState
     final commProvider = ref.read(communicationsProvider);
     await commProvider.doneActiveSessionTotem(
         sessionUserId: participant.sessionUserId!);
+  }
+
+  Future<void> _handleSpace() async {
+    debugPrint('Handling space key: is it my turn? ${_myTurn.toString()}');
+    if (_myTurn) {
+      final activeSession = ref.read(activeSessionProvider);
+      if (activeSession.totemReceived) {
+        _endTurn(context, activeSession.totemParticipant!);
+      } else {
+        _receiveTurn(context, activeSession.totemParticipant!);
+      }
+    }
   }
 }
