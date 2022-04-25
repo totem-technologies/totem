@@ -269,7 +269,7 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
               ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 500),
                 child: Text(
-                  t.joinCircleMessageAnon,
+                  t.joinCircleMessage,
                   textAlign: TextAlign.center,
                 ),
               ),
