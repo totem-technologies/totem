@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,6 +19,13 @@ class CircleSessionControls extends ConsumerStatefulWidget {
 
 class _CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
   bool _more = false;
+  Timer? _timer;
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -85,8 +94,10 @@ class _CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
               ? 'assets/microphone_mute.svg'
               : 'assets/microphone.svg',
           onPressed: () {
-            communications.muteAudio(communications.muted ? false : true);
-            debugPrint('mute pressed');
+            triggerPress(() {
+              communications.muteAudio(communications.muted ? false : true);
+              debugPrint('mute pressed');
+            });
           },
         ),
         ThemedControlButton(
@@ -95,8 +106,11 @@ class _CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
               ? 'assets/video.svg'
               : 'assets/video_stop.svg',
           onPressed: () {
-            communications.muteVideo(communications.videoMuted ? false : true);
-            debugPrint('video pressed');
+            triggerPress(() {
+              communications
+                  .muteVideo(communications.videoMuted ? false : true);
+              debugPrint('video pressed');
+            });
           },
         ),
         if (role == Role.keeper) ...[
@@ -151,12 +165,14 @@ class _CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
                   ? 'assets/microphone_mute.svg'
                   : 'assets/microphone.svg',
               onPressed: () {
-                if (communications.muted) {
-                  communications.muteAudio(false);
-                } else {
-                  communications.muteAudio(true);
-                }
-                debugPrint('mute pressed');
+                triggerPress(() {
+                  if (communications.muted) {
+                    communications.muteAudio(false);
+                  } else {
+                    communications.muteAudio(true);
+                  }
+                  debugPrint('mute pressed');
+                });
               },
             ),
             const SizedBox(
@@ -169,9 +185,11 @@ class _CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
                   ? 'assets/video.svg'
                   : 'assets/video_stop.svg',
               onPressed: () {
-                communications
-                    .muteVideo(communications.videoMuted ? false : true);
-                debugPrint('video pressed');
+                triggerPress(() {
+                  communications
+                      .muteVideo(communications.videoMuted ? false : true);
+                  debugPrint('video pressed');
+                });
               },
             ),
             if (role == Role.keeper) ...[
@@ -293,5 +311,12 @@ class _CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
       await commProvider.endSession();
 //       Navigator.of(context).pop();
     }
+  }
+
+  void triggerPress(Function func) {
+    _timer?.cancel();
+    _timer = Timer(const Duration(milliseconds: 350), () {
+      func();
+    });
   }
 }
