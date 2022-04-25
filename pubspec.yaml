@@ -56,6 +56,7 @@ dependencies:
   image: ^3.1.0
   intl_phone_number_input: ^0.7.0+2
   intl: ^0.17.0
+  keybinder: ^1.0.0
   keyboard_actions: ^3.4.4
   libphonenumber_plugin: ^0.2.3
   logger: ^1.0.0-nullsafety.0
@@ -75,6 +76,9 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints:
+
+dependency_overrides:
+  provider: ^6.0.2
 
 # The following section is specific to Flutter.
 flutter:
