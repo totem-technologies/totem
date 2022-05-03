@@ -7,10 +7,14 @@ import 'package:totem/theme/index.dart';
 
 class CircleLiveSessionParticipant extends StatelessWidget {
   const CircleLiveSessionParticipant(
-      {Key? key, required this.participant, this.hasTotem = false})
+      {Key? key,
+      required this.participant,
+      this.hasTotem = false,
+      this.showMe = false})
       : super(key: key);
   final SessionParticipant participant;
   final bool hasTotem;
+  final bool showMe;
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +35,8 @@ class CircleLiveSessionParticipant extends StatelessWidget {
                     participant: participant,
                     hasTotem: hasTotem,
                   ),
-                  if (participant.me && !hasTotem) _renderMe(context, hasTotem),
+                  if (participant.me && !hasTotem && showMe)
+                    _renderMe(context, hasTotem),
                 ],
               );
             },

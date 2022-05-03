@@ -14,10 +14,12 @@ class CircleParticipantVideo extends ConsumerWidget {
     required this.participant,
     this.hasTotem = false,
     this.annotate = true,
+    this.showMe = false,
   }) : super(key: key);
   final SessionParticipant participant;
   final bool hasTotem;
   final bool annotate;
+  final bool showMe;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -75,7 +77,7 @@ class CircleParticipantVideo extends ConsumerWidget {
                 start: 0,
                 end: 0,
               ),
-            if (participant.me) renderMe(context),
+            if (showMe && participant.me) renderMe(context),
             if (annotate && participant.role == Role.keeper && !participant.me)
               renderKeeperLabel(context)
           ],

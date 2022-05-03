@@ -10,11 +10,13 @@ class CircleParticipant extends StatelessWidget {
       required this.name,
       required this.role,
       this.image,
+      this.showMe = false,
       this.me = false})
       : super(key: key);
   final String? image;
   final String name;
   final bool me;
+  final bool showMe;
   final Role role;
 
   @override
@@ -59,7 +61,7 @@ class CircleParticipant extends StatelessWidget {
               start: 0,
               end: 0,
             ),
-            if (me) renderMe(context),
+            if (showMe && me) renderMe(context),
             if (role == Role.keeper && !me) renderKeeperLabel(context)
           ],
         ));
