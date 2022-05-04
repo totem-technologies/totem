@@ -63,7 +63,15 @@ class _LoginPanel extends StatelessWidget {
                         ),
                     ],
                   )
-                : _showGetMobileApp(context),
+                : (kIsWeb
+                    ? _showGetMobileApp(context)
+                    : ThemedRaisedButton(
+                        label: t.login,
+                        width: 294,
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/login/phone');
+                        },
+                      )),
           ),
         ),
       ],
