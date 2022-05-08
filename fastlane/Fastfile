@@ -12,7 +12,6 @@ platform :ios do
       use_automatic_signing: false,
       path: "ios/Runner.xcodeproj"
     )
-    sh("pod repo update")
     sh("flutter build ipa")
     build_app(scheme: "Runner",
       workspace: "ios/Runner.xcworkspace",
