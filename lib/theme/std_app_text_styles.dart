@@ -7,7 +7,7 @@ class StdAppTextStyles extends AppTextStyles {
           headline1: TextStyle(
               fontFamily: 'Recoleta',
               fontSize: 32,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w600,
               height: 43.52 / 32,
               color: themeColors.secondaryText),
           body: TextStyle(
