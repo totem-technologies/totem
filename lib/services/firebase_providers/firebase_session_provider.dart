@@ -536,16 +536,16 @@ class FirebaseSessionProvider extends SessionProvider {
             sessionUserId: sessionUserId,
             sessionImage: sessionImage,
             role: session.circle.participantRole(uid).name,
-            muted: muted,
-            videoMuted: videoMuted,
+            //muted: muted,
+            //videoMuted: videoMuted,
           );
         } else {
           existingUser['sessionUserId'] = sessionUserId;
           if (sessionImage != null) {
             existingUser['sessionImage'] = sessionImage;
           }
-          existingUser['muted'] = muted;
-          existingUser['videoMuted'] = videoMuted;
+          //existingUser['muted'] = muted;
+          //existingUser['videoMuted'] = videoMuted;
         }
         if (!speakingOrder.contains(sessionUserId)) {
           speakingOrder.add(sessionUserId);

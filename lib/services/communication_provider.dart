@@ -2,7 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
 
-enum CommunicationState { disconnected, disconnecting, joining, active, failed }
+enum CommunicationState {
+  disconnected,
+  disconnecting,
+  joining,
+  active,
+  failed,
+  networkConnectivity
+}
 
 class CommunicationErrors {
   static const String communicationError = "errorCommunicationError";

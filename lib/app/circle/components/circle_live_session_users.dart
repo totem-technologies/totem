@@ -21,72 +21,75 @@ class CircleLiveSessionUsers extends ConsumerWidget {
         .where((element) => element.uid != totemId)
         .toList();
     if (participants.isNotEmpty) {
-      return LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints) {
-          final width = constraints.maxWidth;
-          final height = constraints.maxHeight;
-          final minColumns = (width / (maxDimension)).floor();
-          final maxColumns = (width / (minDimension)).floor();
-          int minRows =
-              (height / (maxDimension + (!DeviceType.isPhone() ? spacing : 0)))
-                  .floor();
-          int maxRows =
-              (height / (minDimension + (!DeviceType.isPhone() ? spacing : 0)))
-                  .floor();
-          double dimension = maxDimension;
-          if (minRows == 0 || maxRows == 0) {
-            minRows = maxRows = 1;
-            dimension = max(minDimension, min(height, maxDimension));
-          }
-          final maxedSizeCount = max(1, (minRows * minColumns));
-          final minSizeCount = max(1, (maxRows * maxColumns));
-          int participantCount = participants.length;
-          if (participantCount > maxedSizeCount &&
-              participantCount < minSizeCount) {
-            int h0 = (sqrt((width * height) / participantCount)).ceil();
-            int value = (width / h0).floor() * (height / h0).floor();
-            while (participantCount > value) {
-              h0--;
-              value = (width / h0).floor() * (height / h0).floor();
+      return CircleNetworkConnectivityLayer(
+        child: LayoutBuilder(
+          builder: (BuildContext context, BoxConstraints constraints) {
+            final width = constraints.maxWidth;
+            final height = constraints.maxHeight;
+            final minColumns = (width / (maxDimension)).floor();
+            final maxColumns = (width / (minDimension)).floor();
+            int minRows = (height /
+                    (maxDimension + (!DeviceType.isPhone() ? spacing : 0)))
+                .floor();
+            int maxRows = (height /
+                    (minDimension + (!DeviceType.isPhone() ? spacing : 0)))
+                .floor();
+            double dimension = maxDimension;
+            if (minRows == 0 || maxRows == 0) {
+              minRows = maxRows = 1;
+              dimension = max(minDimension, min(height, maxDimension));
             }
-            if ((width / h0).floor() == 1) {
-              // use min of 2
-              int cols = min(participantCount, maxColumns);
-              dimension = min(dimension, (width - spacing * (cols - 1)) / cols);
-            } else {
-              dimension = min(dimension, h0.toDouble());
+            final maxedSizeCount = max(1, (minRows * minColumns));
+            final minSizeCount = max(1, (maxRows * maxColumns));
+            int participantCount = participants.length;
+            if (participantCount > maxedSizeCount &&
+                participantCount < minSizeCount) {
+              int h0 = (sqrt((width * height) / participantCount)).ceil();
+              int value = (width / h0).floor() * (height / h0).floor();
+              while (participantCount > value) {
+                h0--;
+                value = (width / h0).floor() * (height / h0).floor();
+              }
+              if ((width / h0).floor() == 1) {
+                // use min of 2
+                int cols = min(participantCount, maxColumns);
+                dimension =
+                    min(dimension, (width - spacing * (cols - 1)) / cols);
+              } else {
+                dimension = min(dimension, h0.toDouble());
+              }
+            } else if (participantCount >= minSizeCount) {
+              dimension = min(
+                  dimension, (width - spacing * (maxColumns - 1)) / maxColumns);
             }
-          } else if (participantCount >= minSizeCount) {
-            dimension = min(
-                dimension, (width - spacing * (maxColumns - 1)) / maxColumns);
-          }
-          return SingleChildScrollView(
-            child: Wrap(
-              runSpacing: spacing,
-              spacing: spacing,
-              alignment: WrapAlignment.start,
-              children: List.generate(participantCount, (index) {
-                if (index < participants.length) {
-                  return CircleSessionParticipant(
-                    dimension: dimension,
-                    participant: participants[index],
-                    hasTotem: activeSession.totemUser ==
-                        participants[index].sessionUserId,
-                    annotate: false,
+            return SingleChildScrollView(
+              child: Wrap(
+                runSpacing: spacing,
+                spacing: spacing,
+                alignment: WrapAlignment.start,
+                children: List.generate(participantCount, (index) {
+                  if (index < participants.length) {
+                    return CircleSessionParticipant(
+                      dimension: dimension,
+                      participant: participants[index],
+                      hasTotem: activeSession.totemUser ==
+                          participants[index].sessionUserId,
+                      annotate: false,
+                    );
+                  }
+                  return Padding(
+                    child: Container(
+                      width: dimension - 4,
+                      height: dimension - 4,
+                      color: Colors.red,
+                    ),
+                    padding: const EdgeInsets.all(2),
                   );
-                }
-                return Padding(
-                  child: Container(
-                    width: dimension - 4,
-                    height: dimension - 4,
-                    color: Colors.red,
-                  ),
-                  padding: const EdgeInsets.all(2),
-                );
-              }),
-            ),
-          );
-        },
+                }),
+              ),
+            );
+          },
+        ),
       );
     }
     final t = AppLocalizations.of(context)!;

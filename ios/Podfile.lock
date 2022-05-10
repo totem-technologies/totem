@@ -608,11 +608,11 @@ PODS:
   - BoringSSL-GRPC/Interface (0.0.24)
   - camera (0.0.1):
     - Flutter
-  - cloud_firestore (3.1.13):
+  - cloud_firestore (3.1.14):
     - Firebase/Firestore (= 8.15.0)
     - firebase_core
     - Flutter
-  - cloud_functions (3.2.13):
+  - cloud_functions (3.2.14):
     - Firebase/Functions (= 8.15.0)
     - firebase_core
     - Flutter
@@ -639,27 +639,27 @@ PODS:
   - Firebase/Storage (8.15.0):
     - Firebase/CoreOnly
     - FirebaseStorage (~> 8.15.0)
-  - firebase_app_check (0.0.6-10):
+  - firebase_app_check (0.0.6-11):
     - Firebase/CoreOnly (~> 8.15.0)
     - firebase_core
     - FirebaseAppCheck (~> 8.15.0-beta)
     - Flutter
-  - firebase_auth (3.3.16):
+  - firebase_auth (3.3.17):
     - Firebase/Auth (= 8.15.0)
     - firebase_core
     - Flutter
-  - firebase_core (1.15.0):
+  - firebase_core (1.16.0):
     - Firebase/CoreOnly (= 8.15.0)
     - Flutter
-  - firebase_crashlytics (2.7.1):
+  - firebase_crashlytics (2.7.2):
     - Firebase/Crashlytics (= 8.15.0)
     - firebase_core
     - Flutter
-  - firebase_dynamic_links (4.2.1):
+  - firebase_dynamic_links (4.2.2):
     - Firebase/DynamicLinks (= 8.15.0)
     - firebase_core
     - Flutter
-  - firebase_storage (10.2.14):
+  - firebase_storage (10.2.15):
     - Firebase/Storage (= 8.15.0)
     - firebase_core
     - Flutter
@@ -829,6 +829,8 @@ PODS:
   - sqflite (0.0.2):
     - Flutter
     - FMDB (>= 2.7.5)
+  - url_launcher_ios (0.0.1):
+    - Flutter
 
 DEPENDENCIES:
   - agora_rtc_engine (from `.symlinks/plugins/agora_rtc_engine/ios`)
@@ -853,6 +855,7 @@ DEPENDENCIES:
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
   - shared_preferences_ios (from `.symlinks/plugins/shared_preferences_ios/ios`)
   - sqflite (from `.symlinks/plugins/sqflite/ios`)
+  - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
 
 SPEC REPOS:
   trunk:
@@ -925,6 +928,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/shared_preferences_ios/ios"
   sqflite:
     :path: ".symlinks/plugins/sqflite/ios"
+  url_launcher_ios:
+    :path: ".symlinks/plugins/url_launcher_ios/ios"
 
 SPEC CHECKSUMS:
   abseil: ebe5b5529fb05d93a8bdb7951607be08b7fa71bc
@@ -932,15 +937,15 @@ SPEC CHECKSUMS:
   AgoraIrisRTC_iOS: c789bb65875b54d2b6b02dc278850dc70515b226
   BoringSSL-GRPC: 3175b25143e648463a56daeaaa499c6cb86dad33
   camera: 9993f92f2c793e87b65e35f3a23c70582afb05b1
-  cloud_firestore: a7a94d8f25b77b84533eb8bd5627437a0cdb49f0
-  cloud_functions: 4cfa97288036d49850a3e45c52f651bc2e509c80
+  cloud_firestore: d6f0fcf4be1240c9e01207b4dfba93ebe96d044b
+  cloud_functions: 560a5d866c4540f87e9f8de6a9ebd63d70040d1c
   Firebase: 5f8193dff4b5b7c5d5ef72ae54bb76c08e2b841d
-  firebase_app_check: a05593dd6ce5bc828de4f57c733a758ce37d7053
-  firebase_auth: 4f80bfd9e8814edc0dc6a135f9c4d5e1b1d67347
-  firebase_core: fa19947d8db1c0a62d8872c45039b3113829cd2e
-  firebase_crashlytics: 5a0fd2de31fb603460f7937cd6b6038dc5a0ac4c
-  firebase_dynamic_links: 81c625df5b132efdfef57ba46b2cba12e86ee5b8
-  firebase_storage: 4a44819c634c80214d685192033925c220e429dd
+  firebase_app_check: 3130964e7b3fba9878174f5ac10a1eff38cb98fa
+  firebase_auth: 99f8d104a93f4424a4b3b2c4cc5b7596f8181eb7
+  firebase_core: 6ef152b7d6a361e24105e2cc56ab458f1f8367fe
+  firebase_crashlytics: 5686f344ff25b6e80c5b4821dfc3b9b5ac1c937c
+  firebase_dynamic_links: 94420fb8abf11dbfc870496b393e895688da4beb
+  firebase_storage: 5601da26ed29e80bee1641d4f3a833abbba8132e
   FirebaseAppCheck: 59853f959315579e696877692e7558a68bd9ee86
   FirebaseAuth: 3e73bf8abf4fbb40f8b421f361f4cc48ee57388c
   FirebaseCore: 5743c5785c074a794d35f2fff7ecc254a91e08b1
@@ -973,6 +978,7 @@ SPEC CHECKSUMS:
   PromisesObjC: 99b6f43f9e1044bd87a95a60beff28c2c44ddb72
   shared_preferences_ios: 548a61f8053b9b8a49ac19c1ffbc8b92c50d68ad
   sqflite: 6d358c025f5b867b29ed92fc697fd34924e11904
+  url_launcher_ios: 839c58cdb4279282219f5e248c3321761ff3c4de
 
 PODFILE CHECKSUM: 638371c4ed4a66a8d968401ff38518c600d3f1cd
 

@@ -25,6 +25,7 @@ class SessionParticipant extends ChangeNotifier {
     sessionImage = participant.sessionImage;
     status = participant.status;
   }
+
   SessionParticipant.fromJson(Map<String, dynamic> json, {this.me = false}) {
     uid = json['uid'] ?? "";
     name = json['name'] ?? "";
@@ -35,8 +36,8 @@ class SessionParticipant extends ChangeNotifier {
       }
       role = Role.values.byName(json['role']);
     }
-    _muted = json['muted'] ?? _muted;
-    _videoMuted = json['videoMuted'] ?? _videoMuted;
+//    _muted = json['muted'] ?? _muted;
+//    _videoMuted = json['videoMuted'] ?? _videoMuted;
     sessionUserId = json["sessionUserId"];
     sessionImage = json["sessionImage"];
   }
@@ -73,14 +74,14 @@ class SessionParticipant extends ChangeNotifier {
       changed = true;
       sessionImage = data['sessionImage'];
     }
-    if (_muted != data['muted']) {
+/*    if (_muted != data['muted']) {
       _muted = data['muted'];
       changed = true;
     }
     if (_videoMuted != data['videoMuted']) {
       _videoMuted = data['videoMuted'];
       changed = true;
-    }
+    } */
     if (changed) {
       notifyListeners();
     }

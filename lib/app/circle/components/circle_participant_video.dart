@@ -39,9 +39,12 @@ class CircleParticipantVideo extends ConsumerWidget {
         borderRadius: BorderRadius.circular(8),
         child: Stack(
           children: [
-            if (!hasTotem && participant.me) const rtc_local_view.SurfaceView(),
+            if (!hasTotem && participant.me)
+              rtc_local_view.SurfaceView(
+                  key: ValueKey(participant.sessionUserId)),
             if (!hasTotem && !participant.me)
               rtc_remote_view.SurfaceView(
+                key: ValueKey(participant.sessionUserId),
                 channelId: commProvider.channelId,
                 uid: int.parse(participant.sessionUserId!),
               ),
