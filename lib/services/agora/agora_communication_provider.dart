@@ -48,7 +48,6 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   Timer? _updateTimer;
   Timer? _networkErrorTimeout;
   int? _statsStreamId;
-  bool _stateUpdate = false;
   Map<String, bool>? _initialState;
 
   @override
@@ -369,7 +368,6 @@ class AgoraCommunicationProvider extends CommunicationProvider {
       notifyListeners();
       notifyState(directChange: true);
     }
-    _stateUpdate = false;
   }
 
   void _handleVideoPublishStateChanged(String channel,
@@ -577,8 +575,6 @@ class AgoraCommunicationProvider extends CommunicationProvider {
                   : StreamPublishState.Published,
               0);
         }
-      } else {
-        _stateUpdate = false;
       }
     }
   }
@@ -596,7 +592,6 @@ class AgoraCommunicationProvider extends CommunicationProvider {
             session.lastChange == ActiveSessionChange.totemReceive) {
           SessionParticipant? participant = session.totemParticipant;
           if (participant != null) {
-            _stateUpdate = true;
             setHasTotem(participant.me);
             muteAudio(!participant.me || !session.totemReceived);
           }
