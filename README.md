@@ -12,6 +12,7 @@
 1. Create a commit with your changes.
 1. Run `make release`.
 1. Then, when happy with it, you need to promote the Android build in the Play console (https://play.google.com/console/u/0/developers/6048825475784314007/app-list)
+1. Additionally, the iOS app needs to be released to external testers at (https://appstoreconnect.apple.com/apps/1591746908/testflight/groups/d57a217c-7e77-4865-98a4-c663ac913bd1)
 
 ## Release Web
 
