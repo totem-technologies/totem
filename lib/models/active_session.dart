@@ -156,11 +156,13 @@ class ActiveSession extends ChangeNotifier {
   }
 
   void updateSessionState(Map<String, dynamic> data) {
-    _state = data["state"] != null
+    SessionState newState = data["state"] != null
         ? SessionState.values.byName(data["state"]!)
         : SessionState.waiting;
-    topic = data["topic"] ?? "";
-    notifyListeners();
+    if (newState != _state) {
+      _state = newState;
+      notifyListeners();
+    }
   }
 
   void updateFromData(Map<String, dynamic> data) {

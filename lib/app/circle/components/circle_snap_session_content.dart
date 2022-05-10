@@ -248,6 +248,7 @@ class _CircleSnapSessionContentState
       case CommunicationState.joining:
         return _joiningSession(context);
       case CommunicationState.active:
+      case CommunicationState.networkConnectivity:
         return const CircleSessionContent();
       case CommunicationState.disconnecting:
         return _sessionDisconnecting(context);

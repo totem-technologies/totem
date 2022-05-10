@@ -18,12 +18,16 @@ class CircleLiveSessionVideo extends ConsumerWidget {
     final commProvider = ref.watch(communicationsProvider);
     if (participant.me) {
       return Container(
-          color: Colors.black, child: const rtc_local_view.SurfaceView());
+          color: Colors.black,
+          child: rtc_local_view.SurfaceView(
+            key: ValueKey(participant.sessionUserId),
+          ));
     }
     if (!participant.me) {
       return Container(
         color: Colors.black,
         child: rtc_remote_view.SurfaceView(
+          key: ValueKey(participant.sessionUserId),
           channelId: commProvider.channelId,
           uid: int.parse(participant.sessionUserId!),
         ),

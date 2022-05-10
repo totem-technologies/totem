@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:math';
-import 'dart:typed_data';
 
 import 'package:agora_rtc_engine/rtc_engine.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -21,6 +20,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   // Communication streams
   static const int statsStream = 0;
   static const int notifyDuration = 10; // seconds
+  static const int networkTimeoutDuration = 20; // seconds
   static const bool useAgoraStream = false;
 
   AgoraCommunicationProvider(
@@ -46,8 +46,8 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   dynamic _channel;
   late Size _fullscreenSize;
   Timer? _updateTimer;
+  Timer? _networkErrorTimeout;
   int? _statsStreamId;
-  bool _stateUpdate = false;
   Map<String, bool>? _initialState;
 
   @override
@@ -57,6 +57,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
 
   @override
   void dispose() {
+    _networkErrorTimeout?.cancel();
     _cancelStateUpdates();
     _channel = null;
     try {
@@ -95,21 +96,10 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     _updateState(CommunicationState.joining);
     try {
       await _assertEngine(enableVideo);
-      // TODO - Call SessionProvider to get token for current session
-      // This will hit the server which will generate a token for the user
-      // this is currently using the test token
-      if (!kIsWeb) {
-        await _engine!.registerLocalUserAccount(appId, userId);
-        _sessionToken =
-            await sessionProvider.requestSessionToken(session: session);
-        await _engine!.joinChannelWithUserAccount(
-            _sessionToken.token, session.id, userId);
-      } else {
-        int uid = Random().nextInt(100000);
-        _sessionToken = await sessionProvider.requestSessionTokenWithUID(
-            session: session, uid: uid);
-        await _engine!.joinChannel(_sessionToken.token, session.id, null, uid);
-      }
+      int uid = Random().nextInt(100000);
+      _sessionToken = await sessionProvider.requestSessionTokenWithUID(
+          session: session, uid: uid);
+      await _engine!.joinChannel(_sessionToken.token, session.id, null, uid);
     } catch (ex) {
       debugPrint('unable to activate agora session: ' + ex.toString());
       _updateState(CommunicationState.failed);
@@ -251,6 +241,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
               leaveChannel: _handleLeaveSession,
               localAudioStateChanged: _handleLocalAudioStateChanged,
               remoteAudioStateChanged: _handleRemoteAudioStateChanged,
+              rejoinChannelSuccess: _handleRejoinChannelSuccess,
               userInfoUpdated: _handleUserInfoUpdated,
               userJoined: _handleUserJoined,
               userOffline: _handleUserOffline,
@@ -258,7 +249,6 @@ class AgoraCommunicationProvider extends CommunicationProvider {
                   !kIsWeb ? _handleAudioVolumeIndication : null,
               videoPublishStateChanged: _handleVideoPublishStateChanged,
               remoteVideoStateChanged: _handleRemoteVideoStateChanged,
-              streamMessage: _handleStreamMessage,
             ),
           );
         } else {
@@ -291,6 +281,24 @@ class AgoraCommunicationProvider extends CommunicationProvider {
         case ErrorCode.AdmGeneralError:
           debugPrint('error: ${error.name}');
           break;
+        case ErrorCode.ConnectionInterrupted:
+          // this is a lost connection for more than 4 seconds but less than
+          // 10 seconds at which point the connection will be lost.
+          debugPrint('error: ${error.name}');
+          _networkErrorTimeout ??= Timer.periodic(
+              const Duration(seconds: networkTimeoutDuration),
+              _handleNetworkTimeout);
+          _updateState(CommunicationState.networkConnectivity);
+          break;
+        case ErrorCode.ConnectionLost:
+          // been more than 10 sec since lost network, set state to show connectivity
+          // issues in the client and wait to see if the network auto reconnects
+          // Need to test to see that it will actually try to reconnect after this
+          _networkErrorTimeout ??= Timer.periodic(
+              const Duration(seconds: networkTimeoutDuration),
+              _handleNetworkTimeout);
+          _updateState(CommunicationState.networkConnectivity);
+          break;
         default:
           // all other errors are fatal for now
           if (!kIsWeb) {
@@ -303,7 +311,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     }
   }
 
-  void _handleStreamMessage(int uid, int streamId, Uint8List data) {
+/*  void _handleStreamMessage(int uid, int streamId, Uint8List data) {
     if (uid != commUid) {
       final List<int> state = data.toList(growable: false);
       debugPrint('Got stream for user: $uid for stream: $streamId');
@@ -323,6 +331,21 @@ class AgoraCommunicationProvider extends CommunicationProvider {
             videoMuted: videoMuted);
       }
     }
+  } */
+
+  void _handleRejoinChannelSuccess(String channel, int uid, int elapsedMS) {
+    debugPrint(
+        'Rejoin success: ${uid.toString()} duration: ${elapsedMS.toString()}');
+    _networkErrorTimeout?.cancel();
+    _networkErrorTimeout = null;
+    if (state != CommunicationState.active) {
+      _updateState(CommunicationState.active);
+    }
+  }
+
+  void _handleNetworkTimeout(Timer timer) {
+    _networkErrorTimeout?.cancel();
+    _networkErrorTimeout = null;
   }
 
   void _handleActiveSpeaker(int uid) {
@@ -345,7 +368,6 @@ class AgoraCommunicationProvider extends CommunicationProvider {
       notifyListeners();
       notifyState(directChange: true);
     }
-    _stateUpdate = false;
   }
 
   void _handleVideoPublishStateChanged(String channel,
@@ -419,6 +441,13 @@ class AgoraCommunicationProvider extends CommunicationProvider {
         state.toString() +
         ' reason: ' +
         reason.toString());
+    if (state == ConnectionStateType.Reconnecting &&
+        reason == ConnectionChangedReason.Interrupted) {
+      _networkErrorTimeout ??= Timer.periodic(
+          const Duration(seconds: networkTimeoutDuration),
+          _handleNetworkTimeout);
+      _updateState(CommunicationState.networkConnectivity);
+    }
   }
 
   Future<void> _handleJoinSession(channel, uid, elapsed) async {
@@ -546,8 +575,6 @@ class AgoraCommunicationProvider extends CommunicationProvider {
                   : StreamPublishState.Published,
               0);
         }
-      } else {
-        _stateUpdate = false;
       }
     }
   }
@@ -565,7 +592,6 @@ class AgoraCommunicationProvider extends CommunicationProvider {
             session.lastChange == ActiveSessionChange.totemReceive) {
           SessionParticipant? participant = session.totemParticipant;
           if (participant != null) {
-            _stateUpdate = true;
             setHasTotem(participant.me);
             muteAudio(!participant.me || !session.totemReceived);
           }
@@ -659,7 +685,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   }
 
   void notifyState({bool directChange = false}) async {
-    if (useAgoraStream) {
+/*    if (useAgoraStream) {
       if (_statsStreamId == null) {
         _statsStreamId = await _engine
             ?.createDataStreamWithConfig(DataStreamConfig(false, false));
@@ -679,6 +705,6 @@ class AgoraCommunicationProvider extends CommunicationProvider {
           sessionUserId: commUid.toString(),
           muted: muted,
           videoMuted: videoMuted);
-    }
+    } */
   }
 }

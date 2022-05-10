@@ -119,6 +119,7 @@ class _CircleScheduledSessionContentState
       case CommunicationState.joining:
         return _joiningSession(context);
       case CommunicationState.active:
+      case CommunicationState.networkConnectivity:
         return const CircleSessionContent();
       case CommunicationState.disconnected:
         return _sessionDisconnected(context);
