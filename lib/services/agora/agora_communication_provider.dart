@@ -391,8 +391,14 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     if (error != AudioLocalError.Ok) {
       debugPrint('local audio state error: ${error.toString()}');
       if (error == AudioLocalError.RecordFailure) {
+        if (muted) {
+          await _engine!.muteLocalAudioStream(false);
+        }
         await _engine!.enableLocalAudio(false);
         await _engine!.enableLocalAudio(true);
+        if (muted) {
+          await _engine!.muteLocalAudioStream(true);
+        }
       }
     }
   }
