@@ -394,10 +394,15 @@ class AgoraCommunicationProvider extends CommunicationProvider {
         if (muted) {
           await _engine!.muteLocalAudioStream(false);
         }
-        await _engine!.enableLocalAudio(false);
-        await _engine!.enableLocalAudio(true);
-        if (muted) {
-          await _engine!.muteLocalAudioStream(true);
+        try {
+          await _engine!.enableLocalAudio(false);
+          await _engine!.enableLocalAudio(true);
+        } catch (ex) {
+          debugPrint('Failed resetting local audio ' + ex.toString());
+        } finally {
+          if (muted) {
+            await _engine!.muteLocalAudioStream(true);
+          }
         }
       }
     }
