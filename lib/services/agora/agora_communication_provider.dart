@@ -385,9 +385,27 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   }
 
   void _handleLocalAudioStateChanged(
-      AudioLocalState state, AudioLocalError error) {
+      AudioLocalState state, AudioLocalError error) async {
     // handles local changes to audio
     debugPrint('local audio state changes: ' + state.toString());
+    if (error != AudioLocalError.Ok) {
+      debugPrint('local audio state error: ${error.toString()}');
+      if (error == AudioLocalError.RecordFailure) {
+        if (muted) {
+          await _engine!.muteLocalAudioStream(false);
+        }
+        try {
+          await _engine!.enableLocalAudio(false);
+          await _engine!.enableLocalAudio(true);
+        } catch (ex) {
+          debugPrint('Failed resetting local audio ' + ex.toString());
+        } finally {
+          if (muted) {
+            await _engine!.muteLocalAudioStream(true);
+          }
+        }
+      }
+    }
   }
 
   void _handleRemoteAudioStateChanged(int uid, AudioRemoteState state,
