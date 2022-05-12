@@ -19,7 +19,7 @@ class TrimmedText extends StatefulWidget {
     this.textAlign,
     this.textDirection,
     this.locale,
-    this.delimiter = _kEllipsis + ' ',
+    this.delimiter = '$_kEllipsis ',
   }) : super(key: key);
 
   /// Used on TrimMode.Length
@@ -65,7 +65,7 @@ class _TrimmedTextState extends State<TrimmedText> {
     final overflow = defaultTextStyle.overflow;
     final locale = widget.locale ?? Localizations.maybeLocaleOf(context);
 
-    TextSpan _delimiter = TextSpan(
+    TextSpan delimiter = TextSpan(
       text: _readMore ? widget.delimiter : '',
       style: effectiveTextStyle,
     );
@@ -84,7 +84,7 @@ class _TrimmedTextState extends State<TrimmedText> {
 
         // Layout and measure delimiter
         TextPainter textPainter = TextPainter(
-          text: _delimiter,
+          text: delimiter,
           textAlign: textAlign,
           textDirection: textDirection,
           textScaleFactor: textScaleFactor,
@@ -119,7 +119,7 @@ class _TrimmedTextState extends State<TrimmedText> {
               textSpan = TextSpan(
                 style: effectiveTextStyle,
                 text: widget.text.substring(0, widget.trimLength),
-                children: <TextSpan>[_delimiter],
+                children: <TextSpan>[delimiter],
               );
               _readMore = true;
             } else {
@@ -134,7 +134,7 @@ class _TrimmedTextState extends State<TrimmedText> {
               textSpan = TextSpan(
                 style: effectiveTextStyle,
                 text: widget.text.substring(0, endIndex),
-                children: <TextSpan>[_delimiter],
+                children: <TextSpan>[delimiter],
               );
               _readMore = true;
             } else {

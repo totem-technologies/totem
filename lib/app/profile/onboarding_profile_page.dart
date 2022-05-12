@@ -16,10 +16,10 @@ class OnboardingProfilePage extends ConsumerStatefulWidget {
   const OnboardingProfilePage({Key? key}) : super(key: key);
 
   @override
-  _OnboardingProfilePageState createState() => _OnboardingProfilePageState();
+  OnboardingProfilePageState createState() => OnboardingProfilePageState();
 }
 
-class _OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage> {
+class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
@@ -48,6 +48,7 @@ class _OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage> {
       _userProfile!.image = uploadedUrl;
       await ref.read(repositoryProvider).updateUserProfile(_userProfile!);
       setState(() => _busy = false);
+      if (!mounted) return;
       Navigator.of(context).pop();
     } else {
       setState(() => _busy = false);
@@ -199,6 +200,7 @@ class _OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage> {
         setState(() => _busy = false);
       }
     }
+    if (!mounted) return;
     Navigator.of(context).pop();
   }
 

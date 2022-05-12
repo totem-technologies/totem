@@ -39,6 +39,9 @@ class CircleParticipant extends StatelessWidget {
                   : _genericUserImage(context),
             ),
             PositionedDirectional(
+              bottom: 0,
+              start: 0,
+              end: 0,
               child: Stack(
                 children: [
                   _gradientLayer(context),
@@ -57,9 +60,6 @@ class CircleParticipant extends StatelessWidget {
                   ),
                 ],
               ),
-              bottom: 0,
-              start: 0,
-              end: 0,
             ),
             if (showMe && me) renderMe(context),
             if (role == Role.keeper && !me) renderKeeperLabel(context)

@@ -15,11 +15,11 @@ class PhoneRegisterNumberEntry extends ConsumerStatefulWidget {
   const PhoneRegisterNumberEntry({Key? key}) : super(key: key);
 
   @override
-  _PhoneRegisterNumberEntryState createState() =>
-      _PhoneRegisterNumberEntryState();
+  PhoneRegisterNumberEntryState createState() =>
+      PhoneRegisterNumberEntryState();
 }
 
-class _PhoneRegisterNumberEntryState
+class PhoneRegisterNumberEntryState
     extends ConsumerState<PhoneRegisterNumberEntry> {
   final formKey = GlobalKey<FormState>();
   final TextEditingController _phoneNumberController = TextEditingController();

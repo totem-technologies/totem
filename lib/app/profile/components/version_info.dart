@@ -16,10 +16,9 @@ class VersionInfo extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              '${t.version}: ' +
-                  (data.hasData
+              '${t.version}: ${data.hasData
                       ? '${data.data!.version} (${data.data!.buildNumber})'
-                      : ""),
+                      : ""}',
               style: const TextStyle(fontSize: 12),
             ),
           ],

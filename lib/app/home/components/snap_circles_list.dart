@@ -15,10 +15,10 @@ class SnapCirclesList extends ConsumerStatefulWidget {
   final double topPadding;
 
   @override
-  _SnapCirclesListState createState() => _SnapCirclesListState();
+  SnapCirclesListState createState() => SnapCirclesListState();
 }
 
-class _SnapCirclesListState extends ConsumerState<SnapCirclesList> {
+class SnapCirclesListState extends ConsumerState<SnapCirclesList> {
   late Stream<List<SnapCircle>> _circles;
 
   @override

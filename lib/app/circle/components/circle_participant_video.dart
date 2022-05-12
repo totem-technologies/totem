@@ -58,6 +58,9 @@ class CircleParticipantVideo extends ConsumerWidget {
               _renderUserImage(context, participant), */
             if (annotate)
               PositionedDirectional(
+                bottom: 0,
+                start: 0,
+                end: 0,
                 child: Stack(
                   children: [
                     _gradientLayer(context),
@@ -76,9 +79,6 @@ class CircleParticipantVideo extends ConsumerWidget {
                     ),
                   ],
                 ),
-                bottom: 0,
-                start: 0,
-                end: 0,
               ),
             if (showMe && participant.me) renderMe(context),
             if (annotate && participant.role == Role.keeper && !participant.me)

@@ -14,10 +14,10 @@ class RegisterPage extends ConsumerStatefulWidget {
   const RegisterPage({Key? key}) : super(key: key);
 
   @override
-  _RegisterPageState createState() => _RegisterPageState();
+  RegisterPageState createState() => RegisterPageState();
 }
 
-class _RegisterPageState extends ConsumerState<RegisterPage> {
+class RegisterPageState extends ConsumerState<RegisterPage> {
   late Stream<AuthRequestState> _requestStateStream;
   late StreamSubscription _subscription;
   @override

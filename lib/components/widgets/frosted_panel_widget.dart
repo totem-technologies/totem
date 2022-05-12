@@ -10,13 +10,13 @@ class FrostedPanelWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var borderRadius = 30.0;
-    var _heightRatio = full ? 0.9 : 0.3;
+    var heightRatio = full ? 0.9 : 0.3;
     return Positioned(
         width: MediaQuery.of(context).size.width,
         bottom: 0,
         child: AnimatedContainer(
             curve: Curves.easeInOut,
-            height: MediaQuery.of(context).size.height * _heightRatio,
+            height: MediaQuery.of(context).size.height * heightRatio,
             duration: const Duration(milliseconds: 500),
             child: ClipRRect(
                 borderRadius: BorderRadius.only(

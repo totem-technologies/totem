@@ -12,10 +12,10 @@ class CirclesList extends ConsumerStatefulWidget {
   const CirclesList({Key? key}) : super(key: key);
 
   @override
-  _CirclesListState createState() => _CirclesListState();
+  CirclesListState createState() => CirclesListState();
 }
 
-class _CirclesListState extends ConsumerState<CirclesList> {
+class CirclesListState extends ConsumerState<CirclesList> {
   late Stream<List<ScheduledCircle>> _circles;
   final double bottomPadding = 80;
 

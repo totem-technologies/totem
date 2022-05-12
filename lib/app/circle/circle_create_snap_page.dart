@@ -12,10 +12,10 @@ class CircleCreateSnapPage extends ConsumerStatefulWidget {
   const CircleCreateSnapPage({Key? key}) : super(key: key);
 
   @override
-  _CircleCreatePageState createState() => _CircleCreatePageState();
+  CircleCreateSnapPageState createState() => CircleCreateSnapPageState();
 }
 
-class _CircleCreatePageState extends ConsumerState<CircleCreateSnapPage> {
+class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
@@ -137,16 +137,19 @@ class _CircleCreatePageState extends ConsumerState<CircleCreateSnapPage> {
       final circle = await repo.createSnapCircle(
           name: _nameController.text, description: _descriptionController.text);
       if (circle != null) {
+        if (!mounted) return;
         Map<String, bool>? state =
             await CircleJoinDialog.showDialog(context, circle: circle);
         if (state != null) {
           // Setup foreground service provider with notification values
+          if (!mounted) return;
           final t = AppLocalizations.of(context)!;
           SessionForeground.instance.notificationTitle = t.circleInProgress;
           SessionForeground.instance.notificationMessage = t.circleReturnToApp;
           // Create the active session
           await repo.createActiveSession(circle: circle);
           // prompt user for image
+          if (!mounted) return;
           Navigator.pushReplacementNamed(context, AppRoutes.circle, arguments: {
             'session': circle.snapSession,
             'state': state,
@@ -155,12 +158,13 @@ class _CircleCreatePageState extends ConsumerState<CircleCreateSnapPage> {
         } else {
           // leave session in place or cancel?
           await repo.removeSnapCircle(circle: circle);
+          if (!mounted) return;
           Navigator.pop(context);
           return;
         }
       }
     } on ServiceException catch (ex) {
-      debugPrint('Error creating circle: ' + ex.toString());
+      debugPrint('Error creating circle: $ex');
       _showCreateError(ex);
     }
     setState(() => _busy = false);

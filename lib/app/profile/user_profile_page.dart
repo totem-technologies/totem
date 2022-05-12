@@ -21,10 +21,10 @@ class UserProfilePage extends ConsumerStatefulWidget {
   const UserProfilePage({Key? key}) : super(key: key);
 
   @override
-  _UserProfilePageState createState() => _UserProfilePageState();
+  UserProfilePageState createState() => UserProfilePageState();
 }
 
-class _UserProfilePageState extends ConsumerState<UserProfilePage> {
+class UserProfilePageState extends ConsumerState<UserProfilePage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
@@ -102,7 +102,8 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
                                 onPressed: !_busy && hasChanged
                                     ? () async {
                                         await _saveForm();
-                                        await Navigator.maybePop(context);
+                                        if (!mounted) return;
+                                        Navigator.maybePop(context);
                                       }
                                     : null,
                                 child: Text(t.save)),
@@ -320,6 +321,7 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
       return;
     }
     if (_pendingClose) {
+      if (!mounted) return;
       Navigator.of(context).pop();
     }
   }
@@ -415,6 +417,7 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
     if (signOut == true) {
       setState(() => _busy = true);
       await ref.read(authServiceProvider).signOut();
+      if (!mounted) return;
       Navigator.of(context).pop();
     }
   }
@@ -439,6 +442,7 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> {
       }
     }
     if (_pendingClose) {
+      if (!mounted) return;
       Navigator.of(context).pop();
     }
   }

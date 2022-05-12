@@ -29,9 +29,7 @@ class ScheduledSessionItem extends StatelessWidget {
         children: [
           Expanded(
             child: Text(
-              dateFormat.format(session.scheduledDate) +
-                  " @ " +
-                  timeFormat.format(session.scheduledDate),
+              "${dateFormat.format(session.scheduledDate)} @ ${timeFormat.format(session.scheduledDate)}",
               style: textStyles.headline4,
             ),
           ),

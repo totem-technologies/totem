@@ -83,11 +83,11 @@ class ThemedRaisedButton extends StatelessWidget {
       width: width,
       child: ElevatedButton(
           style: btnStyle,
+          onPressed: onPressed,
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: horzPadding),
             child: busy ? SizedBox(width: 35, height: 35, child:_busySpinner(context)) : child != null ? child! : AutoSizeText(label ?? "", maxLines: maxLines, textAlign: textAlign,),
           ),
-          onPressed: onPressed,
         )
     );
   }

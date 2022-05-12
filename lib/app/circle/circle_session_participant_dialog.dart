@@ -35,11 +35,11 @@ class CircleSessionParticipantDialog extends ConsumerStatefulWidget {
   }
 
   @override
-  _CircleSessionParticipantDialogState createState() =>
-      _CircleSessionParticipantDialogState();
+  CircleSessionParticipantDialogState createState() =>
+      CircleSessionParticipantDialogState();
 }
 
-class _CircleSessionParticipantDialogState
+class CircleSessionParticipantDialogState
     extends ConsumerState<CircleSessionParticipantDialog> {
   late Future<UserProfile?> _userProfile;
   final timeFormat = DateFormat("MMMM, yyyy");

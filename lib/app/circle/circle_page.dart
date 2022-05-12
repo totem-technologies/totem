@@ -186,6 +186,7 @@ class CirclePageState extends ConsumerState<CirclePage> {
     // use this session to create a pending session
     final repo = ref.read(repositoryProvider);
     await repo.activateSession(session: session);
+    if (!mounted) return;
     Navigator.pushReplacement(
       context,
       FadeRoute(

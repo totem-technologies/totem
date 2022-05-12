@@ -28,10 +28,10 @@ class CircleSessionInfoPage extends ConsumerStatefulWidget {
   }
 
   @override
-  _CircleSessionInfoPageState createState() => _CircleSessionInfoPageState();
+  CircleSessionInfoPageState createState() => CircleSessionInfoPageState();
 }
 
-class _CircleSessionInfoPageState extends ConsumerState<CircleSessionInfoPage> {
+class CircleSessionInfoPageState extends ConsumerState<CircleSessionInfoPage> {
   SessionParticipant? me;
   late List<SessionParticipant> _participants;
   late ActiveSession _activeSession;
@@ -197,12 +197,8 @@ class _CircleSessionInfoPageState extends ConsumerState<CircleSessionInfoPage> {
         assignments.reorderAssignment(
             draggingIndex, newPositionIndex, draggedItem);
       }); */
-        debugPrint('item: ' +
-            (item as ValueKey).value +
-            ' newpos: ' +
-            newPositionIndex.toString() +
-            " Index: " +
-            draggingIndex.toString());
+        debugPrint(
+            'item: ${(item as ValueKey).value} newpos: $newPositionIndex Index: $draggingIndex');
         return true;
       },
       onReorderDone: (Key item) async {

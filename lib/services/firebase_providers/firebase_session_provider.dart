@@ -593,7 +593,7 @@ class FirebaseSessionProvider extends SessionProvider {
           });
           return true;
         } on FirebaseException catch (ex) {
-          debugPrint('error updating user status: ' + ex.toString());
+          debugPrint('error updating user status: $ex');
         }
       }
     }

@@ -14,10 +14,10 @@ class CircleSessionControls extends ConsumerStatefulWidget {
   const CircleSessionControls({Key? key}) : super(key: key);
 
   @override
-  _CircleSessionControlsState createState() => _CircleSessionControlsState();
+  CircleSessionControlsState createState() => CircleSessionControlsState();
 }
 
-class _CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
+class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
   bool _more = false;
   Timer? _timer;
 

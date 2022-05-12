@@ -38,6 +38,7 @@ class SettingsPage extends ConsumerWidget {
                     label: t.signOut,
                     onPressed: () async {
                       await authService.signOut();
+                      // ignore: use_build_context_synchronously
                       Navigator.of(context).pop();
                     },
                   ),

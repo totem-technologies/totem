@@ -12,10 +12,10 @@ class CircleCreatePage extends ConsumerStatefulWidget {
   const CircleCreatePage({Key? key}) : super(key: key);
 
   @override
-  _CircleCreatePageState createState() => _CircleCreatePageState();
+  CircleCreatePageState createState() => CircleCreatePageState();
 }
 
-class _CircleCreatePageState extends ConsumerState<CircleCreatePage> {
+class CircleCreatePageState extends ConsumerState<CircleCreatePage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _numSessionsController = TextEditingController();
@@ -256,11 +256,12 @@ class _CircleCreatePageState extends ConsumerState<CircleCreatePage> {
           daysOfTheWeek: _daysOfWeek,
           description: _descriptionController.text);
       if (circle != null) {
+        if (!mounted) return;
         Navigator.of(context).pop();
         return;
       }
     } catch (ex) {
-      debugPrint('Error creating circle: ' + ex.toString());
+      debugPrint('Error creating circle: $ex');
     }
     setState(() => _busy = false);
   }

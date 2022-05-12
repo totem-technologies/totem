@@ -78,12 +78,12 @@ class CircleLiveSessionUsers extends ConsumerWidget {
                     );
                   }
                   return Padding(
+                    padding: const EdgeInsets.all(2),
                     child: Container(
                       width: dimension - 4,
                       height: dimension - 4,
                       color: Colors.red,
                     ),
-                    padding: const EdgeInsets.all(2),
                   );
                 }),
               ),

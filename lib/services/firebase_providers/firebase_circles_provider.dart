@@ -227,7 +227,7 @@ class FirebaseCirclesProvider extends CirclesProvider {
         return true;
       }
     } catch (ex) {
-      debugPrint('Unable to add user to collection: ' + ex.toString());
+      debugPrint('Unable to add user to collection: $ex');
     }
     return false;
   }
@@ -250,23 +250,21 @@ class FirebaseCirclesProvider extends CirclesProvider {
     } */
     // resolve users participating in the circle
     if (resolveUsers && circleData['participants'] != null) {
-      final List<Map<String, dynamic>>? participantsRef =
+      final List<Map<String, dynamic>> participantsRef =
           List<Map<String, dynamic>>.from(circleData['participants']);
-      if (participantsRef != null) {
-        final participants =
-            await Future.wait(participantsRef.map((participantRef) async {
-          DocumentReference ref = participantRef['ref'];
-          DocumentSnapshot doc = await ref.get();
-          return Participant.fromJson(participantRef,
-              userProfile: UserProfile.fromJson(
-                doc.data() as Map<String, dynamic>,
-                uid: doc.id,
-                ref: doc.reference.path,
-              ),
-              me: doc.id == uid);
-        }).toList());
-        circle.participants = participants;
-      }
+      final participants =
+          await Future.wait(participantsRef.map((participantRef) async {
+        DocumentReference ref = participantRef['ref'];
+        DocumentSnapshot doc = await ref.get();
+        return Participant.fromJson(participantRef,
+            userProfile: UserProfile.fromJson(
+              doc.data() as Map<String, dynamic>,
+              uid: doc.id,
+              ref: doc.reference.path,
+            ),
+            me: doc.id == uid);
+      }).toList());
+      circle.participants = participants;
     }
     DateTime now = DateTime.now();
     // resolve sessions for the circle
@@ -400,7 +398,7 @@ class FirebaseCirclesProvider extends CirclesProvider {
         batch.set(ref, session);
         sessions.add(ref);
       } catch (ex) {
-        debugPrint("unable to create session: " + ex.toString());
+        debugPrint("unable to create session: $ex");
       }
     }
     await batch.commit();

@@ -79,6 +79,7 @@ class _AuthWidget extends ConsumerState<AuthWidget> {
           var repo = ref.read(repositoryProvider);
           SnapCircle? circle = await repo.circleFromId(link.value);
           if (circle != null) {
+            if (!mounted) return;
             Map<String, bool>? state =
                 await CircleJoinDialog.showDialog(context, circle: circle);
             if (state != null) {

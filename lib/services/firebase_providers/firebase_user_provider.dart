@@ -55,7 +55,7 @@ class FirebaseUserProvider extends UserProvider {
           FirebaseFirestore.instance.collection(Paths.users).doc(uid);
       await userProfileDoc.update(userProfile.toJson(updated: true));
     } catch (ex) {
-      debugPrint('error updating user profile: ' + ex.toString());
+      debugPrint('error updating user profile: $ex');
     }
   }
 
@@ -67,7 +67,7 @@ class FirebaseUserProvider extends UserProvider {
           FirebaseFirestore.instance.collection(Paths.users).doc(uid);
       await userProfileDoc.update({"image": imageUrl});
     } catch (ex) {
-      debugPrint('error updating user profile image: ' + ex.toString());
+      debugPrint('error updating user profile image: $ex');
     }
   }
 }
