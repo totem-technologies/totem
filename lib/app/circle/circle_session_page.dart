@@ -27,10 +27,10 @@ class CircleSessionPage extends ConsumerStatefulWidget {
   final Map<String, bool>? state;
 
   @override
-  _CircleSessionPageState createState() => _CircleSessionPageState();
+  CircleSessionPageState createState() => CircleSessionPageState();
 }
 
-class _CircleSessionPageState extends ConsumerState<CircleSessionPage> {
+class CircleSessionPageState extends ConsumerState<CircleSessionPage> {
   @override
   void initState() {
     ref.read(activeSessionProvider).addListener(() {

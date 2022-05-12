@@ -8,10 +8,10 @@ class TopicsList extends ConsumerStatefulWidget {
   const TopicsList({Key? key}) : super(key: key);
 
   @override
-  _TopicsListState createState() => _TopicsListState();
+  TopicsListState createState() => TopicsListState();
 }
 
-class _TopicsListState extends ConsumerState<TopicsList> {
+class TopicsListState extends ConsumerState<TopicsList> {
   late Stream<List<Topic>> _topics;
 
   @override

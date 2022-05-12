@@ -478,6 +478,7 @@ class _CircleSnapSessionContentState
     }
     if (!complete) {
       // leave page
+      if (!mounted) return;
       Navigator.of(context).pop();
     }
   }

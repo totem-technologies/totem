@@ -20,10 +20,10 @@ class FilePromptSave extends ConsumerStatefulWidget {
   }) : super(key: key);
 
   @override
-  _FilePromptSaveState createState() => _FilePromptSaveState();
+  FilePromptSaveState createState() => FilePromptSaveState();
 }
 
-class _FilePromptSaveState extends ConsumerState<FilePromptSave> {
+class FilePromptSaveState extends ConsumerState<FilePromptSave> {
   static const double padding = 20;
   static const double imageRadius = 80;
   bool _uploading = false;

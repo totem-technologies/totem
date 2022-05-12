@@ -14,12 +14,12 @@ class PhoneRegisterCodeEntry extends ConsumerStatefulWidget {
   const PhoneRegisterCodeEntry({Key? key}) : super(key: key);
 
   @override
-  _PhoneRegisterCodeEntryState createState() => _PhoneRegisterCodeEntryState();
+  PhoneRegisterCodeEntryState createState() => PhoneRegisterCodeEntryState();
 }
 
 final errors = {'invalid-verification-code': 'Invalid code. Please try again.'};
 
-class _PhoneRegisterCodeEntryState
+class PhoneRegisterCodeEntryState
     extends ConsumerState<PhoneRegisterCodeEntry> {
   final _formKey = GlobalKey<FormState>();
   final AutovalidateMode _autoValidate = AutovalidateMode.disabled;
@@ -34,6 +34,7 @@ class _PhoneRegisterCodeEntryState
     try {
       await ref.read(authServiceProvider).verifyCode(pinValue);
       setState(() => _busy = false);
+      if (!mounted) return;
       await Navigator.pushReplacementNamed(
         context,
         AppRoutes.loginGuideline,

@@ -267,10 +267,8 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     // A user's information has been updated, this should be a mapping
     // of their user id and the user account id provided at join time which is the
     // totem user id.
-    debugPrint('Got user update with id: ' +
-        uid.toString() +
-        " UserInfo: " +
-        userInfo.userAccount);
+    debugPrint(
+        "Got user update with id: $uid UserInfo: ${userInfo.userAccount}");
   }
 
   void _handleSessionError(ErrorCode error) {
@@ -356,10 +354,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
 
   void _handleAudioPublishStateChanged(String channel,
       StreamPublishState oldState, StreamPublishState newState, int elapsed) {
-    debugPrint('audio state changed: ' +
-        oldState.toString() +
-        " > " +
-        newState.toString());
+    debugPrint('audio state changed: $oldState > $newState');
     bool mute = newState == StreamPublishState.NoPublished;
     if (muted != mute) {
       muted = mute;
@@ -372,10 +367,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
 
   void _handleVideoPublishStateChanged(String channel,
       StreamPublishState oldState, StreamPublishState newState, int elapsed) {
-    debugPrint('video state changed: ' +
-        oldState.toString() +
-        " > " +
-        newState.toString());
+    debugPrint('video state changed: $oldState > $newState');
     bool muteVideo = newState == StreamPublishState.NoPublished;
     if (videoMuted != muteVideo) {
       videoMuted = muteVideo;
@@ -422,7 +414,8 @@ class AgoraCommunicationProvider extends CommunicationProvider {
       sessionProvider.activeSession?.updateMutedStateForUser(
           sessionUserId: uid.toString(), muted: false);
     }
-    debugPrint('Remote audio state change for user: $uid state: $state reason: $reason');
+    debugPrint(
+        'Remote audio state change for user: $uid state: $state reason: $reason');
   }
 
   void _handleRemoteVideoStateChanged(int uid, VideoRemoteState state,
@@ -439,7 +432,8 @@ class AgoraCommunicationProvider extends CommunicationProvider {
       sessionProvider.activeSession?.updateVideoMutedStateForUser(
           sessionUserId: uid.toString(), muted: false);
     }
-    debugPrint('Remote video state change for user: $uid state: $state reason: $reason');
+    debugPrint(
+        'Remote video state change for user: $uid state: $state reason: $reason');
   }
 
   void _handleConnectionStateChanged(
@@ -538,16 +532,12 @@ class AgoraCommunicationProvider extends CommunicationProvider {
 
   void _handleUserJoined(int user, int elapsed) {
     sessionProvider.activeSession?.userJoined(sessionUserId: user.toString());
-    debugPrint('User joined event: ' +
-        user.toString() +
-        " elapsed" +
-        elapsed.toString());
+    debugPrint('User joined event: $user elapsed $elapsed');
   }
 
   void _handleUserOffline(int user, UserOfflineReason reason) {
     sessionProvider.activeSession?.userOffline(sessionUserId: user.toString());
-    debugPrint(
-        'User left: ' + user.toString() + " reason: " + reason.toString());
+    debugPrint('User left: $user reason: $reason');
   }
 
   void _updateState(CommunicationState newState, {bool notify = true}) {
