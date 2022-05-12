@@ -285,7 +285,7 @@ class _CircleScheduledSessionContentState
       fullScreenSize: const Size(600, 600),
       handler: CommunicationHandler(
           joinedCircle: (String sessionId, String sessionUserId) {
-        debugPrint("joined circle as: " + sessionUserId);
+        debugPrint("joined circle as: $sessionUserId");
       }, leaveCircle: () {
         // prompt?
         Future.delayed(const Duration(milliseconds: 0), () {

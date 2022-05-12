@@ -260,7 +260,7 @@ class _CircleCreatePageState extends ConsumerState<CircleCreatePage> {
         return;
       }
     } catch (ex) {
-      debugPrint('Error creating circle: ' + ex.toString());
+      debugPrint('Error creating circle: $ex');
     }
     setState(() => _busy = false);
   }

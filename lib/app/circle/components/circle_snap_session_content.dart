@@ -498,7 +498,7 @@ class _CircleSnapSessionContentState
         enableVideo: true,
         handler: CommunicationHandler(
           joinedCircle: (String sessionId, String sessionUserId) {
-            debugPrint("joined circle as: " + sessionUserId);
+            debugPrint("joined circle as: $sessionUserId");
           },
           leaveCircle: () {
             // prompt?

@@ -67,7 +67,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
       _audioIndicatorStreamController?.close();
       super.dispose();
     } catch (ex) {
-      debugPrint("unable to break down engine: " + ex.toString());
+      debugPrint("unable to break down engine: $ex");
     }
   }
 
@@ -101,7 +101,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
           session: session, uid: uid);
       await _engine!.joinChannel(_sessionToken.token, session.id, null, uid);
     } catch (ex) {
-      debugPrint('unable to activate agora session: ' + ex.toString());
+      debugPrint('unable to activate agora session: $ex');
       _updateState(CommunicationState.failed);
     }
     return false;
@@ -351,7 +351,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   void _handleActiveSpeaker(int uid) {
     // handle display / update of status for the current active speaker
     // this is the loudest speaker in the channel
-    debugPrint('Current active speaker is now: ' + uid.toString());
+    debugPrint('Current active speaker is now: $uid');
   }
 
   void _handleAudioPublishStateChanged(String channel,
@@ -360,9 +360,9 @@ class AgoraCommunicationProvider extends CommunicationProvider {
         oldState.toString() +
         " > " +
         newState.toString());
-    bool _mute = newState == StreamPublishState.NoPublished;
-    if (muted != _mute) {
-      muted = _mute;
+    bool mute = newState == StreamPublishState.NoPublished;
+    if (muted != mute) {
+      muted = mute;
       sessionProvider.activeSession?.updateMutedStateForUser(
           sessionUserId: commUid.toString(), muted: muted);
       notifyListeners();
@@ -376,9 +376,9 @@ class AgoraCommunicationProvider extends CommunicationProvider {
         oldState.toString() +
         " > " +
         newState.toString());
-    bool _muteVideo = newState == StreamPublishState.NoPublished;
-    if (videoMuted != _muteVideo) {
-      videoMuted = _muteVideo;
+    bool muteVideo = newState == StreamPublishState.NoPublished;
+    if (videoMuted != muteVideo) {
+      videoMuted = muteVideo;
       notifyListeners();
       notifyState(directChange: true);
     }
@@ -387,7 +387,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   void _handleLocalAudioStateChanged(
       AudioLocalState state, AudioLocalError error) async {
     // handles local changes to audio
-    debugPrint('local audio state changes: ' + state.toString());
+    debugPrint('local audio state changes: $state');
     if (error != AudioLocalError.Ok) {
       debugPrint('local audio state error: ${error.toString()}');
       if (error == AudioLocalError.RecordFailure) {
@@ -398,7 +398,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
           await _engine!.enableLocalAudio(false);
           await _engine!.enableLocalAudio(true);
         } catch (ex) {
-          debugPrint('Failed resetting local audio ' + ex.toString());
+          debugPrint('Failed resetting local audio $ex');
         } finally {
           if (muted) {
             await _engine!.muteLocalAudioStream(true);
@@ -422,12 +422,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
       sessionProvider.activeSession?.updateMutedStateForUser(
           sessionUserId: uid.toString(), muted: false);
     }
-    debugPrint('Remote audio state change for user: ' +
-        uid.toString() +
-        ' state: ' +
-        state.toString() +
-        ' reason: ' +
-        reason.toString());
+    debugPrint('Remote audio state change for user: $uid state: $state reason: $reason');
   }
 
   void _handleRemoteVideoStateChanged(int uid, VideoRemoteState state,
@@ -444,21 +439,13 @@ class AgoraCommunicationProvider extends CommunicationProvider {
       sessionProvider.activeSession?.updateVideoMutedStateForUser(
           sessionUserId: uid.toString(), muted: false);
     }
-    debugPrint('Remote video state change for user: ' +
-        uid.toString() +
-        ' state: ' +
-        state.toString() +
-        ' reason: ' +
-        reason.toString());
+    debugPrint('Remote video state change for user: $uid state: $state reason: $reason');
   }
 
   void _handleConnectionStateChanged(
       ConnectionStateType state, ConnectionChangedReason reason) {
     // TODO - handle changes to connection state here
-    debugPrint('connection state changed: ' +
-        state.toString() +
-        ' reason: ' +
-        reason.toString());
+    debugPrint('connection state changed: $state reason: $reason');
     if (state == ConnectionStateType.Reconnecting &&
         reason == ConnectionChangedReason.Interrupted) {
       _networkErrorTimeout ??= Timer.periodic(

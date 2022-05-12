@@ -34,7 +34,7 @@ class AppLinks {
     if (params.isNotEmpty) {
       for (var key in params.keys) {
         if (key == "snap") {
-          debugPrint('Found snap session: ' + key + ' > ' + params[key]!);
+          debugPrint('Found snap session: $key > ${params[key]!}');
           _stream
               .add(AppLink(type: AppLinkType.snapSession, value: params[key]!));
         }

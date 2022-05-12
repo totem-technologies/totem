@@ -23,7 +23,7 @@ class UserProfile with ChangeNotifier {
           String last = name.substring(index + 1, index + 2);
           return '$first$last';
         } catch (ex) {
-          debugPrint('unable to parse name: ' + ex.toString());
+          debugPrint('unable to parse name: $ex');
         }
       }
       return name[0];

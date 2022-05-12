@@ -160,7 +160,7 @@ class _CircleCreatePageState extends ConsumerState<CircleCreateSnapPage> {
         }
       }
     } on ServiceException catch (ex) {
-      debugPrint('Error creating circle: ' + ex.toString());
+      debugPrint('Error creating circle: $ex');
       _showCreateError(ex);
     }
     setState(() => _busy = false);

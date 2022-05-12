@@ -99,7 +99,7 @@ class FirebaseAuthService implements AuthService {
       try {
         _handleUserAuth(await _firebaseAuth.signInWithCredential(credential));
       } on FirebaseAuthException catch (e) {
-        debugPrint('Error:' + e.toString());
+        debugPrint('Error:$e');
         throw AuthException(code: e.code, message: e.message);
       }
     } else if (_confirmationResult != null) {
@@ -139,14 +139,14 @@ class FirebaseAuthService implements AuthService {
               _handleUserAuth(
                   await _firebaseAuth.signInWithCredential(credential));
             } on FirebaseAuthException catch (e) {
-              debugPrint('Error:' + e.toString());
+              debugPrint('Error:$e');
               throw AuthException(code: e.code, message: e.message);
             }
             _authRequestStateStreamController!.add(AuthRequestState.complete);
           },
           verificationFailed: (FirebaseAuthException e) {
             debugPrint('verificationFailed');
-            _lastRegisterError = "code: " + e.code; //e.message;
+            _lastRegisterError = "code: ${e.code}"; //e.message;
             _authRequestStateStreamController!.add(AuthRequestState.failed);
           },
           codeSent: (String verificationId, int? resendToken) {
@@ -165,10 +165,10 @@ class FirebaseAuthService implements AuthService {
         _authRequestStateStreamController!.add(AuthRequestState.pending);
       }
     } on FirebaseAuthException catch (e) {
-      debugPrint('Error:' + e.toString());
+      debugPrint('Error:$e');
       throw AuthException(code: e.code, message: e.message);
     } catch (e) {
-      debugPrint('Error:' + e.toString());
+      debugPrint('Error:$e');
       throw AuthException(code: "unknown", message: e.toString());
     }
   }

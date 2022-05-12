@@ -42,7 +42,7 @@ class CircularLayoutDelegate extends MultiChildLayoutDelegate {
       itemCount != oldDelegate.itemCount || radius != oldDelegate.radius;
 
   double _calculateItemAngle(int index) {
-    double _itemSpacing = 360.0 / 5.0;
-    return _startAngle + index * _itemSpacing * _radiansPerDegree;
+    double itemSpacing = 360.0 / 5.0;
+    return _startAngle + index * itemSpacing * _radiansPerDegree;
   }
 }

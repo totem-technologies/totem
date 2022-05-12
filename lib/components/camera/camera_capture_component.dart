@@ -241,6 +241,8 @@ class CameraCaptureScreenState extends State<CameraCapture>
   Widget _buildCameraSelectorControl(BuildContext context) {
     final themeColors = Theme.of(context).themeColors;
     return Positioned(
+      right: 12,
+      bottom: 12,
       child: InkWell(
         onTap: () async {
           await HapticFeedback.lightImpact();
@@ -271,8 +273,6 @@ class CameraCaptureScreenState extends State<CameraCapture>
           ),
         ),
       ),
-      right: 12,
-      bottom: 12,
     );
   }
 
@@ -281,6 +281,9 @@ class CameraCaptureScreenState extends State<CameraCapture>
     final t = AppLocalizations.of(context)!;
 
     return Positioned(
+      left: 0,
+      right: 0,
+      bottom: 8,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -315,15 +318,15 @@ class CameraCaptureScreenState extends State<CameraCapture>
           ),
         ],
       ),
-      left: 0,
-      right: 0,
-      bottom: 8,
     );
   }
 
   Widget _buildCameraControl(BuildContext context) {
     final themeColors = Theme.of(context).themeColors;
     return Positioned(
+      left: 0,
+      right: 0,
+      bottom: 8,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -348,9 +351,6 @@ class CameraCaptureScreenState extends State<CameraCapture>
           ),
         ],
       ),
-      left: 0,
-      right: 0,
-      bottom: 8,
     );
   }
 
@@ -363,12 +363,12 @@ class CameraCaptureScreenState extends State<CameraCapture>
             ? _cameras![1]
             : _cameras![0];
     _frontCamera = cameraDescription.lensDirection == CameraLensDirection.front;
-    CameraController? _oldController = _controller;
+    CameraController? oldController = _controller;
     if (!kIsWeb && widget.captureMode != CaptureMode.preview) {
-      await _oldController?.stopImageStream();
+      await oldController?.stopImageStream();
     }
     _controller = CameraController(cameraDescription, ResolutionPreset.medium);
-    await _oldController?.dispose();
+    await oldController?.dispose();
     _controller!.addListener(() {
       if (_controller!.value.hasError) {
         showInSnackBar('Camera error ${_controller!.value.errorDescription}');
@@ -403,7 +403,7 @@ class CameraCaptureScreenState extends State<CameraCapture>
           setState(() => _saving = true);
           final Directory extDir = await getTemporaryDirectory();
           const uuid = Uuid();
-          final path = extDir.path + "/" + uuid.v1() + ".jpg";
+          final path = "${extDir.path}/${uuid.v1()}.jpg";
           final result = await compute(processImage, {
             'image': _savedImage!,
             'path': path,
@@ -538,7 +538,7 @@ Future<String?> processImage(Map<String, dynamic> data) async {
     );
     return path;
   } catch (e) {
-    debugPrint("image processing error:" + e.toString());
+    debugPrint("image processing error:$e");
   }
   return null;
 }
