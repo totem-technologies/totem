@@ -14,6 +14,13 @@ class CircleDeviceSettingsButton extends ConsumerStatefulWidget {
 
 class CircleDeviceSettingsButtonState
     extends ConsumerState<CircleDeviceSettingsButton> {
+  bool _audioVideo = true;
+  @override
+  void initState() {
+    _audioVideo = ref.read(communicationsProvider).audioDeviceConfigurable;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final themeColors = Theme.of(context).themeColors;
@@ -39,7 +46,7 @@ class CircleDeviceSettingsButtonState
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Text(
-              t.audioVideoSettings,
+              _audioVideo ? t.audioVideoSettings : t.videoSettings,
               style: TextStyle(color: themeColors.primaryText),
             ),
           ),

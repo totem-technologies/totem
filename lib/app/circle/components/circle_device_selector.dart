@@ -3,7 +3,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:totem/app/circle/circle_session_page.dart';
-import 'package:totem/components/widgets/dialog_container.dart';
+import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/theme/index.dart';
 
@@ -16,6 +16,9 @@ class CircleDeviceSelector extends ConsumerStatefulWidget {
 }
 
 class CircleDeviceSelectorState extends ConsumerState<ConsumerStatefulWidget> {
+  bool _testingInput = false;
+  bool _testingOutput = false;
+
   @override
   Widget build(BuildContext context) {
     final commProvider = ref.watch(communicationsProvider);
@@ -37,7 +40,9 @@ class CircleDeviceSelectorState extends ConsumerState<ConsumerStatefulWidget> {
                   children: [
                     Expanded(
                         child: Text(
-                      t.audioVideoSettings,
+                      commProvider.audioDeviceConfigurable
+                          ? t.audioVideoSettings
+                          : t.videoSettings,
                       style: Theme.of(context).textStyles.headline2,
                     )),
                     InkWell(
@@ -66,34 +71,74 @@ class CircleDeviceSelectorState extends ConsumerState<ConsumerStatefulWidget> {
                   },
                   selected: commProvider.camera,
                 ),
-                const SizedBox(
-                  height: 15,
-                ),
-                Text(
-                  t.audioOutput,
-                  style: textStyles.headline4,
-                ),
-                _devicesDropDown(
-                  commProvider.audioOutputs,
-                  onChanged: (item) {
-                    commProvider.setAudioOutput(item);
-                  },
-                  selected: commProvider.audioOutput,
-                ),
-                const SizedBox(
-                  height: 15,
-                ),
-                Text(
-                  t.audioInput,
-                  style: textStyles.headline4,
-                ),
-                _devicesDropDown(
-                  commProvider.audioInputs,
-                  onChanged: (item) {
-                    commProvider.setAudioInput(item);
-                  },
-                  selected: commProvider.audioInput,
-                ),
+                if (commProvider.audioOutput != null) ...[
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  Text(
+                    t.audioOutput,
+                    style: textStyles.headline4,
+                  ),
+                  _devicesDropDown(
+                    commProvider.audioOutputs,
+                    onChanged: (item) {
+                      commProvider.setAudioOutput(item);
+                    },
+                    selected: commProvider.audioOutput,
+                  ),
+                  !_testingOutput
+                      ? ThemedRaisedButton(
+                          label: "Test Audio Output",
+                          onPressed: () {
+                            commProvider.testAudioOutput();
+                            setState(() => _testingOutput = true);
+                          },
+                        )
+                      : Row(
+                          children: [
+                            ThemedRaisedButton(
+                              label: "End Test",
+                              onPressed: () {
+                                commProvider.endTestAudioOutput();
+                                setState(() => _testingOutput = false);
+                              },
+                            )
+                          ],
+                        ),
+                ],
+                if (commProvider.audioInput != null) ...[
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  Text(
+                    t.audioInput,
+                    style: textStyles.headline4,
+                  ),
+                  _devicesDropDown(
+                    commProvider.audioInputs,
+                    onChanged: (item) {
+                      commProvider.setAudioInput(item);
+                    },
+                    selected: commProvider.audioInput,
+                  ),
+                  !_testingInput
+                      ? ThemedRaisedButton(
+                          label: "Test Audio Input",
+                          onPressed: () {
+                            setState(() => _testingInput = true);
+                          },
+                        )
+                      : Row(
+                          children: [
+                            ThemedRaisedButton(
+                              label: "End Test",
+                              onPressed: () {
+                                setState(() => _testingInput = false);
+                              },
+                            )
+                          ],
+                        ),
+                ],
               ],
             ),
           ),

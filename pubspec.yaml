@@ -26,7 +26,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   after_layout: ^1.1.0
-  agora_rtc_engine: ^5.1.1
+  agora_rtc_engine: 5.1.0
   auto_size_text: ^3.0.0-nullsafety.0
   cached_network_image: ^3.1.0
   camera: ^0.9.4+5
@@ -74,6 +74,7 @@ dependencies:
   collection: ^1.16.0
   uuid: ^3.0.6
   path_provider: ^2.0.10
+  just_audio: ^0.9.21
 
 dev_dependencies:
   flutter_test:
@@ -122,6 +123,7 @@ flutter:
     - assets/settings.svg
     - assets/video.svg
     - assets/video_stop.svg
+    - assets/totemtest.mp3
 
   fonts:
     - family: Raleway

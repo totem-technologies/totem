@@ -39,7 +39,6 @@ abstract class CommunicationProvider extends ChangeNotifier {
   Future<bool> joinSession({
     required Session session,
     required CommunicationHandler handler,
-    Map<String, bool>? state,
     bool enableVideo,
     required Size fullScreenSize,
   });
@@ -59,4 +58,12 @@ abstract class CommunicationProvider extends ChangeNotifier {
   Future<void> setHasTotem(bool hasTotem);
 
   Stream<CommunicationAudioVolumeIndication> get audioIndicatorStream;
+
+  bool get audioDeviceConfigurable;
+
+  void testAudioOutput();
+  void endTestAudioOutput();
+
+  void testAudioInput();
+  void endTestAudioInput();
 }

@@ -596,10 +596,12 @@ PODS:
     - abseil/base/base_internal
     - abseil/base/config
     - abseil/meta/type_traits
-  - agora_rtc_engine (5.1.1):
-    - AgoraIrisRTC_iOS (= 3.6.2-fix.1)
+  - agora_rtc_engine (5.1.0):
+    - AgoraIrisRTC_iOS (~> 3.6.2)
     - Flutter
-  - AgoraIrisRTC_iOS (3.6.2-fix.1)
+  - AgoraIrisRTC_iOS (3.6.2)
+  - audio_session (0.0.1):
+    - Flutter
   - BoringSSL-GRPC (0.0.24):
     - BoringSSL-GRPC/Implementation (= 0.0.24)
     - BoringSSL-GRPC/Interface (= 0.0.24)
@@ -797,6 +799,8 @@ PODS:
   - GTMSessionFetcher/Core (1.7.2)
   - hexcolor (0.0.1):
     - Flutter
+  - just_audio (0.0.1):
+    - Flutter
   - leveldb-library (1.22.1)
   - libphonenumber (0.0.1):
     - Flutter
@@ -834,6 +838,7 @@ PODS:
 
 DEPENDENCIES:
   - agora_rtc_engine (from `.symlinks/plugins/agora_rtc_engine/ios`)
+  - audio_session (from `.symlinks/plugins/audio_session/ios`)
   - camera (from `.symlinks/plugins/camera/ios`)
   - cloud_firestore (from `.symlinks/plugins/cloud_firestore/ios`)
   - cloud_functions (from `.symlinks/plugins/cloud_functions/ios`)
@@ -848,6 +853,7 @@ DEPENDENCIES:
   - flutter_foreground_task (from `.symlinks/plugins/flutter_foreground_task/ios`)
   - flutter_sim_country_code (from `.symlinks/plugins/flutter_sim_country_code/ios`)
   - hexcolor (from `.symlinks/plugins/hexcolor/ios`)
+  - just_audio (from `.symlinks/plugins/just_audio/ios`)
   - libphonenumber (from `.symlinks/plugins/libphonenumber/ios`)
   - libphonenumber_plugin (from `.symlinks/plugins/libphonenumber_plugin/ios`)
   - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
@@ -888,6 +894,8 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   agora_rtc_engine:
     :path: ".symlinks/plugins/agora_rtc_engine/ios"
+  audio_session:
+    :path: ".symlinks/plugins/audio_session/ios"
   camera:
     :path: ".symlinks/plugins/camera/ios"
   cloud_firestore:
@@ -914,6 +922,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_sim_country_code/ios"
   hexcolor:
     :path: ".symlinks/plugins/hexcolor/ios"
+  just_audio:
+    :path: ".symlinks/plugins/just_audio/ios"
   libphonenumber:
     :path: ".symlinks/plugins/libphonenumber/ios"
   libphonenumber_plugin:
@@ -933,8 +943,9 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   abseil: ebe5b5529fb05d93a8bdb7951607be08b7fa71bc
-  agora_rtc_engine: 0e74ee4d92d5af869f02be7fb0adca15ace14d0e
-  AgoraIrisRTC_iOS: 9b11083bb79048ae4db7e2f56109cc51ac9e3834
+  agora_rtc_engine: fb0e823adb228eda4433fabed56d72d64ff87771
+  AgoraIrisRTC_iOS: c789bb65875b54d2b6b02dc278850dc70515b226
+  audio_session: 4f3e461722055d21515cf3261b64c973c062f345
   BoringSSL-GRPC: 3175b25143e648463a56daeaaa499c6cb86dad33
   camera: 9993f92f2c793e87b65e35f3a23c70582afb05b1
   cloud_firestore: 76e73835a6ac79ac825190eefd876a1e100c7835
@@ -966,6 +977,7 @@ SPEC CHECKSUMS:
   gRPC-Core: 943e491cb0d45598b0b0eb9e910c88080369290b
   GTMSessionFetcher: 5595ec75acf5be50814f81e9189490412bad82ba
   hexcolor: fdfb9c4258ad96e949c2dbcdf790a62194b8aa89
+  just_audio: baa7252489dbcf47a4c7cc9ca663e9661c99aafa
   leveldb-library: 50c7b45cbd7bf543c81a468fe557a16ae3db8729
   libphonenumber: bd14d5abfc5939ab0b0767234e2d8e2593af258e
   libPhoneNumber-iOS: 0a32a9525cf8744fe02c5206eb30d571e38f7d75

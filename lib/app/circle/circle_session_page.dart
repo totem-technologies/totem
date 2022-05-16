@@ -34,7 +34,6 @@ class CircleSessionPage extends ConsumerStatefulWidget {
 class CircleSessionPageState extends ConsumerState<CircleSessionPage>
     with AfterLayoutMixin<CircleSessionPage> {
   bool joined = false;
-  Map<String, bool>? sessionState;
 
   @override
   void initState() {
@@ -56,12 +55,13 @@ class CircleSessionPageState extends ConsumerState<CircleSessionPage>
   @override
   Widget build(BuildContext context) {
     ref.watch(communicationsProvider);
+    ref.watch(activeSessionProvider);
     if (!joined) {
       return const Material(color: Colors.transparent);
     }
     if (widget.session is SnapSession) {
       return CircleSnapSessionContent(
-          circle: widget.session.circle as SnapCircle, state: sessionState!);
+          circle: widget.session.circle as SnapCircle);
     } else {
       return CircleScheduledSessionContent(session: widget.session);
     }
@@ -69,13 +69,12 @@ class CircleSessionPageState extends ConsumerState<CircleSessionPage>
 
   @override
   void afterFirstLayout(BuildContext context) async {
-    Map<String, bool>? state = await CircleJoinDialog.showDialog(context,
+    bool? state = await CircleJoinDialog.showDialog(context,
         circle: widget.session.circle);
-    if (state != null) {
-      Future.delayed(const Duration(milliseconds: 300), () async {
+    if (state != null && state) {
+      Future.delayed(const Duration(milliseconds: 100), () async {
         setState(() {
           joined = true;
-          sessionState = state;
         });
       });
     } else {
