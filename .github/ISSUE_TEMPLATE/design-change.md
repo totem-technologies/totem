@@ -1,6 +1,6 @@
 ---
-name: Design Change
-about: How to request a design change.
+name: Design change
+about: How to request a design change
 title: ''
 labels: ''
 assignees: ''
