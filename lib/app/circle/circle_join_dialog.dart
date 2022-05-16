@@ -1,9 +1,13 @@
 import 'dart:ui';
 
+import 'package:agora_rtc_engine/rtc_local_view.dart' as rtc_local_view;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:totem/app/circle/circle_session_page.dart';
+import 'package:totem/app/circle/components/circle_device_settings_button.dart';
 import 'package:totem/components/camera/camera_capture_component.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
@@ -42,10 +46,15 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
   late Future<UserProfile?> _userProfileFetch;
   final GlobalKey<CameraCaptureScreenState> _captureKey =
       GlobalKey<CameraCaptureScreenState>();
+  bool _initialized = false;
+  String? _error;
 
   @override
   void initState() {
     _userProfileFetch = ref.read(repositoryProvider).userProfile();
+    Future.delayed(const Duration(milliseconds: 0), () {
+      initializeProvider();
+    });
     super.initState();
   }
 
@@ -53,6 +62,7 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
   Widget build(BuildContext context) {
     final themeColors = Theme.of(context).themeColors;
     final textStyles = Theme.of(context).textStyles;
+    ref.watch(communicationsProvider);
     return (DeviceType.isPhone())
         ? BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 2.5, sigmaY: 2.5),
@@ -177,12 +187,19 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
                       Center(
                         child: _desktopUserInfo(context),
                       ),
+                      const SizedBox(height: 16),
                     ],
                   ),
                 ),
               ),
             ),
           );
+  }
+
+  Widget _cameraPreview() {
+    return kIsWeb
+        ? const rtc_local_view.SurfaceView()
+        : const rtc_local_view.TextureView();
   }
 
   Widget _userInfo(BuildContext context) {
@@ -221,10 +238,18 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
                           color: themeColors.primaryText,
                           child: AnimatedSwitcher(
                             duration: const Duration(milliseconds: 300),
-                            child: CameraCapture(
-                              key: _captureKey,
-                              captureMode: CaptureMode.preview,
-                            ),
+                            child: _initialized
+                                ? _cameraPreview()
+                                : Center(
+                                    child: Text(
+                                      _error ?? t.initializingCamera,
+                                      style: TextStyle(
+                                        color: themeColors.reversedText,
+                                        fontSize: 16,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
                           ),
                         ),
                       ),
@@ -282,23 +307,39 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
                       constraints: BoxConstraints(
                         maxWidth: Theme.of(context).maxRenderWidth,
                       ),
-                      child: AspectRatio(
-                        aspectRatio: 1.0,
-                        child: ClipRRect(
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(24)),
-                          child: Container(
-                            color: themeColors.primaryText,
-                            child: AnimatedSwitcher(
-                              duration: const Duration(milliseconds: 300),
-                              child: CameraCapture(
-                                key: _captureKey,
-                                captureMode: CaptureMode.preview,
+                      child: Column(children: [
+                        AspectRatio(
+                          aspectRatio: 1.0,
+                          child: ClipRRect(
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(24)),
+                            child: Container(
+                              color: Colors.black,
+                              child: AnimatedSwitcher(
+                                duration: const Duration(milliseconds: 300),
+                                child: _initialized
+                                    ? _cameraPreview()
+                                    : Center(
+                                        child: Text(
+                                          _error ?? t.initializingCamera,
+                                          style: TextStyle(
+                                            color: themeColors.reversedText,
+                                            fontSize: 16,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
                               ),
                             ),
                           ),
                         ),
-                      ),
+                        const SizedBox(
+                          height: 16,
+                        ),
+                        const Center(
+                          child: CircleDeviceSettingsButton(),
+                        ),
+                      ]),
                     ),
                   ),
                   const SizedBox(
@@ -315,9 +356,13 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
                           Center(
                             child: ThemedRaisedButton(
                               onPressed: () {
-                                _join();
+                                _error == null
+                                    ? _join()
+                                    : Navigator.of(context).pop();
                               },
-                              label: t.joinCircle,
+                              label: _error == null
+                                  ? t.joinCircle
+                                  : t.leaveSession,
                             ),
                           ),
                         ],
@@ -339,5 +384,30 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
       'muted': _captureKey.currentState!.muted,
       'videoMuted': _captureKey.currentState!.videoMuted
     });
+  }
+
+  void initializeProvider() async {
+    final commProvider = ref.read(communicationsProvider);
+    String? result = await commProvider.initialDevicePreview();
+    if (result == null) {
+      setState(() => _initialized = true);
+    } else {
+      // show error, can't get one of the devices or error with agora
+      if (mounted) {
+        final t = AppLocalizations.of(context)!;
+        switch (result) {
+          case 'errorNoMicrophone':
+            result = t.errorNoMicrophone;
+            break;
+          case 'errorCamera':
+            result = t.errorCamera;
+            break;
+          case 'errorNoSpeakers':
+            result = t.errorNoSpeakers;
+            break;
+        }
+      }
+      setState(() => _error = result);
+    }
   }
 }

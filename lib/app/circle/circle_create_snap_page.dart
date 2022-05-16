@@ -6,8 +6,6 @@ import 'package:totem/components/widgets/index.dart';
 import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
 
-import 'circle_join_dialog.dart';
-
 class CircleCreateSnapPage extends ConsumerStatefulWidget {
   const CircleCreateSnapPage({Key? key}) : super(key: key);
 
@@ -138,7 +136,10 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
           name: _nameController.text, description: _descriptionController.text);
       if (circle != null) {
         if (!mounted) return;
-        Map<String, bool>? state =
+        Navigator.pushReplacementNamed(context, AppRoutes.circle, arguments: {
+          'session': circle.snapSession,
+        });
+/* REMOVE        Map<String, bool>? state =
             await CircleJoinDialog.showDialog(context, circle: circle);
         if (state != null) {
           // Setup foreground service provider with notification values
@@ -153,8 +154,9 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
           Navigator.pushReplacementNamed(context, AppRoutes.circle, arguments: {
             'session': circle.snapSession,
             'state': state,
-          });
-          return;
+          }); */
+      }
+/* REMOVE          return;
         } else {
           // leave session in place or cancel?
           await repo.removeSnapCircle(circle: circle);
@@ -162,7 +164,7 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
           Navigator.pop(context);
           return;
         }
-      }
+      }*/
     } on ServiceException catch (ex) {
       debugPrint('Error creating circle: $ex');
       _showCreateError(ex);

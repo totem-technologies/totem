@@ -22,6 +22,20 @@ abstract class CommunicationProvider extends ChangeNotifier {
   bool muted = false;
   bool videoMuted = false;
   dynamic get channelId;
+
+  List<CommunicationDevice> get audioOutputs;
+  List<CommunicationDevice> get audioInputs;
+  List<CommunicationDevice> get cameras;
+
+  CommunicationDevice? get camera;
+  CommunicationDevice? get audioInput;
+  CommunicationDevice? get audioOutput;
+
+  Future<bool> setCamera(CommunicationDevice device);
+  Future<bool> setAudioInput(CommunicationDevice device);
+  Future<bool> setAudioOutput(CommunicationDevice device);
+
+  Future<String?> initialDevicePreview({bool enableVideo = true});
   Future<bool> joinSession({
     required Session session,
     required CommunicationHandler handler,
@@ -43,5 +57,6 @@ abstract class CommunicationProvider extends ChangeNotifier {
   Future<bool> doneActiveSessionTotem({required String sessionUserId});
   Future<bool> forceNextActiveSessionTotem();
   Future<void> setHasTotem(bool hasTotem);
+
   Stream<CommunicationAudioVolumeIndication> get audioIndicatorStream;
 }

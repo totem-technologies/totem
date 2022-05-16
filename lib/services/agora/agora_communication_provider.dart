@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:agora_rtc_engine/rtc_engine.dart';
+import 'package:collection/collection.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -50,6 +51,14 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   int? _statsStreamId;
   Map<String, bool>? _initialState;
 
+  // Devices and selected device
+  List<CommunicationDevice> _cameras = [];
+  List<CommunicationDevice> _audioOutputs = [];
+  List<CommunicationDevice> _audioInputs = [];
+  CommunicationDevice? _camera;
+  CommunicationDevice? _audioInput;
+  CommunicationDevice? _audioOutput;
+
   @override
   String? get lastError {
     return _lastError;
@@ -62,6 +71,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     _channel = null;
     try {
       sessionProvider.removeListener(_updateCommunicationFromSession);
+      _engine?.stopPreview();
       _engine?.destroy();
       _engine = null;
       _audioIndicatorStreamController?.close();
@@ -69,6 +79,80 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     } catch (ex) {
       debugPrint("unable to break down engine: $ex");
     }
+  }
+
+  @override
+  Future<String?> initialDevicePreview({bool enableVideo = true}) async {
+    String? errorMessage;
+    try {
+      await _assertEngine(enableVideo);
+
+      // Speakers
+      List<MediaDeviceInfo> audioDevices =
+          await _engine!.deviceManager.enumerateAudioPlaybackDevices();
+      _audioOutputs = audioDevices
+          .map((device) => CommunicationDevice(
+              name: device.deviceName,
+              id: device.deviceId,
+              type: CommunicationDeviceType.speakers))
+          .toList(growable: false);
+      String? audioPlayback =
+          await _engine!.deviceManager.getAudioPlaybackDevice();
+      if (audioPlayback != null) {
+        _audioOutput = _audioOutputs.firstWhereOrNull((speaker) =>
+            audioPlayback.isNotEmpty
+                ? speaker.id == audioPlayback
+                : speaker.id == "default");
+      }
+      _audioOutput ??= _audioOutputs.first;
+
+      // Microphones
+      List<MediaDeviceInfo> audioInputDevices =
+          await _engine!.deviceManager.enumerateAudioRecordingDevices();
+      _audioInputs = audioInputDevices
+          .map((device) => CommunicationDevice(
+              name: device.deviceName,
+              id: device.deviceId,
+              type: CommunicationDeviceType.microphone))
+          .toList(growable: false);
+      String? audioInput =
+          await _engine!.deviceManager.getAudioRecordingDevice();
+      if (audioInput != null) {
+        _audioInput = _audioInputs.firstWhereOrNull((device) =>
+            audioInput.isNotEmpty
+                ? device.id == audioInput
+                : device.name == "default");
+      }
+      _audioInput ??= _audioInputs.first;
+      if (_audioInput == null) {
+        return "errorNoMicrophone";
+      }
+
+      // Cameras
+      List<MediaDeviceInfo> cameraDevices =
+          await _engine!.deviceManager.enumerateVideoDevices();
+      _cameras = cameraDevices
+          .map((device) => CommunicationDevice(
+              name: device.deviceName,
+              id: device.deviceId,
+              type: CommunicationDeviceType.camera))
+          .toList(growable: false);
+      String? camera = await _engine!.deviceManager.getVideoDevice();
+      if (camera != null) {
+        _camera = _cameras.firstWhereOrNull((device) =>
+            camera.isNotEmpty ? device.id == camera : device.name == "default");
+      }
+      _camera ??= _cameras.first;
+      if (_camera == null) {
+        return "errorCamera";
+      }
+      return null;
+    } catch (ex) {
+      debugPrint('unable to activate agora session: $ex');
+      _updateState(CommunicationState.failed);
+      errorMessage = ex.toString();
+    }
+    return errorMessage;
   }
 
   @override
@@ -701,5 +785,77 @@ class AgoraCommunicationProvider extends CommunicationProvider {
           muted: muted,
           videoMuted: videoMuted);
     } */
+  }
+
+  @override
+  CommunicationDevice? get audioInput => _audioInput;
+
+  @override
+  List<CommunicationDevice> get audioInputs => _audioInputs;
+
+  @override
+  List<CommunicationDevice> get audioOutputs => _audioOutputs;
+
+  @override
+  CommunicationDevice? get audioOutput => _audioOutput;
+
+  @override
+  CommunicationDevice? get camera => _camera;
+
+  @override
+  List<CommunicationDevice> get cameras => _cameras;
+
+  @override
+  Future<bool> setAudioInput(CommunicationDevice device) async {
+    if (_engine == null) return false;
+    try {
+      if (device != _audioInput) {
+        await _engine!.enableLocalAudio(false);
+        _engine!.deviceManager.setAudioRecordingDevice(device.id);
+        await _engine!.enableLocalAudio(true);
+        _audioInput = device;
+        notifyListeners();
+      }
+      return true;
+    } catch (ex) {
+      debugPrint('unable to setCamera: $ex');
+    }
+    return false;
+  }
+
+  @override
+  Future<bool> setAudioOutput(CommunicationDevice device) async {
+    if (_engine == null) return false;
+    try {
+      if (device != _audioOutput) {
+        await _engine!.enableLocalAudio(false);
+        _engine!.deviceManager.setAudioPlaybackDevice(device.id);
+        await _engine!.enableLocalAudio(true);
+        _audioOutput = device;
+        notifyListeners();
+      }
+      return true;
+    } catch (ex) {
+      debugPrint('unable to setAudioOutput: $ex');
+    }
+    return false;
+  }
+
+  @override
+  Future<bool> setCamera(CommunicationDevice device) async {
+    if (_engine == null) return false;
+    try {
+      if (device != _camera) {
+        _engine!.stopPreview();
+        _engine!.deviceManager.setVideoDevice(device.id);
+        _engine!.startPreview();
+        _camera = device;
+        notifyListeners();
+      }
+      return true;
+    } catch (ex) {
+      debugPrint('unable to setCamera: $ex');
+    }
+    return false;
   }
 }

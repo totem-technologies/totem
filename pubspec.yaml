@@ -26,7 +26,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   after_layout: ^1.1.0
-  agora_rtc_engine: ^5.0.0
+  agora_rtc_engine: ^5.1.1
   auto_size_text: ^3.0.0-nullsafety.0
   cached_network_image: ^3.1.0
   camera: ^0.9.4+5
@@ -119,6 +119,7 @@ flutter:
     - assets/view_circle.svg
     - assets/circle_check.svg
     - assets/active_sharing.svg
+    - assets/settings.svg
     - assets/video.svg
     - assets/video_stop.svg
 
