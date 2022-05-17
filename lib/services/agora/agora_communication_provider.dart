@@ -71,9 +71,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     _channel = null;
     try {
       sessionProvider.removeListener(_updateCommunicationFromSession);
-      if (kIsWeb) {
-        _engine?.stopPreview();
-      }
+      _engine?.stopPreview();
       _engine?.destroy();
       _engine = null;
       _audioIndicatorStreamController?.close();
@@ -896,5 +894,12 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   @override
   bool get audioDeviceConfigurable {
     return _audioInput != null || _audioOutput != null;
+  }
+
+  @override
+  void switchCamera() async {
+    if (_engine != null) {
+      await _engine!.switchCamera();
+    }
   }
 }

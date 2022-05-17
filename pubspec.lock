@@ -14,7 +14,7 @@ packages:
       name: agora_rtc_engine
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "5.1.0"
+    version: "5.1.1"
   archive:
     dependency: transitive
     description:
@@ -77,7 +77,7 @@ packages:
       name: camera
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.9.5"
+    version: "0.9.5+1"
   camera_platform_interface:
     dependency: transitive
     description:

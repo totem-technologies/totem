@@ -596,10 +596,10 @@ PODS:
     - abseil/base/base_internal
     - abseil/base/config
     - abseil/meta/type_traits
-  - agora_rtc_engine (5.1.0):
-    - AgoraIrisRTC_iOS (~> 3.6.2)
+  - agora_rtc_engine (5.1.1):
+    - AgoraIrisRTC_iOS (= 3.6.2-fix.1)
     - Flutter
-  - AgoraIrisRTC_iOS (3.6.2)
+  - AgoraIrisRTC_iOS (3.6.2-fix.1)
   - audio_session (0.0.1):
     - Flutter
   - BoringSSL-GRPC (0.0.24):
@@ -943,8 +943,8 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   abseil: ebe5b5529fb05d93a8bdb7951607be08b7fa71bc
-  agora_rtc_engine: fb0e823adb228eda4433fabed56d72d64ff87771
-  AgoraIrisRTC_iOS: c789bb65875b54d2b6b02dc278850dc70515b226
+  agora_rtc_engine: 0e74ee4d92d5af869f02be7fb0adca15ace14d0e
+  AgoraIrisRTC_iOS: 9b11083bb79048ae4db7e2f56109cc51ac9e3834
   audio_session: 4f3e461722055d21515cf3261b64c973c062f345
   BoringSSL-GRPC: 3175b25143e648463a56daeaaa499c6cb86dad33
   camera: 9993f92f2c793e87b65e35f3a23c70582afb05b1

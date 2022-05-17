@@ -16,8 +16,8 @@ class CircleDeviceSelector extends ConsumerStatefulWidget {
 }
 
 class CircleDeviceSelectorState extends ConsumerState<ConsumerStatefulWidget> {
-  bool _testingInput = false;
-  bool _testingOutput = false;
+/* TODO  bool _testingInput = false;
+  bool _testingOutput = false;*/
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +61,7 @@ class CircleDeviceSelectorState extends ConsumerState<ConsumerStatefulWidget> {
                   height: 15,
                 ),
                 Text(
-                  t.cameras,
+                  t.camera,
                   style: textStyles.headline4,
                 ),
                 _devicesDropDown(
@@ -86,6 +86,7 @@ class CircleDeviceSelectorState extends ConsumerState<ConsumerStatefulWidget> {
                     },
                     selected: commProvider.audioOutput,
                   ),
+                  /* TODO
                   !_testingOutput
                       ? ThemedRaisedButton(
                           label: "Test Audio Output",
@@ -104,7 +105,7 @@ class CircleDeviceSelectorState extends ConsumerState<ConsumerStatefulWidget> {
                               },
                             )
                           ],
-                        ),
+                        ), */
                 ],
                 if (commProvider.audioInput != null) ...[
                   const SizedBox(
@@ -121,6 +122,7 @@ class CircleDeviceSelectorState extends ConsumerState<ConsumerStatefulWidget> {
                     },
                     selected: commProvider.audioInput,
                   ),
+                  /* TODO
                   !_testingInput
                       ? ThemedRaisedButton(
                           label: "Test Audio Input",
@@ -137,7 +139,7 @@ class CircleDeviceSelectorState extends ConsumerState<ConsumerStatefulWidget> {
                               },
                             )
                           ],
-                        ),
+                        ), */
                 ],
               ],
             ),

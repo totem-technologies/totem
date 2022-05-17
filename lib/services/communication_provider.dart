@@ -8,7 +8,7 @@ enum CommunicationState {
   joining,
   active,
   failed,
-  networkConnectivity
+  networkConnectivity,
 }
 
 class CommunicationErrors {
@@ -66,4 +66,6 @@ abstract class CommunicationProvider extends ChangeNotifier {
 
   void testAudioInput();
   void endTestAudioInput();
+
+  void switchCamera();
 }

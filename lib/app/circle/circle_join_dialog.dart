@@ -1,7 +1,6 @@
 import 'dart:ui';
 
 import 'package:agora_rtc_engine/rtc_local_view.dart' as rtc_local_view;
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -203,9 +202,7 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
     return Stack(children: [
       Stack(
         children: [
-          kIsWeb
-              ? const rtc_local_view.SurfaceView()
-              : const rtc_local_view.TextureView(),
+          const rtc_local_view.SurfaceView(),
           if (commProvider.videoMuted)
             const Positioned.fill(
               child: CameraMuted(),
@@ -231,7 +228,7 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
               },
             ),
             const SizedBox(
-              width: 20,
+              width: 15,
             ),
             ThemedControlButton(
               label: commProvider.videoMuted ? t.startVideo : t.stopVideo,
@@ -244,6 +241,24 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
                 debugPrint('video pressed');
               },
             ),
+            if (DeviceType.isMobile()) ...[
+              const SizedBox(
+                width: 15,
+              ),
+              ThemedControlButton(
+                label: t.camera,
+                labelColor: themeColors.reversedText,
+                child: Icon(
+                  Icons.cameraswitch_outlined,
+                  size: 24,
+                  color: themeColors.primaryText,
+                ),
+                onPressed: () {
+                  commProvider.switchCamera();
+                  debugPrint('video switch');
+                },
+              ),
+            ]
           ],
         ),
       ),

@@ -264,7 +264,6 @@ class _CircleSnapSessionContentState
     final t = AppLocalizations.of(context)!;
     final textStyles = Theme.of(context).textStyles;
     final repo = ref.read(repositoryProvider);
-    final commProvider = ref.read(communicationsProvider);
     // then prompt the user about leaving
     if (sessionProvider.state == SessionState.complete ||
         sessionProvider.state == SessionState.cancelled) {
@@ -286,25 +285,7 @@ class _CircleSnapSessionContentState
         ],
       );
     }
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            t.errorJoinSession,
-            style: textStyles.headline3,
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          Text(
-            ErrorCodeTranslation.get(
-                context, commProvider.lastError ?? "unknown"),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
+    return Container();
   }
 
   Widget _errorSession(BuildContext context) {
