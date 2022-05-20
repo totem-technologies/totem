@@ -596,7 +596,7 @@ PODS:
     - abseil/base/base_internal
     - abseil/base/config
     - abseil/meta/type_traits
-  - agora_rtc_engine (5.1.1):
+  - agora_rtc_engine (5.2.0):
     - AgoraIrisRTC_iOS (= 3.6.2-fix.1)
     - Flutter
   - AgoraIrisRTC_iOS (3.6.2-fix.1)
@@ -933,7 +933,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   abseil: ebe5b5529fb05d93a8bdb7951607be08b7fa71bc
-  agora_rtc_engine: 0e74ee4d92d5af869f02be7fb0adca15ace14d0e
+  agora_rtc_engine: ffc530eff766a38272568ebaead9341d73f58856
   AgoraIrisRTC_iOS: 9b11083bb79048ae4db7e2f56109cc51ac9e3834
   BoringSSL-GRPC: 3175b25143e648463a56daeaaa499c6cb86dad33
   camera: 9993f92f2c793e87b65e35f3a23c70582afb05b1
@@ -982,4 +982,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 638371c4ed4a66a8d968401ff38518c600d3f1cd
 
-COCOAPODS: 1.11.2
+COCOAPODS: 1.11.3
