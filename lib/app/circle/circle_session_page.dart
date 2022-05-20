@@ -1,9 +1,12 @@
+import 'package:after_layout/after_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:totem/app/circle/components/circle_scheduled_session_content.dart';
 import 'package:totem/app/circle/components/circle_snap_session_content.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
+
+import 'circle_join_dialog.dart';
 
 final activeSessionProvider =
     ChangeNotifierProvider.autoDispose<ActiveSession>((ref) {
@@ -21,16 +24,17 @@ final communicationsProvider =
 });
 
 class CircleSessionPage extends ConsumerStatefulWidget {
-  const CircleSessionPage({Key? key, required this.session, this.state})
-      : super(key: key);
+  const CircleSessionPage({Key? key, required this.session}) : super(key: key);
   final Session session;
-  final Map<String, bool>? state;
 
   @override
   CircleSessionPageState createState() => CircleSessionPageState();
 }
 
-class CircleSessionPageState extends ConsumerState<CircleSessionPage> {
+class CircleSessionPageState extends ConsumerState<CircleSessionPage>
+    with AfterLayoutMixin<CircleSessionPage> {
+  bool joined = false;
+
   @override
   void initState() {
     ref.read(activeSessionProvider).addListener(() {
@@ -50,11 +54,33 @@ class CircleSessionPageState extends ConsumerState<CircleSessionPage> {
 
   @override
   Widget build(BuildContext context) {
+    ref.watch(communicationsProvider);
+    ref.watch(activeSessionProvider);
+    if (!joined) {
+      return const Material(color: Colors.transparent);
+    }
     if (widget.session is SnapSession) {
       return CircleSnapSessionContent(
-          circle: widget.session.circle as SnapCircle, state: widget.state);
+          circle: widget.session.circle as SnapCircle);
     } else {
       return CircleScheduledSessionContent(session: widget.session);
+    }
+  }
+
+  @override
+  void afterFirstLayout(BuildContext context) async {
+    bool? state = await CircleJoinDialog.showDialog(context,
+        circle: widget.session.circle);
+    if (state != null && state) {
+      Future.delayed(const Duration(milliseconds: 100), () async {
+        setState(() {
+          joined = true;
+        });
+      });
+    } else {
+      if (mounted) {
+        Navigator.of(context).pop();
+      }
     }
   }
 }

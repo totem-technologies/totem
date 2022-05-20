@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:totem/app/circle/circle_join_dialog.dart';
 import 'package:totem/app/home/components/index.dart';
 import 'package:totem/app_routes.dart';
 import 'package:totem/components/widgets/busy_indicator.dart';
@@ -114,6 +113,14 @@ class SnapCirclesListState extends ConsumerState<SnapCirclesList> {
   Future<void> _handleShowCircle(
       BuildContext context, SnapCircle circle) async {
     var repo = ref.read(repositoryProvider);
+    await repo.createActiveSession(
+      circle: circle,
+    );
+    if (!mounted) return;
+    Navigator.of(context).pushNamed(AppRoutes.circle, arguments: {
+      'session': circle.snapSession,
+    });
+/*REMOVE    var repo = ref.read(repositoryProvider);
     Map<String, bool>? state =
         await CircleJoinDialog.showDialog(context, circle: circle);
     if (state != null) {
@@ -126,6 +133,6 @@ class SnapCirclesListState extends ConsumerState<SnapCirclesList> {
           'state': state,
         });
       });
-    }
+    } */
   }
 }

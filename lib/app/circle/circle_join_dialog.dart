@@ -1,12 +1,16 @@
 import 'dart:ui';
 
+import 'package:agora_rtc_engine/rtc_local_view.dart' as rtc_local_view;
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:totem/components/camera/camera_capture_component.dart';
+import 'package:totem/app/circle/circle_session_page.dart';
+import 'package:totem/app/circle/components/circle_device_settings_button.dart';
+import 'package:totem/components/camera/index.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
+import 'package:totem/services/communication_provider.dart';
 import 'package:totem/services/providers.dart';
 import 'package:totem/services/utils/device_type.dart';
 import 'package:totem/theme/index.dart';
@@ -18,9 +22,9 @@ class CircleJoinDialog extends ConsumerStatefulWidget {
   final Circle circle;
   final bool cropEnabled;
 
-  static Future<Map<String, bool>?> showDialog(BuildContext context,
+  static Future<bool?> showDialog(BuildContext context,
       {required Circle circle}) async {
-    return showModalBottomSheet<Map<String, bool>?>(
+    return showModalBottomSheet<bool?>(
       enableDrag: false,
       isScrollControlled: true,
       isDismissible: false,
@@ -40,12 +44,15 @@ class CircleJoinDialog extends ConsumerStatefulWidget {
 
 class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
   late Future<UserProfile?> _userProfileFetch;
-  final GlobalKey<CameraCaptureScreenState> _captureKey =
-      GlobalKey<CameraCaptureScreenState>();
+  bool _initialized = false;
+  String? _error;
 
   @override
   void initState() {
     _userProfileFetch = ref.read(repositoryProvider).userProfile();
+    Future.delayed(const Duration(milliseconds: 0), () {
+      initializeProvider();
+    });
     super.initState();
   }
 
@@ -53,6 +60,7 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
   Widget build(BuildContext context) {
     final themeColors = Theme.of(context).themeColors;
     final textStyles = Theme.of(context).textStyles;
+    final commProvider = ref.watch(communicationsProvider);
     return (DeviceType.isPhone())
         ? BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 2.5, sigmaY: 2.5),
@@ -76,7 +84,7 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
                           Expanded(child: Container()),
                           IconButton(
                             onPressed: () {
-                              Navigator.of(context).pop();
+                              Navigator.of(context).pop(false);
                             },
                             icon: Icon(
                               Icons.close,
@@ -117,7 +125,9 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
                                         color: themeColors.divider,
                                       ),
                                       const SizedBox(height: 24),
-                                      Expanded(child: _userInfo(context)),
+                                      Expanded(
+                                          child:
+                                              _userInfo(context, commProvider)),
                                     ],
                                   ),
                                 ),
@@ -160,7 +170,7 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
                             alignment: Alignment.topRight,
                             child: InkWell(
                               onTap: () {
-                                Navigator.of(context).pop();
+                                Navigator.of(context).pop(false);
                               },
                               child: Padding(
                                 padding: const EdgeInsets.only(
@@ -175,8 +185,9 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
                       const ContentDivider(),
                       const SizedBox(height: 24),
                       Center(
-                        child: _desktopUserInfo(context),
+                        child: _desktopUserInfo(context, commProvider),
                       ),
+                      const SizedBox(height: 16),
                     ],
                   ),
                 ),
@@ -185,7 +196,76 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
           );
   }
 
-  Widget _userInfo(BuildContext context) {
+  Widget _cameraPreview(CommunicationProvider commProvider) {
+    final themeColors = Theme.of(context).themeColors;
+    final t = AppLocalizations.of(context)!;
+    return Stack(children: [
+      Stack(
+        children: [
+          const rtc_local_view.SurfaceView(),
+          if (commProvider.videoMuted)
+            const Positioned.fill(
+              child: CameraMuted(),
+            ),
+        ],
+      ),
+      Positioned(
+        left: 0,
+        right: 0,
+        bottom: 8,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ThemedControlButton(
+              label: commProvider.muted ? t.unmute : t.mute,
+              labelColor: themeColors.reversedText,
+              svgImage: commProvider.muted
+                  ? 'assets/microphone_mute.svg'
+                  : 'assets/microphone.svg',
+              onPressed: () {
+                commProvider.muteAudio(!commProvider.muted);
+                debugPrint('mute pressed');
+              },
+            ),
+            const SizedBox(
+              width: 15,
+            ),
+            ThemedControlButton(
+              label: commProvider.videoMuted ? t.startVideo : t.stopVideo,
+              labelColor: themeColors.reversedText,
+              svgImage: commProvider.videoMuted
+                  ? 'assets/video.svg'
+                  : 'assets/video_stop.svg',
+              onPressed: () {
+                commProvider.muteVideo(!commProvider.videoMuted);
+                debugPrint('video pressed');
+              },
+            ),
+            if (DeviceType.isMobile()) ...[
+              const SizedBox(
+                width: 15,
+              ),
+              ThemedControlButton(
+                label: t.camera,
+                labelColor: themeColors.reversedText,
+                child: Icon(
+                  Icons.cameraswitch_outlined,
+                  size: 24,
+                  color: themeColors.primaryText,
+                ),
+                onPressed: () {
+                  commProvider.switchCamera();
+                  debugPrint('video switch');
+                },
+              ),
+            ]
+          ],
+        ),
+      ),
+    ]);
+  }
+
+  Widget _userInfo(BuildContext context, CommunicationProvider commProvider) {
     final themeColors = Theme.of(context).themeColors;
     final t = AppLocalizations.of(context)!;
 
@@ -221,23 +301,32 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
                           color: themeColors.primaryText,
                           child: AnimatedSwitcher(
                             duration: const Duration(milliseconds: 300),
-                            child: CameraCapture(
-                              key: _captureKey,
-                              captureMode: CaptureMode.preview,
-                            ),
+                            child: _initialized
+                                ? _cameraPreview(commProvider)
+                                : Center(
+                                    child: Text(
+                                      _error ?? t.initializingCamera,
+                                      style: TextStyle(
+                                        color: themeColors.reversedText,
+                                        fontSize: 16,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
                           ),
                         ),
                       ),
                     ),
                     const SizedBox(height: 20),
-                    Center(
-                      child: ThemedRaisedButton(
-                        onPressed: () {
-                          _join();
-                        },
-                        label: t.joinCircle,
+                    if (_initialized)
+                      Center(
+                        child: ThemedRaisedButton(
+                          onPressed: () {
+                            _join();
+                          },
+                          label: _error == null ? t.joinCircle : t.leaveSession,
+                        ),
                       ),
-                    ),
                   ],
                 ),
               ),
@@ -249,7 +338,8 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
     );
   }
 
-  Widget _desktopUserInfo(BuildContext context) {
+  Widget _desktopUserInfo(
+      BuildContext context, CommunicationProvider commProvider) {
     final themeColors = Theme.of(context).themeColors;
     final t = AppLocalizations.of(context)!;
 
@@ -282,23 +372,40 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
                       constraints: BoxConstraints(
                         maxWidth: Theme.of(context).maxRenderWidth,
                       ),
-                      child: AspectRatio(
-                        aspectRatio: 1.0,
-                        child: ClipRRect(
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(24)),
-                          child: Container(
-                            color: themeColors.primaryText,
-                            child: AnimatedSwitcher(
-                              duration: const Duration(milliseconds: 300),
-                              child: CameraCapture(
-                                key: _captureKey,
-                                captureMode: CaptureMode.preview,
+                      child: Column(children: [
+                        AspectRatio(
+                          aspectRatio: 1.0,
+                          child: ClipRRect(
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(24)),
+                            child: Container(
+                              color: Colors.black,
+                              child: AnimatedSwitcher(
+                                duration: const Duration(milliseconds: 300),
+                                child: _initialized
+                                    ? _cameraPreview(commProvider)
+                                    : Center(
+                                        child: Text(
+                                          _error ?? t.initializingCamera,
+                                          style: TextStyle(
+                                            color: themeColors.reversedText,
+                                            fontSize: 16,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
                               ),
                             ),
                           ),
                         ),
-                      ),
+                        const SizedBox(
+                          height: 16,
+                        ),
+                        if (_initialized)
+                          const Center(
+                            child: CircleDeviceSettingsButton(),
+                          ),
+                      ]),
                     ),
                   ),
                   const SizedBox(
@@ -312,14 +419,19 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
                       child: Column(
                         children: [
                           const SizedBox(height: 8),
-                          Center(
-                            child: ThemedRaisedButton(
-                              onPressed: () {
-                                _join();
-                              },
-                              label: t.joinCircle,
+                          if (_initialized)
+                            Center(
+                              child: ThemedRaisedButton(
+                                onPressed: () {
+                                  _error == null
+                                      ? _join()
+                                      : Navigator.of(context).pop(false);
+                                },
+                                label: _error == null
+                                    ? t.joinCircle
+                                    : t.leaveSession,
+                              ),
                             ),
-                          ),
                         ],
                       ),
                     ),
@@ -335,9 +447,31 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
   }
 
   void _join() {
-    Navigator.of(context).pop({
-      'muted': _captureKey.currentState!.muted,
-      'videoMuted': _captureKey.currentState!.videoMuted
-    });
+    Navigator.of(context).pop(true);
+  }
+
+  void initializeProvider() async {
+    final commProvider = ref.read(communicationsProvider);
+    String? result = await commProvider.initialDevicePreview();
+    if (result == null) {
+      setState(() => _initialized = true);
+    } else {
+      // show error, can't get one of the devices or error with agora
+      if (mounted) {
+        final t = AppLocalizations.of(context)!;
+        switch (result) {
+          case 'errorNoMicrophone':
+            result = t.errorNoMicrophone;
+            break;
+          case 'errorCamera':
+            result = t.errorCamera;
+            break;
+          case 'errorNoSpeakers':
+            result = t.errorNoSpeakers;
+            break;
+        }
+      }
+      setState(() => _error = result);
+    }
   }
 }

@@ -6,7 +6,8 @@ class ThemedControlButton extends StatelessWidget {
   const ThemedControlButton({
     Key? key,
     required this.label,
-    required this.svgImage,
+    this.svgImage,
+    this.child,
     this.onPressed,
     this.enabled = true,
     this.imageColor,
@@ -17,7 +18,8 @@ class ThemedControlButton extends StatelessWidget {
     this.iconHeight,
   }) : super(key: key);
   final String label;
-  final String svgImage;
+  final String? svgImage;
+  final Widget? child;
   final bool enabled;
   final double size;
   final double? iconHeight;
@@ -47,12 +49,14 @@ class ThemedControlButton extends StatelessWidget {
               child: Center(
                 child: Padding(
                   padding: iconPadding,
-                  child: SvgPicture.asset(
-                    svgImage,
-                    color: imageColor,
-                    fit: BoxFit.contain,
-                    height: iconHeight,
-                  ),
+                  child: svgImage != null
+                      ? SvgPicture.asset(
+                          svgImage!,
+                          color: imageColor,
+                          fit: BoxFit.contain,
+                          height: iconHeight,
+                        )
+                      : child,
                 ),
               ),
             ),

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:agora_rtc_engine/rtc_engine.dart';
+import 'package:collection/collection.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -48,7 +49,13 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   Timer? _updateTimer;
   Timer? _networkErrorTimeout;
   int? _statsStreamId;
-  Map<String, bool>? _initialState;
+  // Devices and selected device
+  List<CommunicationDevice> _cameras = [];
+  List<CommunicationDevice> _audioOutputs = [];
+  List<CommunicationDevice> _audioInputs = [];
+  CommunicationDevice? _camera;
+  CommunicationDevice? _audioInput;
+  CommunicationDevice? _audioOutput;
 
   @override
   String? get lastError {
@@ -62,6 +69,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     _channel = null;
     try {
       sessionProvider.removeListener(_updateCommunicationFromSession);
+      _engine?.stopPreview();
       _engine?.destroy();
       _engine = null;
       _audioIndicatorStreamController?.close();
@@ -72,10 +80,96 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   }
 
   @override
+  Future<String?> initialDevicePreview({bool enableVideo = true}) async {
+    String? errorMessage;
+    try {
+      await _assertEngine(enableVideo);
+
+      // Speakers
+      try {
+        List<MediaDeviceInfo> audioDevices =
+            await _engine!.deviceManager.enumerateAudioPlaybackDevices();
+        _audioOutputs = audioDevices
+            .map((device) => CommunicationDevice(
+                name: device.deviceName,
+                id: device.deviceId,
+                type: CommunicationDeviceType.speakers))
+            .toList(growable: false);
+        String? audioPlayback =
+            await _engine!.deviceManager.getAudioPlaybackDevice();
+        if (audioPlayback != null) {
+          _audioOutput = _audioOutputs.firstWhereOrNull((speaker) =>
+              audioPlayback.isNotEmpty
+                  ? speaker.id == audioPlayback
+                  : speaker.id == "default");
+        }
+        _audioOutput ??= _audioOutputs.first;
+      } catch (ex) {
+        debugPrint('unable to get devices: $ex');
+      }
+
+      // Microphones
+      try {
+        List<MediaDeviceInfo> audioInputDevices =
+            await _engine!.deviceManager.enumerateAudioRecordingDevices();
+        _audioInputs = audioInputDevices
+            .map((device) => CommunicationDevice(
+                name: device.deviceName,
+                id: device.deviceId,
+                type: CommunicationDeviceType.microphone))
+            .toList(growable: false);
+        String? audioInput =
+            await _engine!.deviceManager.getAudioRecordingDevice();
+        if (audioInput != null) {
+          _audioInput = _audioInputs.firstWhereOrNull((device) =>
+              audioInput.isNotEmpty
+                  ? device.id == audioInput
+                  : device.name == "default");
+        }
+        _audioInput ??= _audioInputs.first;
+        if (_audioInput == null) {
+          return "errorNoMicrophone";
+        }
+      } catch (ex) {
+        debugPrint('unable to get audioInput devices, not supported $ex');
+      }
+
+      // Cameras
+      try {
+        List<MediaDeviceInfo> cameraDevices =
+            await _engine!.deviceManager.enumerateVideoDevices();
+        _cameras = cameraDevices
+            .map((device) => CommunicationDevice(
+                name: device.deviceName,
+                id: device.deviceId,
+                type: CommunicationDeviceType.camera))
+            .toList(growable: false);
+        String? camera = await _engine!.deviceManager.getVideoDevice();
+        if (camera != null) {
+          _camera = _cameras.firstWhereOrNull((device) => camera.isNotEmpty
+              ? device.id == camera
+              : device.name == "default");
+        }
+        _camera ??= _cameras.first;
+        if (_camera == null) {
+          return "errorCamera";
+        }
+      } catch (ex) {
+        debugPrint('unable to get camera devices, not supported $ex');
+      }
+      return null;
+    } catch (ex) {
+      debugPrint('unable to activate agora session: $ex');
+      _updateState(CommunicationState.failed);
+      errorMessage = ex.toString();
+    }
+    return errorMessage;
+  }
+
+  @override
   Future<bool> joinSession({
     required Session session,
     required CommunicationHandler handler,
-    Map<String, bool>? state,
     bool enableVideo = false,
     required Size fullScreenSize,
   }) async {
@@ -83,7 +177,6 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     _handler = handler;
     _session = session;
     _lastError = null;
-    _initialState = state;
     _audioIndicatorStreamController =
         StreamController<CommunicationAudioVolumeIndication>.broadcast(
       onListen: () {
@@ -245,8 +338,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
               userInfoUpdated: _handleUserInfoUpdated,
               userJoined: _handleUserJoined,
               userOffline: _handleUserOffline,
-              audioVolumeIndication:
-                  !kIsWeb ? _handleAudioVolumeIndication : null,
+              audioVolumeIndication: _handleAudioVolumeIndication,
               videoPublishStateChanged: _handleVideoPublishStateChanged,
               remoteVideoStateChanged: _handleRemoteVideoStateChanged,
             ),
@@ -453,30 +545,19 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     commUid = uid;
     _channel = channel;
     // Update the session to add user information to session display
-    bool initialMuted = _initialState?['muted'] ?? false;
-    bool initialVideoMuted = _initialState?['videoMuted'] ?? false;
     await sessionProvider.joinSession(
       session: _session!,
       uid: userId,
       sessionUserId: commUid.toString(),
       sessionImage: _sessionImage,
-      muted: initialMuted,
-      videoMuted: initialVideoMuted,
+      muted: muted,
+      videoMuted: videoMuted,
     );
     sessionProvider.activeSession
         ?.userJoined(sessionUserId: commUid.toString());
     bool? onSpeaker = await _engine!.isSpeakerphoneEnabled();
     if (onSpeaker != true) {
       await _engine!.setEnableSpeakerphone(true);
-    }
-    if (initialVideoMuted) {
-      await _engine?.muteLocalVideoStream(true);
-      await _engine?.stopPreview();
-      videoMuted = true;
-    }
-    if (initialMuted) {
-      await _engine?.muteLocalAudioStream(true);
-      muted = true;
     }
     _statsStreamId = await _engine
         ?.createDataStreamWithConfig(DataStreamConfig(false, false));
@@ -551,25 +632,23 @@ class AgoraCommunicationProvider extends CommunicationProvider {
 
   @override
   Future<void> muteAudio(bool mute) async {
-    if (state == CommunicationState.active) {
-      if (mute != muted) {
-        _engine?.muteLocalAudioStream(mute);
-        if (kIsWeb) {
-          // FIXME - TEMP - Right now it seems that the
-          // audio publishing changes made locally are
-          // not coming, so to work around this,
-          // call the callback directly to simulate the
-          // callback that should come and trigger the state change
-          _handleAudioPublishStateChanged(
-              _channel,
-              mute
-                  ? StreamPublishState.Published
-                  : StreamPublishState.NoPublished,
-              mute
-                  ? StreamPublishState.NoPublished
-                  : StreamPublishState.Published,
-              0);
-        }
+    if (mute != muted) {
+      _engine?.muteLocalAudioStream(mute);
+      if (kIsWeb) {
+        // FIXME - TEMP - Right now it seems that the
+        // audio publishing changes made locally are
+        // not coming, so to work around this,
+        // call the callback directly to simulate the
+        // callback that should come and trigger the state change
+        _handleAudioPublishStateChanged(
+            _channel ?? "",
+            mute
+                ? StreamPublishState.Published
+                : StreamPublishState.NoPublished,
+            mute
+                ? StreamPublishState.NoPublished
+                : StreamPublishState.Published,
+            0);
       }
     }
   }
@@ -604,18 +683,20 @@ class AgoraCommunicationProvider extends CommunicationProvider {
 
   void _handleAudioVolumeIndication(
       List<AudioVolumeInfo> speakers, int totalVolume) {
-    //debugPrint('Audio volume: ${totalVolume.toString()}');
+//    debugPrint(
+//        'Audio volume: ${totalVolume.toString()}');
     if (!_isIndicatorStreamOpen) {
       return;
     }
-
-    var infos = speakers.map((info) {
-      //debugPrint('speaker: ${info.uid.toString()} ${info.vad.toString()}');
-      return CommunicationAudioVolumeInfo(
-          uid: info.uid, volume: info.volume, speaking: info.vad == 1);
-    }).toList();
-    _audioIndicatorStreamController?.add(CommunicationAudioVolumeIndication(
-        speakers: infos, totalVolume: totalVolume));
+    if (speakers.isNotEmpty) {
+      var infos = speakers.map((info) {
+        //debugPrint('speaker: ${info.uid.toString()} ${info.vad.toString()}');
+        return CommunicationAudioVolumeInfo(
+            uid: info.uid, volume: info.volume, speaking: info.vad == 1);
+      }).toList();
+      _audioIndicatorStreamController?.add(CommunicationAudioVolumeIndication(
+          speakers: infos, totalVolume: totalVolume));
+    }
   }
 
   @override
@@ -635,30 +716,24 @@ class AgoraCommunicationProvider extends CommunicationProvider {
 
   @override
   Future<void> muteVideo(bool mute) async {
-    if (state == CommunicationState.active) {
-      if (mute != videoMuted) {
-        await _engine?.muteLocalVideoStream(mute);
+    if (mute != videoMuted) {
+      await _engine?.muteLocalVideoStream(mute);
 /*        if (mute) {
           _engine?.stopPreview();
         } else {
           _engine?.startPreview();
         } */
-        _engine?.enableLocalVideo(!mute);
-        // FIXME - TEMP - Right now it seems that the
-        // video publishing changes made locally are
-        // not coming, so to work around this,
-        // call the callback directly to simulate the
-        // callback that should come and trigger the state change
-        _handleVideoPublishStateChanged(
-            _channel,
-            mute
-                ? StreamPublishState.Published
-                : StreamPublishState.NoPublished,
-            mute
-                ? StreamPublishState.NoPublished
-                : StreamPublishState.Published,
-            0);
-      }
+      _engine?.enableLocalVideo(!mute);
+      // FIXME - TEMP - Right now it seems that the
+      // video publishing changes made locally are
+      // not coming, so to work around this,
+      // call the callback directly to simulate the
+      // callback that should come and trigger the state change
+      _handleVideoPublishStateChanged(
+          _channel ?? "",
+          mute ? StreamPublishState.Published : StreamPublishState.NoPublished,
+          mute ? StreamPublishState.NoPublished : StreamPublishState.Published,
+          0);
     }
   }
 
@@ -701,5 +776,120 @@ class AgoraCommunicationProvider extends CommunicationProvider {
           muted: muted,
           videoMuted: videoMuted);
     } */
+  }
+
+  @override
+  CommunicationDevice? get audioInput => _audioInput;
+
+  @override
+  List<CommunicationDevice> get audioInputs => _audioInputs;
+
+  @override
+  List<CommunicationDevice> get audioOutputs => _audioOutputs;
+
+  @override
+  CommunicationDevice? get audioOutput => _audioOutput;
+
+  @override
+  CommunicationDevice? get camera => _camera;
+
+  @override
+  List<CommunicationDevice> get cameras => _cameras;
+
+  @override
+  Future<bool> setAudioInput(CommunicationDevice device) async {
+    if (_engine == null) return false;
+    try {
+      if (device != _audioInput) {
+        await _engine!.enableLocalAudio(false);
+        _engine!.deviceManager.setAudioRecordingDevice(device.id);
+        await _engine!.enableLocalAudio(true);
+        _audioInput = device;
+        notifyListeners();
+      }
+      return true;
+    } catch (ex) {
+      debugPrint('unable to setCamera: $ex');
+    }
+    return false;
+  }
+
+  @override
+  Future<bool> setAudioOutput(CommunicationDevice device) async {
+    if (_engine == null) return false;
+    try {
+      if (device != _audioOutput) {
+        //await _engine!.enableLocalAudio(false);
+        await _engine!.deviceManager.setAudioPlaybackDevice(device.id);
+        String? setDev = await _engine!.deviceManager.getAudioPlaybackDevice();
+        debugPrint('Set Device: $setDev');
+        //await _engine!.enableLocalAudio(true);
+        _audioOutput = device;
+        notifyListeners();
+      }
+      return true;
+    } catch (ex) {
+      debugPrint('unable to setAudioOutput: $ex');
+    }
+    return false;
+  }
+
+  @override
+  Future<bool> setCamera(CommunicationDevice device) async {
+    if (_engine == null) return false;
+    try {
+      if (device != _camera) {
+        _engine!.stopPreview();
+        _engine!.deviceManager.setVideoDevice(device.id);
+        _engine!.startPreview();
+        _camera = device;
+        notifyListeners();
+      }
+      return true;
+    } catch (ex) {
+      debugPrint('unable to setCamera: $ex');
+    }
+    return false;
+  }
+
+  @override
+  void endTestAudioInput() {
+    if (_engine != null) {}
+  }
+
+  @override
+  void endTestAudioOutput() {
+    if (_engine != null) {
+      if (!kIsWeb) {
+        _engine!.deviceManager.stopAudioPlaybackDeviceTest();
+      }
+    }
+  }
+
+  @override
+  void testAudioInput() {
+    if (_engine != null) {}
+  }
+
+  @override
+  void testAudioOutput() async {
+    if (_engine != null) {
+      if (!kIsWeb) {
+        await _engine!.deviceManager
+            .startAudioPlaybackDeviceTest('assets/totemtest.mp3');
+      }
+    }
+  }
+
+  @override
+  bool get audioDeviceConfigurable {
+    return _audioInput != null || _audioOutput != null;
+  }
+
+  @override
+  void switchCamera() async {
+    if (_engine != null) {
+      await _engine!.switchCamera();
+    }
   }
 }
