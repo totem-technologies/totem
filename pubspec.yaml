@@ -74,7 +74,6 @@ dependencies:
   collection: ^1.16.0
   uuid: ^3.0.6
   path_provider: ^2.0.10
-  just_audio: ^0.9.21
 
 dev_dependencies:
   flutter_test:

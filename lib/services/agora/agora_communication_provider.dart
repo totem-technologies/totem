@@ -7,7 +7,6 @@ import 'package:collection/collection.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:just_audio/just_audio.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
@@ -50,7 +49,6 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   Timer? _updateTimer;
   Timer? _networkErrorTimeout;
   int? _statsStreamId;
-  AudioPlayer? _player;
   // Devices and selected device
   List<CommunicationDevice> _cameras = [];
   List<CommunicationDevice> _audioOutputs = [];
@@ -862,9 +860,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   @override
   void endTestAudioOutput() {
     if (_engine != null) {
-      if (kIsWeb) {
-        _player?.stop();
-      } else {
+      if (!kIsWeb) {
         _engine!.deviceManager.stopAudioPlaybackDeviceTest();
       }
     }
@@ -878,13 +874,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   @override
   void testAudioOutput() async {
     if (_engine != null) {
-      if (kIsWeb) {
-        _player?.stop();
-        _player = AudioPlayer();
-        _player!.setAsset('assets/totemtest.mp3');
-        await _player!.setLoopMode(LoopMode.all);
-        _player!.play();
-      } else {
+      if (!kIsWeb) {
         await _engine!.deviceManager
             .startAudioPlaybackDeviceTest('assets/totemtest.mp3');
       }
