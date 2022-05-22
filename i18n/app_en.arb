@@ -138,6 +138,7 @@
     "skip": "Skip",
     "slideToPass": "Slide to pass",
     "slideToReceive": "Slide to receive",
+    "speakingMuted": "Speaking detected. Your microphone is muted.",
     "start": "Start",
     "started": "Started",
     "startDate": "Start Date",

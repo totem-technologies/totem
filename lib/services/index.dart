@@ -1,3 +1,4 @@
+export 'audio_level/audio_level.dart';
 export 'auth/index.dart';
 export 'communication_handler.dart';
 export 'communication_provider.dart';

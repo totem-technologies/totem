@@ -122,6 +122,12 @@ class _CircleLiveVideoSessionState
                           participants: participants,
                           activeSession: activeSession,
                         ),
+                      const Align(
+                        alignment: Alignment.bottomCenter,
+                        child: CircleMutedIndicator(
+                          live: true,
+                        ),
+                      ),
                     ],
                   ),
                 ),
