@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:js/js.dart';
 
@@ -10,18 +11,23 @@ external stopAudioStream();
 
 class AudioLevel {
   static const speakingThreshold = 45;
+  static const double speakingPct = 0.25;
+  static const minDB = 20;
+  static const maxDB = 120;
   AudioLevel() {
     _controller =
-        StreamController<bool>.broadcast(onListen: start, onCancel: stop);
+        StreamController<double>.broadcast(onListen: start, onCancel: stop);
   }
-  bool last = false;
-  late StreamController<bool> _controller;
+  double lastLevel = 0;
+  late StreamController<double> _controller;
+  bool speaking = false;
 
   _callback(level) {
-    bool speaking = level > speakingThreshold;
-    if (speaking != last) {
-      last = speaking;
-      _controller.add(speaking);
+    double adjustedLevel = max((level - minDB) / (maxDB - minDB), 0);
+    if (adjustedLevel != lastLevel) {
+      lastLevel = adjustedLevel;
+      speaking = level > speakingThreshold;
+      _controller.add(adjustedLevel);
     }
   }
 
@@ -33,7 +39,7 @@ class AudioLevel {
     stopAudioStream();
   }
 
-  Stream<bool> get stream {
+  Stream<double> get stream {
     return _controller.stream;
   }
 }

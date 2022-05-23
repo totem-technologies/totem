@@ -1,25 +1,37 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:noise_meter/noise_meter.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class AudioLevel {
-  static const double speakingThreshold = 52;
-  late StreamController<bool> controller;
+  static const double speakingThreshold = 45;
+  static const double speakingPct = 0.25;
+  static const minDB = 20;
+  static const maxDB = 120;
+  double lastLevel = 0;
+  bool speaking = false;
+  late StreamController<double> controller;
   StreamSubscription<NoiseReading>? _noiseSubscription;
   NoiseMeter? _noiseMeter;
   AudioLevel() {
     _controller =
-        StreamController<bool>.broadcast(onListen: start, onCancel: stop);
+        StreamController<double>.broadcast(onListen: start, onCancel: stop);
   }
 
-  late StreamController<bool> _controller;
+  late StreamController<double> _controller;
 
   void start() async {
     await Permission.microphone.request();
     _noiseMeter = NoiseMeter((error) {});
     _noiseSubscription = _noiseMeter!.noiseStream.listen((event) {
-      _controller.add(event.maxDecibel > speakingThreshold);
+      double adjustedLevel =
+          max((event.meanDecibel - minDB) / (maxDB - minDB), 0);
+      if (adjustedLevel != lastLevel) {
+        lastLevel = adjustedLevel;
+        speaking = event.meanDecibel > speakingThreshold;
+        _controller.add(adjustedLevel);
+      }
     });
   }
 
@@ -29,7 +41,7 @@ class AudioLevel {
     _noiseMeter = null;
   }
 
-  Stream<bool> get stream {
+  Stream<double> get stream {
     return _controller.stream;
   }
 }

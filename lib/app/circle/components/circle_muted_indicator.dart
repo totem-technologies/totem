@@ -3,6 +3,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:totem/app/circle/circle_session_page.dart';
 import 'package:totem/app/circle/components/circle_snap_session_content.dart';
+import 'package:totem/services/audio_level/audio_level.dart';
 import 'package:totem/theme/index.dart';
 
 class CircleMutedIndicator extends ConsumerWidget {
@@ -18,8 +19,8 @@ class CircleMutedIndicator extends ConsumerWidget {
     return audioLevel.when(
         loading: () => Container(),
         error: (Object error, StackTrace? stackTrace) => Container(),
-        data: (bool speaking) {
-          if (speaking && communications.muted) {
+        data: (double level) {
+          if (level > AudioLevel.speakingPct && communications.muted) {
             return Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
