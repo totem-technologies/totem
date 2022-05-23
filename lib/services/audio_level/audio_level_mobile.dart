@@ -26,7 +26,7 @@ class AudioLevel {
     _noiseMeter = NoiseMeter((error) {});
     _noiseSubscription = _noiseMeter!.noiseStream.listen((event) {
       double adjustedLevel =
-          max((event.meanDecibel - minDB) / (maxDB - minDB), 0);
+          min(max((event.meanDecibel - minDB) / (maxDB - minDB), 0), 1);
       if (adjustedLevel != lastLevel) {
         lastLevel = adjustedLevel;
         speaking = event.meanDecibel > speakingThreshold;

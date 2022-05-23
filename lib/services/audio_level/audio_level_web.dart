@@ -23,7 +23,7 @@ class AudioLevel {
   bool speaking = false;
 
   _callback(level) {
-    double adjustedLevel = max((level - minDB) / (maxDB - minDB), 0);
+    double adjustedLevel = min(max((level - minDB) / (maxDB - minDB), 0), 1);
     if (adjustedLevel != lastLevel) {
       lastLevel = adjustedLevel;
       speaking = level > speakingThreshold;
