@@ -634,6 +634,12 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   Future<void> muteAudio(bool mute) async {
     if (mute != muted) {
       _engine?.muteLocalAudioStream(mute);
+      if (state != CommunicationState.active) {
+        // reflect the state locally if not in a session
+        muted = mute;
+        notifyListeners();
+        return;
+      }
       if (kIsWeb) {
         // FIXME - TEMP - Right now it seems that the
         // audio publishing changes made locally are

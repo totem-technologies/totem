@@ -84,7 +84,11 @@ dev_dependencies:
 
 dependency_overrides:
   provider: ^6.0.2
-
+  audio_streamer:
+    git:
+      url: https://github.com/cph-cachet/flutter-plugins.git
+      path: packages/audio_streamer
+      ref: master
 # The following section is specific to Flutter.
 flutter:
   generate: true

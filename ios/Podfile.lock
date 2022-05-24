@@ -600,6 +600,8 @@ PODS:
     - AgoraIrisRTC_iOS (= 3.6.2-fix.1)
     - Flutter
   - AgoraIrisRTC_iOS (3.6.2-fix.1)
+  - audio_streamer (0.0.1):
+    - Flutter
   - BoringSSL-GRPC (0.0.24):
     - BoringSSL-GRPC/Implementation (= 0.0.24)
     - BoringSSL-GRPC/Interface (= 0.0.24)
@@ -834,6 +836,7 @@ PODS:
 
 DEPENDENCIES:
   - agora_rtc_engine (from `.symlinks/plugins/agora_rtc_engine/ios`)
+  - audio_streamer (from `.symlinks/plugins/audio_streamer/ios`)
   - camera (from `.symlinks/plugins/camera/ios`)
   - cloud_firestore (from `.symlinks/plugins/cloud_firestore/ios`)
   - cloud_functions (from `.symlinks/plugins/cloud_functions/ios`)
@@ -888,6 +891,8 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   agora_rtc_engine:
     :path: ".symlinks/plugins/agora_rtc_engine/ios"
+  audio_streamer:
+    :path: ".symlinks/plugins/audio_streamer/ios"
   camera:
     :path: ".symlinks/plugins/camera/ios"
   cloud_firestore:
@@ -935,6 +940,7 @@ SPEC CHECKSUMS:
   abseil: ebe5b5529fb05d93a8bdb7951607be08b7fa71bc
   agora_rtc_engine: ffc530eff766a38272568ebaead9341d73f58856
   AgoraIrisRTC_iOS: 9b11083bb79048ae4db7e2f56109cc51ac9e3834
+  audio_streamer: af49e73eb66f71c4eeabb4bbcb05f122d03a6709
   BoringSSL-GRPC: 3175b25143e648463a56daeaaa499c6cb86dad33
   camera: 9993f92f2c793e87b65e35f3a23c70582afb05b1
   cloud_firestore: 76e73835a6ac79ac825190eefd876a1e100c7835
@@ -982,4 +988,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 638371c4ed4a66a8d968401ff38518c600d3f1cd
 
-COCOAPODS: 1.11.2
+COCOAPODS: 1.11.3
