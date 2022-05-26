@@ -1,7 +1,5 @@
-import 'dart:async';
-import 'dart:math';
-
 import 'package:js/js.dart';
+import 'audio_level_impl.dart';
 
 @JS('AudioLevels.getAudioLevel')
 external _getAudioLevel(Function(double) callback);
@@ -9,37 +7,14 @@ external _getAudioLevel(Function(double) callback);
 @JS('AudioLevels.stopAudioStream')
 external stopAudioStream();
 
-class AudioLevel {
-  static const speakingThreshold = 45;
-  static const double speakingPct = 0.25;
-  static const minDB = 20;
-  static const maxDB = 120;
-  AudioLevel() {
-    _controller =
-        StreamController<double>.broadcast(onListen: start, onCancel: stop);
-  }
-  double lastLevel = 0;
-  late StreamController<double> _controller;
-  bool speaking = false;
-
-  _callback(level) {
-    double adjustedLevel = min(max((level - minDB) / (maxDB - minDB), 0), 1);
-    if (adjustedLevel != lastLevel) {
-      lastLevel = adjustedLevel;
-      speaking = level > speakingThreshold;
-      _controller.add(adjustedLevel);
-    }
-  }
-
+class AudioLevel extends AudioLevelImpl {
+  @override
   void start() {
-    _getAudioLevel(allowInterop(_callback));
+    _getAudioLevel(allowInterop(emitData));
   }
 
+  @override
   void stop() {
     stopAudioStream();
-  }
-
-  Stream<double> get stream {
-    return _controller.stream;
   }
 }

@@ -19,8 +19,8 @@ class CircleMutedIndicator extends ConsumerWidget {
     return audioLevel.when(
         loading: () => Container(),
         error: (Object error, StackTrace? stackTrace) => Container(),
-        data: (double level) {
-          if (level > AudioLevel.speakingPct && communications.muted) {
+        data: (AudioLevelData auidoData) {
+          if (auidoData.speaking && communications.muted) {
             return Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
