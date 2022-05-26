@@ -75,7 +75,7 @@ class WidgetContainer extends StatelessWidget {
           right: 0,
           top: 0,
           child: IconButton(
-            icon: Icon(Icons.close),
+            icon: const Icon(Icons.close),
             onPressed: () {
               reset();
             },

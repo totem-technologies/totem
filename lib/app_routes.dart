@@ -73,7 +73,7 @@ class AppRoutes {
         break;
       case dev:
         return MaterialPageRoute(
-          builder: (_) => DevPage(),
+          builder: (_) => const DevPage(),
           settings: settings,
         );
       default:
