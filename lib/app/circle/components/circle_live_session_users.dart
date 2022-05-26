@@ -75,6 +75,7 @@ class CircleLiveSessionUsers extends ConsumerWidget {
                       hasTotem: activeSession.totemUser ==
                           participants[index].sessionUserId,
                       annotate: false,
+                      next: index == 0,
                     );
                   }
                   return Padding(

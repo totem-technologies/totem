@@ -60,30 +60,29 @@ class CircleParticipantVideo extends ConsumerWidget {
                 (participant.me && participant.videoMuted) ||
                 (!participant.me && participant.videoMuted))
               _renderUserImage(context, participant), */
-            if (annotate)
-              PositionedDirectional(
-                bottom: 0,
-                start: 0,
-                end: 0,
-                child: Stack(
-                  children: [
-                    _gradientLayer(context),
-                    PositionedDirectional(
-                      bottom: 0,
-                      start: 0,
-                      end: 0,
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                            left: 12, right: 12, bottom: 8),
-                        child: Text(
-                          participant.name,
-                          style: textStyles.headline5,
-                        ),
+            PositionedDirectional(
+              bottom: 0,
+              start: 0,
+              end: 0,
+              child: Stack(
+                children: [
+                  _gradientLayer(context),
+                  PositionedDirectional(
+                    bottom: 0,
+                    start: 0,
+                    end: 0,
+                    child: Padding(
+                      padding:
+                          const EdgeInsets.only(left: 12, right: 12, bottom: 8),
+                      child: Text(
+                        participant.name,
+                        style: textStyles.headline5,
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
+            ),
             if (showMe && participant.me) renderMe(context),
             if (annotate && participant.role == Role.keeper && !participant.me)
               renderKeeperLabel(context)

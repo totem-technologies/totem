@@ -17,6 +17,7 @@ class AppTextStyles extends TextTheme {
     required this.dialogContent,
     required this.dialogTitle,
     required this.hintInputLabel,
+    required this.nextTag,
   }) : super(
           bodyText1: body,
           headline1: headline1,
@@ -35,4 +36,5 @@ class AppTextStyles extends TextTheme {
   final TextStyle dialogContent;
   final TextStyle dialogTitle;
   final TextStyle hintInputLabel;
+  final TextStyle nextTag;
 }
