@@ -238,8 +238,8 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
               label: commProvider.videoMuted ? t.startVideo : t.stopVideo,
               labelColor: themeColors.reversedText,
               svgImage: commProvider.videoMuted
-                  ? 'assets/video.svg'
-                  : 'assets/video_stop.svg',
+                  ? 'assets/video_stop.svg'
+                  : 'assets/video.svg',
               onPressed: () {
                 commProvider.muteVideo(!commProvider.videoMuted);
                 debugPrint('video pressed');

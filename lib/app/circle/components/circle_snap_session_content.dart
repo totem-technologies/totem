@@ -10,7 +10,7 @@ import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
 
-final audioLevelStream = StreamProvider.autoDispose<double>((ref) {
+final audioLevelStream = StreamProvider.autoDispose<AudioLevelData>((ref) {
   final audioLevel = AudioLevel();
   return audioLevel.stream;
 });
