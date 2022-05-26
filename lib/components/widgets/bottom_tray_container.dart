@@ -46,24 +46,15 @@ class BottomTrayContainer extends StatelessWidget {
         borderRadius: BorderRadius.only(
             topLeft: Radius.circular(borderRadius),
             topRight: Radius.circular(borderRadius)),
-        child: backgroundColor == null
-            ? BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 8.0, sigmaY: 8.0),
-                child: Container(
-                  padding: padding ??
-                      const EdgeInsets.only(
-                          top: 24, bottom: 18, left: 10, right: 10),
-                  color: themeColors.trayBackground,
-                  child: child,
-                ),
-              )
-            : Container(
-                padding: padding ??
-                    const EdgeInsets.only(
-                        top: 24, bottom: 18, left: 10, right: 10),
-                color: backgroundColor,
-                child: child,
-              ),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 8.0, sigmaY: 8.0),
+          child: Container(
+            padding: padding ??
+                const EdgeInsets.only(top: 24, bottom: 18, left: 10, right: 10),
+            color: backgroundColor ?? themeColors.trayBackground,
+            child: child,
+          ),
+        ),
       ),
     );
   }

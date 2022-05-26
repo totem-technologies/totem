@@ -24,6 +24,7 @@ class CircleLiveVideoSession extends ConsumerStatefulWidget {
 
 class _CircleLiveVideoSessionState
     extends ConsumerState<CircleLiveVideoSession> {
+  static const double minSideImage = 100;
   final GlobalKey _sliderPass = GlobalKey();
   final GlobalKey _sliderReceive = GlobalKey();
   bool _myTurn = false;
@@ -122,6 +123,12 @@ class _CircleLiveVideoSessionState
                           participants: participants,
                           activeSession: activeSession,
                         ),
+                      const Align(
+                        alignment: Alignment.bottomCenter,
+                        child: CircleMutedIndicator(
+                          live: true,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -185,7 +192,8 @@ class _CircleLiveVideoSessionState
   }) {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
-        final horizontal = constraints.maxWidth - 120 > constraints.maxHeight;
+        final horizontal =
+            constraints.maxWidth - (minSideImage + 20) > constraints.maxHeight;
         if (horizontal) {
           return Row(
             children: [
@@ -193,10 +201,16 @@ class _CircleLiveVideoSessionState
               const SizedBox(
                 width: 20,
               ),
-              Expanded(
-                  flex: 1,
+              Flexible(
+                fit: FlexFit.loose,
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(
+                    minWidth: minSideImage,
+                  ),
                   child: _speakerUserView(context,
-                      participants: participants, activeSession: activeSession))
+                      participants: participants, activeSession: activeSession),
+                ),
+              ),
             ],
           );
         }
@@ -206,10 +220,13 @@ class _CircleLiveVideoSessionState
             const SizedBox(
               height: 15,
             ),
-            Expanded(
-              flex: 1,
-              child: _speakerUserView(context,
-                  participants: participants, activeSession: activeSession),
+            Flexible(
+              fit: FlexFit.loose,
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(minHeight: minSideImage),
+                child: _speakerUserView(context,
+                    participants: participants, activeSession: activeSession),
+              ),
             ),
           ],
         );

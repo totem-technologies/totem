@@ -10,6 +10,11 @@ import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
 
+final audioLevelStream = StreamProvider.autoDispose<double>((ref) {
+  final audioLevel = AudioLevel();
+  return audioLevel.stream;
+});
+
 class CircleSnapSessionContent extends ConsumerStatefulWidget {
   const CircleSnapSessionContent({
     Key? key,
@@ -43,6 +48,7 @@ class _CircleSnapSessionContentState
     final t = AppLocalizations.of(context)!;
     final commProvider = ref.watch(communicationsProvider);
     final sessionProvider = ref.watch(activeSessionProvider);
+    ref.watch(audioLevelStream);
     return GradientBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,

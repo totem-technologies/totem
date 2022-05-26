@@ -81,5 +81,11 @@ class StdAppTextStyles extends AppTextStyles {
               fontSize: 14,
               color: themeColors.secondaryText,
               fontWeight: FontWeight.w500),
+          nextTag: TextStyle(
+              fontFamily: 'Poppins',
+              fontSize: 14,
+              height: 1.5,
+              fontWeight: FontWeight.w500,
+              color: themeColors.primaryText),
         );
 }

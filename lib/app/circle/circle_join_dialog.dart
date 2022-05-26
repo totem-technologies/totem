@@ -10,8 +10,7 @@ import 'package:totem/app/circle/components/circle_device_settings_button.dart';
 import 'package:totem/components/camera/index.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
-import 'package:totem/services/communication_provider.dart';
-import 'package:totem/services/providers.dart';
+import 'package:totem/services/index.dart';
 import 'package:totem/services/utils/device_type.dart';
 import 'package:totem/theme/index.dart';
 
@@ -54,6 +53,11 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
       initializeProvider();
     });
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override

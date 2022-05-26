@@ -20,6 +20,7 @@ class CircleSessionControls extends ConsumerStatefulWidget {
 class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
   bool _more = false;
   Timer? _timer;
+  static const double _btnSpacing = 8;
 
   @override
   void dispose() {
@@ -35,20 +36,17 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
     return Stack(
       children: [
         BottomTrayContainer(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 16),
           backgroundColor:
               activeSession.state == SessionState.live ? Colors.black : null,
-          child: SafeArea(
-            top: false,
-            bottom: true,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
-              child: activeSession.state == SessionState.waiting
-                  ? waitingControls(
-                      context, ref, activeSession, role, authUser.uid)
-                  : activeSession.state == SessionState.live
-                      ? liveControls(context, ref, activeSession, role)
-                      : emptyControls(context),
-            ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+            child: activeSession.state == SessionState.waiting
+                ? waitingControls(
+                    context, ref, activeSession, role, authUser.uid)
+                : activeSession.state == SessionState.live
+                    ? liveControls(context, ref, activeSession, role)
+                    : emptyControls(context),
           ),
         ),
         Positioned(
@@ -82,7 +80,6 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
     final t = AppLocalizations.of(context)!;
     final communications = ref.watch(communicationsProvider);
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Expanded(
           flex: 1,
@@ -100,6 +97,7 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
             });
           },
         ),
+        const SizedBox(width: _btnSpacing),
         ThemedControlButton(
           label: communications.videoMuted ? t.startVideo : t.stopVideo,
           svgImage: !communications.videoMuted
@@ -114,6 +112,7 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
           },
         ),
         if (role == Role.keeper) ...[
+          const SizedBox(width: _btnSpacing),
           ThemedControlButton(
             label: t.start,
             size: 48,
@@ -128,6 +127,7 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
             },
           ),
         ],
+        const SizedBox(width: _btnSpacing),
         ThemedControlButton(
           label: t.info,
           svgImage: 'assets/info.svg',
@@ -152,7 +152,6 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
     return Column(
       children: [
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Expanded(
               flex: 1,
@@ -176,7 +175,7 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
               },
             ),
             const SizedBox(
-              width: 20,
+              width: _btnSpacing,
             ),
             ThemedControlButton(
               label: communications.videoMuted ? t.startVideo : t.stopVideo,
@@ -194,7 +193,7 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
             ),
             if (role == Role.keeper) ...[
               const SizedBox(
-                width: 20,
+                width: _btnSpacing,
               ),
               ThemedControlButton(
                 label: !_more ? t.more : t.less,
@@ -202,6 +201,17 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
                 svgImage: !_more ? 'assets/more.svg' : 'assets/less.svg',
                 onPressed: () {
                   setState(() => _more = !_more);
+                },
+              ),
+            ],
+            if (role != Role.keeper) ...[
+              const SizedBox(width: _btnSpacing),
+              ThemedControlButton(
+                label: t.leaveSession,
+                labelColor: themeColors.reversedText,
+                svgImage: 'assets/leave.svg',
+                onPressed: () {
+                  _endSessionPrompt(context, ref, role);
                 },
               ),
             ],
@@ -214,7 +224,6 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
         if (role == Role.keeper && _more) ...[
           const SizedBox(height: 24),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Expanded(
                 flex: 1,
@@ -229,7 +238,7 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
                 },
               ),
               const SizedBox(
-                width: 20,
+                width: _btnSpacing,
               ),*/
               ThemedControlButton(
                 label: t.next,
@@ -240,14 +249,14 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
                 },
               ),
               const SizedBox(
-                width: 20,
+                width: _btnSpacing,
               ),
               ThemedControlButton(
                 label: t.endSession,
                 labelColor: themeColors.reversedText,
                 svgImage: 'assets/leave.svg',
                 onPressed: () {
-                  _endSessionPrompt(context, ref);
+                  _endSessionPrompt(context, ref, role);
                 },
               ),
               Expanded(
@@ -276,16 +285,20 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
     await CircleSessionInfoPage.showDialog(context);
   }
 
-  Future<void> _endSessionPrompt(BuildContext context, WidgetRef ref) async {
+  Future<void> _endSessionPrompt(
+      BuildContext context, WidgetRef ref, Role role) async {
     FocusScope.of(context).unfocus();
     final t = AppLocalizations.of(context)!;
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
-      title: Text(t.endSessionPrompt),
-      content: Text(t.endSessionPromptMessage),
+      title:
+          Text(role == Role.keeper ? t.endSessionPrompt : t.leaveSessionPrompt),
+      content: Text(role == Role.keeper
+          ? t.endSessionPromptMessage
+          : t.leaveSessionPromptMessage),
       actions: [
         TextButton(
-          child: Text(t.endSession),
+          child: Text(role == Role.keeper ? t.endSession : t.leaveSession),
           onPressed: () {
             Navigator.of(context).pop(true);
           },
@@ -308,8 +321,13 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
     );
     if (result) {
       final commProvider = ref.read(communicationsProvider);
-      await commProvider.endSession();
-//       Navigator.of(context).pop();
+      if (role == Role.keeper) {
+        await commProvider.endSession();
+      } else {
+        await commProvider.leaveSession();
+        if (!mounted) return;
+        Navigator.of(context).pop();
+      }
     }
   }
 
