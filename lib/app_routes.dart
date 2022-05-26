@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'app/index.dart';
 import 'components/index.dart';
 import 'models/index.dart';
+import 'dev/dev_page.dart';
 
 class AppRoutes {
   static const String loginPhone = '/login/phone';
@@ -13,6 +14,7 @@ class AppRoutes {
   static const String appSettings = '/settings';
   static const String userProfile = '/profile';
   static const String circle = '/circle';
+  static const String dev = '/dev';
 
   static Route<dynamic>? generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -69,6 +71,11 @@ class AppRoutes {
               settings: settings);
         }
         break;
+      case dev:
+        return MaterialPageRoute(
+          builder: (_) => DevPage(),
+          settings: settings,
+        );
       default:
         return null;
     }
