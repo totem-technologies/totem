@@ -4,8 +4,12 @@ import 'package:totem/theme/index.dart';
 
 import '../components/widgets/content_divider.dart';
 import 'layouts.dart';
+import 'buttons.dart';
 
-final widgetList = <String, Function>{"CircleLayout": CircleLayout.new};
+final widgetList = <String, Function>{
+  "Circle Layout": CircleLayout.new,
+  "Buttons": ButtonsScreen.new
+};
 
 class DevPage extends StatefulWidget {
   const DevPage({Key? key}) : super(key: key);

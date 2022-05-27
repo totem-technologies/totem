@@ -6,7 +6,6 @@ class ThemedRaisedButton extends StatelessWidget {
   const ThemedRaisedButton({
     Key? key,
     this.child,
-    this.color,
     this.disabledColor,
     this.width,
     this.height = 60.0,
@@ -22,7 +21,6 @@ class ThemedRaisedButton extends StatelessWidget {
     this.horzPadding = 15,
   }) : super(key: key);
   final Widget? child;
-  final Color? color;
   final Color? disabledColor;
   final double height;
   final double? width;
@@ -53,42 +51,50 @@ class ThemedRaisedButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeColors = Theme.of(context).themeColors;
     final btnStyle = ButtonStyle(
-      shape: MaterialStateProperty.resolveWith((states) => RoundedRectangleBorder(
-        side: side != null ? side! : BorderSide.none,
-        borderRadius: BorderRadius.all(
-          Radius.circular(borderRadius),
-        ),
-      )),
+      shape:
+          MaterialStateProperty.resolveWith((states) => RoundedRectangleBorder(
+                side: side != null ? side! : BorderSide.none,
+                borderRadius: BorderRadius.all(
+                  Radius.circular(borderRadius),
+                ),
+              )),
       shadowColor: MaterialStateProperty.resolveWith<Color>(
-            (Set<MaterialState> states) => themeColors.shadow,
+        (Set<MaterialState> states) => themeColors.shadow,
       ),
       elevation: MaterialStateProperty.resolveWith<double>(
-            (states) => states.contains(MaterialState.disabled) ? 0 : elevation
-      ),
+          (states) => states.contains(MaterialState.disabled) ? 0 : elevation),
       padding: MaterialStateProperty.resolveWith((states) => padding),
       foregroundColor: MaterialStateProperty.resolveWith<Color>(
         // text color
-            (Set<MaterialState> states) => states.contains(MaterialState.disabled)
-            ? color ?? themeColors.primaryText.withAlpha(102)
-            : color ?? themeColors.primaryText,
+        (Set<MaterialState> states) => states.contains(MaterialState.disabled)
+            ? themeColors.primaryText.withAlpha(102)
+            : themeColors.primaryText,
       ),
       backgroundColor: MaterialStateProperty.resolveWith<Color>(
         // background color    this is color:
-            (Set<MaterialState> states) =>
-        states.contains(MaterialState.disabled) ? color ?? themeColors.primaryButtonBackground.withAlpha(102) : color ?? themeColors.primaryButtonBackground,
+        (Set<MaterialState> states) => states.contains(MaterialState.disabled)
+            ? themeColors.primaryButtonBackground.withAlpha(102)
+            : themeColors.primaryButtonBackground,
       ),
     );
     return SizedBox(
-      height: height,
-      width: width,
-      child: ElevatedButton(
+        height: height,
+        width: width,
+        child: ElevatedButton(
           style: btnStyle,
           onPressed: onPressed,
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: horzPadding),
-            child: busy ? SizedBox(width: 35, height: 35, child:_busySpinner(context)) : child != null ? child! : AutoSizeText(label ?? "", maxLines: maxLines, textAlign: textAlign,),
+            child: busy
+                ? SizedBox(width: 35, height: 35, child: _busySpinner(context))
+                : child != null
+                    ? child!
+                    : AutoSizeText(
+                        label ?? "",
+                        maxLines: maxLines,
+                        textAlign: textAlign,
+                      ),
           ),
-        )
-    );
+        ));
   }
 }
