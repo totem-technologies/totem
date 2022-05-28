@@ -7,7 +7,7 @@ import 'layouts.dart';
 import 'buttons.dart';
 
 final widgetList = <String, Function>{
-  "Circle Layout": CircleLayout.new,
+  "Circle User Layout": CircleUserLayout.new,
   "Buttons": ButtonsScreen.new
 };
 
@@ -25,7 +25,7 @@ class _DevPageState extends State<DevPage> {
   Widget build(BuildContext context) {
     final themeColors = Theme.of(context).themeColors;
     Widget widget = WidgetList(changeWidget);
-    if (displayWidget != null) {
+    if (displayWidget != null && widgetList.containsKey(displayWidget)) {
       widget =
           WidgetContainer(child: widgetList[displayWidget!]!(), reset: reset);
     }

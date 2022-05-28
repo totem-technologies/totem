@@ -9,9 +9,6 @@ import 'package:totem/theme/index.dart';
 
 class CircleLiveSessionUsers extends ConsumerWidget {
   const CircleLiveSessionUsers({Key? key}) : super(key: key);
-  static const double maxDimension = 380;
-  static const double minDimension = 135;
-  static const double spacing = 0;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -20,8 +17,34 @@ class CircleLiveSessionUsers extends ConsumerWidget {
     final participants = activeSession.speakOrderParticipants
         .where((element) => element.uid != totemId)
         .toList();
-    if (participants.isNotEmpty) {
-      return CircleNetworkConnectivityLayer(
+    return CircleNetworkConnectivityLayer(
+        child: CircleLiveSessionUsersLayout(
+            count: participants.length,
+            generate: (i, dimenstion) => CircleSessionParticipant(
+                  dimension: dimenstion,
+                  participant: participants[i],
+                  hasTotem:
+                      activeSession.totemUser == participants[i].sessionUserId,
+                  annotate: false,
+                  next: i == 0,
+                )));
+  }
+}
+
+class CircleLiveSessionUsersLayout extends StatelessWidget {
+  const CircleLiveSessionUsersLayout(
+      {Key? key, required this.generate, required this.count})
+      : super(key: key);
+  static const double maxDimension = 380;
+  static const double minDimension = 135;
+  static const double spacing = 0;
+  final int count;
+  final Widget Function(int, double) generate;
+
+  @override
+  Widget build(BuildContext context) {
+    if (count != 0) {
+      return Center(
         child: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
             final width = constraints.maxWidth;
@@ -41,7 +64,7 @@ class CircleLiveSessionUsers extends ConsumerWidget {
             }
             final maxedSizeCount = max(1, (minRows * minColumns));
             final minSizeCount = max(1, (maxRows * maxColumns));
-            int participantCount = participants.length;
+            int participantCount = count;
             if (participantCount > maxedSizeCount &&
                 participantCount < minSizeCount) {
               int h0 = (sqrt((width * height) / participantCount)).ceil();
@@ -67,26 +90,10 @@ class CircleLiveSessionUsers extends ConsumerWidget {
                 runSpacing: spacing,
                 spacing: spacing,
                 alignment: WrapAlignment.start,
-                children: List.generate(participantCount, (index) {
-                  if (index < participants.length) {
-                    return CircleSessionParticipant(
-                      dimension: dimension,
-                      participant: participants[index],
-                      hasTotem: activeSession.totemUser ==
-                          participants[index].sessionUserId,
-                      annotate: false,
-                      next: index == 0,
-                    );
-                  }
-                  return Padding(
-                    padding: const EdgeInsets.all(2),
-                    child: Container(
-                      width: dimension - 4,
-                      height: dimension - 4,
-                      color: Colors.red,
-                    ),
-                  );
-                }),
+                children: List<Widget>.generate(
+                  participantCount,
+                  (index) => generate(index, dimension),
+                ),
               ),
             );
           },
