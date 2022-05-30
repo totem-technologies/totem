@@ -33,7 +33,6 @@ class SnapCirclesRejoinableState extends ConsumerState<SnapCirclesRejoinable> {
 
   @override
   Widget build(BuildContext context) {
-    final bottomPadding = MediaQuery.of(context).padding.bottom + 100;
     return StreamBuilder<List<SnapCircle>>(
         stream: _circles,
         builder: (context, snapshot) {
