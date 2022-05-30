@@ -6,6 +6,11 @@ import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
 
+final rejoinableCircles = StreamProvider.autoDispose<List<SnapCircle>>((ref) {
+  final repo = ref.read(repositoryProvider);
+  return repo.rejoinableSnapCircles();
+});
+
 class SnapCirclesRejoinable extends ConsumerStatefulWidget {
   const SnapCirclesRejoinable({Key? key, this.topPadding = 140})
       : super(key: key);
@@ -16,75 +21,56 @@ class SnapCirclesRejoinable extends ConsumerStatefulWidget {
 }
 
 class SnapCirclesRejoinableState extends ConsumerState<SnapCirclesRejoinable> {
-  late Stream<List<SnapCircle>> _circles;
-
-  @override
-  void initState() {
-    super.initState();
-    _updateCircleQuery();
-  }
-
-  void _updateCircleQuery() {
-    var repo = ref.read(repositoryProvider);
-    setState(() {
-      _circles = repo.rejoinableSnapCircles();
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<List<SnapCircle>>(
-        stream: _circles,
-        builder: (context, snapshot) {
-          if (snapshot.hasError ||
-              snapshot.connectionState == ConnectionState.waiting) {
+    return ref.watch(rejoinableCircles).when(
+          data: (List<SnapCircle> data) {
+            if (data.isNotEmpty) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: Theme.of(context).pageHorizontalPadding),
+                    child: Text(
+                      "Rejoin circle",
+                      style: Theme.of(context).textStyles.headline3,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  SnapCircleItem(
+                    circle: data.first,
+                    onPressed: (circle) => _handleShowCircle(context, circle),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                        vertical: 8.0,
+                        horizontal: Theme.of(context).pageHorizontalPadding),
+                    child: Divider(
+                      height: 1,
+                      thickness: 1,
+                      color: Theme.of(context).themeColors.divider,
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                        vertical: 8.0,
+                        horizontal: Theme.of(context).pageHorizontalPadding),
+                    child: Text(
+                      "Other circles",
+                      style: Theme.of(context).textStyles.headline3,
+                    ),
+                  ),
+                ],
+              );
+            }
             return Container();
-          }
-          final list = snapshot.data ?? <SnapCircle>[];
-
-          if (list.isNotEmpty) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: Theme.of(context).pageHorizontalPadding),
-                  child: Text(
-                    "Rejoin circle",
-                    style: Theme.of(context).textStyles.headline3,
-                  ),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                SnapCircleItem(
-                  circle: list[0],
-                  onPressed: (circle) => _handleShowCircle(context, circle),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                      vertical: 8.0,
-                      horizontal: Theme.of(context).pageHorizontalPadding),
-                  child: Divider(
-                    height: 1,
-                    thickness: 1,
-                    color: Theme.of(context).themeColors.divider,
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                      vertical: 8.0,
-                      horizontal: Theme.of(context).pageHorizontalPadding),
-                  child: Text(
-                    "Other circles",
-                    style: Theme.of(context).textStyles.headline3,
-                  ),
-                ),
-              ],
-            );
-          }
-          return Container();
-        });
+          },
+          loading: () => Container(),
+          error: (Object error, StackTrace? stackTrace) => Container(),
+        );
   }
 
   Future<void> _handleShowCircle(
@@ -97,19 +83,5 @@ class SnapCirclesRejoinableState extends ConsumerState<SnapCirclesRejoinable> {
     Navigator.of(context).pushNamed(AppRoutes.circle, arguments: {
       'session': circle.snapSession,
     });
-/*REMOVE    var repo = ref.read(repositoryProvider);
-    Map<String, bool>? state =
-        await CircleJoinDialog.showDialog(context, circle: circle);
-    if (state != null) {
-      await repo.createActiveSession(
-        circle: circle,
-      );
-      Future.delayed(const Duration(milliseconds: 300), () async {
-        Navigator.of(context).pushNamed(AppRoutes.circle, arguments: {
-          'session': circle.snapSession,
-          'state': state,
-        });
-      });
-    } */
   }
 }
