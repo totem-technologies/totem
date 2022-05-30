@@ -72,6 +72,7 @@ class FirebaseCirclesProvider extends CirclesProvider {
         .where('state', isEqualTo: SessionState.live.name)
         .where('circleParticipants', arrayContains: uid)
         .orderBy('startedDate', descending: true)
+        .limit(1)
         .snapshots()
         .transform(
       StreamTransformer<QuerySnapshot<Map<String, dynamic>>,
