@@ -23,8 +23,14 @@ class HomePage extends StatelessWidget {
               bottom: false,
               child: Column(
                 children: const [
+                  SizedBox(
+                    height: 140,
+                  ),
+                  SnapCirclesRejoinable(),
                   Expanded(
-                    child: SnapCirclesList(),
+                    child: SnapCirclesList(
+                      topPadding: 0,
+                    ),
                   ),
                 ],
               ),

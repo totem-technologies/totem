@@ -662,7 +662,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   void _updateCommunicationFromSession() {
     // check the session state
     ActiveSession? session = sessionProvider.activeSession;
-    if (session != null) {
+    if (session != null && _session != null) {
       if (session.state == SessionState.live && !session.userStatus) {
         // have to manage mute state based on changes to the state
         bool started = (_lastState == SessionState.starting &&

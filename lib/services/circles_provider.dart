@@ -3,6 +3,7 @@ import 'package:totem/models/index.dart';
 abstract class CirclesProvider {
   Stream<List<ScheduledCircle>> scheduledCircles(String? uid);
   Stream<List<SnapCircle>> snapCircles();
+  Stream<List<SnapCircle>> rejoinableSnapCircles(String uid);
   Future<ScheduledCircle?> createScheduledCircle({
     required String name,
     required int numSessions,

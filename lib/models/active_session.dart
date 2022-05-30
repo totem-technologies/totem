@@ -165,12 +165,13 @@ class ActiveSession extends ChangeNotifier {
     }
   }
 
-  void updateFromData(Map<String, dynamic> data) {
+  Map<String, dynamic>? updateFromData(Map<String, dynamic> data) {
     if (data["totemUser"] != null) {
       _totemUser = data["totemUser"];
     } else {
       _totemUser = null;
     }
+    Map<String, dynamic>? request;
     totemReceived = data["totemReceived"] ?? false;
     locked = data["locked"] ?? true;
     if (data['lastChange'] != null) {
@@ -209,7 +210,20 @@ class ActiveSession extends ChangeNotifier {
       }
     }
     _speakingOrder = List<String>.from(data["speakingOrder"] ?? []);
+    if (totemUser != null && state == SessionState.live) {
+      // ensure the totemUser is still valid... if not patch
+      if (!_speakingOrder.contains(totemUser) && _speakingOrder.isNotEmpty) {
+        //need to set a new totemUser
+        _totemUser = _speakingOrder.first;
+        request = _toJson(
+          nextTotemUser: _totemUser,
+          received: false,
+          sessionChange: ActiveSessionChange.totemChange,
+        );
+      }
+    }
     notifyListeners();
+    return request;
   }
 
   bool userJoined({required String sessionUserId, bool pending = false}) {

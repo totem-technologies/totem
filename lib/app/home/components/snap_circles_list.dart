@@ -9,6 +9,11 @@ import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
 
+final snapCircles = StreamProvider.autoDispose<List<SnapCircle>>((ref) {
+  final repo = ref.read(repositoryProvider);
+  return repo.snapCircles();
+});
+
 class SnapCirclesList extends ConsumerStatefulWidget {
   const SnapCirclesList({Key? key, this.topPadding = 140}) : super(key: key);
   final double topPadding;
@@ -18,57 +23,38 @@ class SnapCirclesList extends ConsumerStatefulWidget {
 }
 
 class SnapCirclesListState extends ConsumerState<SnapCirclesList> {
-  late Stream<List<SnapCircle>> _circles;
-
-  @override
-  void initState() {
-    super.initState();
-    _updateCircleQuery();
-  }
-
-  void _updateCircleQuery() {
-    var repo = ref.read(repositoryProvider);
-    setState(() {
-      _circles = repo.snapCircles();
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     final bottomPadding = MediaQuery.of(context).padding.bottom + 100;
-    return StreamBuilder<List<SnapCircle>>(
-        stream: _circles,
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return Center(
-              child: Text(snapshot.error.toString()),
-            );
-          }
-
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: Padding(
-                padding: EdgeInsets.only(bottom: bottomPadding),
-                child: const BusyIndicator(),
-              ),
-            );
-          }
-
-          final list = snapshot.data ?? <SnapCircle>[];
-
-          if (list.isNotEmpty) {
-            return ListView.builder(
-              padding: EdgeInsets.only(
-                  bottom: bottomPadding, top: widget.topPadding),
-              itemCount: list.length,
-              itemBuilder: (c, i) => SnapCircleItem(
-                circle: list[i],
-                onPressed: (circle) => _handleShowCircle(context, circle),
-              ),
-            );
-          }
-          return _noCircles(context, bottomPadding);
-        });
+    return ref.watch(snapCircles).when(
+      data: (List<SnapCircle> list) {
+        if (list.isNotEmpty) {
+          return ListView.builder(
+            padding:
+                EdgeInsets.only(bottom: bottomPadding, top: widget.topPadding),
+            itemCount: list.length,
+            itemBuilder: (c, i) => SnapCircleItem(
+              circle: list[i],
+              onPressed: (circle) => _handleShowCircle(context, circle),
+            ),
+          );
+        }
+        return _noCircles(context, bottomPadding);
+      },
+      loading: () {
+        return Center(
+          child: Padding(
+            padding: EdgeInsets.only(bottom: bottomPadding),
+            child: const BusyIndicator(),
+          ),
+        );
+      },
+      error: (Object error, StackTrace? stackTrace) {
+        return Center(
+          child: Text(error.toString()),
+        );
+      },
+    );
   }
 
   Widget _noCircles(BuildContext context, double bottomPadding) {

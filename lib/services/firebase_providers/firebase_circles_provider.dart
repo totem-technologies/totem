@@ -66,6 +66,26 @@ class FirebaseCirclesProvider extends CirclesProvider {
   }
 
   @override
+  Stream<List<SnapCircle>> rejoinableSnapCircles(String uid) {
+    final collection = FirebaseFirestore.instance.collection(Paths.snapCircles);
+    return collection
+        .where('state', isEqualTo: SessionState.live.name)
+        .where('circleParticipants', arrayContains: uid)
+        .orderBy('startedDate', descending: true)
+        .limit(1)
+        .snapshots()
+        .transform(
+      StreamTransformer<QuerySnapshot<Map<String, dynamic>>,
+          List<SnapCircle>>.fromHandlers(
+        handleData: (QuerySnapshot<Map<String, dynamic>> querySnapshot,
+            EventSink<List<SnapCircle>> sink) {
+          _mapSnapCircleUserReference(querySnapshot, sink);
+        },
+      ),
+    );
+  }
+
+  @override
   Future<ScheduledCircle?> createScheduledCircle({
     required String name,
     required int numSessions,

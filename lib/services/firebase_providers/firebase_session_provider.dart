@@ -386,7 +386,12 @@ class FirebaseSessionProvider extends SessionProvider {
     if (sessionSnapshot.exists) {
       final Map<String, dynamic> sessionData =
           sessionSnapshot.data()! as Map<String, dynamic>;
-      _activeSession!.updateFromData(sessionData);
+      Map<String, dynamic>? requestedUpdate =
+          _activeSession!.updateFromData(sessionData);
+      if (requestedUpdate != null) {
+        // have to update the user
+        updateActiveSession(requestedUpdate);
+      }
       notifyListeners();
     }
   }
@@ -488,6 +493,7 @@ class FirebaseSessionProvider extends SessionProvider {
         }
       }
       await ref.update({"participants": participants});
+      return true;
     }
     return false;
   }

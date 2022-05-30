@@ -24,6 +24,13 @@
     "circles": "Circles",
     "circleInProgress": "Circle in progress",
     "circleName": "Circle Name",
+    "circleRejoinWaiting": "Waiting for keeper to let you into the session in progress",
+    "circleRejoinRequest": "{{name}} is requesting to rejoin the circle",
+    "@circleRejoinRequest": {
+        "placeholders": {
+            "name": {}
+        }
+    },
     "circleReturnToApp": "Tap to return to Totem",
     "circleStarting": "Circle is starting",
     "circleWeeksSession": "This Weeks Session",
@@ -107,6 +114,7 @@
     "numberOfSessions": "Number of Sessions",
     "ooh": "Ooh!",
     "ok": "OK",
+    "otherCircles": "Other circles",
     "openFloor": "Open Floor",
     "participantCount": "{count, plural, =0{No participants} =1{1 participant} other{{count} participants}}",
     "@participantCount": {
@@ -118,6 +126,7 @@
     "phoneNumber": "Phone Number",
     "profilePicture": "Profile Picture",
     "receive": "Receive",
+    "rejoinCircle": "Rejoin circle in progress",
     "retake": "Retake",
     "retryPhone": "Didn’t receive a code?\nEnter a new number",
     "retrySignin": "Retry",
