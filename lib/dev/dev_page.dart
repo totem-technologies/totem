@@ -4,8 +4,12 @@ import 'package:totem/theme/index.dart';
 
 import '../components/widgets/content_divider.dart';
 import 'layouts.dart';
+import 'buttons.dart';
 
-final widgetList = <String, Function>{"CircleLayout": CircleLayout.new};
+final widgetList = <String, Function>{
+  "Circle User Layout": CircleUserLayout.new,
+  "Buttons": ButtonsScreen.new
+};
 
 class DevPage extends StatefulWidget {
   const DevPage({Key? key}) : super(key: key);
@@ -21,7 +25,7 @@ class _DevPageState extends State<DevPage> {
   Widget build(BuildContext context) {
     final themeColors = Theme.of(context).themeColors;
     Widget widget = WidgetList(changeWidget);
-    if (displayWidget != null) {
+    if (displayWidget != null && widgetList.containsKey(displayWidget)) {
       widget =
           WidgetContainer(child: widgetList[displayWidget!]!(), reset: reset);
     }
