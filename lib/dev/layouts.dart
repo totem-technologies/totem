@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../app/circle/components/layouts.dart';
 
 Widget getParticipant(int i, double d) {
