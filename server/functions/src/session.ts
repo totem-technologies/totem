@@ -67,7 +67,7 @@ export const startSnapSession = functions.https.onCall(async ({circleId}, {auth}
     if (circleSnapshot.exists) {
       const {state} = circleSnapshot.data() ?? {};
       if (state === SessionState.starting) {
-        let circleParticipants = {};
+        let sessionParticipants = {};
 
         // start the session
         await admin.firestore().runTransaction(async (transaction) => {
@@ -82,13 +82,24 @@ export const startSnapSession = functions.https.onCall(async ({circleId}, {auth}
           activeSession["userStatus"] = false;
           // update the active session
           transaction.update(activeRef, activeSession);
-          circleParticipants = participants;
+          sessionParticipants = participants;
         });
-
+        // store the participants, but store them keyed by uid so it
+        // can be looked up in case of need to rejoin
+        let keeper = "";
+        const circleParticipants: string[] = [];
+        Object.entries(sessionParticipants).forEach(([key, value]) => {
+          const uid: string = <string>(<Record<string, unknown>>value).uid;
+          const role: string = <string>(<Record<string, unknown>>value).role;
+          if (role === "keeper") {
+            keeper = uid;
+          }
+          circleParticipants.push(uid);
+        });
         // cache the participants at the circle level as an archive of the users that
         // are part of the started session
         const startedDate = admin.firestore.Timestamp.fromDate(new Date());
-        ref.update({state: SessionState.live, startedDate, circleParticipants});
+        ref.update({state: SessionState.live, startedDate, circleParticipants, keeper});
         return true;
       }
     }
