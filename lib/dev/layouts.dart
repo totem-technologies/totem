@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../app/circle/components/circle_live_session_users.dart';
+import '../app/circle/components/layouts.dart';
 
 Widget getParticipant(int i, double d) {
   return Container(
@@ -30,7 +30,7 @@ class _CircleUserLayoutState extends State<CircleUserLayout> {
     return Stack(
       children: [
         Center(
-          child: CircleLiveSessionUsersLayout(
+          child: ParticipantListLayout(
               generate: getParticipant, count: participantCount),
         ),
         Container(
