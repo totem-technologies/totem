@@ -20,7 +20,7 @@ class CircleSessionControls extends ConsumerStatefulWidget {
 class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
   bool _more = false;
   Timer? _timer;
-  static const double _btnSpacing = 8;
+  static const double _btnSpacing = 6;
 
   @override
   void dispose() {
@@ -257,6 +257,16 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
                 svgImage: 'assets/leave.svg',
                 onPressed: () {
                   _endSessionPrompt(context, ref, role);
+                },
+              ),
+              const SizedBox(width: _btnSpacing),
+              ThemedControlButton(
+                label: t.info,
+                labelColor: themeColors.reversedText,
+                svgImage: 'assets/info.svg',
+                onPressed: () {
+                  debugPrint('info pressed');
+                  _showCircleInfo(context);
                 },
               ),
               Expanded(
