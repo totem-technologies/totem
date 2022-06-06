@@ -16,6 +16,7 @@ class CircleLiveSessionUsers extends ConsumerWidget {
         .toList();
     return CircleNetworkConnectivityLayer(
         child: ParticipantListLayout(
+            maxDimension: 300,
             count: participants.length,
             generate: (i, dimenstion) => CircleSessionParticipant(
                   dimension: dimenstion,
