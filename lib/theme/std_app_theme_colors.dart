@@ -63,5 +63,6 @@ class StdAppThemeColors extends AppThemeColors {
           containerBackground: StdThemePalette.offWhite2,
           titleBarGradient: StdThemePalette.blackGradient,
           cameraBorder: StdThemePalette.grey,
+          contentDivider: StdThemePalette.grey,
         );
 }

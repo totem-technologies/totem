@@ -6,14 +6,16 @@ import 'package:totem/services/utils/device_type.dart';
 import 'package:totem/theme/index.dart';
 
 class ParticipantListLayout extends StatelessWidget {
-  const ParticipantListLayout(
-      {Key? key,
-      required this.generate,
-      required this.count,
-      this.maxDimension = 600})
-      : super(key: key);
+  const ParticipantListLayout({
+    Key? key,
+    required this.generate,
+    required this.count,
+    this.maxAllowedDimension = 2,
+    this.maxDimension = 150,
+  }) : super(key: key);
   final double maxDimension;
-  static const double minDimension = 135;
+  final int maxAllowedDimension;
+  static const double minDimension = 100;
   static const double spacing = 0;
   final int count;
   final Widget Function(int, double) generate;
@@ -23,51 +25,64 @@ class ParticipantListLayout extends StatelessWidget {
     if (count != 0) {
       return LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
-          final width = constraints.maxWidth;
-          final height = constraints.maxHeight;
-          final minColumns = (width / (maxDimension)).floor();
-          final maxColumns = (width / (minDimension)).floor();
-          int minRows =
-              (height / (maxDimension + (!DeviceType.isPhone() ? spacing : 0)))
-                  .floor();
-          int maxRows =
-              (height / (minDimension + (!DeviceType.isPhone() ? spacing : 0)))
-                  .floor();
-          double dimension = min(min(height, width), maxDimension);
-          if (minRows == 0 || maxRows == 0) {
-            minRows = maxRows = 1;
-            dimension = max(minDimension, min(height, maxDimension));
-          }
-          final maxedSizeCount = max(1, (minRows * minColumns));
-          final minSizeCount = max(1, (maxRows * maxColumns));
-          int participantCount = count;
-          if (participantCount > maxedSizeCount &&
-              participantCount < minSizeCount) {
-            int h0 = (sqrt((width * height) / participantCount)).ceil();
-            int value = (width / h0).floor() * (height / h0).floor();
-            while (participantCount > value) {
-              h0--;
-              value = (width / h0).floor() * (height / h0).floor();
-            }
-            if ((width / h0).floor() == 1) {
-              // use min of 2
-              int cols = min(participantCount, maxColumns);
-              dimension = min(dimension, (width - spacing * (cols - 1)) / cols);
+          bool horizontal = constraints.maxWidth >= constraints.maxHeight;
+          double width = horizontal
+              ? (maxAllowedDimension * minDimension)
+              : constraints.maxWidth;
+          double height = horizontal
+              ? constraints.maxHeight
+              : (maxAllowedDimension * minDimension);
+          int maxColumns = 1;
+          int maxRows = 1;
+          int columns = 1;
+          int rows = 1;
+          double dimension = minDimension;
+          if (horizontal) {
+            // calculate the number based on the height
+            maxRows = (height /
+                    (minDimension + (!DeviceType.isPhone() ? spacing : 0)))
+                .floor();
+            maxColumns = maxAllowedDimension;
+            int scaledTotal = maxColumns * maxRows;
+            if (count <= scaledTotal) {
+              dimension = min(
+                  height / (count / maxAllowedDimension).ceilToDouble(),
+                  maxDimension);
+              columns = (count / (height / dimension)).ceil();
             } else {
-              dimension = min(dimension, h0.toDouble());
+              columns = maxAllowedDimension;
             }
-          } else if (participantCount >= minSizeCount) {
-            dimension = min(
-                dimension, (width - spacing * (maxColumns - 1)) / maxColumns);
+            width = (columns * dimension).ceilToDouble();
+          } else {
+            // calculate the number base on the width
+            // calculate the number based on the height
+            maxColumns =
+                (width / (minDimension + (!DeviceType.isPhone() ? spacing : 0)))
+                    .floor();
+            maxRows = maxAllowedDimension;
+            int scaledTotal = maxColumns * maxRows;
+            if (count <= scaledTotal) {
+              dimension = min(
+                  width / (count / maxAllowedDimension).ceilToDouble(),
+                  maxDimension);
+              rows = (count / (width / dimension)).ceil();
+            } else {
+              rows = maxAllowedDimension;
+            }
+            height = (rows * dimension).ceilToDouble();
           }
-          return SingleChildScrollView(
-            child: Wrap(
-              runSpacing: spacing,
-              spacing: spacing,
-              alignment: WrapAlignment.start,
-              children: List<Widget>.generate(
-                participantCount,
-                (index) => generate(index, dimension),
+          return SizedBox(
+            height: height,
+            width: width,
+            child: SingleChildScrollView(
+              child: Wrap(
+                runSpacing: spacing,
+                spacing: spacing,
+                alignment: WrapAlignment.start,
+                children: List<Widget>.generate(
+                  count,
+                  (index) => generate(index, dimension),
+                ),
               ),
             ),
           );

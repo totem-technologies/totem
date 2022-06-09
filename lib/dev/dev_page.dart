@@ -3,11 +3,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:totem/theme/index.dart';
 
 import '../components/widgets/content_divider.dart';
-import 'layouts.dart';
 import 'buttons.dart';
+import 'layouts.dart';
 
 final widgetList = <String, Function>{
   "Circle User Layout": CircleUserLayout.new,
+  "Listen Live Layout": ListenLiveLayoutTest.new,
   "Buttons": ButtonsScreen.new
 };
 
