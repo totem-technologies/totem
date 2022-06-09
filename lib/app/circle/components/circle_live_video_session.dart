@@ -24,7 +24,6 @@ class CircleLiveVideoSession extends ConsumerStatefulWidget {
 
 class _CircleLiveVideoSessionState
     extends ConsumerState<CircleLiveVideoSession> {
-  static const double minSideImage = 100;
   final GlobalKey _sliderPass = GlobalKey();
   final GlobalKey _sliderReceive = GlobalKey();
   bool _myTurn = false;
@@ -102,11 +101,13 @@ class _CircleLiveVideoSessionState
                                             activeSession: activeSession,
                                             participants: participants,
                                           )
-                                        : _listeningView(
-                                            context,
-                                            activeSession: activeSession,
-                                            participants: participants,
-                                          ))
+                                        : ListenerUserLayout(
+                                            speaker: _speakerVideoView(
+                                                context, activeSession),
+                                            userList:
+                                                const CircleLiveSessionUsers(),
+                                          ),
+                                  )
                                 : Center(
                                     child: Text(
                                       t.noParticipantsActiveSession,
@@ -114,6 +115,9 @@ class _CircleLiveVideoSessionState
                                       textAlign: TextAlign.center,
                                     ),
                                   ),
+                          ),
+                          const SizedBox(
+                            height: 10,
                           ),
                         ],
                       ),
@@ -183,55 +187,6 @@ class _CircleLiveVideoSessionState
       );
     }
     return Container();
-  }
-
-  Widget _listeningView(
-    BuildContext context, {
-    required ActiveSession activeSession,
-    required List<SessionParticipant> participants,
-  }) {
-    return LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints constraints) {
-        final horizontal =
-            constraints.maxWidth - (minSideImage + 20) > constraints.maxHeight;
-        if (horizontal) {
-          return Row(
-            children: [
-              _speakerVideoView(context, activeSession),
-              const SizedBox(
-                width: 20,
-              ),
-              Flexible(
-                fit: FlexFit.loose,
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(
-                    minWidth: minSideImage,
-                  ),
-                  child: _speakerUserView(context,
-                      participants: participants, activeSession: activeSession),
-                ),
-              ),
-            ],
-          );
-        }
-        return Column(
-          children: [
-            _speakerVideoView(context, activeSession),
-            const SizedBox(
-              height: 15,
-            ),
-            Flexible(
-              fit: FlexFit.loose,
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(minHeight: minSideImage),
-                child: _speakerUserView(context,
-                    participants: participants, activeSession: activeSession),
-              ),
-            ),
-          ],
-        );
-      },
-    );
   }
 
   Widget _speakerUserView(

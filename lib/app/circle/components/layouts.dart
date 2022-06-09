@@ -6,14 +6,17 @@ import 'package:totem/services/utils/device_type.dart';
 import 'package:totem/theme/index.dart';
 
 class ParticipantListLayout extends StatelessWidget {
-  const ParticipantListLayout(
-      {Key? key,
-      required this.generate,
-      required this.count,
-      this.maxDimension = 600})
-      : super(key: key);
-  final double maxDimension;
-  static const double minDimension = 135;
+  const ParticipantListLayout({
+    Key? key,
+    required this.generate,
+    required this.count,
+    this.maxAllowedDimension = 2,
+    this.maxChildSize = 150,
+    this.minChildSize = 100,
+  }) : super(key: key);
+  final double maxChildSize;
+  final double minChildSize;
+  final int maxAllowedDimension;
   static const double spacing = 0;
   final int count;
   final Widget Function(int, double) generate;
@@ -23,51 +26,148 @@ class ParticipantListLayout extends StatelessWidget {
     if (count != 0) {
       return LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
-          final width = constraints.maxWidth;
-          final height = constraints.maxHeight;
-          final minColumns = (width / (maxDimension)).floor();
-          final maxColumns = (width / (minDimension)).floor();
-          int minRows =
-              (height / (maxDimension + (!DeviceType.isPhone() ? spacing : 0)))
-                  .floor();
-          int maxRows =
-              (height / (minDimension + (!DeviceType.isPhone() ? spacing : 0)))
-                  .floor();
-          double dimension = min(min(height, width), maxDimension);
-          if (minRows == 0 || maxRows == 0) {
-            minRows = maxRows = 1;
-            dimension = max(minDimension, min(height, maxDimension));
-          }
-          final maxedSizeCount = max(1, (minRows * minColumns));
-          final minSizeCount = max(1, (maxRows * maxColumns));
-          int participantCount = count;
-          if (participantCount > maxedSizeCount &&
-              participantCount < minSizeCount) {
-            int h0 = (sqrt((width * height) / participantCount)).ceil();
-            int value = (width / h0).floor() * (height / h0).floor();
-            while (participantCount > value) {
-              h0--;
-              value = (width / h0).floor() * (height / h0).floor();
-            }
-            if ((width / h0).floor() == 1) {
-              // use min of 2
-              int cols = min(participantCount, maxColumns);
-              dimension = min(dimension, (width - spacing * (cols - 1)) / cols);
+          bool horizontal = constraints.maxWidth >= constraints.maxHeight;
+          double width = horizontal
+              ? (maxAllowedDimension * minChildSize)
+              : constraints.maxWidth;
+          double height = horizontal
+              ? constraints.maxHeight
+              : (maxAllowedDimension * minChildSize);
+          int maxColumns = 1;
+          int maxRows = 1;
+          int columns = 1;
+          int rows = 1;
+          double dimension = minChildSize;
+          if (horizontal) {
+            // calculate the number based on the height
+            maxRows = (height /
+                    (minChildSize + (!DeviceType.isPhone() ? spacing : 0)))
+                .floor();
+            maxColumns = maxAllowedDimension;
+            int scaledTotal = maxColumns * maxRows;
+            if (count <= scaledTotal) {
+              dimension = min(
+                  height / (count / maxAllowedDimension).ceilToDouble(),
+                  maxChildSize);
+              columns = (count / (height / dimension)).ceil();
             } else {
-              dimension = min(dimension, h0.toDouble());
+              columns = maxAllowedDimension;
             }
-          } else if (participantCount >= minSizeCount) {
-            dimension = min(
-                dimension, (width - spacing * (maxColumns - 1)) / maxColumns);
+            width = (columns * dimension).ceilToDouble();
+          } else {
+            // calculate the number base on the width
+            // calculate the number based on the height
+            maxColumns =
+                (width / (minChildSize + (!DeviceType.isPhone() ? spacing : 0)))
+                    .floor();
+            maxRows = maxAllowedDimension;
+            int scaledTotal = maxColumns * maxRows;
+            if (count <= scaledTotal) {
+              dimension = min(
+                  width / (count / maxAllowedDimension).ceilToDouble(),
+                  maxChildSize);
+              rows = (count / (width / dimension)).ceil();
+            } else {
+              rows = maxAllowedDimension;
+            }
+            height = (rows * dimension).ceilToDouble();
           }
-          return SingleChildScrollView(
-            child: Wrap(
-              runSpacing: spacing,
-              spacing: spacing,
-              alignment: WrapAlignment.start,
-              children: List<Widget>.generate(
-                participantCount,
-                (index) => generate(index, dimension),
+          return SizedBox(
+            height: height,
+            width: width,
+            child: SingleChildScrollView(
+              child: Wrap(
+                runSpacing: spacing,
+                spacing: spacing,
+                alignment: WrapAlignment.start,
+                children: List<Widget>.generate(
+                  count,
+                  (index) => generate(index, dimension),
+                ),
+              ),
+            ),
+          );
+        },
+      );
+    }
+    final t = AppLocalizations.of(context)!;
+    final themeData = Theme.of(context);
+    final textStyles = themeData.textTheme;
+    return Center(
+      child: Padding(
+        padding:
+            EdgeInsets.symmetric(horizontal: themeData.pageHorizontalPadding),
+        child: Text(
+          t.noParticipantsActiveSession,
+          style: textStyles.headline3,
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
+  }
+}
+
+class WaitingRoomListLayout extends StatelessWidget {
+  const WaitingRoomListLayout({
+    Key? key,
+    required this.generate,
+    required this.count,
+    this.maxChildSize = 150,
+    this.minChildSize = 100,
+  }) : super(key: key);
+  final double maxChildSize;
+  final double minChildSize;
+  static const double spacing = 0;
+  final int count;
+  final Widget Function(int, double) generate;
+
+  @override
+  Widget build(BuildContext context) {
+    if (count != 0) {
+      return LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+          double x = constraints.maxWidth;
+          double y = constraints.maxHeight;
+          int n = count;
+
+          // Taken from https://math.stackexchange.com/a/2570649
+          double ratio = x / y;
+          double ncols = sqrt(n * ratio);
+          double nrows = n / ncols;
+
+          // Find best option filling the whole height
+          int nrows1 = (nrows).ceil();
+          int ncols1 = (n / nrows1).ceil();
+          while (nrows1 * ratio < ncols1) {
+            nrows1++;
+            ncols1 = (n / nrows1).ceil();
+          }
+          double size1 = y / nrows1;
+
+          // Find best option filling the whole width
+          int ncols2 = (ncols).ceil();
+          int nrows2 = (n / ncols2).ceil();
+          while (ncols2 < nrows2 * ratio) {
+            ncols2++;
+            nrows2 = (n / ncols2).ceil();
+          }
+          double size2 = x / ncols2;
+
+          double size =
+              max(min(maxChildSize, max(size1, size2)), minChildSize) -
+                  2 * spacing;
+          return SizedBox(
+            height: constraints.maxHeight,
+            width: constraints.maxWidth,
+            child: SingleChildScrollView(
+              child: Wrap(
+                runSpacing: spacing,
+                spacing: spacing,
+                alignment: WrapAlignment.start,
+                children: List<Widget>.generate(
+                  count,
+                  (index) => generate(index, size),
+                ),
               ),
             ),
           );
