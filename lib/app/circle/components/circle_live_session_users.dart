@@ -16,10 +16,10 @@ class CircleLiveSessionUsers extends ConsumerWidget {
         .toList();
     return CircleNetworkConnectivityLayer(
         child: ParticipantListLayout(
-            maxDimension: 300,
+            maxChildSize: 300,
             count: participants.length,
-            generate: (i, dimenstion) => CircleSessionParticipant(
-                  dimension: dimenstion,
+            generate: (i, dimension) => CircleSessionParticipant(
+                  dimension: dimension,
                   participant: participants[i],
                   hasTotem:
                       activeSession.totemUser == participants[i].sessionUserId,

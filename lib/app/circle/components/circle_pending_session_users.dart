@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:totem/app/circle/circle_session_page.dart';
 import 'package:totem/app/circle/components/circle_session_participant.dart';
+
 import 'circle_network_connectivity_layer.dart';
 import 'layouts.dart';
 
@@ -15,7 +16,8 @@ class CirclePendingSessionUsers extends ConsumerWidget {
       child: Padding(
         padding: const EdgeInsets.only(left: 20.0, right: 20.0),
         child: ParticipantListLayout(
-            maxDimension: 300,
+            maxChildSize: 300,
+            maxAllowedDimension: 3,
             count: participants.length,
             generate: (i, dimension) => CircleSessionParticipant(
                 dimension: dimension, participant: participants[i])),

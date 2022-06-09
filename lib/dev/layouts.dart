@@ -32,7 +32,7 @@ class _CircleUserLayoutState extends State<CircleUserLayout> {
       children: [
         Center(
           child: ParticipantListLayout(
-              maxDimension: 600,
+              maxChildSize: 600,
               maxAllowedDimension: 3,
               generate: getParticipant,
               count: participantCount),
@@ -148,7 +148,7 @@ class ListenLiveLayoutState extends State<ListenLiveLayoutTest> {
             child: ListenerUserLayout(
               userList: ParticipantListLayout(
                   maxAllowedDimension: 2,
-                  maxDimension: 150,
+                  maxChildSize: 150,
                   generate: getParticipant,
                   count: participantCount),
               speaker: Container(

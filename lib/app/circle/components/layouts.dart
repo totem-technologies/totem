@@ -11,11 +11,12 @@ class ParticipantListLayout extends StatelessWidget {
     required this.generate,
     required this.count,
     this.maxAllowedDimension = 2,
-    this.maxDimension = 150,
+    this.maxChildSize = 150,
+    this.minChildSize = 100,
   }) : super(key: key);
-  final double maxDimension;
+  final double maxChildSize;
+  final double minChildSize;
   final int maxAllowedDimension;
-  static const double minDimension = 100;
   static const double spacing = 0;
   final int count;
   final Widget Function(int, double) generate;
@@ -27,27 +28,27 @@ class ParticipantListLayout extends StatelessWidget {
         builder: (BuildContext context, BoxConstraints constraints) {
           bool horizontal = constraints.maxWidth >= constraints.maxHeight;
           double width = horizontal
-              ? (maxAllowedDimension * minDimension)
+              ? (maxAllowedDimension * minChildSize)
               : constraints.maxWidth;
           double height = horizontal
               ? constraints.maxHeight
-              : (maxAllowedDimension * minDimension);
+              : (maxAllowedDimension * minChildSize);
           int maxColumns = 1;
           int maxRows = 1;
           int columns = 1;
           int rows = 1;
-          double dimension = minDimension;
+          double dimension = minChildSize;
           if (horizontal) {
             // calculate the number based on the height
             maxRows = (height /
-                    (minDimension + (!DeviceType.isPhone() ? spacing : 0)))
+                    (minChildSize + (!DeviceType.isPhone() ? spacing : 0)))
                 .floor();
             maxColumns = maxAllowedDimension;
             int scaledTotal = maxColumns * maxRows;
             if (count <= scaledTotal) {
               dimension = min(
                   height / (count / maxAllowedDimension).ceilToDouble(),
-                  maxDimension);
+                  maxChildSize);
               columns = (count / (height / dimension)).ceil();
             } else {
               columns = maxAllowedDimension;
@@ -57,14 +58,14 @@ class ParticipantListLayout extends StatelessWidget {
             // calculate the number base on the width
             // calculate the number based on the height
             maxColumns =
-                (width / (minDimension + (!DeviceType.isPhone() ? spacing : 0)))
+                (width / (minChildSize + (!DeviceType.isPhone() ? spacing : 0)))
                     .floor();
             maxRows = maxAllowedDimension;
             int scaledTotal = maxColumns * maxRows;
             if (count <= scaledTotal) {
               dimension = min(
                   width / (count / maxAllowedDimension).ceilToDouble(),
-                  maxDimension);
+                  maxChildSize);
               rows = (count / (width / dimension)).ceil();
             } else {
               rows = maxAllowedDimension;
