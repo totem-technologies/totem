@@ -112,10 +112,11 @@ class WaitingRoomListLayout extends StatelessWidget {
     Key? key,
     required this.generate,
     required this.count,
-    this.maxDimension = 150,
+    this.maxChildSize = 150,
+    this.minChildSize = 100,
   }) : super(key: key);
-  final double maxDimension;
-  static const double minDimension = 100;
+  final double maxChildSize;
+  final double minChildSize;
   static const double spacing = 0;
   final int count;
   final Widget Function(int, double) generate;
@@ -125,34 +126,36 @@ class WaitingRoomListLayout extends StatelessWidget {
     if (count != 0) {
       return LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
-          var x = constraints.maxWidth.toDouble();
-          var y = constraints.maxHeight.toDouble();
-          var n = count;
+          double x = constraints.maxWidth;
+          double y = constraints.maxHeight;
+          int n = count;
 
           // Taken from https://math.stackexchange.com/a/2570649
-          var ratio = x / y;
-          var ncols = sqrt(n * ratio);
-          var nrows = n / ncols;
+          double ratio = x / y;
+          double ncols = sqrt(n * ratio);
+          double nrows = n / ncols;
 
           // Find best option filling the whole height
-          var nrows1 = (nrows).ceil();
-          var ncols1 = (n / nrows1).ceil();
+          int nrows1 = (nrows).ceil();
+          int ncols1 = (n / nrows1).ceil();
           while (nrows1 * ratio < ncols1) {
             nrows1++;
             ncols1 = (n / nrows1).ceil();
           }
-          var size1 = y / nrows1;
+          double size1 = y / nrows1;
 
           // Find best option filling the whole width
-          var ncols2 = (ncols).ceil();
-          var nrows2 = (n / ncols2).ceil();
+          int ncols2 = (ncols).ceil();
+          int nrows2 = (n / ncols2).ceil();
           while (ncols2 < nrows2 * ratio) {
             ncols2++;
             nrows2 = (n / ncols2).ceil();
           }
-          var size2 = x / ncols2;
+          double size2 = x / ncols2;
 
-          var size = min(maxDimension, max(size1, size2)) - 2 * spacing;
+          double size =
+              max(min(maxChildSize, max(size1, size2)), minChildSize) -
+                  2 * spacing;
           return SizedBox(
             height: constraints.maxHeight,
             width: constraints.maxWidth,

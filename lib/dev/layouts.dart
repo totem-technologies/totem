@@ -31,7 +31,7 @@ class _WaitingRoomDevLayoutState extends State<WaitingRoomDevLayout> {
     return Stack(
       children: [
         WaitingRoomListLayout(
-            maxDimension: 600,
+            maxChildSize: 600,
             generate: getParticipant,
             count: participantCount),
         Container(

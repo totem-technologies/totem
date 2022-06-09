@@ -15,12 +15,13 @@ class CirclePendingSessionUsers extends ConsumerWidget {
     return CircleNetworkConnectivityLayer(
       child: Padding(
         padding: const EdgeInsets.only(left: 20.0, right: 20.0),
-        child: ParticipantListLayout(
-            maxChildSize: 300,
-            maxAllowedDimension: 3,
-            count: participants.length,
-            generate: (i, dimension) => CircleSessionParticipant(
-                dimension: dimension, participant: participants[i])),
+        child: Center(
+          child: WaitingRoomListLayout(
+              maxChildSize: 300,
+              count: participants.length,
+              generate: (i, dimension) => CircleSessionParticipant(
+                  dimension: dimension, participant: participants[i])),
+        ),
       ),
     );
   }
