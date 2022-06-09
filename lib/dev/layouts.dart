@@ -17,26 +17,23 @@ Widget getParticipant(int i, double d) {
   );
 }
 
-class CircleUserLayout extends StatefulWidget {
-  const CircleUserLayout({Key? key}) : super(key: key);
+class WaitingRoomDevLayout extends StatefulWidget {
+  const WaitingRoomDevLayout({Key? key}) : super(key: key);
 
   @override
-  State<CircleUserLayout> createState() => _CircleUserLayoutState();
+  State<WaitingRoomDevLayout> createState() => _WaitingRoomDevLayoutState();
 }
 
-class _CircleUserLayoutState extends State<CircleUserLayout> {
+class _WaitingRoomDevLayoutState extends State<WaitingRoomDevLayout> {
   var participantCount = 4;
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        Center(
-          child: ParticipantListLayout(
-              maxChildSize: 600,
-              maxAllowedDimension: 3,
-              generate: getParticipant,
-              count: participantCount),
-        ),
+        WaitingRoomListLayout(
+            maxDimension: 600,
+            generate: getParticipant,
+            count: participantCount),
         Container(
           color: Colors.indigo,
           child: Row(

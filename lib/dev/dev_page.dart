@@ -7,7 +7,7 @@ import 'buttons.dart';
 import 'layouts.dart';
 
 final widgetList = <String, Function>{
-  "Circle User Layout": CircleUserLayout.new,
+  "Waiting Room Layout": WaitingRoomDevLayout.new,
   "Listen Live Layout": ListenLiveLayoutTest.new,
   "Buttons": ButtonsScreen.new
 };

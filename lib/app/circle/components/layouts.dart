@@ -106,3 +106,84 @@ class ParticipantListLayout extends StatelessWidget {
     );
   }
 }
+
+class WaitingRoomListLayout extends StatelessWidget {
+  const WaitingRoomListLayout({
+    Key? key,
+    required this.generate,
+    required this.count,
+    this.maxDimension = 150,
+  }) : super(key: key);
+  final double maxDimension;
+  static const double minDimension = 100;
+  static const double spacing = 0;
+  final int count;
+  final Widget Function(int, double) generate;
+
+  @override
+  Widget build(BuildContext context) {
+    if (count != 0) {
+      return LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+          var x = constraints.maxWidth.toDouble();
+          var y = constraints.maxHeight.toDouble();
+          var n = count;
+
+          // Taken from https://math.stackexchange.com/a/2570649
+          var ratio = x / y;
+          var ncols = sqrt(n * ratio);
+          var nrows = n / ncols;
+
+          // Find best option filling the whole height
+          var nrows1 = (nrows).ceil();
+          var ncols1 = (n / nrows1).ceil();
+          while (nrows1 * ratio < ncols1) {
+            nrows1++;
+            ncols1 = (n / nrows1).ceil();
+          }
+          var size1 = y / nrows1;
+
+          // Find best option filling the whole width
+          var ncols2 = (ncols).ceil();
+          var nrows2 = (n / ncols2).ceil();
+          while (ncols2 < nrows2 * ratio) {
+            ncols2++;
+            nrows2 = (n / ncols2).ceil();
+          }
+          var size2 = x / ncols2;
+
+          var size = min(maxDimension, max(size1, size2)) - 2 * spacing;
+          return SizedBox(
+            height: constraints.maxHeight,
+            width: constraints.maxWidth,
+            child: SingleChildScrollView(
+              child: Wrap(
+                runSpacing: spacing,
+                spacing: spacing,
+                alignment: WrapAlignment.start,
+                children: List<Widget>.generate(
+                  count,
+                  (index) => generate(index, size),
+                ),
+              ),
+            ),
+          );
+        },
+      );
+    }
+    final t = AppLocalizations.of(context)!;
+    final themeData = Theme.of(context);
+    final textStyles = themeData.textTheme;
+    return Center(
+      child: Padding(
+        padding:
+            EdgeInsets.symmetric(horizontal: themeData.pageHorizontalPadding),
+        child: Text(
+          t.noParticipantsActiveSession,
+          style: textStyles.headline3,
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
+  }
+}
