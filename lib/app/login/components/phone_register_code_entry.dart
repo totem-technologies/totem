@@ -7,6 +7,7 @@ import 'package:libphonenumber_plugin/libphonenumber_plugin.dart';
 import 'package:totem/app/login/components/pin_code_widget.dart';
 import 'package:totem/app_routes.dart';
 import 'package:totem/components/widgets/index.dart';
+import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
 
@@ -35,10 +36,21 @@ class PhoneRegisterCodeEntryState
       await ref.read(authServiceProvider).verifyCode(pinValue);
       setState(() => _busy = false);
       if (!mounted) return;
+      final authSvc = ref.read(authServiceProvider);
+      final AuthUser? authUser = authSvc.currentUser();
+      if (authUser != null && authUser.isNewUser) {
+        Navigator.pushReplacementNamed(
+          context,
+          AppRoutes.loginOnboarding,
+        );
+      } else {
+        Navigator.of(context).pop();
+      }
+/*    RESTORE THIS WHEN LOGIN GUIDELINES HAVE TO BE ACCEPTED FIRST
       await Navigator.pushReplacementNamed(
         context,
         AppRoutes.loginGuideline,
-      );
+      ); */
     } on AuthException catch (e) {
       setState(() {
         error = e.message!;
