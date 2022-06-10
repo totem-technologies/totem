@@ -39,7 +39,12 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage> {
 
   @override
   void initState() {
-    _userProfileFetch = ref.read(repositoryProvider).userProfile();
+    final repo = ref.read(repositoryProvider);
+    if (repo.user == null) {
+      AuthUser? user = ref.read(authServiceProvider).currentUser();
+      repo.user = user;
+    }
+    _userProfileFetch = repo.userProfile();
     super.initState();
   }
 

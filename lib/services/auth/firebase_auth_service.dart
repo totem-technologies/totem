@@ -97,7 +97,8 @@ class FirebaseAuthService implements AuthService {
         smsCode: code,
       );
       try {
-        _handleUserAuth(await _firebaseAuth.signInWithCredential(credential));
+        await _handleUserAuth(
+            await _firebaseAuth.signInWithCredential(credential));
       } on FirebaseAuthException catch (e) {
         debugPrint('Error:$e');
         throw AuthException(code: e.code, message: e.message);
@@ -106,7 +107,7 @@ class FirebaseAuthService implements AuthService {
       try {
         final UserCredential credential =
             await _confirmationResult!.confirm(code);
-        _handleUserAuth(credential);
+        await _handleUserAuth(credential);
       } on FirebaseAuthException catch (fe) {
         debugPrint('Auth Error: ${fe.message}');
         throw AuthException(code: fe.code, message: fe.message);
@@ -136,7 +137,7 @@ class FirebaseAuthService implements AuthService {
             debugPrint('verificationCompleted');
             // should trigger auth state change
             try {
-              _handleUserAuth(
+              await _handleUserAuth(
                   await _firebaseAuth.signInWithCredential(credential));
             } on FirebaseAuthException catch (e) {
               debugPrint('Error:$e');
@@ -198,14 +199,14 @@ class FirebaseAuthService implements AuthService {
     }
   }
 
-  void _handleUserAuth(UserCredential credential) async {
+  Future<void> _handleUserAuth(UserCredential credential) async {
     bool isNewUser = credential.additionalUserInfo?.isNewUser ?? false;
-    _assertUserProfile(credential.user!.uid);
+    await _assertUserProfile(credential.user!.uid);
     _currentUser = _userFromFirebase(credential.user, isNewUser: isNewUser);
     streamController?.add(_currentUser);
   }
 
-  void _assertUserProfile(String uid) async {
+  Future<void> _assertUserProfile(String uid) async {
     DocumentReference userRef =
         FirebaseFirestore.instance.collection(Paths.users).doc(uid);
     DocumentSnapshot userDataSnapshot = await userRef.get();
