@@ -88,7 +88,7 @@ export const startSnapSession = functions.https.onCall(async ({circleId}, {auth}
         // can be looked up in case of need to rejoin
         let keeper = "";
         const circleParticipants: string[] = [];
-        Object.entries(sessionParticipants).forEach(([key, value]) => {
+        Object.entries(sessionParticipants).forEach(([, value]) => {
           const uid: string = <string>(<Record<string, unknown>>value).uid;
           const role: string = <string>(<Record<string, unknown>>value).role;
           if (role === "keeper") {
