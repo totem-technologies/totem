@@ -96,10 +96,8 @@ class _CircleLiveVideoSessionState
                                     duration: const Duration(milliseconds: 500),
                                     child: activeSession.totemReceived &&
                                             (totemParticipant.me)
-                                        ? _speakerUserView(
-                                            context,
-                                            activeSession: activeSession,
-                                            participants: participants,
+                                        ? const CircleLiveSessionUsers(
+                                            listening: false,
                                           )
                                         : ListenerUserLayout(
                                             speaker: _speakerVideoView(
@@ -187,14 +185,6 @@ class _CircleLiveVideoSessionState
       );
     }
     return Container();
-  }
-
-  Widget _speakerUserView(
-    BuildContext context, {
-    required List<SessionParticipant> participants,
-    required ActiveSession activeSession,
-  }) {
-    return const CircleLiveSessionUsers();
   }
 
   Widget _speakerControlsView(

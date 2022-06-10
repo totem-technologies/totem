@@ -5,7 +5,9 @@ import 'package:totem/app/circle/index.dart';
 import 'layouts.dart';
 
 class CircleLiveSessionUsers extends ConsumerWidget {
-  const CircleLiveSessionUsers({Key? key}) : super(key: key);
+  const CircleLiveSessionUsers({Key? key, this.listening = true})
+      : super(key: key);
+  final bool listening;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -15,16 +17,31 @@ class CircleLiveSessionUsers extends ConsumerWidget {
         .where((element) => element.uid != totemId)
         .toList();
     return CircleNetworkConnectivityLayer(
-        child: ParticipantListLayout(
-            maxChildSize: 180,
-            count: participants.length,
-            generate: (i, dimension) => CircleSessionParticipant(
-                  dimension: dimension,
-                  participant: participants[i],
-                  hasTotem:
-                      activeSession.totemUser == participants[i].sessionUserId,
-                  annotate: false,
-                  next: i == 0,
-                )));
+      child: listening
+          ? ParticipantListLayout(
+              maxChildSize: 180,
+              count: participants.length,
+              generate: (i, dimension) => CircleSessionParticipant(
+                dimension: dimension,
+                participant: participants[i],
+                hasTotem:
+                    activeSession.totemUser == participants[i].sessionUserId,
+                annotate: false,
+                next: i == 0,
+              ),
+            )
+          : WaitingRoomListLayout(
+              maxChildSize: 300,
+              count: participants.length,
+              generate: (i, dimension) => CircleSessionParticipant(
+                dimension: dimension,
+                participant: participants[i],
+                hasTotem:
+                    activeSession.totemUser == participants[i].sessionUserId,
+                annotate: false,
+                next: i == 0,
+              ),
+            ),
+    );
   }
 }
