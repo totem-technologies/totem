@@ -3,11 +3,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:totem/app/circle/circle_session_info_page.dart';
-import 'package:totem/app/circle/circle_session_page.dart';
+import 'package:totem/app/circle/index.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/providers.dart';
+import 'package:totem/services/utils/device_type.dart';
 import 'package:totem/theme/index.dart';
 
 class CircleSessionControls extends ConsumerStatefulWidget {
@@ -33,35 +33,43 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
     final authUser = ref.read(authServiceProvider).currentUser()!;
     final activeSession = ref.watch(activeSessionProvider);
     final role = activeSession.participantRole(authUser.uid);
-    return Stack(
-      children: [
-        BottomTrayContainer(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 16),
-          backgroundColor:
-              activeSession.state == SessionState.live ? Colors.black : null,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
-            child: activeSession.state == SessionState.waiting
-                ? waitingControls(
-                    context, ref, activeSession, role, authUser.uid)
-                : activeSession.state == SessionState.live
-                    ? liveControls(context, ref, activeSession, role)
-                    : emptyControls(context),
+    return LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+      debugPrint(
+          'Live Controls width: ${constraints.maxWidth} <= ${Theme.of(context).portraitBreak}');
+      bool isPhoneLayout = DeviceType.isPhone() ||
+          constraints.maxWidth <= Theme.of(context).portraitBreak;
+      return Stack(
+        children: [
+          BottomTrayContainer(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 16),
+            backgroundColor:
+                activeSession.state == SessionState.live ? Colors.black : null,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+              child: activeSession.state == SessionState.waiting
+                  ? waitingControls(
+                      context, ref, activeSession, role, authUser.uid)
+                  : activeSession.state == SessionState.live
+                      ? liveControls(context, ref, activeSession, role,
+                          isPhoneLayout, constraints.maxWidth)
+                      : emptyControls(context),
+            ),
           ),
-        ),
-        Positioned(
-          bottom: 0,
-          left: 0,
-          right: 0,
-          child: Container(
-            height: 1,
-            color: activeSession.state == SessionState.live
-                ? Colors.black
-                : Theme.of(context).themeColors.trayBackground,
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              height: 1,
+              color: activeSession.state == SessionState.live
+                  ? Colors.black
+                  : Theme.of(context).themeColors.trayBackground,
+            ),
           ),
-        ),
-      ],
-    );
+        ],
+      );
+    });
   }
 
   Widget emptyControls(BuildContext context) {
@@ -144,92 +152,99 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
     );
   }
 
-  Widget liveControls(BuildContext context, WidgetRef ref,
-      ActiveSession activeSession, Role role) {
+  Widget liveControls(
+      BuildContext context,
+      WidgetRef ref,
+      ActiveSession activeSession,
+      Role role,
+      bool isPhoneLayout,
+      double maxWidth) {
     final t = AppLocalizations.of(context)!;
     final themeColors = Theme.of(context).themeColors;
     final communications = ref.watch(communicationsProvider);
-    return Column(
+    return Stack(
       children: [
-        Row(
+        Column(
           children: [
-            Expanded(
-              flex: 1,
-              child: Container(),
+            Row(
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: Container(),
+                ),
+                ThemedControlButton(
+                  label: communications.muted ? t.unmute : t.mute,
+                  labelColor: themeColors.reversedText,
+                  svgImage: communications.muted
+                      ? 'assets/microphone_mute.svg'
+                      : 'assets/microphone.svg',
+                  onPressed: () {
+                    triggerPress(() {
+                      if (communications.muted) {
+                        communications.muteAudio(false);
+                      } else {
+                        communications.muteAudio(true);
+                      }
+                      debugPrint('mute pressed');
+                    });
+                  },
+                ),
+                const SizedBox(
+                  width: _btnSpacing,
+                ),
+                ThemedControlButton(
+                  label: communications.videoMuted ? t.startVideo : t.stopVideo,
+                  labelColor: themeColors.reversedText,
+                  svgImage: !communications.videoMuted
+                      ? 'assets/video.svg'
+                      : 'assets/video_stop.svg',
+                  onPressed: () {
+                    triggerPress(() {
+                      communications
+                          .muteVideo(communications.videoMuted ? false : true);
+                      debugPrint('video pressed');
+                    });
+                  },
+                ),
+                if (role == Role.keeper) ...[
+                  const SizedBox(
+                    width: _btnSpacing,
+                  ),
+                  ThemedControlButton(
+                    label: !_more ? t.more : t.less,
+                    labelColor: themeColors.reversedText,
+                    svgImage: !_more ? 'assets/more.svg' : 'assets/less.svg',
+                    onPressed: () {
+                      setState(() => _more = !_more);
+                    },
+                  ),
+                ],
+                if (role != Role.keeper) ...[
+                  const SizedBox(width: _btnSpacing),
+                  ThemedControlButton(
+                    label: t.leaveSession,
+                    labelColor: themeColors.reversedText,
+                    svgImage: 'assets/leave.svg',
+                    onPressed: () {
+                      _endSessionPrompt(context, ref, role);
+                    },
+                  ),
+                ],
+                Expanded(
+                  flex: 1,
+                  child: Container(),
+                ),
+              ],
             ),
-            ThemedControlButton(
-              label: communications.muted ? t.unmute : t.mute,
-              labelColor: themeColors.reversedText,
-              svgImage: communications.muted
-                  ? 'assets/microphone_mute.svg'
-                  : 'assets/microphone.svg',
-              onPressed: () {
-                triggerPress(() {
-                  if (communications.muted) {
-                    communications.muteAudio(false);
-                  } else {
-                    communications.muteAudio(true);
-                  }
-                  debugPrint('mute pressed');
-                });
-              },
-            ),
-            const SizedBox(
-              width: _btnSpacing,
-            ),
-            ThemedControlButton(
-              label: communications.videoMuted ? t.startVideo : t.stopVideo,
-              labelColor: themeColors.reversedText,
-              svgImage: !communications.videoMuted
-                  ? 'assets/video.svg'
-                  : 'assets/video_stop.svg',
-              onPressed: () {
-                triggerPress(() {
-                  communications
-                      .muteVideo(communications.videoMuted ? false : true);
-                  debugPrint('video pressed');
-                });
-              },
-            ),
-            if (role == Role.keeper) ...[
-              const SizedBox(
-                width: _btnSpacing,
-              ),
-              ThemedControlButton(
-                label: !_more ? t.more : t.less,
-                labelColor: themeColors.reversedText,
-                svgImage: !_more ? 'assets/more.svg' : 'assets/less.svg',
-                onPressed: () {
-                  setState(() => _more = !_more);
-                },
-              ),
-            ],
-            if (role != Role.keeper) ...[
-              const SizedBox(width: _btnSpacing),
-              ThemedControlButton(
-                label: t.leaveSession,
-                labelColor: themeColors.reversedText,
-                svgImage: 'assets/leave.svg',
-                onPressed: () {
-                  _endSessionPrompt(context, ref, role);
-                },
-              ),
-            ],
-            Expanded(
-              flex: 1,
-              child: Container(),
-            ),
-          ],
-        ),
-        if (role == Role.keeper && _more) ...[
-          const SizedBox(height: 24),
-          Row(
-            children: [
-              Expanded(
-                flex: 1,
-                child: Container(),
-              ),
-              /* ThemedControlButton(
+            if (role == Role.keeper && _more) ...[
+              const SizedBox(height: 24),
+              Row(
+                children: [
+                  Expanded(
+                    flex: 1,
+                    child: Container(),
+                  ),
+                  /* ThemedControlButton(
                 label: t.openFloor,
                 labelColor: themeColors.reversedText,
                 svgImage: 'assets/unlock.svg',
@@ -240,42 +255,47 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
               const SizedBox(
                 width: _btnSpacing,
               ),*/
-              ThemedControlButton(
-                label: t.next,
-                labelColor: themeColors.reversedText,
-                svgImage: 'assets/fast_forward.svg',
-                onPressed: () {
-                  _nextUser(context, ref);
-                },
-              ),
-              const SizedBox(
-                width: _btnSpacing,
-              ),
-              ThemedControlButton(
-                label: t.endSession,
-                labelColor: themeColors.reversedText,
-                svgImage: 'assets/leave.svg',
-                onPressed: () {
-                  _endSessionPrompt(context, ref, role);
-                },
-              ),
-              const SizedBox(width: _btnSpacing),
-              ThemedControlButton(
-                label: t.info,
-                labelColor: themeColors.reversedText,
-                svgImage: 'assets/info.svg',
-                onPressed: () {
-                  debugPrint('info pressed');
-                  _showCircleInfo(context);
-                },
-              ),
-              Expanded(
-                flex: 1,
-                child: Container(),
+                  ThemedControlButton(
+                    label: t.next,
+                    labelColor: themeColors.reversedText,
+                    svgImage: 'assets/fast_forward.svg',
+                    onPressed: () {
+                      _nextUser(context, ref);
+                    },
+                  ),
+                  const SizedBox(
+                    width: _btnSpacing,
+                  ),
+                  ThemedControlButton(
+                    label: t.endSession,
+                    labelColor: themeColors.reversedText,
+                    svgImage: 'assets/leave.svg',
+                    onPressed: () {
+                      _endSessionPrompt(context, ref, role);
+                    },
+                  ),
+                  const SizedBox(width: _btnSpacing),
+                  ThemedControlButton(
+                    label: t.info,
+                    labelColor: themeColors.reversedText,
+                    svgImage: 'assets/info.svg',
+                    onPressed: () {
+                      debugPrint('info pressed');
+                      _showCircleInfo(context);
+                    },
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: Container(),
+                  ),
+                ],
               ),
             ],
-          ),
-        ],
+          ],
+        ),
+        if (!isPhoneLayout)
+          CircleLiveTrayTitle(
+              title: activeSession.circle.name, maxWidth: maxWidth)
       ],
     );
   }

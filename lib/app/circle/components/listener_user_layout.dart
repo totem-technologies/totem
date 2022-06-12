@@ -8,6 +8,7 @@ class ListenerUserLayout extends StatelessWidget {
       {Key? key,
       required this.speaker,
       required this.userList,
+      required this.isPhoneLayout,
       this.minUserImageSize = 135})
       : super(key: key);
 
@@ -16,13 +17,13 @@ class ListenerUserLayout extends StatelessWidget {
   final Widget speaker;
   final Widget userList;
   final double minUserImageSize;
+  final bool isPhoneLayout;
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
-        final horizontal = constraints.maxWidth >= constraints.maxHeight;
-        if (horizontal) {
+        if (!isPhoneLayout) {
           return Row(
             children: [
               Expanded(
