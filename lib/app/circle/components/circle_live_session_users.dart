@@ -5,8 +5,9 @@ import 'package:totem/app/circle/index.dart';
 import 'layouts.dart';
 
 class CircleLiveSessionUsers extends ConsumerWidget {
-  const CircleLiveSessionUsers({Key? key}) : super(key: key);
-
+  const CircleLiveSessionUsers({Key? key, this.speakerView = false})
+      : super(key: key);
+  final bool speakerView;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final activeSession = ref.watch(activeSessionProvider);
@@ -15,16 +16,31 @@ class CircleLiveSessionUsers extends ConsumerWidget {
         .where((element) => element.uid != totemId)
         .toList();
     return CircleNetworkConnectivityLayer(
-        child: ParticipantListLayout(
-            maxChildSize: 180,
-            count: participants.length,
-            generate: (i, dimension) => CircleSessionParticipant(
-                  dimension: dimension,
-                  participant: participants[i],
-                  hasTotem:
-                      activeSession.totemUser == participants[i].sessionUserId,
-                  annotate: false,
-                  next: i == 0,
-                )));
+      child: !speakerView
+          ? ParticipantListLayout(
+              maxChildSize: 180,
+              count: participants.length,
+              generate: (i, dimension) => CircleSessionParticipant(
+                dimension: dimension,
+                participant: participants[i],
+                hasTotem:
+                    activeSession.totemUser == participants[i].sessionUserId,
+                annotate: false,
+                next: i == 0,
+              ),
+            )
+          : WaitingRoomListLayout(
+              maxChildSize: 300,
+              generate: (i, dimension) => CircleSessionParticipant(
+                dimension: dimension,
+                participant: participants[i],
+                hasTotem:
+                    activeSession.totemUser == participants[i].sessionUserId,
+                annotate: false,
+                next: i == 0,
+              ),
+              count: participants.length,
+            ),
+    );
   }
 }

@@ -97,6 +97,10 @@ class _CircleLiveVideoSessionState
                                   height: 14,
                                 ),
                               ],
+                              if (!isPhoneLayout)
+                                const SizedBox(
+                                  height: 20,
+                                ),
                               Expanded(
                                 child: participants.isNotEmpty
                                     ? AnimatedSwitcher(
@@ -205,7 +209,9 @@ class _CircleLiveVideoSessionState
     required List<SessionParticipant> participants,
     required ActiveSession activeSession,
   }) {
-    return const CircleLiveSessionUsers();
+    return const CircleLiveSessionUsers(
+      speakerView: true,
+    );
   }
 
   Widget _speakerControlsView(

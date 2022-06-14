@@ -39,6 +39,9 @@ class CircleParticipantVideo extends ConsumerWidget {
         borderRadius: BorderRadius.circular(8),
         child: Stack(
           children: [
+            Container(
+              color: Colors.black,
+            ),
             if (!hasTotem &&
                 participant.me &&
                 participant.sessionUserId != null)
