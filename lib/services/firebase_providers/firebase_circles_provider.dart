@@ -135,24 +135,11 @@ class FirebaseCirclesProvider extends CirclesProvider {
     required String name,
     required String uid,
     String? description,
+    String? keeper,
+    String? previousCircle,
   }) async {
     final DocumentReference userRef =
-        FirebaseFirestore.instance.collection(Paths.users).doc(uid);
-    final DateTime now = DateTime.now();
-    Map<String, dynamic> data = {
-      "name": name,
-      "createdOn": now,
-      "updatedOn": now,
-      "createdBy": userRef,
-      "state": SessionState.waiting.name,
-    };
-    if (description != null) {
-      data["description"] = description;
-    }
-    Map<String, dynamic> snapSession = {
-      "started": now,
-    };
-    data["activeSession"] = snapSession;
+        FirebaseFirestore.instance.collection(Paths.users).doc(keeper ?? uid);
     try {
       HttpsCallable callable =
           FirebaseFunctions.instance.httpsCallable('createSnapCircle');
@@ -161,6 +148,12 @@ class FirebaseCirclesProvider extends CirclesProvider {
       };
       if (description != null) {
         data["description"] = description;
+      }
+      if (keeper != null) {
+        data["keeper"] = keeper;
+      }
+      if (previousCircle != null) {
+        data['previousCircle'] = previousCircle;
       }
       final result = await callable(data);
       final String id = result.data['id'];
@@ -459,6 +452,29 @@ class FirebaseCirclesProvider extends CirclesProvider {
         SnapSession.fromJson(data['activeSession'], circle: circle);
       }
       return circle;
+    } catch (ex) {
+      debugPrint(ex.toString());
+    }
+    return null;
+  }
+
+  @override
+  Future<SnapCircle?> circleFromPreviousIdAndState(
+      String previousId, SessionState state) async {
+    try {
+      final query = FirebaseFirestore.instance
+          .collection(Paths.snapCircles)
+          .where('previousCircle', isEqualTo: previousId)
+          .where('state', isEqualTo: state.name)
+          .orderBy('createdOn', descending: true)
+          .limit(1);
+      QuerySnapshot<Map<String, dynamic>> result = await query.get();
+      if (result.docs.isNotEmpty) {
+        QueryDocumentSnapshot<Map<String, dynamic>> snapshot = result.docs[0];
+        SnapCircle snapCircle = SnapCircle.fromJson(snapshot.data(),
+            id: snapshot.id, ref: snapshot.reference.path);
+        return snapCircle;
+      }
     } catch (ex) {
       debugPrint(ex.toString());
     }

@@ -122,11 +122,13 @@ class UserProfilePageState extends ConsumerState<UserProfilePage> {
                                 ),
                                 child: ConstrainedBox(
                                   constraints: BoxConstraints(
-                                      minHeight: constraint.maxHeight),
+                                    minHeight: constraint.maxHeight,
+                                    maxWidth: 200,
+                                  ),
                                   child: IntrinsicHeight(
                                     child: Column(
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.stretch,
+                                          CrossAxisAlignment.center,
                                       children: [
                                         const SizedBox(height: 8),
                                         Text(

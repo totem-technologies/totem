@@ -3,11 +3,13 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:totem/app_routes.dart';
 import 'package:totem/components/widgets/index.dart';
+import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
 
 class CircleCreateSnapPage extends ConsumerStatefulWidget {
-  const CircleCreateSnapPage({Key? key}) : super(key: key);
+  const CircleCreateSnapPage({Key? key, this.fromCircle}) : super(key: key);
+  final Circle? fromCircle;
 
   @override
   CircleCreateSnapPageState createState() => CircleCreateSnapPageState();
@@ -23,6 +25,10 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
 
   @override
   void initState() {
+    if (widget.fromCircle != null) {
+      _nameController.text = widget.fromCircle!.name;
+      _descriptionController.text = widget.fromCircle!.description ?? "";
+    }
     super.initState();
   }
 
@@ -133,7 +139,11 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
     var repo = ref.read(repositoryProvider);
     try {
       final circle = await repo.createSnapCircle(
-          name: _nameController.text, description: _descriptionController.text);
+        name: _nameController.text,
+        description: _descriptionController.text,
+        keeper: widget.fromCircle?.keeper,
+        previousCircle: widget.fromCircle?.id,
+      );
       if (circle != null) {
         await repo.createActiveSession(
           circle: circle,

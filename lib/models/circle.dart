@@ -11,6 +11,9 @@ abstract class Circle {
   DateTime? updatedOn;
   String? activeSession;
   int participantCount = 0;
+  String? link;
+  String? keeper;
+  String? previousCircle;
 
   Circle.fromJson(Map<String, dynamic> json,
       {required this.id,
@@ -23,6 +26,9 @@ abstract class Circle {
     createdOn = DateTimeEx.fromMapValue(json['createdOn']) ?? DateTime.now();
     updatedOn = DateTimeEx.fromMapValue(json['updatedOn']);
     participantCount = json['participantCount'] ?? 0;
+    link = json['link'];
+    keeper = json['keeper'];
+    previousCircle = json['previousCircle'];
   }
 
   Role participantRole(String participantId);

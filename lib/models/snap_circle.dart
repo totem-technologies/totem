@@ -26,8 +26,8 @@ class SnapCircle extends Circle {
     if (json['activeSession'] != null) {
       activeSession = json['activeSession'];
     }
-    started = DateTimeEx.fromMapValue(json['started']);
-    completed = DateTimeEx.fromMapValue(json['completed']);
+    started = DateTimeEx.fromMapValue(json['startedDate']);
+    completed = DateTimeEx.fromMapValue(json['completedDate']);
   }
 
   SnapSession get snapSession {

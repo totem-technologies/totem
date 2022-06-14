@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'app/index.dart';
 import 'components/index.dart';
-import 'models/index.dart';
 import 'dev/dev_page.dart';
+import 'models/index.dart';
 
 class AppRoutes {
   static const String loginPhone = '/login/phone';
@@ -39,8 +39,12 @@ class AppRoutes {
           settings: settings,
         );
       case snapCircleCreate:
+        Circle? circle;
+        if (settings.arguments != null) {
+          circle = settings.arguments as Circle?;
+        }
         return MaterialPageRoute(
-          builder: (_) => const CircleCreateSnapPage(),
+          builder: (_) => CircleCreateSnapPage(fromCircle: circle),
           settings: settings,
         );
       case appSettings:
