@@ -4,11 +4,13 @@ import 'package:totem/theme/index.dart';
 
 import '../components/widgets/content_divider.dart';
 import 'buttons.dart';
+import 'circle_session_test.dart';
 import 'layouts.dart';
 
 final widgetList = <String, Function>{
   "Waiting Room Layout": WaitingRoomDevLayout.new,
   "Listen Live Layout": ListenLiveLayoutTest.new,
+  "Circle Session": ActiveSessionLayoutTest.new,
   "Buttons": ButtonsScreen.new
 };
 

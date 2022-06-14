@@ -9,17 +9,13 @@ class MuteIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeColors = Theme.of(context).themeColors;
-    return Container(
+    return SizedBox(
       width: size,
       height: size,
-      decoration: ShapeDecoration(
-        color: themeColors.primaryText,
-        shape: const CircleBorder(),
-      ),
       child: Center(
         child: SvgPicture.asset(
           'assets/microphone_mute.svg',
-          color: themeColors.primary,
+          color: themeColors.reversedText,
           fit: BoxFit.contain,
         ),
       ),

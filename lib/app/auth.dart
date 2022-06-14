@@ -1,14 +1,14 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:totem/app_routes.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/applinks/index.dart';
 import 'package:totem/services/index.dart';
-
-import 'circle/circle_join_dialog.dart';
+import 'package:totem/theme/index.dart';
 
 class AuthWidget extends ConsumerStatefulWidget {
   const AuthWidget({
@@ -26,6 +26,7 @@ class AuthWidget extends ConsumerStatefulWidget {
 class _AuthWidget extends ConsumerState<AuthWidget> {
   late AppLinks _appLinks;
   late StreamSubscription _streamSubscription;
+  AppLink? _pendingLink;
 
   @override
   void initState() {
@@ -65,37 +66,104 @@ class _AuthWidget extends ConsumerState<AuthWidget> {
   Widget _data(BuildContext context, TotemRepository repo, AuthUser? user) {
     if (user != null && !user.isAnonymous) {
       repo.user = user;
-
+      if (_pendingLink != null) {
+        AppLink link = _pendingLink!;
+        _pendingLink = null;
+        _handleAppLink(link, delay: 1000);
+      }
       return widget.signedInBuilder(context);
     }
     repo.user = null;
     return widget.nonSignedInBuilder(context);
   }
 
-  void _handleAppLink(AppLink? link) async {
+  void _handleAppLink(AppLink? link, {int delay = 2000}) async {
     if (link != null) {
-      Future.delayed(const Duration(milliseconds: 2000), () async {
+      Future.delayed(Duration(milliseconds: delay), () async {
         if (link.type == AppLinkType.snapSession) {
+          var auth = ref.read(authServiceProvider);
           var repo = ref.read(repositoryProvider);
-          SnapCircle? circle = await repo.circleFromId(link.value);
-          if (circle != null) {
-            if (!mounted) return;
-            bool? result =
-                await CircleJoinDialog.showDialog(context, circle: circle);
-            if (result != null) {
-              await repo.createActiveSession(
-                circle: circle,
-              );
-              Future.delayed(const Duration(milliseconds: 300), () async {
-                Navigator.of(context).pushNamed(AppRoutes.circle, arguments: {
-                  'session': circle.snapSession,
-                });
-              });
+          if (auth.currentUser() != null) {
+            SnapCircle? circle = await repo.circleFromId(link.value);
+            if (circle != null) {
+              if (!mounted) return;
+              if (circle.state != SessionState.complete &&
+                  circle.state != SessionState.cancelled) {
+                _joinCircle(circle, repo);
+              } else {
+                // Make sure there isn't a new one already started as well,
+                // should only be 1 that is waiting with a previous circle referencing this one
+                SnapCircle? pending = await repo.circleFromPreviousIdAndState(
+                    circle.id, SessionState.waiting);
+                if (pending == null) {
+                  // this is a create new circle moment
+                  SnapCircle? newCircle = await repo.createSnapCircle(
+                      name: circle.name,
+                      description: circle.description,
+                      keeper: circle.keeper,
+                      previousCircle: circle.id);
+                  if (newCircle != null) {
+                    _joinCircle(newCircle, repo);
+                  } else {
+                    _promptMissingCircle();
+                  }
+                } else {
+                  // join the pending one
+                  _joinCircle(pending, repo);
+                }
+              }
+            } else {
+              // circle doesn't exist... give an uh-oh message!
+              _promptMissingCircle();
             }
+          } else {
+            // cache as a pending link
+            _pendingLink = link;
           }
         }
       });
     }
+  }
+
+  void _joinCircle(SnapCircle circle, TotemRepository repo) async {
+    await repo.createActiveSession(
+      circle: circle,
+    );
+    if (!mounted) return;
+    Navigator.of(context).pushNamed(AppRoutes.circle, arguments: {
+      'session': circle.snapSession,
+    });
+  }
+
+  Future<void> _promptMissingCircle() async {
+    final t = AppLocalizations.of(context)!;
+    await showDialog<bool>(
+      context: context,
+      /*it shows a popup with few options which you can select, for option we
+        created enums which we can use with switch statement, in this first switch
+        will wait for the user to select the option which it can use with switch cases*/
+      builder: (BuildContext context) {
+        final actions = [
+          TextButton(
+            child: Text(t.ok),
+            onPressed: () {
+              Navigator.of(context).pop(true);
+            },
+          ),
+        ];
+        return AlertDialog(
+          title: Text(
+            t.circleDoesNotExist,
+          ),
+          content: ConstrainedBox(
+            constraints:
+                BoxConstraints(maxWidth: Theme.of(context).maxRenderWidth),
+            child: Text(t.circleDoesNotExistMessage),
+          ),
+          actions: actions,
+        );
+      },
+    );
   }
 }
 

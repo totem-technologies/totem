@@ -17,4 +17,5 @@ extension AppThemeStyles on ThemeData {
   double get titleTopPadding => 40.0;
   double get standardButtonWidth => 294.0;
   double get maxRenderWidth => 400;
+  double get portraitBreak => 1000;
 }

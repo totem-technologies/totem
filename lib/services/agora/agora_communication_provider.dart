@@ -463,6 +463,8 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     bool muteVideo = newState == StreamPublishState.NoPublished;
     if (videoMuted != muteVideo) {
       videoMuted = muteVideo;
+      sessionProvider.activeSession?.updateVideoMutedStateForUser(
+          sessionUserId: commUid.toString(), muted: videoMuted);
       notifyListeners();
       notifyState(directChange: true);
     }

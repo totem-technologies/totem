@@ -10,6 +10,7 @@
     "back": "Back",
     "camera": "Camera",
     "cancel": "Cancel",
+    "change": "Change",
     "changesProfilePrompt": "You have changes to your profile, do you want to save?",
     "changesTitle": "Save Changes?",
     "characterCount": "{count, plural, =1{{count} character remaining} other{{count} characters remaining}}",
@@ -18,14 +19,22 @@
             "count": {}
         }
     },
+    "circleCreateNewMessage": "The circle named {name} is not available.\n\nDo you want to start a new circle with the same name and keeper?",
+    "@circleCreateNewMessage": {
+        "placeholders": {
+            "name": {}
+        }
+    },
     "circleDescription": "Circle Description",
+    "circleDoesNotExist":"Circle does not exist",
+    "circleDoesNotExistMessage":"The circle you are trying to join does not exist. Please contact the person that provided you the information to ensure it is correct or contact support.",
     "circlesDone": "Circles done",
     "circleEnding": "Circle is ending",
     "circles": "Circles",
     "circleInProgress": "Circle in progress",
     "circleName": "Circle Name",
     "circleRejoinWaiting": "Waiting for keeper to let you into the session in progress",
-    "circleRejoinRequest": "{{name}} is requesting to rejoin the circle",
+    "circleRejoinRequest": "{name} is requesting to rejoin the circle",
     "@circleRejoinRequest": {
         "placeholders": {
             "name": {}
@@ -34,6 +43,7 @@
     "circleReturnToApp": "Tap to return to Totem",
     "circleStarting": "Circle is starting",
     "circleWeeksSession": "This Weeks Session",
+    "copiedToClipboard": "The link to the circle has been copied to your clipboard.",
     "createCircle": "Create Circle",
     "createNewCircle": "Create New Circle",
     "createdOn": "Created on",
@@ -142,6 +152,7 @@
     "sessionStateCancelled": "The session was cancelled",
     "sessionStateComplete": "The session has ended.",
     "sessionWaiting": "Waiting to start",
+    "share": "Share",
     "signup": "Signup",
     "signOut": "Sign Out",
     "skip": "Skip",
