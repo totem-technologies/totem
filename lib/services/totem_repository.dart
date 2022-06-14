@@ -123,8 +123,9 @@ class TotemRepository {
   // Users
   Stream<UserProfile> userProfileStream() =>
       _userProvider.userProfileStream(uid: user!.uid);
-  Future<UserProfile?> userProfile() =>
-      _userProvider.userProfile(uid: user!.uid);
+  Future<UserProfile?> userProfile({bool circlesCompleted = false}) =>
+      _userProvider.userProfile(
+          uid: user!.uid, circlesCompleted: circlesCompleted);
   Future<UserProfile?> userProfileWithId(
           {required String uid, bool circlesCompleted = false}) =>
       _userProvider.userProfile(uid: uid, circlesCompleted: circlesCompleted);

@@ -29,6 +29,7 @@ class StdAppTextStyles extends AppTextStyles {
               fontFamily: 'Recoleta',
               fontSize: 24,
               fontWeight: FontWeight.w400,
+              height: 1.5,
               color: themeColors.secondaryText),
           headline6: TextStyle(
               fontFamily: 'Raleway',

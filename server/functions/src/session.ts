@@ -29,7 +29,7 @@ export const endSnapSession = functions.https.onCall(async ({circleId}, {auth}) 
     const circleRef = admin.firestore().collection("snapCircles").doc(circleId);
     const circleSnapshot = await circleRef.get();
     if (circleSnapshot.exists) {
-      const {participants, state} = circleSnapshot.data() ?? {};
+      const {circleParticipants, state, keeper} = circleSnapshot.data() ?? {};
       const completedDate = admin.firestore.Timestamp.fromDate(new Date());
       const batch = admin.firestore().batch();
       let endState = SessionState.cancelled;
@@ -38,10 +38,10 @@ export const endSnapSession = functions.https.onCall(async ({circleId}, {auth}) 
         const entry = {circleRef, completedDate};
         // moving from current state of 'active' to complete means the session is done
         // only cache the circle in users list if it was active
-        if (participants) {
-          Object.keys(participants).forEach((key)=>{
-            const {role} = participants[key];
-            const entryRef = admin.firestore().collection("users").doc(key).collection("snapCircles").doc();
+        if (circleParticipants) {
+          circleParticipants.forEach((uid: string)=>{
+            const entryRef = admin.firestore().collection("users").doc(uid).collection("snapCircles").doc();
+            const role = (keeper === uid) ? "keeper" : "member";
             batch.set(entryRef, {...entry, role, completedDate});
           });
         }

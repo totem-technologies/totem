@@ -27,6 +27,7 @@ class _AuthWidget extends ConsumerState<AuthWidget> {
   late AppLinks _appLinks;
   late StreamSubscription _streamSubscription;
   AppLink? _pendingLink;
+
   @override
   void initState() {
     super.initState();
@@ -95,9 +96,17 @@ class _AuthWidget extends ConsumerState<AuthWidget> {
                 SnapCircle? pending = await repo.circleFromPreviousIdAndState(
                     circle.id, SessionState.waiting);
                 if (pending == null) {
-                  // this is a prompt to create a new circle and clone the previous
-                  // one.
-                  _promptNewCircle(circle);
+                  // this is a create new circle moment
+                  SnapCircle? newCircle = await repo.createSnapCircle(
+                      name: circle.name,
+                      description: circle.description,
+                      keeper: circle.keeper,
+                      previousCircle: circle.id);
+                  if (newCircle != null) {
+                    _joinCircle(newCircle, repo);
+                  } else {
+                    _promptMissingCircle();
+                  }
                 } else {
                   // join the pending one
                   _joinCircle(pending, repo);
@@ -155,49 +164,6 @@ class _AuthWidget extends ConsumerState<AuthWidget> {
         );
       },
     );
-  }
-
-  Future<void> _promptNewCircle(Circle circle) async {
-    final t = AppLocalizations.of(context)!;
-    final bool? result = await showDialog<bool>(
-      context: context,
-      /*it shows a popup with few options which you can select, for option we
-        created enums which we can use with switch statement, in this first switch
-        will wait for the user to select the option which it can use with switch cases*/
-      builder: (BuildContext context) {
-        final actions = [
-          TextButton(
-            child: Text(t.createCircle),
-            onPressed: () {
-              Navigator.of(context).pop(true);
-            },
-          ),
-          TextButton(
-            child: Text(t.cancel),
-            onPressed: () {
-              Navigator.of(context).pop(false);
-            },
-          ),
-        ];
-        return AlertDialog(
-          title: Text(
-            t.circleDoesNotExist,
-          ),
-          content: ConstrainedBox(
-            constraints:
-                BoxConstraints(maxWidth: Theme.of(context).maxRenderWidth),
-            child: Text(t.circleCreateNewMessage(circle.name)),
-          ),
-          actions: actions,
-        );
-      },
-    );
-    if (result != null && result) {
-      // create a new circle using the information from the previous circle
-      if (!mounted) return;
-      Navigator.of(context)
-          .pushNamed(AppRoutes.snapCircleCreate, arguments: circle);
-    }
   }
 }
 
