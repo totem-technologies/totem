@@ -224,7 +224,7 @@ class CircleSessionInfoPageState extends ConsumerState<CircleSessionInfoPage> {
         // sorted, save
         // update the list of users
         final repo = ref.read(repositoryProvider);
-        repo.updateActiveSession(repo.activeSession!.reorderParticipants(
+        await repo.updateActiveSession(repo.activeSession!.reorderParticipants(
             _participants
                 .map((element) => element.sessionUserId!)
                 .toList(growable: false)));

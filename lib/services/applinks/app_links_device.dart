@@ -29,7 +29,7 @@ class AppLinks {
     final PendingDynamicLinkData? initialLink =
         await FirebaseDynamicLinks.instance.getInitialLink();
     if (initialLink != null) {
-      _handleDynamicLink(initialLink.link);
+      await _handleDynamicLink(initialLink.link);
     }
     _subscription = dynamicLinks.onLink.listen((dynamicLinkData) {
       _handleDynamicLink(dynamicLinkData.link);

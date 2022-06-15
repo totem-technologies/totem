@@ -149,7 +149,7 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
           circle: circle,
         );
         if (!mounted) return;
-        Navigator.pushReplacementNamed(context, AppRoutes.circle, arguments: {
+        await Navigator.pushReplacementNamed(context, AppRoutes.circle, arguments: {
           'session': circle.snapSession,
         });
       } /*else {
@@ -160,7 +160,7 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
       } */
     } on ServiceException catch (ex) {
       debugPrint('Error creating circle: $ex');
-      _showCreateError(ex);
+      await _showCreateError(ex);
     }
     setState(() => _busy = false);
   }

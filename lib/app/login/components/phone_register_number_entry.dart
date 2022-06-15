@@ -158,7 +158,7 @@ class PhoneRegisterNumberEntryState
       // chooses a different one than the default
       String isoCode = numberController.isoCode!;
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.setString('lastIso', isoCode);
+      await prefs.setString('lastIso', isoCode);
 
       debugPrint(number);
       try {

@@ -6,7 +6,7 @@ import 'package:totem/components/widgets/bottom_tray_container.dart';
 import 'package:totem/theme/index.dart';
 
 class BottomTrayHelpDialog extends StatelessWidget {
-  static showTrayHelp(BuildContext context,
+  static void showTrayHelp(BuildContext context,
       {required String title, required String detail}) async {
     await showModalBottomSheet(
       context: context,

@@ -55,7 +55,7 @@ class UserProfilePageState extends ConsumerState<UserProfilePage> {
 
   @override
   void dispose() async {
-    _pendingImageChangeFile?.delete();
+    await _pendingImageChangeFile?.delete();
     super.dispose();
   }
 
@@ -105,7 +105,7 @@ class UserProfilePageState extends ConsumerState<UserProfilePage> {
                                     ? () async {
                                         await _saveForm();
                                         if (!mounted) return;
-                                        Navigator.maybePop(context);
+                                        await Navigator.maybePop(context);
                                       }
                                     : null,
                                 child: Text(t.save)),
@@ -294,7 +294,7 @@ class UserProfilePageState extends ConsumerState<UserProfilePage> {
     XFile? imagePath = await ProfileImageDialog.showDialog(context,
         userProfile: _userProfile!);
     if (imagePath != null) {
-      _pendingImageChangeFile?.delete();
+      await _pendingImageChangeFile?.delete();
       setState(() {
         _pendingImageChange = imagePath;
         _hasChanged = true;
@@ -309,7 +309,7 @@ class UserProfilePageState extends ConsumerState<UserProfilePage> {
     if (uploadedUrl != null) {
       _userProfile!.image = uploadedUrl;
       // delete pending image
-      _pendingImageChangeFile?.delete();
+      await _pendingImageChangeFile?.delete();
       _pendingImageChangeFile = null;
       _pendingImageChange = null;
       await ref.read(repositoryProvider).updateUserProfile(_userProfile!);
@@ -317,7 +317,7 @@ class UserProfilePageState extends ConsumerState<UserProfilePage> {
     } else {
       // this is an error condition
       setState(() => _busy = false);
-      _showUploadError(context, error);
+      await _showUploadError(context, error);
       return;
     }
     if (_pendingClose) {
@@ -433,7 +433,7 @@ class UserProfilePageState extends ConsumerState<UserProfilePage> {
       _userProfile!.email = _emailController.text;
       if (_pendingImageChange != null) {
         AuthUser user = ref.read(authServiceProvider).currentUser()!;
-        _uploader.currentState!.profileImageUpload(_pendingImageChange!, user);
+        await _uploader.currentState!.profileImageUpload(_pendingImageChange!, user);
         return;
       } else {
         // just save the profile
@@ -678,7 +678,7 @@ class UserProfilePageState extends ConsumerState<UserProfilePage> {
     );
     if (result == 2) {
       _pendingClose = pendingClose;
-      _saveForm();
+      await _saveForm();
       return false;
     }
     if (result == 1) {

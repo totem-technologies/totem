@@ -392,9 +392,9 @@ class _CircleLiveVideoSessionState
     if (_myTurn) {
       final activeSession = ref.read(activeSessionProvider);
       if (activeSession.totemReceived) {
-        _endTurn(context, activeSession.totemParticipant!);
+        await _endTurn(context, activeSession.totemParticipant!);
       } else {
-        _receiveTurn(context, activeSession.totemParticipant!);
+        await _receiveTurn(context, activeSession.totemParticipant!);
       }
     }
   }

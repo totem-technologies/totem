@@ -53,7 +53,7 @@ class FirebaseSessionProvider extends SessionProvider {
       Map<String, dynamic> circleData = {"activeSession": sessionRef};
       batch.update(ref, circleData);
       await batch.commit();
-      createActiveSession(circle: session.circle, uid: uid);
+      await createActiveSession(circle: session.circle, uid: uid);
       return _activeSession!;
     }
     throw ServiceException(
@@ -390,7 +390,7 @@ class FirebaseSessionProvider extends SessionProvider {
           _activeSession!.updateFromData(sessionData);
       if (requestedUpdate != null) {
         // have to update the user
-        updateActiveSession(requestedUpdate);
+        await updateActiveSession(requestedUpdate);
       }
       notifyListeners();
     }
@@ -427,7 +427,7 @@ class FirebaseSessionProvider extends SessionProvider {
         .doc(session.circle.id);
     DocumentReference circleRef =
         FirebaseFirestore.instance.doc(session.circle.ref);
-    FirebaseFirestore.instance.runTransaction((transaction) async {
+    await FirebaseFirestore.instance.runTransaction((transaction) async {
       DocumentSnapshot circleDataSnapshot = await transaction.get(circleRef);
       DocumentSnapshot activeDataSnapshot = await transaction.get(ref);
       if (circleDataSnapshot.exists && activeDataSnapshot.exists) {

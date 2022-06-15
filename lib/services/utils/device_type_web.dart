@@ -15,7 +15,7 @@ class DeviceType {
     return _isMobile!;
   }
 
-  static _assertUserAgent() {
+  static void _assertUserAgent() {
     _userAgent ??= html.window.navigator.userAgent.toString().toLowerCase();
   }
 
