@@ -19,7 +19,7 @@ class AudioLevel extends AudioLevelImpl {
 
   @override
   void stop() async {
-    _noiseSubscription?.cancel();
+    await _noiseSubscription?.cancel();
     _noiseSubscription = null;
     _noiseMeter = null;
   }

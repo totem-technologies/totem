@@ -105,7 +105,7 @@ class _AuthWidget extends ConsumerState<AuthWidget> {
                   if (newCircle != null) {
                     _joinCircle(newCircle, repo);
                   } else {
-                    _promptMissingCircle();
+                    await _promptMissingCircle();
                   }
                 } else {
                   // join the pending one
@@ -114,7 +114,7 @@ class _AuthWidget extends ConsumerState<AuthWidget> {
               }
             } else {
               // circle doesn't exist... give an uh-oh message!
-              _promptMissingCircle();
+              await _promptMissingCircle();
             }
           } else {
             // cache as a pending link
@@ -130,7 +130,7 @@ class _AuthWidget extends ConsumerState<AuthWidget> {
       circle: circle,
     );
     if (!mounted) return;
-    Navigator.of(context).pushNamed(AppRoutes.circle, arguments: {
+    await Navigator.of(context).pushNamed(AppRoutes.circle, arguments: {
       'session': circle.snapSession,
     });
   }

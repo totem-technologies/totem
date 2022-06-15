@@ -42,7 +42,7 @@ class _DevPageState extends State<DevPage> {
     _init();
   }
 
-  _init() async {
+  void _init() async {
     final prefs = await SharedPreferences.getInstance();
     if (prefs.containsKey(stateKey)) {
       setState(() {
@@ -51,17 +51,17 @@ class _DevPageState extends State<DevPage> {
     }
   }
 
-  changeWidget(String widget) async {
+  void changeWidget(String widget) async {
     final prefs = await SharedPreferences.getInstance();
-    prefs.setString(stateKey, widget);
+    await prefs.setString(stateKey, widget);
     setState(() {
       displayWidget = widget;
     });
   }
 
-  reset() async {
+  void reset() async {
     final prefs = await SharedPreferences.getInstance();
-    prefs.remove(stateKey);
+    await prefs.remove(stateKey);
     setState(() {
       displayWidget = null;
     });

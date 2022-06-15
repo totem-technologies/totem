@@ -91,7 +91,7 @@ class CameraCaptureScreenState extends State<CameraCapture>
         _initialized = true;
       });
       if (!kIsWeb && widget.captureMode != CaptureMode.preview) {
-        _controller!.startImageStream((image) {
+        await _controller!.startImageStream((image) {
           _savedImage = image;
         });
       }
@@ -246,7 +246,7 @@ class CameraCaptureScreenState extends State<CameraCapture>
       child: InkWell(
         onTap: () async {
           await HapticFeedback.lightImpact();
-          _onCameraSwitch();
+          await _onCameraSwitch();
         },
         child: Container(
           width: 40,
@@ -385,7 +385,7 @@ class CameraCaptureScreenState extends State<CameraCapture>
       setState(() {});
       _initialized = true;
       if (!kIsWeb && widget.captureMode != CaptureMode.preview) {
-        _controller!.startImageStream((image) {
+        await _controller!.startImageStream((image) {
           _savedImage = image;
         });
       }

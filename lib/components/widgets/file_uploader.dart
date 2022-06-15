@@ -89,7 +89,7 @@ class FileUploaderState extends ConsumerState<FileUploader> {
   Future<void> _completeUpload(XFile? upload, {String url = ''}) async {
     if (url.isNotEmpty && widget.assignProfile) {
       var repo = ref.read(repositoryProvider);
-      repo.updateUserProfileImage(url);
+      await repo.updateUserProfileImage(url);
     }
     // await clearTemporaryFiles(upload);
     if (widget.onComplete != null) {

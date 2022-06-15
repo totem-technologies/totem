@@ -2,10 +2,10 @@ import 'package:js/js.dart';
 import 'audio_level_impl.dart';
 
 @JS('AudioLevels.getAudioLevel')
-external _getAudioLevel(Function(double) callback);
+external void _getAudioLevel(Function(double) callback);
 
 @JS('AudioLevels.stopAudioStream')
-external stopAudioStream();
+external void stopAudioStream();
 
 class AudioLevel extends AudioLevelImpl {
   @override

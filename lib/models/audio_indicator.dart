@@ -9,7 +9,7 @@ class CommunicationAudioVolumeInfo {
     required this.speaking,
   });
 
-  get local => uid == 0;
+  bool get local => uid == 0;
 }
 
 class CommunicationAudioVolumeIndication {

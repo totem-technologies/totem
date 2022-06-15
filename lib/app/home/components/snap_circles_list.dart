@@ -103,7 +103,7 @@ class SnapCirclesListState extends ConsumerState<SnapCirclesList> {
       circle: circle,
     );
     if (!mounted) return;
-    Navigator.of(context).pushNamed(AppRoutes.circle, arguments: {
+    await Navigator.of(context).pushNamed(AppRoutes.circle, arguments: {
       'session': circle.snapSession,
     });
 /*REMOVE    var repo = ref.read(repositoryProvider);

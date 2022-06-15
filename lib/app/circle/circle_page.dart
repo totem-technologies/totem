@@ -187,7 +187,7 @@ class CirclePageState extends ConsumerState<CirclePage> {
     final repo = ref.read(repositoryProvider);
     await repo.activateSession(session: session);
     if (!mounted) return;
-    Navigator.pushReplacement(
+    await Navigator.pushReplacement(
       context,
       FadeRoute(
         page: CircleSessionPage(session: session),
