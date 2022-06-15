@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:diffutil_dart/diffutil.dart' as diff_util;
 import 'package:flutter/material.dart' hide ReorderableList;
+import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_reorderable_list/flutter_reorderable_list.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -120,9 +121,26 @@ class CircleSessionInfoPageState extends ConsumerState<CircleSessionInfoPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Text(
-                          _activeSession.circle.name,
-                          style: textStyles.dialogTitle,
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                _activeSession.circle.name,
+                                style: textStyles.dialogTitle,
+                              ),
+                            ),
+                            if (_activeSession.circle.link != null) ...[
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  _handleShare();
+                                },
+                                child: Text(t.share),
+                              ),
+                            ],
+                          ],
                         ),
                         if (_activeSession.topic.isNotEmpty) ...[
                           const SizedBox(height: 8),
@@ -206,7 +224,7 @@ class CircleSessionInfoPageState extends ConsumerState<CircleSessionInfoPage> {
         // sorted, save
         // update the list of users
         final repo = ref.read(repositoryProvider);
-        repo.updateActiveSession(repo.activeSession!.reorderParticipants(
+        await repo.updateActiveSession(repo.activeSession!.reorderParticipants(
             _participants
                 .map((element) => element.sessionUserId!)
                 .toList(growable: false)));
@@ -239,5 +257,37 @@ class CircleSessionInfoPageState extends ConsumerState<CircleSessionInfoPage> {
           },
           itemCount: participants.length),
     );
+  }
+
+  Future<void> _handleShare() async {
+    if (_activeSession.circle.link != null) {
+      try {
+        await Clipboard.setData(
+            ClipboardData(text: _activeSession.circle.link!));
+        if (!mounted) return;
+        final t = AppLocalizations.of(context)!;
+        // show the dialog
+        await showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              content: Text(t.copiedToClipboard),
+              actions: [
+                TextButton(
+                  child: Text(t.ok),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                )
+              ],
+            );
+          },
+        );
+      } catch (ex) {
+        debugPrint(
+            'ERROR copying ${_activeSession.circle.link} to clipboard: ${ex.toString()}');
+      }
+    }
   }
 }

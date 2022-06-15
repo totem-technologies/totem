@@ -24,7 +24,7 @@ abstract class AudioLevelImpl {
 
   void stop();
 
-  emitData(double level) {
+  void emitData(double level) {
     double adjustedLevel = adjustLevel(level);
     if (adjustedLevel != lastLevel) {
       lastLevel = adjustedLevel;

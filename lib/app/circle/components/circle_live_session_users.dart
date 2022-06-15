@@ -5,10 +5,9 @@ import 'package:totem/app/circle/index.dart';
 import 'layouts.dart';
 
 class CircleLiveSessionUsers extends ConsumerWidget {
-  const CircleLiveSessionUsers({Key? key, this.listening = true})
+  const CircleLiveSessionUsers({Key? key, this.speakerView = false})
       : super(key: key);
-  final bool listening;
-
+  final bool speakerView;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final activeSession = ref.watch(activeSessionProvider);
@@ -17,7 +16,7 @@ class CircleLiveSessionUsers extends ConsumerWidget {
         .where((element) => element.uid != totemId)
         .toList();
     return CircleNetworkConnectivityLayer(
-      child: listening
+      child: !speakerView
           ? ParticipantListLayout(
               maxChildSize: 180,
               count: participants.length,
@@ -32,7 +31,6 @@ class CircleLiveSessionUsers extends ConsumerWidget {
             )
           : WaitingRoomListLayout(
               maxChildSize: 300,
-              count: participants.length,
               generate: (i, dimension) => CircleSessionParticipant(
                 dimension: dimension,
                 participant: participants[i],
@@ -41,6 +39,7 @@ class CircleLiveSessionUsers extends ConsumerWidget {
                 annotate: false,
                 next: i == 0,
               ),
+              count: participants.length,
             ),
     );
   }

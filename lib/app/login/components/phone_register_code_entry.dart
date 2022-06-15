@@ -39,7 +39,7 @@ class PhoneRegisterCodeEntryState
       final authSvc = ref.read(authServiceProvider);
       final AuthUser? authUser = authSvc.currentUser();
       if (authUser != null && authUser.isNewUser) {
-        Navigator.pushReplacementNamed(
+        await Navigator.pushReplacementNamed(
           context,
           AppRoutes.loginOnboarding,
         );

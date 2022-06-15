@@ -57,7 +57,7 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage> {
       Navigator.of(context).pop();
     } else {
       setState(() => _busy = false);
-      _showUploadError(context, error);
+      await _showUploadError(context, error);
     }
   }
 
@@ -197,7 +197,7 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage> {
       _userProfile!.email = _emailController.text;
       if (_pendingImageChange != null) {
         AuthUser user = ref.read(authServiceProvider).currentUser()!;
-        _uploader.currentState!.profileImageUpload(_pendingImageChange!, user);
+        await _uploader.currentState!.profileImageUpload(_pendingImageChange!, user);
         return;
       } else {
         // just save the profile
@@ -441,7 +441,7 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage> {
       },
     );
     if (result == 2) {
-      _saveForm();
+      await _saveForm();
       return false;
     }
     return result == 1;

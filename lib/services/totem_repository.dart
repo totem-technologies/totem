@@ -30,6 +30,7 @@ class TotemRepository {
   late final UserProvider _userProvider;
   late final SessionProvider _sessionProvider;
   AuthUser? user;
+  String? pendingSessionId;
 
   TotemRepository() {
     _topicsProvider = FirebaseTopicsProvider();
@@ -65,12 +66,16 @@ class TotemRepository {
   Future<SnapCircle?> createSnapCircle({
     required String name,
     String? description,
+    String? keeper,
+    String? previousCircle,
     bool addAsMember = true,
   }) =>
       _circlesProvider.createSnapCircle(
         name: name,
         description: description,
         uid: user!.uid,
+        keeper: keeper,
+        previousCircle: previousCircle,
       );
   Future<bool> removeSnapCircle({required SnapCircle circle}) =>
       _circlesProvider.removeSnapCircle(circle: circle, uid: user!.uid);
@@ -83,6 +88,9 @@ class TotemRepository {
       _circlesProvider.scheduledCircle(circleId, user!.uid);
   Future<SnapCircle?> circleFromId(String id) =>
       _circlesProvider.circleFromId(id);
+  Future<SnapCircle?> circleFromPreviousIdAndState(
+          String previousId, SessionState state) =>
+      _circlesProvider.circleFromPreviousIdAndState(previousId, state);
 
   // Sessions
   Future<ActiveSession> activateSession({required ScheduledSession session}) =>
@@ -115,8 +123,9 @@ class TotemRepository {
   // Users
   Stream<UserProfile> userProfileStream() =>
       _userProvider.userProfileStream(uid: user!.uid);
-  Future<UserProfile?> userProfile() =>
-      _userProvider.userProfile(uid: user!.uid);
+  Future<UserProfile?> userProfile({bool circlesCompleted = false}) =>
+      _userProvider.userProfile(
+          uid: user!.uid, circlesCompleted: circlesCompleted);
   Future<UserProfile?> userProfileWithId(
           {required String uid, bool circlesCompleted = false}) =>
       _userProvider.userProfile(uid: uid, circlesCompleted: circlesCompleted);

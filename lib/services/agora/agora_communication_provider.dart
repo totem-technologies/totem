@@ -463,6 +463,8 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     bool muteVideo = newState == StreamPublishState.NoPublished;
     if (videoMuted != muteVideo) {
       videoMuted = muteVideo;
+      sessionProvider.activeSession?.updateVideoMutedStateForUser(
+          sessionUserId: commUid.toString(), muted: videoMuted);
       notifyListeners();
       notifyState(directChange: true);
     }
@@ -572,7 +574,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     // for android, start a foreground service to keep the process running
     // to prevent drops in connection
     if (!kIsWeb && Platform.isAndroid) {
-      SessionForeground.instance.startSessionTask();
+      await SessionForeground.instance.startSessionTask();
     }
     // notify of state to others
     notifyState();
@@ -584,7 +586,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     // for android, stop the foreground service to keep the process running
     // to prevent drops in connection
     if (!kIsWeb && Platform.isAndroid) {
-      SessionForeground.instance.stopSessionTask();
+      await SessionForeground.instance.stopSessionTask();
     }
 
     // end the data session and update state
@@ -633,7 +635,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   @override
   Future<void> muteAudio(bool mute) async {
     if (mute != muted) {
-      _engine?.muteLocalAudioStream(mute);
+      await _engine?.muteLocalAudioStream(mute);
       if (state != CommunicationState.active) {
         // reflect the state locally if not in a session
         muted = mute;
@@ -728,7 +730,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
         } else {
           _engine?.startPreview();
         } */
-      _engine?.enableLocalVideo(!mute);
+      await _engine?.enableLocalVideo(!mute);
       // FIXME - TEMP - Right now it seems that the
       // video publishing changes made locally are
       // not coming, so to work around this,
@@ -807,7 +809,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     try {
       if (device != _audioInput) {
         await _engine!.enableLocalAudio(false);
-        _engine!.deviceManager.setAudioRecordingDevice(device.id);
+        await _engine!.deviceManager.setAudioRecordingDevice(device.id);
         await _engine!.enableLocalAudio(true);
         _audioInput = device;
         notifyListeners();
@@ -844,9 +846,9 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     if (_engine == null) return false;
     try {
       if (device != _camera) {
-        _engine!.stopPreview();
-        _engine!.deviceManager.setVideoDevice(device.id);
-        _engine!.startPreview();
+        await _engine!.stopPreview();
+        await _engine!.deviceManager.setVideoDevice(device.id);
+        await _engine!.startPreview();
         _camera = device;
         notifyListeners();
       }

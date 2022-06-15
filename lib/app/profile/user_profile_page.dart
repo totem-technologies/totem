@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:libphonenumber_plugin/libphonenumber_plugin.dart';
 import 'package:totem/app/profile/components/index.dart';
@@ -47,13 +48,14 @@ class UserProfilePageState extends ConsumerState<UserProfilePage> {
 
   @override
   void initState() {
-    _userProfileFetch = ref.read(repositoryProvider).userProfile();
+    _userProfileFetch =
+        ref.read(repositoryProvider).userProfile(circlesCompleted: true);
     super.initState();
   }
 
   @override
   void dispose() async {
-    _pendingImageChangeFile?.delete();
+    await _pendingImageChangeFile?.delete();
     super.dispose();
   }
 
@@ -103,7 +105,7 @@ class UserProfilePageState extends ConsumerState<UserProfilePage> {
                                     ? () async {
                                         await _saveForm();
                                         if (!mounted) return;
-                                        Navigator.maybePop(context);
+                                        await Navigator.maybePop(context);
                                       }
                                     : null,
                                 child: Text(t.save)),
@@ -122,19 +124,19 @@ class UserProfilePageState extends ConsumerState<UserProfilePage> {
                                 ),
                                 child: ConstrainedBox(
                                   constraints: BoxConstraints(
-                                      minHeight: constraint.maxHeight),
+                                    minHeight: constraint.maxHeight,
+                                  ),
                                   child: IntrinsicHeight(
                                     child: Column(
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.stretch,
+                                          CrossAxisAlignment.center,
                                       children: [
-                                        const SizedBox(height: 8),
                                         Text(
                                           t.editProfile,
                                           style: textStyles.headline2,
                                           textAlign: TextAlign.center,
                                         ),
-                                        const SizedBox(height: 8),
+                                        const SizedBox(height: 24),
                                         Row(
                                           children: [
                                             Stack(
@@ -205,8 +207,6 @@ class UserProfilePageState extends ConsumerState<UserProfilePage> {
                                                           child:
                                                               SvgPicture.asset(
                                                             'assets/more_info.svg',
-                                                            width: 17,
-                                                            height: 17,
                                                           ),
                                                         ),
                                                       ),
@@ -231,7 +231,7 @@ class UserProfilePageState extends ConsumerState<UserProfilePage> {
                                                       onPressed: () =>
                                                           _getUserImage(
                                                               context),
-                                                      child: Text(t.edit)),
+                                                      child: Text(t.change)),
                                                 ],
                                               ),
                                             ),
@@ -294,7 +294,7 @@ class UserProfilePageState extends ConsumerState<UserProfilePage> {
     XFile? imagePath = await ProfileImageDialog.showDialog(context,
         userProfile: _userProfile!);
     if (imagePath != null) {
-      _pendingImageChangeFile?.delete();
+      await _pendingImageChangeFile?.delete();
       setState(() {
         _pendingImageChange = imagePath;
         _hasChanged = true;
@@ -309,7 +309,7 @@ class UserProfilePageState extends ConsumerState<UserProfilePage> {
     if (uploadedUrl != null) {
       _userProfile!.image = uploadedUrl;
       // delete pending image
-      _pendingImageChangeFile?.delete();
+      await _pendingImageChangeFile?.delete();
       _pendingImageChangeFile = null;
       _pendingImageChange = null;
       await ref.read(repositoryProvider).updateUserProfile(_userProfile!);
@@ -317,7 +317,7 @@ class UserProfilePageState extends ConsumerState<UserProfilePage> {
     } else {
       // this is an error condition
       setState(() => _busy = false);
-      _showUploadError(context, error);
+      await _showUploadError(context, error);
       return;
     }
     if (_pendingClose) {
@@ -433,7 +433,7 @@ class UserProfilePageState extends ConsumerState<UserProfilePage> {
       _userProfile!.email = _emailController.text;
       if (_pendingImageChange != null) {
         AuthUser user = ref.read(authServiceProvider).currentUser()!;
-        _uploader.currentState!.profileImageUpload(_pendingImageChange!, user);
+        await _uploader.currentState!.profileImageUpload(_pendingImageChange!, user);
         return;
       } else {
         // just save the profile
@@ -566,7 +566,54 @@ class UserProfilePageState extends ConsumerState<UserProfilePage> {
                   return Text(asyncSnapshot.data ?? user.phoneNumber);
                 },
               ),
+              const SizedBox(height: 10),
+              Divider(
+                color: themeData.themeColors.divider,
+                height: 1,
+                thickness: 1,
+              ),
               const SizedBox(height: 20),
+              Row(
+                children: [
+                  Text(
+                    t.memberSince,
+                    style: textStyles.inputLabel,
+                  ),
+                  Expanded(
+                    child: Text(
+                      DateFormat.yMMMM().format(_userProfile!.createdOn),
+                      textAlign: TextAlign.right,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              Divider(
+                color: themeData.themeColors.divider,
+                height: 1,
+                thickness: 1,
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  Text(
+                    t.circlesDone,
+                    style: textStyles.inputLabel,
+                  ),
+                  Expanded(
+                    child: Text(
+                      _userProfile!.completedCircles?.toString() ?? "0",
+                      textAlign: TextAlign.right,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              Divider(
+                color: themeData.themeColors.divider,
+                height: 1,
+                thickness: 1,
+              ),
             ],
           ),
         );
@@ -631,7 +678,7 @@ class UserProfilePageState extends ConsumerState<UserProfilePage> {
     );
     if (result == 2) {
       _pendingClose = pendingClose;
-      _saveForm();
+      await _saveForm();
       return false;
     }
     if (result == 1) {

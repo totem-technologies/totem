@@ -12,6 +12,7 @@ import 'package:slide_to_act/slide_to_act.dart';
 import 'package:totem/app/circle/index.dart';
 import 'package:totem/components/camera/index.dart';
 import 'package:totem/models/index.dart';
+import 'package:totem/services/utils/device_type.dart';
 import 'package:totem/theme/index.dart';
 
 class CircleLiveVideoSession extends ConsumerStatefulWidget {
@@ -60,85 +61,101 @@ class _CircleLiveVideoSessionState
     final totemParticipant = activeSession.totemParticipant;
     _myTurn = totemParticipant != null && totemParticipant.me;
     if (totemParticipant != null) {
-      return Container(
-        color: Colors.black,
-        child: SafeArea(
-          top: true,
-          bottom: false,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Expanded(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: themeData.pageHorizontalPadding),
-                  child: Stack(
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
+      return LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+          final isPhoneLayout = DeviceType.isPhone() ||
+              (constraints.maxWidth <= Theme.of(context).portraitBreak);
+          return Container(
+            color: Colors.black,
+            child: SafeArea(
+              top: true,
+              bottom: false,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: themeData.pageHorizontalPadding),
+                      child: Stack(
                         children: [
-                          Text(
-                            activeSession.circle.name,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: textStyles.headline2!.merge(
-                              TextStyle(
-                                  fontWeight: FontWeight.w900,
-                                  color: themeColors.reversedText),
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 14,
-                          ),
-                          Expanded(
-                            child: participants.isNotEmpty
-                                ? AnimatedSwitcher(
-                                    duration: const Duration(milliseconds: 500),
-                                    child: activeSession.totemReceived &&
-                                            (totemParticipant.me)
-                                        ? const CircleLiveSessionUsers(
-                                            listening: false,
-                                          )
-                                        : ListenerUserLayout(
-                                            speaker: _speakerVideoView(
-                                                context, activeSession),
-                                            userList:
-                                                const CircleLiveSessionUsers(),
-                                          ),
-                                  )
-                                : Center(
-                                    child: Text(
-                                      t.noParticipantsActiveSession,
-                                      style: textStyles.headline3,
-                                      textAlign: TextAlign.center,
-                                    ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              if (isPhoneLayout) ...[
+                                Text(
+                                  activeSession.circle.name,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: textStyles.headline2!.merge(
+                                    TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        color: themeColors.reversedText),
                                   ),
+                                ),
+                                const SizedBox(
+                                  height: 14,
+                                ),
+                              ],
+                              if (!isPhoneLayout)
+                                const SizedBox(
+                                  height: 20,
+                                ),
+                              Expanded(
+                                child: participants.isNotEmpty
+                                    ? AnimatedSwitcher(
+                                        duration:
+                                            const Duration(milliseconds: 500),
+                                        child: activeSession.totemReceived &&
+                                                (totemParticipant.me)
+                                            ? _speakerUserView(
+                                                context,
+                                                activeSession: activeSession,
+                                                participants: participants,
+                                              )
+                                            : ListenerUserLayout(
+                                                speaker: _speakerVideoView(
+                                                    context, activeSession),
+                                                userList:
+                                                    const CircleLiveSessionUsers(),
+                                                isPhoneLayout: isPhoneLayout,
+                                              ),
+                                      )
+                                    : Center(
+                                        child: Text(
+                                          t.noParticipantsActiveSession,
+                                          style: textStyles.headline3,
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                            ],
                           ),
-                          const SizedBox(
-                            height: 10,
+                          if (totemParticipant.me)
+                            _speakerControlsView(
+                              context,
+                              participants: participants,
+                              activeSession: activeSession,
+                            ),
+                          const Align(
+                            alignment: Alignment.bottomCenter,
+                            child: CircleMutedIndicator(
+                              live: true,
+                            ),
                           ),
                         ],
                       ),
-                      if (totemParticipant.me)
-                        _speakerControlsView(
-                          context,
-                          participants: participants,
-                          activeSession: activeSession,
-                        ),
-                      const Align(
-                        alignment: Alignment.bottomCenter,
-                        child: CircleMutedIndicator(
-                          live: true,
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
-                ),
+                  const CircleSessionControls(),
+                ],
               ),
-              const CircleSessionControls(),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       );
     }
     return Container();
@@ -185,6 +202,16 @@ class _CircleLiveVideoSessionState
       );
     }
     return Container();
+  }
+
+  Widget _speakerUserView(
+    BuildContext context, {
+    required List<SessionParticipant> participants,
+    required ActiveSession activeSession,
+  }) {
+    return const CircleLiveSessionUsers(
+      speakerView: true,
+    );
   }
 
   Widget _speakerControlsView(
@@ -365,9 +392,9 @@ class _CircleLiveVideoSessionState
     if (_myTurn) {
       final activeSession = ref.read(activeSessionProvider);
       if (activeSession.totemReceived) {
-        _endTurn(context, activeSession.totemParticipant!);
+        await _endTurn(context, activeSession.totemParticipant!);
       } else {
-        _receiveTurn(context, activeSession.totemParticipant!);
+        await _receiveTurn(context, activeSession.totemParticipant!);
       }
     }
   }
