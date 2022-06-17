@@ -1,4 +1,4 @@
-git_url("git@github.com:blopker/totem-keys.git")
+git_url("git@github.com:totem-technologies/totem-keys.git")
 
 storage_mode("git")
 
