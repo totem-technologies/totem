@@ -37,6 +37,8 @@ class _CircleSnapSessionContentState
   @override
   void initState() {
     _validSession = true; //widget.circle.activeSession != null;
+    ref.read(analyticsProvider).showScreen('snapCircleScreen');
+
     super.initState();
   }
 

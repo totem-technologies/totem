@@ -16,4 +16,8 @@ class FirebaseAnalyticsProvider extends AnalyticsProvider {
       "sessionName": session.circle.name
     });
   }
+
+  void showScreen(String name) {
+    FirebaseAnalytics.instance.logScreenView(screenName: name);
+  }
 }
