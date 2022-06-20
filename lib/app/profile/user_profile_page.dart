@@ -55,8 +55,8 @@ class UserProfilePageState extends ConsumerState<UserProfilePage> {
 
   @override
   void dispose() async {
-    await _pendingImageChangeFile?.delete();
     super.dispose();
+    await _pendingImageChangeFile?.delete();
   }
 
   @override
@@ -433,7 +433,8 @@ class UserProfilePageState extends ConsumerState<UserProfilePage> {
       _userProfile!.email = _emailController.text;
       if (_pendingImageChange != null) {
         AuthUser user = ref.read(authServiceProvider).currentUser()!;
-        await _uploader.currentState!.profileImageUpload(_pendingImageChange!, user);
+        await _uploader.currentState!
+            .profileImageUpload(_pendingImageChange!, user);
         return;
       } else {
         // just save the profile

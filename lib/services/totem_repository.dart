@@ -3,7 +3,9 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/agora/agora_communication_provider.dart';
+import 'package:totem/services/analytics_provider.dart';
 import 'package:totem/services/circles_provider.dart';
+import 'package:totem/services/firebase_providers/firebase_analytics_provider.dart';
 import 'package:totem/services/firebase_providers/firebase_circles_provider.dart';
 import 'package:totem/services/firebase_providers/firebase_session_provider.dart';
 import 'package:totem/services/firebase_providers/firebase_user_provider.dart';
@@ -29,14 +31,17 @@ class TotemRepository {
   late final CirclesProvider _circlesProvider;
   late final UserProvider _userProvider;
   late final SessionProvider _sessionProvider;
+  late final AnalyticsProvider _analyticsProvider;
   AuthUser? user;
   String? pendingSessionId;
 
   TotemRepository() {
+    _analyticsProvider = FirebaseAnalyticsProvider();
     _topicsProvider = FirebaseTopicsProvider();
     _circlesProvider = FirebaseCirclesProvider();
     _userProvider = FirebaseUserProvider();
-    _sessionProvider = FirebaseSessionProvider();
+    _sessionProvider =
+        FirebaseSessionProvider(analyticsProvider: _analyticsProvider);
   }
 
   // Topics
@@ -112,6 +117,11 @@ class TotemRepository {
   ActiveSession? get activeSession => _sessionProvider.activeSession;
   Future<void> updateActiveSession(Map<String, dynamic> sessionData) =>
       _sessionProvider.updateActiveSession(sessionData);
+
+  // Analytics
+  AnalyticsProvider get analyticsProvider {
+    return _analyticsProvider;
+  }
 
   // Communications for Session
   CommunicationProvider createCommunicationProvider() {

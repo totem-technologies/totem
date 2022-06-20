@@ -38,6 +38,7 @@ dependencies:
   datetime_picker_formfield: ^2.0.0
   diffutil_dart: ^3.0.0
   email_validator: ^2.0.1
+  firebase_analytics: ^9.1.10
   firebase_app_check: ^0.0.6+4
   firebase_auth: ^3.0.0
   firebase_core: ^1.2.0
