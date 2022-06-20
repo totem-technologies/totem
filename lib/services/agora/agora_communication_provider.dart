@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
+import 'package:wakelock/wakelock.dart';
 
 class AgoraCommunicationProvider extends CommunicationProvider {
   static const String appId = "4880737da9bf47e290f46d847cd1c3b1";
@@ -571,6 +572,9 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     }
     _updateState(CommunicationState.active);
 
+    // Prevent device from going to sleep while the session is active
+    unawaited(Wakelock.enable());
+
     // for android, start a foreground service to keep the process running
     // to prevent drops in connection
     if (!kIsWeb && Platform.isAndroid) {
@@ -583,6 +587,10 @@ class AgoraCommunicationProvider extends CommunicationProvider {
 
   Future<void> _handleLeaveSession(stats) async {
     _cancelStateUpdates();
+
+    // disable wakelock
+    unawaited(Wakelock.disable());
+
     // for android, stop the foreground service to keep the process running
     // to prevent drops in connection
     if (!kIsWeb && Platform.isAndroid) {
