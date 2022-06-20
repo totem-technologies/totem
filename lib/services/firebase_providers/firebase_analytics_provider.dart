@@ -17,6 +17,7 @@ class FirebaseAnalyticsProvider extends AnalyticsProvider {
     });
   }
 
+  @override
   void showScreen(String name) {
     FirebaseAnalytics.instance.logScreenView(screenName: name);
   }
