@@ -203,7 +203,17 @@ class AgoraCommunicationProvider extends CommunicationProvider {
 
   @override
   Future<void> leaveSession({bool requested = true}) async {
+    // disable wakelock
+    unawaited(Wakelock.disable());
+
+    // for android, stop the foreground service to keep the process running
+    // to prevent drops in connection
+    if (!kIsWeb && Platform.isAndroid) {
+      await SessionForeground.instance.stopSessionTask();
+    }
+
     _pendingRequestLeave = requested;
+
     if (requested &&
         sessionProvider.activeSession != null &&
         sessionProvider.activeSession!.totemParticipant != null &&
@@ -587,15 +597,6 @@ class AgoraCommunicationProvider extends CommunicationProvider {
 
   Future<void> _handleLeaveSession(stats) async {
     _cancelStateUpdates();
-
-    // disable wakelock
-    unawaited(Wakelock.disable());
-
-    // for android, stop the foreground service to keep the process running
-    // to prevent drops in connection
-    if (!kIsWeb && Platform.isAndroid) {
-      await SessionForeground.instance.stopSessionTask();
-    }
 
     // end the data session and update state
     try {
