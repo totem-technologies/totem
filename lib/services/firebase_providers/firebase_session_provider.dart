@@ -5,6 +5,7 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:totem/models/index.dart';
+import 'package:totem/services/analytics_provider.dart';
 import 'package:totem/services/auth/auth_exception.dart';
 import 'package:totem/services/firebase_providers/paths.dart';
 import 'package:totem/services/service_exception.dart';
@@ -14,6 +15,9 @@ class FirebaseSessionProvider extends SessionProvider {
   ActiveSession? _activeSession;
   StreamSubscription? _sessionSubscription;
   StreamSubscription? _circleSubscription;
+  AnalyticsProvider analyticsProvider;
+
+  FirebaseSessionProvider({required this.analyticsProvider});
 
   @override
   ActiveSession? get activeSession {
@@ -89,6 +93,11 @@ class FirebaseSessionProvider extends SessionProvider {
           code: ServiceException.errorCodeInvalidSession,
           reference: session.circle.ref,
         );
+      }
+
+      // Log analytics
+      if (session is SnapSession) {
+        analyticsProvider.joinedSnapSession(session);
       }
     } on FirebaseException catch (ex) {
       throw ServiceException(

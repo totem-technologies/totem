@@ -29,6 +29,7 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
       _nameController.text = widget.fromCircle!.name;
       _descriptionController.text = widget.fromCircle!.description ?? "";
     }
+    ref.read(analyticsProvider).showScreen('createSnapCircleScreen');
     super.initState();
   }
 
@@ -149,9 +150,10 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
           circle: circle,
         );
         if (!mounted) return;
-        await Navigator.pushReplacementNamed(context, AppRoutes.circle, arguments: {
-          'session': circle.snapSession,
-        });
+        await Navigator.pushReplacementNamed(context, AppRoutes.circle,
+            arguments: {
+              'session': circle.snapSession,
+            });
       } /*else {
         // leave session in place or cancel?
         if (!mounted) return;

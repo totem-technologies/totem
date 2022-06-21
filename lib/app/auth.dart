@@ -64,6 +64,7 @@ class _AuthWidget extends ConsumerState<AuthWidget> {
   }
 
   Widget _data(BuildContext context, TotemRepository repo, AuthUser? user) {
+    ref.read(analyticsProvider).setAuthUser(user);
     if (user != null && !user.isAnonymous) {
       repo.user = user;
       if (_pendingLink != null) {

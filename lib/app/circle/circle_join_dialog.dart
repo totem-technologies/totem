@@ -52,6 +52,7 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
     Future.delayed(const Duration(milliseconds: 0), () {
       initializeProvider();
     });
+    ref.read(analyticsProvider).showScreen('joinCircleDialog');
     super.initState();
   }
 
