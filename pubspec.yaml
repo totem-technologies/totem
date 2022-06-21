@@ -35,6 +35,7 @@ dependencies:
   cloud_functions: ^3.1.1
   collection: ^1.16.0
   cupertino_icons: ^1.0.2
+  cupertino_will_pop_scope: ^1.2.0
   datetime_picker_formfield: ^2.0.0
   diffutil_dart: ^3.0.0
   email_validator: ^2.0.1
@@ -43,8 +44,8 @@ dependencies:
   firebase_auth: ^3.0.0
   firebase_core: ^1.2.0
   firebase_crashlytics: ^2.4.4
-  firebase_storage: ^10.0.1
   firebase_dynamic_links: ^4.0.8
+  firebase_storage: ^10.0.1
   flutter_device_type: ^0.4.0
   flutter_foreground_task: ^3.5.4
   flutter_reorderable_list: ^1.2.0
@@ -71,12 +72,11 @@ dependencies:
   rxdart: ^0.27.2
   share_plus: ^4.0.8
   shared_preferences: ^2.0.12
+  simple_shadow: ^0.3.0
   slide_to_act: ^2.0.1
   state_notifier: ^0.7.0
-  simple_shadow: ^0.3.0
-  cupertino_will_pop_scope: ^1.2.0
-  url_launcher: ^6.0.2
   universal_html: ^2.0.8
+  url_launcher: ^6.0.2
   uuid: ^3.0.6
   wakelock: 0.6.1+2
   web_browser_detect: ^2.0.2
@@ -87,12 +87,12 @@ dev_dependencies:
   flutter_lints:
 
 dependency_overrides:
-  provider: ^6.0.2
   audio_streamer:
     git:
       url: https://github.com/cph-cachet/flutter-plugins.git
       path: packages/audio_streamer
       ref: master
+
 # The following section is specific to Flutter.
 flutter:
   generate: true
