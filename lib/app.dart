@@ -49,7 +49,7 @@ class _AppState extends ConsumerState<App> {
       ],
       debugShowCheckedModeBanner: false,
       title: 'totem',
-      theme: _appTheme(context),
+      theme: appTheme(context),
       home: WithForegroundTask(
         child: AuthWidget(
           nonSignedInBuilder: (_) => const LoginPage(),
@@ -59,36 +59,35 @@ class _AppState extends ConsumerState<App> {
       onGenerateRoute: AppRoutes.generateRoute,
     );
   }
+}
 
-  ThemeData _appTheme(BuildContext context) {
-    AppThemeColors themeColors = StdAppThemeColors();
-    AppTextStyles textStyles = StdAppTextStyles(themeColors);
-    AppThemeStyles.setStyles(colors: themeColors, textStyles: textStyles);
-    return ThemeData(
-      appBarTheme: AppBarTheme(
-        centerTitle: true,
-        systemOverlayStyle: SystemUiOverlayStyle.dark,
-        iconTheme: IconThemeData(color: themeColors.primaryText),
-      ),
-      primaryColor: themeColors.primary,
-      scaffoldBackgroundColor: themeColors.screenBackground,
-      fontFamily: 'Raleway',
-      dialogTheme: DialogTheme(
-        backgroundColor: themeColors.dialogBackground,
-        contentTextStyle: textStyles.dialogContent,
-      ),
-      textTheme: textStyles,
-      textButtonTheme: TextButtonThemeData(
-        style: TextButton.styleFrom(
-            primary: themeColors.linkText,
-            textStyle: textStyles.textLinkButton),
-      ),
-      pageTransitionsTheme: const PageTransitionsTheme(
-        builders: {
-          TargetPlatform.android: ZoomPageTransitionsBuilder(),
-          TargetPlatform.iOS: CupertinoWillPopScopePageTransionsBuilder(),
-        },
-      ),
-    );
-  }
+ThemeData appTheme(BuildContext context) {
+  AppThemeColors themeColors = StdAppThemeColors();
+  AppTextStyles textStyles = StdAppTextStyles(themeColors);
+  AppThemeStyles.setStyles(colors: themeColors, textStyles: textStyles);
+  return ThemeData(
+    appBarTheme: AppBarTheme(
+      centerTitle: true,
+      systemOverlayStyle: SystemUiOverlayStyle.dark,
+      iconTheme: IconThemeData(color: themeColors.primaryText),
+    ),
+    primaryColor: themeColors.primary,
+    scaffoldBackgroundColor: themeColors.screenBackground,
+    fontFamily: 'Raleway',
+    dialogTheme: DialogTheme(
+      backgroundColor: themeColors.dialogBackground,
+      contentTextStyle: textStyles.dialogContent,
+    ),
+    textTheme: textStyles,
+    textButtonTheme: TextButtonThemeData(
+      style: TextButton.styleFrom(
+          primary: themeColors.linkText, textStyle: textStyles.textLinkButton),
+    ),
+    pageTransitionsTheme: const PageTransitionsTheme(
+      builders: {
+        TargetPlatform.android: ZoomPageTransitionsBuilder(),
+        TargetPlatform.iOS: CupertinoWillPopScopePageTransionsBuilder(),
+      },
+    ),
+  );
 }
