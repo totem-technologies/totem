@@ -733,14 +733,8 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   @override
   Future<void> muteVideo(bool mute) async {
     if (mute != videoMuted) {
-      await _engine?.muteLocalVideoStream(mute);
-/*        if (mute) {
-          _engine?.stopPreview();
-        } else {
-          _engine?.startPreview();
-        } */
       await _engine?.enableLocalVideo(!mute);
-      // FIXME - TEMP - Right now it seems that the
+      // Right now it seems that the
       // video publishing changes made locally are
       // not coming, so to work around this,
       // call the callback directly to simulate the
