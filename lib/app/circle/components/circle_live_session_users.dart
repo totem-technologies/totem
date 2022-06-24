@@ -30,7 +30,6 @@ class CircleLiveSessionUsers extends ConsumerWidget {
               ),
             )
           : WaitingRoomListLayout(
-              maxChildSize: 300,
               generate: (i, dimension) => CircleSessionParticipant(
                 dimension: dimension,
                 participant: participants[i],

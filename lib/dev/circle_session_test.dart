@@ -91,7 +91,6 @@ class ActiveSessionLayoutTestState extends State<ActiveSessionLayoutTest> {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 20, vertical: 20),
                             child: WaitingRoomListLayout(
-                                maxChildSize: 300,
                                 generate: getParticipant,
                                 count: participantCount),
                           ),
