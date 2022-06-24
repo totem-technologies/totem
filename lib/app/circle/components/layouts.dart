@@ -112,10 +112,9 @@ class WaitingRoomListLayout extends StatelessWidget {
     Key? key,
     required this.generate,
     required this.count,
-    this.maxChildSize = 150,
     this.minChildSize = 100,
   }) : super(key: key);
-  final double maxChildSize;
+  final double maxChildSize = 600;
   final double minChildSize;
   static const double spacing = 0;
   final int count;
@@ -163,7 +162,7 @@ class WaitingRoomListLayout extends StatelessWidget {
               child: Wrap(
                 runSpacing: spacing,
                 spacing: spacing,
-                alignment: WrapAlignment.start,
+                alignment: WrapAlignment.center,
                 children: List<Widget>.generate(
                   count,
                   (index) => generate(index, size),
