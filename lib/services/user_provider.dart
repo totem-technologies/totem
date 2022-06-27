@@ -10,4 +10,5 @@ abstract class UserProvider {
       {required UserProfile userProfile, required String uid});
   Future<void> updateUserProfileImage(
       {required String imageUrl, required String uid});
+  Stream<List<Media>> userMedia({required String uid});
 }

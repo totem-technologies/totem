@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
+import 'package:totem/models/media.dart';
 import 'package:totem/models/user_profile.dart';
 import 'package:totem/services/firebase_providers/paths.dart';
 import 'package:totem/services/user_provider.dart';
@@ -69,5 +70,27 @@ class FirebaseUserProvider extends UserProvider {
     } catch (ex) {
       debugPrint('error updating user profile image: $ex');
     }
+  }
+
+  @override
+  Stream<List<Media>> userMedia({required String uid}) {
+    final mediaCollection = FirebaseFirestore.instance
+        .collection(Paths.users)
+        .doc(uid)
+        .collection(Paths.media);
+    return mediaCollection.snapshots().transform(
+      StreamTransformer<QuerySnapshot<Map<String, dynamic>>,
+              List<Media>>.fromHandlers(
+          handleData: (QuerySnapshot<Map<String, dynamic>> snapshot,
+              EventSink<List<Media>> sink) {
+        List<Media> items = [];
+        if (snapshot.size > 0) {
+          items = snapshot.docs
+              .map((doc) => Media.fromJSON(doc.data(), id: doc.id))
+              .toList();
+        }
+        sink.add(items);
+      }),
+    );
   }
 }

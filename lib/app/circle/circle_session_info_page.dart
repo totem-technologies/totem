@@ -13,6 +13,11 @@ import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
 
+final userMediaStream = StreamProvider.autoDispose<List<Media>>((ref) {
+  final repo = ref.read(repositoryProvider);
+  return repo.userMedia();
+});
+
 class CircleSessionInfoPage extends ConsumerStatefulWidget {
   const CircleSessionInfoPage({Key? key}) : super(key: key);
 
@@ -161,6 +166,18 @@ class CircleSessionInfoPageState extends ConsumerState<CircleSessionInfoPage> {
                           const SizedBox(height: 4),
                           Text(_activeSession.circle.description!),
                         ],
+                        if (me != null && me!.role == Role.keeper) ...[
+                          const SizedBox(height: 24),
+                          Row(
+                            children: [
+                              Text('${t.sessionSound}:'),
+                              const SizedBox(
+                                width: 8,
+                              ),
+                              _circleMediaPicker(context),
+                            ],
+                          )
+                        ],
                         const SizedBox(height: 24),
                         Divider(
                           thickness: 1,
@@ -181,6 +198,40 @@ class CircleSessionInfoPageState extends ConsumerState<CircleSessionInfoPage> {
         ),
       ),
     );
+  }
+
+  Widget _circleMediaPicker(BuildContext context) {
+    final userMedia = ref.watch(userMediaStream);
+    final t = AppLocalizations.of(context)!;
+    return userMedia.when(error: (Object error, StackTrace? stackTrace) {
+      return Text(t.noAudioAvailable);
+    }, loading: () {
+      return Text('${t.loadingMedia}...');
+    }, data: (List<Media> data) {
+      Media none = Media.fromJSON({
+        "name": t.none,
+        "type": MediaType.audio.name,
+        "format": AudioFormatType.mp3.name
+      }, id: "");
+      List<Media> items = [none, ...data];
+      return DropdownButton<Media?>(
+        value: _activeSession.media ?? none,
+        //icon: const Icon(Icons.arrow_downward),
+        onChanged: (Media? newValue) {
+          setState(() {
+            _activeSession.media =
+                newValue != null ? (newValue.id != "" ? newValue : null) : null;
+//            dropdownValue = newValue!;
+          });
+        },
+        items: items.map<DropdownMenuItem<Media>>((Media value) {
+          return DropdownMenuItem<Media>(
+            value: value,
+            child: Text(value.name),
+          );
+        }).toList(),
+      );
+    });
   }
 
   Widget _contentList(

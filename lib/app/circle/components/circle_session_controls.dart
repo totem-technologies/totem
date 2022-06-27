@@ -131,9 +131,22 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
             backgroundColor: themeColors.primary,
             iconPadding: const EdgeInsets.all(6),
             onPressed: () {
-              _startSession(context, ref);
+              _playMedia(context, ref);
+//              _startSession(context, ref);
             },
           ),
+          /* const SizedBox(width: _btnSpacing),
+          ThemedControlButton(
+            label: t.start,
+            size: 48,
+            iconHeight: 20,
+            svgImage: 'assets/send.svg',
+            backgroundColor: themeColors.primary,
+            iconPadding: const EdgeInsets.all(6),
+            onPressed: () {
+              _playMedia(context, ref);
+            },
+          ), */
         ],
         const SizedBox(width: _btnSpacing),
         ThemedControlButton(
@@ -303,6 +316,11 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
   void _nextUser(BuildContext context, WidgetRef ref) async {
     final commProvider = ref.read(communicationsProvider);
     await commProvider.forceNextActiveSessionTotem();
+  }
+
+  void _playMedia(BuildContext context, WidgetRef ref) async {
+    final commProvider = ref.read(communicationsProvider);
+    commProvider.playSessionMedia();
   }
 
   void _startSession(BuildContext context, WidgetRef ref) async {

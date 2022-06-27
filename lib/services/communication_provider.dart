@@ -68,4 +68,7 @@ abstract class CommunicationProvider extends ChangeNotifier {
   void endTestAudioInput();
 
   void switchCamera();
+
+  void playSessionMedia();
+  void stopSessionMedia();
 }

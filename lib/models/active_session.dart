@@ -39,6 +39,7 @@ class ActiveSession extends ChangeNotifier {
   List<String> _speakingOrder = [];
   SessionState _state = SessionState.waiting;
   bool _userStatus = false;
+  Media? media;
 
   @override
   void dispose() {

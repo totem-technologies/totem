@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -39,10 +41,10 @@ class PhoneRegisterCodeEntryState
       final authSvc = ref.read(authServiceProvider);
       final AuthUser? authUser = authSvc.currentUser();
       if (authUser != null && authUser.isNewUser) {
-        await Navigator.pushReplacementNamed(
+        unawaited(Navigator.pushReplacementNamed(
           context,
           AppRoutes.loginOnboarding,
-        );
+        ));
       } else {
         Navigator.of(context).pop();
       }

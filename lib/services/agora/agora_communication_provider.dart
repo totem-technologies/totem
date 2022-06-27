@@ -341,6 +341,25 @@ class AgoraCommunicationProvider extends CommunicationProvider {
               audioVolumeIndication: _handleAudioVolumeIndication,
               videoPublishStateChanged: _handleVideoPublishStateChanged,
               remoteVideoStateChanged: _handleRemoteVideoStateChanged,
+              audioMixingFinished: () {
+                debugPrint('audioMixingFinished');
+              },
+              audioMixingStateChanged: (
+                AudioMixingStateCode state,
+                AudioMixingReason reason,
+              ) {
+                debugPrint(
+                    'audioMixingStateChanged state:${state.toString()}, reason: ${reason.toString()}}');
+              },
+              remoteAudioMixingBegin: () {
+                debugPrint('remoteAudioMixingBegin');
+              },
+              remoteAudioMixingEnd: () {
+                debugPrint('remoteAudioMixingEnd');
+              },
+              audioEffectFinished: (soundId) {
+                debugPrint("Finished playing $soundId");
+              },
             ),
           );
         } else {
@@ -897,6 +916,27 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   void switchCamera() async {
     if (_engine != null) {
       await _engine!.switchCamera();
+    }
+  }
+
+  @override
+  void playSessionMedia() async {
+    if (_engine != null &&
+        sessionProvider.activeSession != null &&
+        sessionProvider.activeSession!.media != null) {
+/*      await _engine!
+          .preloadEffect(1, sessionProvider.activeSession!.media!.url); */
+      await _engine!.playEffect(
+          1, sessionProvider.activeSession!.media!.url, 0, 1, 0, 100, true, 0);
+      /*   unawaited(_engine!.startAudioMixing(
+          sessionProvider.activeSession!.media!.url, false, false, 1)); */
+    }
+  }
+
+  @override
+  void stopSessionMedia() {
+    if (_engine != null) {
+      _engine!.pauseAudioMixing();
     }
   }
 }
