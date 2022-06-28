@@ -6,13 +6,18 @@ import * as admin from "firebase-admin";
 import {CloudFunction} from "firebase-functions";
 
 describe("offline api tests", () => {
+  admin.initializeApp();
   const assert = chai.assert;
   const test = testFunc();
-  let myFunctions: { ping: (arg0:Record<string, unknown>, arg1: { send: (data: string) => void; }) => void; getToken: CloudFunction<unknown>; };
+  let myFunctions: {
+    ping: (arg0: Record<string, unknown>, arg1: {send: (data: string) => void}) => void;
+    getToken: CloudFunction<unknown>;
+    deleteSelf: CloudFunction<unknown>;
+  };
   let adminInitStub: sinon.SinonStub;
 
   before(() => {
-    test.mockConfig({agora: {appid: "testappid0", certificate: "abcdefghij012345"}});
+    test.mockConfig({agora: {appid: "testappid0", certificate: "abcdefghij012345"}, applinks: {key: "testkey"}});
     adminInitStub = sinon.stub(admin, "initializeApp");
     myFunctions = require("../src");
   });
@@ -42,6 +47,18 @@ describe("offline api tests", () => {
       assert.isString(token);
       assert.isAbove(token.length, 0);
       assert.isAtLeast(expiration, oneHourFromNowInSeconds);
+    });
+  });
+
+  describe("deleteSelf", () => {
+    it("should call admin.deleteUser and return true", async () => {
+      const deleteUserStub = sinon.stub(admin.auth(), "deleteUser");
+      deleteUserStub.returns(Promise.resolve());
+      const wrapped = test.wrap(myFunctions.deleteSelf);
+      const result = await wrapped({}, {auth: {uid: "abcdefg123"}});
+      assert.isTrue(result);
+      assert.isTrue(deleteUserStub.calledOnce);
+      deleteUserStub.restore();
     });
   });
 });

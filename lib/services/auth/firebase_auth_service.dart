@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:rxdart/rxdart.dart';
@@ -224,5 +225,19 @@ class FirebaseAuthService implements AuthService {
     // state of the system. If there was a reset for firebase auth it would
     // be triggered here
     _authRequestStateStreamController!.add(AuthRequestState.entry);
+  }
+
+  @override
+  Future<void> deleteAccount() async {
+    try {
+      HttpsCallable deleteSelf =
+          FirebaseFunctions.instance.httpsCallable("deleteSelf");
+      final results = await deleteSelf();
+      if (results.data == true) {
+        return signOut();
+      }
+    } on FirebaseAuthException catch (e) {
+      debugPrint('Unable to delete account: $e');
+    }
   }
 }
