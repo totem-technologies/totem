@@ -21,7 +21,6 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
   bool _more = false;
   Timer? _timer;
   static const double _btnSpacing = 6;
-
   @override
   void dispose() {
     _timer?.cancel();
@@ -123,7 +122,6 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
           const SizedBox(width: _btnSpacing),
           ThemedControlButton(
             label: t.start,
-            size: 48,
             iconHeight: 20,
             svgImage: activeSession.state == SessionState.waiting
                 ? 'assets/view_circle.svg'
@@ -162,6 +160,128 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
     final t = AppLocalizations.of(context)!;
     final themeColors = Theme.of(context).themeColors;
     final communications = ref.watch(communicationsProvider);
+    if (isPhoneLayout) {
+      return Column(
+        children: [
+          Row(
+            children: [
+              Expanded(
+                flex: 1,
+                child: Container(),
+              ),
+              ThemedControlButton(
+                label: communications.muted ? t.unmute : t.mute,
+                labelColor: themeColors.reversedText,
+                svgImage: communications.muted
+                    ? 'assets/microphone_mute.svg'
+                    : 'assets/microphone.svg',
+                onPressed: () {
+                  triggerPress(() {
+                    if (communications.muted) {
+                      communications.muteAudio(false);
+                    } else {
+                      communications.muteAudio(true);
+                    }
+                    debugPrint('mute pressed');
+                  });
+                },
+              ),
+              const SizedBox(
+                width: _btnSpacing,
+              ),
+              ThemedControlButton(
+                label: communications.videoMuted ? t.startVideo : t.stopVideo,
+                labelColor: themeColors.reversedText,
+                svgImage: !communications.videoMuted
+                    ? 'assets/video.svg'
+                    : 'assets/video_stop.svg',
+                onPressed: () {
+                  triggerPress(() {
+                    communications
+                        .muteVideo(communications.videoMuted ? false : true);
+                    debugPrint('video pressed');
+                  });
+                },
+              ),
+              if (role == Role.keeper) ...[
+                const SizedBox(
+                  width: _btnSpacing,
+                ),
+                ThemedControlButton(
+                  label: !_more ? t.more : t.less,
+                  labelColor: themeColors.reversedText,
+                  svgImage: !_more ? 'assets/more.svg' : 'assets/less.svg',
+                  onPressed: () {
+                    setState(() => _more = !_more);
+                  },
+                ),
+              ],
+              if (role != Role.keeper) ...[
+                const SizedBox(width: _btnSpacing),
+                ThemedControlButton(
+                  label: t.leaveSession,
+                  labelColor: themeColors.reversedText,
+                  svgImage: 'assets/leave.svg',
+                  onPressed: () {
+                    _endSessionPrompt(context, ref, role);
+                  },
+                ),
+              ],
+              Expanded(
+                flex: 1,
+                child: Container(),
+              ),
+            ],
+          ),
+          if (role == Role.keeper && _more) ...[
+            const SizedBox(height: 24),
+            Row(
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: Container(),
+                ),
+                ThemedControlButton(
+                  label: t.next,
+                  labelColor: themeColors.reversedText,
+                  svgImage: 'assets/fast_forward.svg',
+                  onPressed: () {
+                    _nextUser(context, ref);
+                  },
+                ),
+                const SizedBox(width: _btnSpacing),
+                ThemedControlButton(
+                  label: t.info,
+                  labelColor: themeColors.reversedText,
+                  svgImage: 'assets/info.svg',
+                  onPressed: () {
+                    debugPrint('info pressed');
+                    _showCircleInfo(context);
+                  },
+                ),
+                const SizedBox(
+                  width: _btnSpacing,
+                ),
+                ThemedControlButton(
+                  label: t.endSession,
+                  labelColor: themeColors.reversedText,
+                  backgroundColor: themeColors.error,
+                  imageColor: themeColors.reversedText,
+                  svgImage: 'assets/close.svg',
+                  onPressed: () {
+                    _endSessionPrompt(context, ref, role);
+                  },
+                ),
+                Expanded(
+                  flex: 1,
+                  child: Container(),
+                ),
+              ],
+            ),
+          ],
+        ],
+      );
+    }
     return Stack(
       children: [
         Column(
@@ -206,19 +326,6 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
                     });
                   },
                 ),
-                if (role == Role.keeper) ...[
-                  const SizedBox(
-                    width: _btnSpacing,
-                  ),
-                  ThemedControlButton(
-                    label: !_more ? t.more : t.less,
-                    labelColor: themeColors.reversedText,
-                    svgImage: !_more ? 'assets/more.svg' : 'assets/less.svg',
-                    onPressed: () {
-                      setState(() => _more = !_more);
-                    },
-                  ),
-                ],
                 if (role != Role.keeper) ...[
                   const SizedBox(width: _btnSpacing),
                   ThemedControlButton(
@@ -230,48 +337,16 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
                     },
                   ),
                 ],
-                Expanded(
-                  flex: 1,
-                  child: Container(),
-                ),
-              ],
-            ),
-            if (role == Role.keeper && _more) ...[
-              const SizedBox(height: 24),
-              Row(
-                children: [
-                  Expanded(
-                    flex: 1,
-                    child: Container(),
+                if (role == Role.keeper) ...[
+                  const SizedBox(
+                    width: _btnSpacing,
                   ),
-                  /* ThemedControlButton(
-                label: t.openFloor,
-                labelColor: themeColors.reversedText,
-                svgImage: 'assets/unlock.svg',
-                onPressed: () {
-                  debugPrint('lock pressed');
-                },
-              ),
-              const SizedBox(
-                width: _btnSpacing,
-              ),*/
                   ThemedControlButton(
                     label: t.next,
                     labelColor: themeColors.reversedText,
                     svgImage: 'assets/fast_forward.svg',
                     onPressed: () {
                       _nextUser(context, ref);
-                    },
-                  ),
-                  const SizedBox(
-                    width: _btnSpacing,
-                  ),
-                  ThemedControlButton(
-                    label: t.endSession,
-                    labelColor: themeColors.reversedText,
-                    svgImage: 'assets/leave.svg',
-                    onPressed: () {
-                      _endSessionPrompt(context, ref, role);
                     },
                   ),
                   const SizedBox(width: _btnSpacing),
@@ -284,18 +359,30 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
                       _showCircleInfo(context);
                     },
                   ),
-                  Expanded(
-                    flex: 1,
-                    child: Container(),
+                  const SizedBox(
+                    width: _btnSpacing,
+                  ),
+                  ThemedControlButton(
+                    backgroundColor: themeColors.error,
+                    imageColor: themeColors.reversedText,
+                    label: t.endSession,
+                    labelColor: themeColors.reversedText,
+                    svgImage: 'assets/close.svg',
+                    onPressed: () {
+                      _endSessionPrompt(context, ref, role);
+                    },
                   ),
                 ],
-              ),
-            ],
+                Expanded(
+                  flex: 1,
+                  child: Container(),
+                ),
+              ],
+            ),
           ],
         ),
-        if (!isPhoneLayout)
-          CircleLiveTrayTitle(
-              title: activeSession.circle.name, maxWidth: maxWidth)
+        CircleLiveTrayTitle(
+            title: activeSession.circle.name, maxWidth: maxWidth),
       ],
     );
   }
