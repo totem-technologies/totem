@@ -262,6 +262,21 @@ class UserProfilePageState extends ConsumerState<UserProfilePage> {
                                             ),
                                           ],
                                         ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            TextButton(
+                                              onPressed: !_busy
+                                                  ? () {
+                                                      _promptDeleteAccount(
+                                                          context);
+                                                    }
+                                                  : null,
+                                              child: Text(t.deleteAccount),
+                                            ),
+                                          ],
+                                        ),
                                         const SizedBox(height: 4),
                                         const VersionInfo(),
                                         const SizedBox(height: 40),
@@ -381,6 +396,42 @@ class UserProfilePageState extends ConsumerState<UserProfilePage> {
         );
       },
     );
+  }
+
+  Future<void> _promptDeleteAccount(BuildContext context) async {
+    final t = AppLocalizations.of(context)!;
+    bool? deleteAccount = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        final actions = [
+          TextButton(
+            child: Text(t.cancel),
+            onPressed: () {
+              Navigator.of(context).pop(false);
+            },
+          ),
+          TextButton(
+            child: Text(t.deleteEverythingButton),
+            onPressed: () {
+              Navigator.of(context).pop(true);
+            },
+          ),
+        ];
+        return AlertDialog(
+          title: Text(
+            t.deleteAccount,
+          ),
+          content: Text(t.deleteAccountMessage),
+          actions: actions,
+        );
+      },
+    );
+    if (deleteAccount == true) {
+      setState(() => _busy = true);
+      await ref.read(authServiceProvider).deleteAccount();
+      if (!mounted) return;
+      Navigator.of(context).pop();
+    }
   }
 
   Future<void> _promptSignOut(BuildContext context) async {

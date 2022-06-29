@@ -10,6 +10,7 @@ abstract class AuthService {
   Future<AuthUser?> signInWithCode(String code);
   Future<void> signInWithPhoneNumber(String phoneNumber);
   Future<void> signOut();
+  Future<void> deleteAccount();
   Future<void> verifyCode(String code);
   Stream<AuthUser?> get onAuthStateChanged;
   Stream<AuthRequestState> get onAuthRequestStateChanged;
