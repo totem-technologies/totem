@@ -352,6 +352,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
               audioVolumeIndication: _handleAudioVolumeIndication,
               videoPublishStateChanged: _handleVideoPublishStateChanged,
               remoteVideoStateChanged: _handleRemoteVideoStateChanged,
+              networkQuality: _handleNetworkQuality,
             ),
           );
         } else {
@@ -639,6 +640,25 @@ class AgoraCommunicationProvider extends CommunicationProvider {
         notifyListeners();
       }
     }
+  }
+
+  void _handleNetworkQuality(
+      int uid, NetworkQuality qualityTx, NetworkQuality qualityRx) {
+    // user for display
+    bool networkUnstable =
+        isBadConnection(qualityTx) || isBadConnection(qualityRx);
+    uid = uid == 0 ? commUid : uid;
+    debugPrint(
+        'Network quality: ${qualityTx.name}, tx: ${qualityRx.name} unstable: $networkUnstable  for user: $uid');
+    sessionProvider.activeSession?.updateUnstableNetworkForUser(
+        sessionUserId: uid.toString(), unstable: networkUnstable);
+  }
+
+  bool isBadConnection(NetworkQuality quality) {
+    return quality == NetworkQuality.Bad ||
+        quality == NetworkQuality.VBad ||
+        quality == NetworkQuality.Poor ||
+        quality == NetworkQuality.Down;
   }
 
   @override

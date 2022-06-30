@@ -3,6 +3,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:provider/provider.dart' as prov;
 import 'package:rxdart/rxdart.dart';
+import 'package:totem/app/circle/components/circle_network_indicator.dart';
 import 'package:totem/app/circle/index.dart';
 import 'package:totem/components/camera/index.dart';
 import 'package:totem/models/index.dart';
@@ -41,6 +42,8 @@ class CircleSessionParticipant extends ConsumerWidget {
             height: dimension,
             child: prov.Consumer<SessionParticipant>(
               builder: (_, participant, __) {
+                debugPrint(
+                    "Participant update: ${participant.networkUnstable}");
                 return Stack(
                   clipBehavior: Clip.none,
                   children: [
@@ -84,6 +87,12 @@ class CircleSessionParticipant extends ConsumerWidget {
                         annotate: annotate,
                       ),
                     ),
+                    if (!participant.me && participant.networkUnstable)
+                      const Positioned(
+                        top: 10,
+                        left: 10,
+                        child: CircleNetworkUnstable(),
+                      ),
                     PositionedDirectional(
                       top: 5,
                       end: 5,

@@ -32,6 +32,7 @@ class AppThemeColors {
     required this.titleBarGradient,
     required this.cameraBorder,
     required this.contentDivider,
+    required this.alertBackground,
   });
 
   final Color blurBackground;
@@ -59,6 +60,7 @@ class AppThemeColors {
   final Color containerBackground;
   final Color cameraBorder;
   final Color contentDivider;
+  final Color alertBackground;
   final List<Color> primaryGradient;
   final List<Color> secondaryGradient;
   final List<Color> welcomeGradient;

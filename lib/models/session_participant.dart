@@ -12,6 +12,7 @@ class SessionParticipant extends ChangeNotifier {
   Role role = Role.member;
   DateTime? joined;
   late bool me;
+  bool _networkUnstable = false;
 
   SessionParticipant.from(SessionParticipant participant) {
     me = participant.me;
@@ -24,6 +25,7 @@ class SessionParticipant extends ChangeNotifier {
     uid = participant.uid;
     sessionImage = participant.sessionImage;
     status = participant.status;
+    _networkUnstable = participant._networkUnstable;
   }
 
   SessionParticipant.fromJson(Map<String, dynamic> json, {this.me = false}) {
@@ -52,6 +54,18 @@ class SessionParticipant extends ChangeNotifier {
 
   bool get hasImage {
     return sessionImage != null && sessionImage!.isNotEmpty;
+  }
+
+  bool get networkUnstable {
+    return _networkUnstable;
+  }
+
+  set networkUnstable(bool value) {
+    if (_networkUnstable != value) {
+      debugPrint('toggling unstable network:  $value');
+      _networkUnstable = value;
+      notifyListeners();
+    }
   }
 
   set muted(bool isMuted) {
