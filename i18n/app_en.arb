@@ -177,6 +177,14 @@
     },
     "unableToReadProfile": "Unable to read profile",
     "unmute": "Unmute",
+    "unstableNetwork": "Unstable Network",
+    "unstableNetworkUser": "{name}'s network is unstable",
+    "@unstableNetworkUser": {
+        "placeholders": {
+            "name": {}
+        }
+    },
+    "unstableNetworkYou": "Your network is unstable",
     "uploadErrorGeneric": "An unknown error occured trying to save your image.",
     "uploadErrorTitle": "Unable to save image",
     "useImage": "Use Image",

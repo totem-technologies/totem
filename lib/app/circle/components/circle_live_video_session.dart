@@ -9,6 +9,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:keybinder/keybinder.dart';
 import 'package:provider/provider.dart' as prov;
 import 'package:slide_to_act/slide_to_act.dart';
+import 'package:totem/app/circle/components/circle_network_indicator.dart';
 import 'package:totem/app/circle/index.dart';
 import 'package:totem/components/camera/index.dart';
 import 'package:totem/models/index.dart';
@@ -184,6 +185,14 @@ class _CircleLiveVideoSessionState
                         if (participant.videoMuted)
                           const Positioned.fill(
                             child: CameraMuted(),
+                          ),
+                        if (!participant.me && participant.networkUnstable)
+                          Positioned(
+                            top: 10,
+                            left: 10,
+                            child: CircleNetworkUnstable(
+                              participant: participant,
+                            ),
                           ),
                         if (participant.muted)
                           const PositionedDirectional(

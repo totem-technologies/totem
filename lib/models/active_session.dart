@@ -288,6 +288,20 @@ class ActiveSession extends ChangeNotifier {
     }
   }
 
+  void updateUnstableNetworkForUser(
+      {required String sessionUserId, required bool unstable}) {
+    SessionParticipant? participant = _activeParticipants.values
+        .firstWhereOrNull((element) => element.sessionUserId == sessionUserId);
+    if (participant != null) {
+      if (participant.networkUnstable != unstable) {
+        participant.networkUnstable = unstable;
+        if (participant.me) {
+          notifyListeners();
+        }
+      }
+    }
+  }
+
   bool mutedStateForUser({required String sessionUserId}) {
     SessionParticipant? participant = _activeParticipants.values
         .firstWhereOrNull((element) => element.sessionUserId == sessionUserId);

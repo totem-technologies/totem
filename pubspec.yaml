@@ -132,7 +132,7 @@ flutter:
     - assets/settings.svg
     - assets/video.svg
     - assets/video_stop.svg
-    - assets/totemtest.mp3
+    - assets/wifi.svg
 
   fonts:
     - family: Raleway

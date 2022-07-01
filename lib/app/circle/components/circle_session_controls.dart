@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:totem/app/circle/components/circle_network_indicator.dart';
 import 'package:totem/app/circle/index.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
@@ -32,6 +33,7 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
     final authUser = ref.read(authServiceProvider).currentUser()!;
     final activeSession = ref.watch(activeSessionProvider);
     final role = activeSession.participantRole(authUser.uid);
+    final me = activeSession.me();
     return LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
       debugPrint(
@@ -39,6 +41,8 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
       bool isPhoneLayout = DeviceType.isPhone() ||
           constraints.maxWidth <= Theme.of(context).portraitBreak;
       return Stack(
+        alignment: Alignment.topCenter,
+        clipBehavior: Clip.none,
         children: [
           BottomTrayContainer(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 16),
@@ -66,6 +70,15 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
                   : Theme.of(context).themeColors.trayBackground,
             ),
           ),
+          if (me != null && me.networkUnstable)
+            Positioned(
+              top: -35,
+              child: Center(
+                child: CircleNetworkUnstable(
+                  participant: activeSession.me(),
+                ),
+              ),
+            ),
         ],
       );
     });

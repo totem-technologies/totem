@@ -15,6 +15,7 @@ class StdThemePalette {
   static const mainGradient = [offWhite2, Color(0xfffeeecc)];
   static const homeGradient = [offWhite2, offWhite3];
   static const red = Color(0xffdf0000);
+  static const red2 = Color(0xffCB0E14);
   static const brown = Color(0xffa47817);
   static const grey = Color(0xff696b76);
   static const lightGrey = Color(0xffc9c9cd);
@@ -64,5 +65,6 @@ class StdAppThemeColors extends AppThemeColors {
           titleBarGradient: StdThemePalette.blackGradient,
           cameraBorder: StdThemePalette.grey,
           contentDivider: StdThemePalette.grey,
+          alertBackground: StdThemePalette.red2,
         );
 }
