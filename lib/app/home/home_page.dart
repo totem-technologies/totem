@@ -70,11 +70,11 @@ class HomePage extends StatelessWidget {
           text: t.circles,
           trailing: !isMobile ? const CreateCircleButton() : null,
         ),
-        const SizedBox(height: 40),
+        SizedBox(height: isMobile ? 30 : 20),
         if (isMobile)
           Padding(
             padding: EdgeInsets.only(
-                bottom: 40,
+                bottom: 20,
                 left: Theme.of(context).pageHorizontalPadding,
                 right: Theme.of(context).pageHorizontalPadding),
             child: Row(children: const [CreateCircleButton()]),
@@ -82,7 +82,7 @@ class HomePage extends StatelessWidget {
         const SnapCirclesRejoinable(),
         const Expanded(
           child: SnapCirclesList(
-            topPadding: 0,
+            topPadding: 15,
           ),
         ),
       ],
