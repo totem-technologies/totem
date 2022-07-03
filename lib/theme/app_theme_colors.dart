@@ -33,6 +33,7 @@ class AppThemeColors {
     required this.cameraBorder,
     required this.contentDivider,
     required this.alertBackground,
+    required this.videoOverlayBackground,
   });
 
   final Color blurBackground;
@@ -61,6 +62,7 @@ class AppThemeColors {
   final Color cameraBorder;
   final Color contentDivider;
   final Color alertBackground;
+  final Color videoOverlayBackground;
   final List<Color> primaryGradient;
   final List<Color> secondaryGradient;
   final List<Color> welcomeGradient;

@@ -23,8 +23,6 @@ class CircleParticipantVideo extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final themeData = Theme.of(context);
-    final textStyles = themeData.textTheme;
     final commProvider = ref.watch(communicationsProvider);
     return Container(
       decoration: BoxDecoration(
@@ -64,26 +62,10 @@ class CircleParticipantVideo extends ConsumerWidget {
                 (!participant.me && participant.videoMuted))
               _renderUserImage(context, participant), */
             PositionedDirectional(
-              bottom: 0,
-              start: 0,
-              end: 0,
-              child: Stack(
-                children: [
-                  _gradientLayer(context),
-                  PositionedDirectional(
-                    bottom: 0,
-                    start: 0,
-                    end: 0,
-                    child: Padding(
-                      padding:
-                          const EdgeInsets.only(left: 12, right: 12, bottom: 8),
-                      child: Text(
-                        participant.name,
-                        style: textStyles.headline5,
-                      ),
-                    ),
-                  ),
-                ],
+              bottom: 4,
+              start: 4,
+              child: CircleNameLabel(
+                name: participant.name,
               ),
             ),
             if (showMe && participant.me) renderMe(context),
@@ -164,20 +146,6 @@ class CircleParticipantVideo extends ConsumerWidget {
           ),
           Expanded(child: Container()),
         ],
-      ),
-    );
-  }
-
-  Widget _gradientLayer(BuildContext context) {
-    final themeColors = Theme.of(context).themeColors;
-    return Container(
-      height: 45,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: themeColors.profileGradient,
-        ),
       ),
     );
   }

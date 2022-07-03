@@ -45,6 +45,7 @@ class StdAppTextStyles extends AppTextStyles {
           headline4: TextStyle(
               fontFamily: 'Raleway',
               fontSize: 14,
+              height: 18 / 14,
               fontWeight: FontWeight.w500,
               color: themeColors.secondaryText),
           headline5: TextStyle(

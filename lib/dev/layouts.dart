@@ -1,21 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:totem/app/circle/index.dart';
 import 'package:totem/services/utils/device_type.dart';
 import 'package:totem/theme/app_theme_styles.dart';
 
 import '../app/circle/components/layouts.dart';
-import '../app/circle/components/listener_user_layout.dart';
 
 Widget getParticipant(int i, double d) {
   return Container(
     height: d,
     width: d,
     padding: const EdgeInsets.all(5),
-    child: Container(
-      decoration: BoxDecoration(
-        color: Colors.red,
-        borderRadius: BorderRadius.circular(10),
+    child: Stack(children: [
+      Container(
+        decoration: BoxDecoration(
+          color: Colors.red,
+          borderRadius: BorderRadius.circular(10),
+        ),
       ),
-    ),
+      Positioned(
+          bottom: 5,
+          left: 5,
+          child: CircleNameLabel(
+            name: "Participant ${i + 1}",
+          )),
+    ]),
   );
 }
 
@@ -32,8 +40,11 @@ class _WaitingRoomDevLayoutState extends State<WaitingRoomDevLayout> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        WaitingRoomListLayout(
-            generate: getParticipant, count: participantCount),
+        Padding(
+          padding: const EdgeInsets.only(top: 30),
+          child: WaitingRoomListLayout(
+              generate: getParticipant, count: participantCount),
+        ),
         Container(
           color: Colors.indigo,
           child: Row(
