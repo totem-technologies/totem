@@ -22,6 +22,7 @@ class SnapCircleItem extends StatelessWidget {
       padding: EdgeInsets.symmetric(
           vertical: 8.0, horizontal: themeData.pageHorizontalPadding),
       child: InkWell(
+        hoverColor: Colors.transparent,
         onTap: () {
           onPressed(circle);
         },

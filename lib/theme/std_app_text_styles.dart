@@ -9,7 +9,7 @@ class StdAppTextStyles extends AppTextStyles {
               fontSize: 32,
               fontWeight: FontWeight.w600,
               height: 43.52 / 32,
-              color: themeColors.secondaryText),
+              color: themeColors.primaryText),
           body: TextStyle(
               fontFamily: 'Raleway',
               fontSize: 14,
