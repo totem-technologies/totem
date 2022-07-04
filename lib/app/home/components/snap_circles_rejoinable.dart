@@ -34,7 +34,7 @@ class SnapCirclesRejoinableState extends ConsumerState<SnapCirclesRejoinable> {
                         horizontal: Theme.of(context).pageHorizontalPadding),
                     child: Text(
                       "Rejoin circle",
-                      style: Theme.of(context).textStyles.headline3,
+                      style: Theme.of(context).textStyles.headline2,
                     ),
                   ),
                   const SizedBox(
@@ -60,7 +60,7 @@ class SnapCirclesRejoinableState extends ConsumerState<SnapCirclesRejoinable> {
                         horizontal: Theme.of(context).pageHorizontalPadding),
                     child: Text(
                       "Other circles",
-                      style: Theme.of(context).textStyles.headline3,
+                      style: Theme.of(context).textStyles.headline2,
                     ),
                   ),
                 ],

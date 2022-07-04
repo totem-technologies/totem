@@ -20,6 +20,7 @@ class StdThemePalette {
   static const grey = Color(0xff696b76);
   static const lightGrey = Color(0xffc9c9cd);
   static const lighterGrey = Color(0xffd8d8d8);
+  static const transparentGrey = Color(0x99444654);
   static const profileGradient = [
     Color.fromRGBO(49, 53, 84, 0),
     Color.fromRGBO(28, 30, 51, 0.78),
@@ -66,5 +67,6 @@ class StdAppThemeColors extends AppThemeColors {
           cameraBorder: StdThemePalette.grey,
           contentDivider: StdThemePalette.grey,
           alertBackground: StdThemePalette.red2,
+          videoOverlayBackground: StdThemePalette.transparentGrey,
         );
 }

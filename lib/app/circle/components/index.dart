@@ -7,6 +7,7 @@ export 'circle_live_session_video.dart';
 export 'circle_live_totem_participant.dart';
 export 'circle_live_tray_title.dart';
 export 'circle_muted_indicator.dart';
+export 'circle_name_label.dart';
 export 'circle_network_connectivity_layer.dart';
 export 'circle_participant.dart';
 export 'circle_participant_video.dart';

@@ -113,6 +113,7 @@ flutter:
     - assets/close.svg
     - assets/face.svg
     - assets/fast_forward.svg
+    - assets/home_logo.svg
     - assets/info.svg
     - assets/ios_download.png
     - assets/leave.svg
