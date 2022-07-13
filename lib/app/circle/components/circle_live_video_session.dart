@@ -187,12 +187,10 @@ class _CircleLiveVideoSessionState
                             child: CameraMuted(),
                           ),
                         if (!participant.me && participant.networkUnstable)
-                          Positioned(
+                          const Positioned(
                             top: 10,
                             left: 10,
-                            child: CircleNetworkUnstable(
-                              participant: participant,
-                            ),
+                            child: CircleNetworkUnstable(),
                           ),
                         if (participant.muted)
                           const PositionedDirectional(
