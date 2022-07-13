@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart' hide ReorderableList;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:totem/app/circle/index.dart';
 import 'package:totem/components/widgets/index.dart';
@@ -14,12 +15,15 @@ class CircleSessionParticipantDialog extends ConsumerStatefulWidget {
   const CircleSessionParticipantDialog({
     Key? key,
     required this.participant,
+    this.overrideMe = false,
   }) : super(key: key);
   final SessionParticipant participant;
+  final bool overrideMe;
 
   static Future<String?> showDialog(
     BuildContext context, {
     required SessionParticipant participant,
+    bool overrideMe = false,
   }) async {
     return showModalBottomSheet<String>(
       enableDrag: true,
@@ -30,6 +34,7 @@ class CircleSessionParticipantDialog extends ConsumerStatefulWidget {
       barrierColor: Theme.of(context).themeColors.blurBackground,
       builder: (_) => CircleSessionParticipantDialog(
         participant: participant,
+        overrideMe: overrideMe,
       ),
     );
   }
@@ -50,7 +55,9 @@ class CircleSessionParticipantDialogState
     _userProfile = ref
         .read(repositoryProvider)
         .userProfileWithId(uid: widget.participant.uid, circlesCompleted: true);
-    me = ref.read(activeSessionProvider).me();
+    me = !widget.overrideMe
+        ? ref.read(activeSessionProvider).me()
+        : widget.participant;
     super.initState();
   }
 
@@ -178,11 +185,10 @@ class CircleSessionParticipantDialogState
                                     ),
                                     const SizedBox(height: 24),
                                     Expanded(child: Container()),
-                                    if (me != null && me!.role == Role.keeper)
-                                      Padding(
-                                        padding: const EdgeInsets.only(top: 10),
-                                        child: Container(),
-                                      ),
+                                    if (!widget.participant.me &&
+                                        me != null &&
+                                        me!.role == Role.keeper)
+                                      ..._removeButton(context),
                                   ]
                                 ],
                               );
@@ -199,5 +205,93 @@ class CircleSessionParticipantDialogState
         ),
       ),
     );
+  }
+
+  List<Widget> _removeButton(BuildContext context) {
+    final themeColors = Theme.of(context).themeColors;
+    final textStyles = Theme.of(context).textStyles;
+    return [
+      Divider(
+        thickness: 1,
+        height: 32,
+        color: themeColors.divider,
+      ),
+      InkWell(
+        onTap: () {
+          _promptRemoveUser(context);
+        },
+        child: Row(
+          children: [
+            SvgPicture.asset('assets/erase.svg'),
+            const SizedBox(width: 10),
+            Text(AppLocalizations.of(context)!.removeFromCircle,
+                style: textStyles.button),
+          ],
+        ),
+      ),
+      Divider(
+        thickness: 1,
+        height: 32,
+        color: themeColors.divider,
+      ),
+    ];
+  }
+
+  Future<void> _promptRemoveUser(BuildContext context) async {
+    final t = AppLocalizations.of(context)!;
+    bool? result = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      barrierColor: Theme.of(context).themeColors.blurBackground,
+      builder: (_) => AlertDialog(
+        title: Text(t.removeFromCircle),
+        content: Text(t.removeFromCirclePrompt(widget.participant.name)),
+        actions: [
+          TextButton(
+            child: Text(t.no),
+            onPressed: () {
+              Navigator.of(context).pop(false);
+            },
+          ),
+          TextButton(
+            child: Text(t.yes),
+            onPressed: () {
+              Navigator.of(context).pop(true);
+            },
+          ),
+        ],
+      ),
+    );
+    if (result == true) {
+      //await _removeUser();
+      bool result =
+          await ref.read(communicationsProvider).removeUserFromSession(
+                sessionUserId: widget.participant.sessionUserId!,
+              );
+      if (!mounted) {
+        return;
+      }
+      if (result) {
+        Navigator.of(context).pop();
+      } else {
+        await showDialog(
+          context: context,
+          barrierDismissible: false,
+          barrierColor: Theme.of(context).themeColors.blurBackground,
+          builder: (_) => AlertDialog(
+            title: Text(t.unableToRemoveUser),
+            content: Text(t.unableToRemoveUserMessage(widget.participant.name)),
+            actions: [
+              TextButton(
+                child: Text(t.ok),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
+        );
+      }
+    }
   }
 }

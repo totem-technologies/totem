@@ -120,6 +120,7 @@
     "name": "Name",
     "next": "Next",
     "nextSession": "Next Session",
+    "no": "No",
     "noCirclesMessage": "You are not a part of any circles",
     "noParticipantsActiveSession": "There are no participants in this session.",
     "noSnapCirclesMessage": "seems like there are no active circles",
@@ -140,6 +141,13 @@
     "profilePicture": "Profile Picture",
     "receive": "Receive",
     "rejoinCircle": "Rejoin circle in progress",
+    "removeFromCircle": "Remove from circle",
+    "removeFromCirclePrompt": "This will remove {name} from the circle and they won't be able to rejoin.\n\nDo you want to remove {name} from this circle?",
+    "@removeFromCirclePrompt": {
+        "placeholders": {
+            "name": {}
+        }
+    },
     "retake": "Retake",
     "retryPhone": "Didn’t receive a code?\nEnter a new number",
     "retrySignin": "Retry",
@@ -154,6 +162,7 @@
     "sessionsCompleted": "All session completed",
     "sessionStateCancelled": "The session was cancelled",
     "sessionStateComplete": "The session has ended.",
+    "sessionUserRemoved": "You were removed from the circle",
     "sessionWaiting": "Waiting to start",
     "share": "Share",
     "signup": "Signup",
@@ -176,6 +185,13 @@
         }
     },
     "unableToReadProfile": "Unable to read profile",
+    "unableToRemoveUser": "Unable to remove",
+    "unableToRemoveUserMessage": "Unable to remove {name} from the circle. Please try again.",
+    "@unableToRemoveUserMessage": {
+        "placeholders": {
+            "name": {}
+        }
+    },
     "unmute": "Unmute",
     "unstableNetwork": "Unstable Network",
     "unstableNetworkUser": "{name}'s network is unstable",
@@ -193,6 +209,7 @@
     "welcome": "Welcome to Totem",
     "welcomeDetail": "We are a Community, made to let you share and participate with others, by communicating your thoughts on a topic of your interest.",
     "worksBestChrome": "This works best in Chrome browsers",
+    "yes": "Yes",
     "youAreSharing": "You are sharing",
     "yourTurn": "Your Turn"
   }

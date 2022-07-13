@@ -12,6 +12,7 @@ enum SessionState {
   cancelling,
   cancelled,
   idle,
+  removed,
 }
 
 enum ActiveSessionChange {
@@ -20,6 +21,7 @@ enum ActiveSessionChange {
   totemChange,
   started,
   participantsChange,
+  userRemoved
 }
 
 class ActiveSession extends ChangeNotifier {
@@ -39,6 +41,7 @@ class ActiveSession extends ChangeNotifier {
   List<String> _speakingOrder = [];
   SessionState _state = SessionState.waiting;
   bool _userStatus = false;
+  List<String> _removedUsers = [];
 
   @override
   void dispose() {
@@ -156,11 +159,18 @@ class ActiveSession extends ChangeNotifier {
   }
 
   void updateSessionState(Map<String, dynamic> data) {
+    _removedUsers =
+        List<String>.from(data['removedParticipants'] as List? ?? []);
     SessionState newState = data["state"] != null
         ? SessionState.values.byName(data["state"]!)
         : SessionState.waiting;
-    if (newState != _state) {
+    bool removed = _removedUsers.isNotEmpty && _removedUsers.contains(userId);
+    if (newState != _state && !removed) {
       _state = newState;
+      notifyListeners();
+    } else if (removed) {
+      // User has been removed from the session by keeper, so update state
+      _state = SessionState.removed;
       notifyListeners();
     }
   }

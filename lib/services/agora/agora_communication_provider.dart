@@ -285,6 +285,13 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     return false;
   }
 
+  @override
+  Future<bool> removeUserFromSession({required String sessionUserId}) async {
+    // first user from the session
+    return sessionProvider.removeParticipantFromActiveSession(
+        sessionUserId: sessionUserId);
+  }
+
   void _cancelStateUpdates() {
     _updateTimer?.cancel();
     _updateTimer = null;

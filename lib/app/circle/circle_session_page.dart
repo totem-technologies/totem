@@ -42,7 +42,8 @@ class CircleSessionPageState extends ConsumerState<CircleSessionPage>
       final activeSession = ref.read(activeSessionProvider);
 
       if ((activeSession.state == SessionState.cancelled ||
-              activeSession.state == SessionState.complete) &&
+              activeSession.state == SessionState.complete ||
+              activeSession.state == SessionState.removed) &&
           commProvider.state == CommunicationState.active) {
         // the session has been ended remotely... trigger leave session
         commProvider.leaveSession(requested: false);

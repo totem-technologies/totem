@@ -248,6 +248,9 @@ class _CircleSnapSessionContentState
         sessionProvider.state == SessionState.cancelling) {
       return _circleStartingOrEnding(context, sessionProvider.state);
     }
+    if (sessionProvider.state == SessionState.removed) {
+      return _circleUserRemoved(context);
+    }
     switch (commProvider.state) {
       case CommunicationState.failed:
         return _errorSession(context);
@@ -294,6 +297,24 @@ class _CircleSnapSessionContentState
       );
     }
     return Container();
+  }
+
+  Widget _circleUserRemoved(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
+    final textStyles = Theme.of(context).textStyles;
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(t.sessionUserRemoved, style: textStyles.headline3),
+        const SizedBox(height: 20),
+        ThemedRaisedButton(
+          label: t.leaveSession,
+          onPressed: () async {
+            Navigator.of(context).pop();
+          },
+        ),
+      ],
+    );
   }
 
   Widget _errorSession(BuildContext context) {

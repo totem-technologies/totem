@@ -614,4 +614,95 @@ class FirebaseSessionProvider extends SessionProvider {
     }
     return false;
   }
+
+  @override
+  Future<bool> removeParticipantFromActiveSession(
+      {required String sessionUserId}) async {
+    bool result = false;
+    if (activeSession != null) {
+      SessionParticipant? participant =
+          activeSession!.participantWithSessionID(sessionUserId);
+      if (participant != null) {
+        try {
+          await FirebaseFirestore.instance.runTransaction((transaction) async {
+            DocumentReference activeCircleRef = FirebaseFirestore.instance
+                .collection(Paths.activeCircles)
+                .doc(activeSession!.circle.id);
+            DocumentSnapshot activeSnapshot =
+                await transaction.get(activeCircleRef);
+            // Make sure the active session is present
+            if (activeSnapshot.data() != null) {
+              Map<String, dynamic> activeCircleData =
+                  activeSnapshot.data()! as Map<String, dynamic>;
+              Map<String, dynamic> participants =
+                  activeCircleData['participants']! as Map<String, dynamic>;
+              Map<String, dynamic>? participant =
+                  activeCircleData['participants'][sessionUserId]
+                      as Map<String, dynamic>?;
+              if (participant != null) {
+                String uid = participant['uid'] as String;
+                participants.remove(sessionUserId);
+                participants.remove(sessionUserId);
+                activeCircleData['participants'] = participants;
+
+                // if the user is the current totem holder, move to the next one
+                if (activeCircleData['totemUser'] == sessionUserId) {
+                  String? nextTotemUser;
+                  int index =
+                      activeCircleData['speakingOrder'].indexOf(sessionUserId);
+                  if (index < activeCircleData['speakerOrder'].length - 1) {
+                    nextTotemUser =
+                        activeCircleData['speakingOrder'][index + 1];
+                  } else {
+                    nextTotemUser = activeCircleData['speakingOrder'][0];
+                  }
+                  activeCircleData['totemReceived'] = false;
+                  activeCircleData['totemUser'] = nextTotemUser ?? '';
+                }
+                List<String> speakingOrder = List<String>.from(
+                    activeCircleData['speakingOrder']! as List);
+                speakingOrder.remove(sessionUserId);
+                activeCircleData['speakingOrder'] = speakingOrder;
+                activeCircleData['lastChange'] =
+                    ActiveSessionChange.userRemoved.name;
+
+                // Update the circle itself
+                DocumentReference ref = FirebaseFirestore.instance
+                    .collection(Paths.snapCircles)
+                    .doc(activeSession!.circle.id);
+                DocumentSnapshot snapshot = await transaction.get(ref);
+                Map<String, dynamic> snapSessionData =
+                    snapshot.data()! as Map<String, dynamic>;
+                List<String> removedParticipants =
+                    snapSessionData['removedParticipants'] ?? [];
+                if (!removedParticipants.contains(uid)) {
+                  removedParticipants.add(uid);
+                }
+                if (removedParticipants.isNotEmpty) {
+                  snapSessionData['removedParticipants'] = removedParticipants;
+                }
+                List<String> currentParticipants = List<String>.from(
+                    snapSessionData['circleParticipants'] ?? []);
+                if (currentParticipants.contains(uid)) {
+                  currentParticipants.remove(uid);
+                }
+                snapSessionData['circleParticipants'] = currentParticipants;
+                snapSessionData['participantCount'] = participants.length;
+                transaction.update(ref, snapSessionData);
+                transaction.update(activeCircleRef, activeCircleData);
+                result = true;
+              }
+            }
+          });
+        } on FirebaseException catch (ex) {
+          debugPrint('error updating user status: $ex');
+          result = false;
+        } catch (e) {
+          debugPrint('error updating user status: $e');
+          result = false;
+        }
+      }
+    }
+    return result;
+  }
 }

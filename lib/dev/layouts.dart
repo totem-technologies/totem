@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:totem/app/circle/index.dart';
+import 'package:totem/components/widgets/index.dart';
+import 'package:totem/models/index.dart';
 import 'package:totem/services/utils/device_type.dart';
 import 'package:totem/theme/app_theme_styles.dart';
 
@@ -170,6 +172,86 @@ class ListenLiveLayoutState extends State<ListenLiveLayoutTest> {
                   isPhoneLayout: isPhoneLayout,
                 ),
               ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class CircleUserProfileTest extends StatefulWidget {
+  const CircleUserProfileTest({Key? key}) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() => CircleUserProfileTestState();
+}
+
+class CircleUserProfileTestState extends State<CircleUserProfileTest> {
+  late SessionParticipant _testParticipant;
+
+  @override
+  void initState() {
+    _testParticipant = _generateParticipant(Role.keeper);
+    super.initState();
+  }
+
+  SessionParticipant _generateParticipant(Role role) {
+    return SessionParticipant.fromJson({
+      "name": "Test Participant",
+      "uid": "cz7h6p4IeqMSc1ZahXTw26OMOxy1",
+      "role": role.name,
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final themeColors = Theme.of(context).themeColors;
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Container(
+              color: Colors.indigo,
+              child: Row(
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      setState(() {
+                        _testParticipant = _generateParticipant(Role.keeper);
+                      });
+                    },
+                    child: const Text('Keeper'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      setState(() {
+                        _testParticipant = _generateParticipant(Role.member);
+                      });
+                    },
+                    child: const Text('Member'),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                  color: themeColors.screenBackground,
+                  child: Center(
+                    child: ThemedRaisedButton(
+                      onPressed: () {
+                        CircleSessionParticipantDialog.showDialog(
+                          context,
+                          participant: _testParticipant,
+                          overrideMe: true,
+                        );
+                      },
+                      child: const Text('Show Dialog'),
+                    ),
+                  )),
             ),
           ],
         );

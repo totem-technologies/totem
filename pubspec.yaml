@@ -111,6 +111,7 @@ flutter:
     - assets/cam.svg
     - assets/check.svg
     - assets/close.svg
+    - assets/erase.svg
     - assets/face.svg
     - assets/fast_forward.svg
     - assets/home_logo.svg
