@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class AppThemeColors {
   AppThemeColors({
+    required this.alternateButtonBackground,
     required this.blurBackground,
     required this.busyIndicator,
     required this.screenBackground,
@@ -36,6 +37,7 @@ class AppThemeColors {
     required this.videoOverlayBackground,
   });
 
+  final Color alternateButtonBackground;
   final Color blurBackground;
   final Color busyIndicator;
   final Color controlButtonBackground;
