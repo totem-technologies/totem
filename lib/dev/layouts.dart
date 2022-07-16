@@ -10,20 +10,23 @@ Widget getParticipant(int i, double d) {
     height: d,
     width: d,
     padding: const EdgeInsets.all(5),
-    child: Stack(children: [
-      Container(
-        decoration: BoxDecoration(
-          color: Colors.red,
-          borderRadius: BorderRadius.circular(10),
+    child: Stack(
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.grey,
+            borderRadius: BorderRadius.circular(10),
+          ),
         ),
-      ),
-      Positioned(
+        Positioned(
           bottom: 5,
           left: 5,
           child: CircleNameLabel(
             name: "Participant ${i + 1}",
-          )),
-    ]),
+          ),
+        ),
+      ],
+    ),
   );
 }
 

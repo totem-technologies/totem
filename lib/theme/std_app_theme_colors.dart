@@ -36,6 +36,7 @@ class StdThemePalette {
 class StdAppThemeColors extends AppThemeColors {
   StdAppThemeColors()
       : super(
+          alternateButtonBackground: StdThemePalette.baseWhite,
           busyIndicator: StdThemePalette.baseBlack,
           primary: StdThemePalette.yellow,
           primaryButtonBackground: StdThemePalette.yellow,

@@ -10,11 +10,11 @@ class CircleSessionContent extends ConsumerWidget {
     return Stack(
       children: const [
         CirclePendingSessionUsers(),
-        Align(
+        /*Align(
             alignment: Alignment.bottomCenter,
             child: CircleMutedIndicator(
               live: false,
-            )),
+            ),), */
       ],
     );
   }

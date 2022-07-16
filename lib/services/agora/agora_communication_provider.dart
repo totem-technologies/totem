@@ -657,7 +657,6 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   bool isBadConnection(NetworkQuality quality) {
     return quality == NetworkQuality.Bad ||
         quality == NetworkQuality.VBad ||
-        quality == NetworkQuality.Poor ||
         quality == NetworkQuality.Down;
   }
 

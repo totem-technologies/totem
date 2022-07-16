@@ -1,6 +1,6 @@
-import 'package:totem/theme/index.dart';
-import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:flutter/material.dart';
+import 'package:totem/theme/index.dart';
 
 class ThemedRaisedButton extends StatelessWidget {
   const ThemedRaisedButton({
@@ -19,6 +19,7 @@ class ThemedRaisedButton extends StatelessWidget {
     this.maxLines = 1,
     this.textAlign = TextAlign.center,
     this.horzPadding = 15,
+    this.backgroundColor,
   }) : super(key: key);
   final Widget? child;
   final Color? disabledColor;
@@ -34,6 +35,7 @@ class ThemedRaisedButton extends StatelessWidget {
   final int maxLines;
   final TextAlign textAlign;
   final double horzPadding;
+  final Color? backgroundColor;
 
   Widget _busySpinner(BuildContext context) {
     final themeColors = Theme.of(context).themeColors;
@@ -73,8 +75,9 @@ class ThemedRaisedButton extends StatelessWidget {
       backgroundColor: MaterialStateProperty.resolveWith<Color>(
         // background color    this is color:
         (Set<MaterialState> states) => states.contains(MaterialState.disabled)
-            ? themeColors.primaryButtonBackground.withAlpha(102)
-            : themeColors.primaryButtonBackground,
+            ? (backgroundColor?.withAlpha(102) ??
+                themeColors.primaryButtonBackground.withAlpha(102))
+            : (backgroundColor ?? themeColors.primaryButtonBackground),
       ),
     );
     return SizedBox(
