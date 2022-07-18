@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:totem/app_routes.dart';
 import 'package:totem/services/applinks/index.dart';
 import 'package:totem/theme/index.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 import 'app/auth.dart';
 import 'app/home/home_page.dart';
@@ -47,6 +48,7 @@ class _AppState extends ConsumerState<App> {
       supportedLocales: const [
         Locale('en', ''),
       ],
+      navigatorObservers: [SentryNavigatorObserver()],
       debugShowCheckedModeBanner: false,
       title: 'totem',
       theme: _appTheme(context),
