@@ -80,6 +80,7 @@ dependencies:
   uuid: ^3.0.6
   wakelock: 0.6.1+2
   web_browser_detect: ^2.0.2
+  sentry_flutter: ^6.6.3
 
 dev_dependencies:
   flutter_test:
