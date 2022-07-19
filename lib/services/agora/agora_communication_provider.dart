@@ -402,6 +402,8 @@ class AgoraCommunicationProvider extends CommunicationProvider {
           _updateState(CommunicationState.networkConnectivity);
           break;
         case ErrorCode.StartCamera:
+          // This seems to be benign like the AdmGeneralError error.
+          // also its deprecated so its odd that its being generated.
           debugPrint('error: ${error.name} -> Ignoring');
           break;
         default:
