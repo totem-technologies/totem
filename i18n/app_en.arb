@@ -186,7 +186,7 @@
         }
     },
     "unstableNetworkYou": "Your network is unstable",
-    "uploadErrorGeneric": "An unknown error occured trying to save your image.",
+    "uploadErrorGeneric": "An unknown error occurred trying to save your image.",
     "uploadErrorTitle": "Unable to save image",
     "useImage": "Use Image",
     "version": "Version",
