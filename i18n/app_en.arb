@@ -101,6 +101,18 @@
     "home": "Home",
     "info": "Info",
     "initializingCamera": "Initializing Camera...",
+    "introScreenTitle1": "Un-conferencing"
+    "introScreenMessage1": "Totem is about everyone listening to the current speaker.\nEach person is given time to share uninterrupted to the group.\nKeepers set topics and guide the group discussion."
+    "introScreenTitle2": "Getting Started"
+    "introScreenMessage2": "Everyone begins the session on mute.\nListen to others and try not blame or judge them.\nWait for your turn and use “I” instead of “We” statements."
+    "introScreenTitle3": "Sharing"
+    "introScreenMessage3": "When it’s your turn to share, a “Receive” button will appear on screen.\nPush that button to unmute and begin speaking.\nYour video will now be hightlighted to everyone in the group, if available."
+    "introScreenTitle4": "Passing"
+    "introScreenMessage4": "After you have completed sharing, you will see a “pass” button.\nPress that button to mute yourself and allow the next person to speak.\nYour video will return to the side of the display."
+    "introScreenTitle5": "Guidelines"
+    "introScreenMessage5": "Please remember that there is no advertising allowed.\nNo recording or sharing outside of Totem, for confidentiality.\nThere is no exposing people’s information to others."
+    "introScreenTitle6": "Let’s Begin"
+    "introScreenMessage6": "Listen with compassion.\nOwn your story. Try not to blame anyone for your past.\nConsider withholding judgment even if you disagree with what the person is saying."
     "joinCircle": "Join Circle",
     "joinCircleMessage": "Welcome! Before you enter the waiting room, please check that your audio and video are working as intended.",
     "joiningCircle": "Joining Circle",
