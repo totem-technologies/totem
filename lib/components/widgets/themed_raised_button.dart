@@ -20,6 +20,7 @@ class ThemedRaisedButton extends StatelessWidget {
     this.textAlign = TextAlign.center,
     this.horzPadding = 15,
     this.backgroundColor,
+    this.textStyle,
   }) : super(key: key);
   final Widget? child;
   final Color? disabledColor;
@@ -36,6 +37,7 @@ class ThemedRaisedButton extends StatelessWidget {
   final TextAlign textAlign;
   final double horzPadding;
   final Color? backgroundColor;
+  final TextStyle? textStyle;
 
   Widget _busySpinner(BuildContext context) {
     final themeColors = Theme.of(context).themeColors;
@@ -72,6 +74,15 @@ class ThemedRaisedButton extends StatelessWidget {
             ? themeColors.primaryText.withAlpha(102)
             : themeColors.primaryText,
       ),
+      textStyle: textStyle != null
+          ? MaterialStateProperty.resolveWith<TextStyle>(
+              (states) => states.contains(MaterialState.disabled)
+                  ? textStyle!.copyWith(
+                      color: themeColors.primaryText.withAlpha(102),
+                    )
+                  : textStyle!,
+            )
+          : null,
       backgroundColor: MaterialStateProperty.resolveWith<Color>(
         // background color    this is color:
         (Set<MaterialState> states) => states.contains(MaterialState.disabled)

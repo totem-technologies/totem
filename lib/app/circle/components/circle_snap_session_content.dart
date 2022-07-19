@@ -9,6 +9,7 @@ import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 final audioLevelStream = StreamProvider.autoDispose<AudioLevelData>((ref) {
   final audioLevel = AudioLevel();
@@ -290,6 +291,20 @@ class _CircleSnapSessionContentState
               Navigator.of(context).pop();
             },
           ),
+          if (sessionProvider.state == SessionState.complete)
+            Padding(
+              padding: const EdgeInsets.only(top: 60),
+              child: ThemedRaisedButton(
+                backgroundColor:
+                    Theme.of(context).themeColors.secondaryButtonBackground,
+                label: t.sessionFeedbackRequest,
+                textStyle:
+                    textStyles.button!.merge(const TextStyle(fontSize: 14)),
+                onPressed: () async {
+                  _launchUserFeedback();
+                },
+              ),
+            )
         ],
       );
     }
@@ -496,5 +511,8 @@ class _CircleSnapSessionContentState
         ),
         fullScreenSize: fullscreenSize);
   }
-//  }
+
+  void _launchUserFeedback() async {
+    await launchUrl(Uri.parse(DataUrls.userFeedback));
+  }
 }

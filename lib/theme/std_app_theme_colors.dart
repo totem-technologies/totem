@@ -69,5 +69,6 @@ class StdAppThemeColors extends AppThemeColors {
           contentDivider: StdThemePalette.grey,
           alertBackground: StdThemePalette.red2,
           videoOverlayBackground: StdThemePalette.transparentGrey,
+          secondaryButtonBackground: StdThemePalette.lightYellow,
         );
 }

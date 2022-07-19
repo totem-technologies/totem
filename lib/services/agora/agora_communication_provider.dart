@@ -401,6 +401,12 @@ class AgoraCommunicationProvider extends CommunicationProvider {
               _handleNetworkTimeout);
           _updateState(CommunicationState.networkConnectivity);
           break;
+        // ignore: deprecated_member_use
+        case ErrorCode.StartCamera:
+          // This seems to be benign like the AdmGeneralError error.
+          // also its deprecated so its odd that its being generated.
+          debugPrint('error: ${error.name} -> Ignoring');
+          break;
         default:
           // all other errors are fatal for now
           if (!kIsWeb) {

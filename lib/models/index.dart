@@ -3,6 +3,7 @@ export 'audio_indicator.dart';
 export 'auth_user.dart';
 export 'circle.dart';
 export 'communication_device.dart';
+export 'data_urls.dart';
 export 'date_name_ext.dart';
 export 'participant.dart';
 export 'roles.dart';
