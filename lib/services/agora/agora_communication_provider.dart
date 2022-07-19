@@ -654,8 +654,8 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     bool networkUnstable =
         isBadConnection(qualityTx) || isBadConnection(qualityRx);
     uid = uid == 0 ? commUid : uid;
-    debugPrint(
-        'Network quality: ${qualityTx.name}, tx: ${qualityRx.name} unstable: $networkUnstable  for user: $uid');
+    // debugPrint(
+    //     'Network quality: ${qualityTx.name}, tx: ${qualityRx.name} unstable: $networkUnstable  for user: $uid');
     sessionProvider.activeSession?.updateUnstableNetworkForUser(
         sessionUserId: uid.toString(), unstable: networkUnstable);
   }
