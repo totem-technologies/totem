@@ -4,8 +4,10 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:totem/app.dart';
 import 'package:totem/firebase_options.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,7 +30,25 @@ Future<void> main() async {
       FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
     }
   }
-  runApp(const ProviderScope(
-    child: App(),
-  ));
+  var release = await PackageInfo.fromPlatform();
+  await SentryFlutter.init(
+    (options) {
+      options.dsn =
+          'https://66cc97ae272344978f48840710f857a0@o1324443.ingest.sentry.io/6582849';
+      // Set tracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
+      // We recommend adjusting this value in production.
+      options.tracesSampleRate = 1.0;
+      options.release = '${release.version} (${release.buildNumber})';
+      if (kDebugMode) {
+        options.environment = 'debug';
+      } else {
+        options.environment = 'production';
+      }
+    },
+    appRunner: () {
+      runApp(const ProviderScope(
+        child: App(),
+      ));
+    },
+  );
 }
