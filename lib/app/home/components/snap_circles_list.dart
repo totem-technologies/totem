@@ -87,10 +87,6 @@ class SnapCirclesListState extends ConsumerState<SnapCirclesList> {
                 color: themeData.themeColors.secondaryText, fontSize: 16),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(
-            height: 24,
-          ),
-          const CreateCircleButton(),
         ],
       ),
     );
