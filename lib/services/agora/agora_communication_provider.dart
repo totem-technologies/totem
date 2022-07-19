@@ -401,6 +401,9 @@ class AgoraCommunicationProvider extends CommunicationProvider {
               _handleNetworkTimeout);
           _updateState(CommunicationState.networkConnectivity);
           break;
+        case ErrorCode.StartCamera:
+          debugPrint('error: ${error.name} -> Ignoring');
+          break;
         default:
           // all other errors are fatal for now
           if (!kIsWeb) {
