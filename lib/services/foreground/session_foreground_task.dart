@@ -57,15 +57,20 @@ class SessionForeground {
   ReceivePort? _receivePort;
 
   Future<bool> startSessionTask() async {
-    ReceivePort? receivePort;
+    bool reqResult;
     if (await FlutterForegroundTask.isRunningService) {
-      receivePort = await FlutterForegroundTask.restartService();
+      reqResult = await FlutterForegroundTask.restartService();
     } else {
-      receivePort = await FlutterForegroundTask.startService(
+      reqResult = await FlutterForegroundTask.startService(
         notificationTitle: notificationTitle ?? "",
         notificationText: notificationMessage ?? "",
         callback: startCallback,
       );
+    }
+
+    ReceivePort? receivePort;
+    if (reqResult) {
+      receivePort = await FlutterForegroundTask.receivePort;
     }
 
     if (receivePort != null) {
