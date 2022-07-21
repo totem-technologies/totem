@@ -325,7 +325,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
           if (enableVideo) {
             await _engine!.setVideoEncoderConfiguration(
                 VideoEncoderConfiguration(
-                    dimensions: VideoDimensions(
+                    dimensions: const VideoDimensions(
                         width: videoWidth, height: videoHeight)));
             await _engine!.enableVideo();
             await _engine!.startPreview();
