@@ -1,8 +1,32 @@
 PODS:
-  - agora_rtc_engine (5.2.0):
-    - AgoraIrisRTC_iOS (= 3.6.2-fix.1)
+  - agora_rtc_engine (5.3.0):
+    - AgoraIrisRTC_iOS (= 3.7.0.3)
+    - AgoraRtcEngine_iOS (= 3.7.0.3)
     - Flutter
-  - AgoraIrisRTC_iOS (3.6.2-fix.1)
+  - AgoraIrisRTC_iOS (3.7.0.3)
+  - AgoraRtcEngine_iOS (3.7.0.3):
+    - AgoraRtcEngine_iOS/AINS (= 3.7.0.3)
+    - AgoraRtcEngine_iOS/AV1Dec (= 3.7.0.3)
+    - AgoraRtcEngine_iOS/ContentInspect (= 3.7.0.3)
+    - AgoraRtcEngine_iOS/FullAudioFormat (= 3.7.0.3)
+    - AgoraRtcEngine_iOS/ReplayKit (= 3.7.0.3)
+    - AgoraRtcEngine_iOS/ROIEnc (= 3.7.0.3)
+    - AgoraRtcEngine_iOS/RtcBasic (= 3.7.0.3)
+    - AgoraRtcEngine_iOS/SpatialAudio (= 3.7.0.3)
+    - AgoraRtcEngine_iOS/SuperResolution (= 3.7.0.3)
+    - AgoraRtcEngine_iOS/VideoPreprocess (= 3.7.0.3)
+    - AgoraRtcEngine_iOS/VirtualBackground (= 3.7.0.3)
+  - AgoraRtcEngine_iOS/AINS (3.7.0.3)
+  - AgoraRtcEngine_iOS/AV1Dec (3.7.0.3)
+  - AgoraRtcEngine_iOS/ContentInspect (3.7.0.3)
+  - AgoraRtcEngine_iOS/FullAudioFormat (3.7.0.3)
+  - AgoraRtcEngine_iOS/ReplayKit (3.7.0.3)
+  - AgoraRtcEngine_iOS/ROIEnc (3.7.0.3)
+  - AgoraRtcEngine_iOS/RtcBasic (3.7.0.3)
+  - AgoraRtcEngine_iOS/SpatialAudio (3.7.0.3)
+  - AgoraRtcEngine_iOS/SuperResolution (3.7.0.3)
+  - AgoraRtcEngine_iOS/VideoPreprocess (3.7.0.3)
+  - AgoraRtcEngine_iOS/VirtualBackground (3.7.0.3)
   - audio_streamer (0.0.1):
     - Flutter
   - camera_avfoundation (0.0.1):
@@ -262,6 +286,7 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - AgoraIrisRTC_iOS
+    - AgoraRtcEngine_iOS
     - Firebase
     - FirebaseAnalytics
     - FirebaseAppCheck
@@ -348,8 +373,9 @@ CHECKOUT OPTIONS:
     :tag: 8.15.0
 
 SPEC CHECKSUMS:
-  agora_rtc_engine: ffc530eff766a38272568ebaead9341d73f58856
-  AgoraIrisRTC_iOS: 9b11083bb79048ae4db7e2f56109cc51ac9e3834
+  agora_rtc_engine: eb26dd1d3993b69345235352d558e79bfdd84f40
+  AgoraIrisRTC_iOS: d802443ae16f043e7b2805c978880eb62ee8154c
+  AgoraRtcEngine_iOS: 549bb3853d5afb18fabca4197786f39f31141da8
   audio_streamer: af49e73eb66f71c4eeabb4bbcb05f122d03a6709
   camera_avfoundation: 07c77549ea54ad95d8581be86617c094a46280d9
   cloud_firestore: 06275c927c4a8ccbb67ce6523c9c2848c512d602
@@ -369,7 +395,7 @@ SPEC CHECKSUMS:
   FirebaseCoreDiagnostics: 92e07a649aeb66352b319d43bdd2ee3942af84cb
   FirebaseCrashlytics: feb07e4e9187be3c23c6a846cce4824e5ce2dd0b
   FirebaseDynamicLinks: 1dc816ef789c5adac6fede0b46d11478175c70e4
-  FirebaseFirestore: 3a0a7e1e72e4359b92d4c38de06d84e4c4900c0a
+  FirebaseFirestore: cb361b7f8f225a225c9f11b8d42066baebb1630c
   FirebaseFunctions: f9346c6afd2c7d84aabb331d70dd0c8309e1abe1
   FirebaseInstallations: 40bd9054049b2eae9a2c38ef1c3dd213df3605cd
   FirebaseStorage: 8019af461599b2c3bc61c6a5dbdfa3d2de66a4d9

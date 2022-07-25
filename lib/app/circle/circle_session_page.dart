@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:totem/app/circle/components/circle_scheduled_session_content.dart';
 import 'package:totem/app/circle/components/circle_snap_session_content.dart';
+import 'package:totem/app/onboarding/onboarding_screen.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
 
@@ -69,7 +70,14 @@ class CircleSessionPageState extends ConsumerState<CircleSessionPage>
 
   @override
   void afterFirstLayout(BuildContext context) async {
-    bool? state = await CircleJoinDialog.showDialog(context,
+    if (true) {
+      await OnboardingScreen.showOnboarding(context, onComplete: (bool result) {
+        // show
+        Navigator.of(context).pop();
+      });
+    }
+    if (!mounted) return;
+    bool? state = await CircleJoinDialog.showJoinDialog(context,
         circle: widget.session.circle);
     if (state != null && state) {
       Future.delayed(const Duration(milliseconds: 100), () async {

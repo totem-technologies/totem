@@ -26,7 +26,8 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   after_layout: ^1.1.0
-  agora_rtc_engine: 5.2.0
+  agora_rtc_engine: 5.3.0
+  audio_streamer: ^2.2.0
   auto_size_text: ^3.0.0-nullsafety.0
   cached_network_image: ^3.1.0
   camera: ^0.10.0
@@ -58,6 +59,7 @@ dependencies:
   image: ^3.1.0
   intl_phone_number_input: ^0.7.0+2
   intl: ^0.17.0
+  introduction_screen: ^3.0.2
   js: ^0.6.4
   keybinder: ^1.0.0
   keyboard_actions: ^4.0.0
@@ -81,7 +83,6 @@ dependencies:
   wakelock: ^0.6.1+2
   web_browser_detect: ^2.0.2
   sentry_flutter: ^6.6.3
-  audio_streamer: ^2.2.0
 
 dev_dependencies:
   flutter_test:
@@ -118,6 +119,12 @@ flutter:
     - assets/less.svg
     - assets/more.svg
     - assets/more_info.svg
+    - assets/onboarding_finish_flag.png
+    - assets/onboarding_help_book.png
+    - assets/onboarding_pass_baton.png
+    - assets/onboarding_play_button.png
+    - assets/onboarding_talking_person.png
+    - assets/onboarding_totem_icon.png
     - assets/profile.svg
     - assets/send.svg
     - assets/sort.svg
