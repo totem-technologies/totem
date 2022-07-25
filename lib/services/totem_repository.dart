@@ -35,13 +35,17 @@ class TotemRepository {
   AuthUser? user;
   String? pendingSessionId;
 
-  TotemRepository() {
+  TotemRepository(ProviderRef ref) {
     _analyticsProvider = FirebaseAnalyticsProvider();
     _topicsProvider = FirebaseTopicsProvider();
     _circlesProvider = FirebaseCirclesProvider();
     _userProvider = FirebaseUserProvider();
     _sessionProvider =
         FirebaseSessionProvider(analyticsProvider: _analyticsProvider);
+    final serv = ref.read(authServiceProvider);
+    serv.onAuthStateChanged.listen((event) {
+      user = event;
+    });
   }
 
   // Topics

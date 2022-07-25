@@ -5,9 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:totem/app/login/components/phone_register_code_entry.dart';
 import 'package:totem/app/login/components/phone_register_number_entry.dart';
 import 'package:totem/app/login/components/phone_register_number_error.dart';
-import 'package:totem/app_routes.dart';
 import 'package:totem/components/widgets/index.dart';
-import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
 
@@ -20,37 +18,12 @@ class RegisterPage extends ConsumerStatefulWidget {
 
 class RegisterPageState extends ConsumerState<RegisterPage> {
   late Stream<AuthRequestState> _requestStateStream;
-  late StreamSubscription _subscription;
+  // late StreamSubscription _subscription;
   @override
   void initState() {
     final auth = ref.read(authServiceProvider);
     _requestStateStream = auth.onAuthRequestStateChanged;
-    _subscription = _requestStateStream.listen((event) {
-      if (event == AuthRequestState.complete) {
-        final authSvc = ref.read(authServiceProvider);
-        final AuthUser? authUser = authSvc.currentUser();
-        if (authUser != null && authUser.isNewUser) {
-          Navigator.pushReplacementNamed(
-            context,
-            AppRoutes.loginOnboarding,
-          );
-        } else {
-          Navigator.of(context).pop();
-        }
-        /*    RESTORE THIS WHEN LOGIN GUIDELINES HAVE TO BE ACCEPTED FIRST
-         Navigator.pushReplacementNamed(
-          context,
-          AppRoutes.loginGuideline,
-        ); */
-      }
-    });
     super.initState();
-  }
-
-  @override
-  void dispose() {
-    _subscription.cancel();
-    super.dispose();
   }
 
   @override

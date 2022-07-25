@@ -44,7 +44,7 @@ class PhoneRegisterCodeEntryState
           AppRoutes.loginOnboarding,
         );
       } else {
-        Navigator.of(context).pop();
+        context.replace('/');
       }
 /*    RESTORE THIS WHEN LOGIN GUIDELINES HAVE TO BE ACCEPTED FIRST
       await Navigator.pushReplacementNamed(

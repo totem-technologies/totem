@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/services/utils/device_type.dart';
 import 'package:totem/theme/index.dart';
+import 'package:totem/app_routes.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:web_browser_detect/web_browser_detect.dart';
 
@@ -50,7 +51,7 @@ class _LoginPanel extends StatelessWidget {
                         label: t.login,
                         width: 294,
                         onPressed: () {
-                          Navigator.pushNamed(context, '/login/phone');
+                          context.go('/login/phone');
                         },
                       ),
                       if (isSafari)
@@ -69,7 +70,7 @@ class _LoginPanel extends StatelessWidget {
                         label: t.login,
                         width: 294,
                         onPressed: () {
-                          Navigator.pushNamed(context, '/login/phone');
+                          context.go('/login/phone');
                         },
                       )),
           ),

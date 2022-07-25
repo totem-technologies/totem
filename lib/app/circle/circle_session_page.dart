@@ -24,8 +24,9 @@ final communicationsProvider =
 });
 
 class CircleSessionPage extends ConsumerStatefulWidget {
-  const CircleSessionPage({Key? key, required this.session}) : super(key: key);
-  final Session session;
+  const CircleSessionPage({Key? key, required this.sessionID})
+      : super(key: key);
+  final String sessionID;
 
   @override
   CircleSessionPageState createState() => CircleSessionPageState();
@@ -34,6 +35,7 @@ class CircleSessionPage extends ConsumerStatefulWidget {
 class CircleSessionPageState extends ConsumerState<CircleSessionPage>
     with AfterLayoutMixin<CircleSessionPage> {
   bool joined = false;
+  Session? session;
 
   @override
   void initState() {
@@ -59,18 +61,25 @@ class CircleSessionPageState extends ConsumerState<CircleSessionPage>
     if (!joined) {
       return const Material(color: Colors.transparent);
     }
-    if (widget.session is SnapSession) {
-      return CircleSnapSessionContent(
-          circle: widget.session.circle as SnapCircle);
+    if (session is SnapSession) {
+      return CircleSnapSessionContent(circle: session!.circle as SnapCircle);
     } else {
-      return CircleScheduledSessionContent(session: widget.session);
+      return CircleScheduledSessionContent(session: session!);
     }
   }
 
   @override
   void afterFirstLayout(BuildContext context) async {
-    bool? state = await CircleJoinDialog.showDialog(context,
-        circle: widget.session.circle);
+    var repo = ref.read(repositoryProvider);
+    session = (await repo.circleFromId(widget.sessionID))?.snapSession;
+    if (!mounted) {
+      return;
+    }
+    if (session == null) {
+      Navigator.of(context).pop();
+    }
+    bool? state =
+        await CircleJoinDialog.showDialog(context, circle: session!.circle);
     if (state != null && state) {
       Future.delayed(const Duration(milliseconds: 100), () async {
         setState(() {

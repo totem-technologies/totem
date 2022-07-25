@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
+import 'package:totem/app_routes.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -257,7 +258,7 @@ class CircleCreatePageState extends ConsumerState<CircleCreatePage> {
           description: _descriptionController.text);
       if (circle != null) {
         if (!mounted) return;
-        Navigator.of(context).pop();
+        context.pop();
         return;
       }
     } catch (ex) {
