@@ -460,12 +460,35 @@ class FirebaseCirclesProvider extends CirclesProvider {
 
   @override
   Future<SnapCircle?> circleFromPreviousIdAndState(
-      String previousId, SessionState state) async {
+      String previousId, List<SessionState> state) async {
     try {
       final query = FirebaseFirestore.instance
           .collection(Paths.snapCircles)
           .where('previousCircle', isEqualTo: previousId)
-          .where('state', isEqualTo: state.name)
+          .where('state', whereIn: state.map((e) => e.name).toList())
+          .orderBy('createdOn', descending: true)
+          .limit(1);
+      QuerySnapshot<Map<String, dynamic>> result = await query.get();
+      if (result.docs.isNotEmpty) {
+        QueryDocumentSnapshot<Map<String, dynamic>> snapshot = result.docs[0];
+        SnapCircle snapCircle = SnapCircle.fromJson(snapshot.data(),
+            id: snapshot.id, ref: snapshot.reference.path);
+        return snapCircle;
+      }
+    } catch (ex) {
+      debugPrint(ex.toString());
+    }
+    return null;
+  }
+
+  @override
+  Future<SnapCircle?> circleFromPreviousIdAndNotState(
+      String previousId, List<SessionState> state) async {
+    try {
+      final query = FirebaseFirestore.instance
+          .collection(Paths.snapCircles)
+          .where('previousCircle', isEqualTo: previousId)
+          .where('state', whereNotIn: state.map((e) => e.name).toList())
           .orderBy('createdOn', descending: true)
           .limit(1);
       QuerySnapshot<Map<String, dynamic>> result = await query.get();

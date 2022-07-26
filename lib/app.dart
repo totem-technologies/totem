@@ -1,18 +1,13 @@
 import 'package:cupertino_will_pop_scope/cupertino_will_pop_scope.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:totem/app_routes.dart';
 import 'package:totem/services/applinks/index.dart';
+import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
-
-import 'app/auth.dart';
-import 'app/home/home_page.dart';
-import 'app/login/login_page.dart';
 
 class App extends ConsumerStatefulWidget {
   const App({Key? key}) : super(key: key);
@@ -28,6 +23,8 @@ class _AppState extends ConsumerState<App> {
     AppLinks.instance.initialize();
   }
 
+  late final _router = AppRoutes.instance.getRouter(ref);
+
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
@@ -38,7 +35,11 @@ class _AppState extends ConsumerState<App> {
       statusBarIconBrightness: Brightness.dark,
       statusBarBrightness: Brightness.light,
     ));
-    return MaterialApp(
+    ref.watch(authStateChangesProvider);
+    return MaterialApp.router(
+      routeInformationProvider: _router.routeInformationProvider,
+      routeInformationParser: _router.routeInformationParser,
+      routerDelegate: _router.routerDelegate,
       localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
@@ -48,17 +49,9 @@ class _AppState extends ConsumerState<App> {
       supportedLocales: const [
         Locale('en', ''),
       ],
-      navigatorObservers: [SentryNavigatorObserver()],
       debugShowCheckedModeBanner: false,
       title: 'totem',
       theme: _appTheme(context),
-      home: WithForegroundTask(
-        child: AuthWidget(
-          nonSignedInBuilder: (_) => const LoginPage(),
-          signedInBuilder: (_) => const HomePage(),
-        ),
-      ),
-      onGenerateRoute: AppRoutes.generateRoute,
     );
   }
 

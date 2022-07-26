@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:totem/app/circle/components/circle_participant.dart';
-import 'package:totem/components/fade_route.dart';
+
+import 'package:totem/app_routes.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
 
-import 'circle_session_page.dart';
 import 'components/scheduled_session_item.dart';
 
 class CirclePage extends ConsumerStatefulWidget {
@@ -187,12 +187,8 @@ class CirclePageState extends ConsumerState<CirclePage> {
     final repo = ref.read(repositoryProvider);
     await repo.activateSession(session: session);
     if (!mounted) return;
-    await Navigator.pushReplacement(
-      context,
-      FadeRoute(
-        page: CircleSessionPage(session: session),
-      ),
-    );
+    debugPrint(session.id);
+    context.go('/circle/${session.id}');
   }
 
   void _joinSession(BuildContext context) async {

@@ -10,7 +10,7 @@ final authStateChangesProvider = StreamProvider<AuthUser?>(
     (ref) => ref.read(authServiceProvider).onAuthStateChanged);
 
 final repositoryProvider =
-    Provider<TotemRepository>((ref) => TotemRepository());
+    Provider<TotemRepository>((ref) => TotemRepository(ref));
 
 final analyticsProvider = Provider<AnalyticsProvider>(
     (ref) => ref.read(repositoryProvider).analyticsProvider);

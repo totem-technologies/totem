@@ -4,17 +4,20 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:totem/app.dart';
 import 'package:totem/firebase_options.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  // remove # from url
+  GoRouter.setUrlPathStrategy(UrlPathStrategy.path);
+
   // Initialize the App Check interface which allows access
   // to firebase
-
   // TODO - need to initialize web with recaptcha, for now disabled
   if (!kIsWeb) {
     await FirebaseAppCheck.instance.activate();
