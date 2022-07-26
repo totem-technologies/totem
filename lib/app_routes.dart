@@ -17,8 +17,8 @@ class AppRoutes {
   static const String loginPhone = '/login/phone';
   static const String loginGuideline = '/login/guideline';
   static const String loginOnboarding = '/login/onboarding';
-  static const String circleCreateScheduled = '/circle_scheduled_create';
-  static const String circleCreate = '/circle_create';
+  static const String circleCreateScheduled = '/scheduledcreate';
+  static const String circleCreate = '/create';
   static const String appSettings = '/settings';
   static const String userProfile = '/profile';
   static const String dev = '/dev';
@@ -30,7 +30,7 @@ class AppRoutes {
     return _instance!;
   }
 
-  String? _pendingCircleRoute;
+  String? _pendingRoute;
 
   GoRouter getRouter(WidgetRef ref) {
     return GoRouter(
@@ -61,7 +61,7 @@ class AppRoutes {
                 },
               ),
               GoRoute(
-                path: 'circle_create',
+                path: 'create',
                 pageBuilder: (context, state) => const MaterialPage(
                     child: CircleCreateSnapPage(), fullscreenDialog: true),
               ),
@@ -97,9 +97,9 @@ class AppRoutes {
           if (loggedIn && state.subloc.contains(login)) {
             // Auth completed here, check for any pending links to circle
             // if there is, redirect to that
-            if (_pendingCircleRoute != null) {
-              String path = _pendingCircleRoute!;
-              _pendingCircleRoute = null;
+            if (_pendingRoute != null) {
+              String path = _pendingRoute!;
+              _pendingRoute = null;
               return path;
             }
             // otherwise just redirect to home
@@ -117,11 +117,7 @@ class AppRoutes {
           // if the route is a circle, then preserve the route and redirect after
           // login
           if (!loggedIn) {
-            if (state.subloc.startsWith('${home}circle') ||
-                state.queryParams.containsKey('snap')) {
-              // this is a circle request, stash it till auth is complete
-              _pendingCircleRoute = state.location;
-            }
+            _pendingRoute = state.location;
             return login;
           }
           // if this is a snap circle link, redirect to the circle page
