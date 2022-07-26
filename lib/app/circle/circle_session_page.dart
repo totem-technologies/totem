@@ -34,8 +34,8 @@ class CircleSessionPage extends ConsumerStatefulWidget {
 }
 
 class CircleSessionPageState extends ConsumerState<CircleSessionPage> {
-  bool joined = false;
   late Future<Session?> _loadSession;
+  bool _canceled = false;
 
   @override
   void initState() {
@@ -57,7 +57,7 @@ class CircleSessionPageState extends ConsumerState<CircleSessionPage> {
             session: snapshot.data!,
           );
         }
-        return _failedToLoadSession(context);
+        return !_canceled ? _failedToLoadSession(context) : Container();
       },
     );
   }
@@ -65,20 +65,23 @@ class CircleSessionPageState extends ConsumerState<CircleSessionPage> {
   Widget _loadingSession(BuildContext context) {
     return _interstitialBackground(
       context,
-      Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text(
-            AppLocalizations.of(context)!.loadingCircle,
-            style: Theme.of(context).textTheme.headline4,
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(
-            height: 30,
-          ),
-          const BusyIndicator(),
-        ],
+      ConstrainedBox(
+        constraints: const BoxConstraints(minWidth: 250),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              AppLocalizations.of(context)!.loadingCircle,
+              style: Theme.of(context).textTheme.headline4,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(
+              height: 30,
+            ),
+            const BusyIndicator(),
+          ],
+        ),
       ),
     );
   }
@@ -160,6 +163,7 @@ class CircleSessionPageState extends ConsumerState<CircleSessionPage> {
         if (state != null && state) {
           return circle.snapSession;
         } else {
+          _canceled = true;
           if (mounted) {
             Navigator.of(context).pop();
           }
