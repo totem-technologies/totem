@@ -4,12 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:totem/app/circle/index.dart';
+import 'package:totem/app/onboarding/index.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
-
-import 'circle_join_dialog.dart';
 
 final activeSessionProvider =
     ChangeNotifierProvider.autoDispose<ActiveSession>((ref) {
@@ -160,6 +159,7 @@ class CircleSessionPageState extends ConsumerState<CircleSessionPage> {
           await repo.createActiveSession(circle: circle);
         }
         if (true) {
+          if (!mounted) return null;
           await OnboardingScreen.showOnboarding(context,
               onComplete: (bool result) {
             // show
@@ -168,7 +168,7 @@ class CircleSessionPageState extends ConsumerState<CircleSessionPage> {
         }
         if (!mounted) return null;
         bool? state =
-            await CircleJoinDialog.showDialog(context, circle: circle);
+            await CircleJoinDialog.showJoinDialog(context, circle: circle);
         if (state != null && state) {
           return circle.snapSession;
         } else {

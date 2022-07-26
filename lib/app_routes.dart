@@ -70,7 +70,7 @@ class AppRoutes {
           GoRoute(
             path: dev,
             pageBuilder: (context, state) =>
-                const MaterialPage(child: DevPage()),
+                const NoTransitionPage(child: DevPage()),
           ),
           GoRoute(
             path: login,
