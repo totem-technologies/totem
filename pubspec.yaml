@@ -77,7 +77,6 @@ dependencies:
   state_notifier: ^0.7.0
   universal_html: ^2.0.8
   url_launcher: ^6.0.2
-  url_strategy: ^0.2.0
   uuid: ^3.0.6
   wakelock: ^0.6.1+2
   web_browser_detect: ^2.0.2
