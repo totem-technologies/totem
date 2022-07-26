@@ -22,7 +22,7 @@ publish-web:
 run-web:
 	firebase emulators:start
 
-release:
+release: test
 	./scripts/tag_release.sh
 
 test:
