@@ -73,13 +73,7 @@ class SnapCirclesRejoinableState extends ConsumerState<SnapCirclesRejoinable> {
         );
   }
 
-  Future<void> _handleShowCircle(
-      BuildContext context, SnapCircle circle) async {
-    var repo = ref.read(repositoryProvider);
-    await repo.createActiveSession(
-      circle: circle,
-    );
-    if (!mounted) return;
+  void _handleShowCircle(BuildContext context, SnapCircle circle) {
     context.go(AppRoutes.circle(circle.snapSession.id));
   }
 }

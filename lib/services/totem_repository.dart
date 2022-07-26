@@ -43,6 +43,7 @@ class TotemRepository {
     _sessionProvider =
         FirebaseSessionProvider(analyticsProvider: _analyticsProvider);
     final serv = ref.read(authServiceProvider);
+    user = serv.currentUser();
     serv.onAuthStateChanged.listen((event) {
       user = event;
     });
@@ -98,8 +99,11 @@ class TotemRepository {
   Future<SnapCircle?> circleFromId(String id) =>
       _circlesProvider.circleFromId(id);
   Future<SnapCircle?> circleFromPreviousIdAndState(
-          String previousId, SessionState state) =>
+          String previousId, List<SessionState> state) =>
       _circlesProvider.circleFromPreviousIdAndState(previousId, state);
+  Future<SnapCircle?> circleFromPreviousIdAndNotState(
+          String previousId, List<SessionState> state) =>
+      _circlesProvider.circleFromPreviousIdAndNotState(previousId, state);
 
   // Sessions
   Future<ActiveSession> activateSession({required ScheduledSession session}) =>

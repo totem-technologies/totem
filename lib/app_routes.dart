@@ -117,11 +117,16 @@ class AppRoutes {
           // if the route is a circle, then preserve the route and redirect after
           // login
           if (!loggedIn) {
-            if (state.subloc.startsWith('${home}circle')) {
+            if (state.subloc.startsWith('${home}circle') ||
+                state.queryParams.containsKey('snap')) {
               // this is a circle request, stash it till auth is complete
-              _pendingCircleRoute = state.subloc;
+              _pendingCircleRoute = state.location;
             }
             return login;
+          }
+          // if this is a snap circle link, redirect to the circle page
+          if (state.subloc == home && state.queryParams.containsKey('snap')) {
+            return '${home}circle/${state.queryParams['snap']}';
           }
           // no need to redirect at all
           return null;
