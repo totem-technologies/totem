@@ -1,11 +1,14 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:totem/app_routes.dart';
 import 'package:totem/components/widgets/index.dart';
+import 'package:totem/models/index.dart';
+import 'package:totem/services/index.dart';
 import 'package:totem/services/utils/device_type.dart';
 import 'package:totem/theme/index.dart';
-import 'package:totem/app_routes.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:web_browser_detect/web_browser_detect.dart';
 
@@ -18,6 +21,7 @@ class _LoginPanel extends StatelessWidget {
     final theme = Theme.of(context);
     final browser = Browser.detectOrNull();
     final isMobile = DeviceType.isMobile();
+
     final isSafari =
         kIsWeb && (browser?.browser.toLowerCase().contains('safari') ?? false);
     return Column(
@@ -104,12 +108,13 @@ class _LoginPanel extends StatelessWidget {
   }
 }
 
-class LoginPage extends StatelessWidget {
-  const LoginPage({Key? key}) : super(key: key);
+class WelcomePage extends ConsumerWidget {
+  const WelcomePage({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final themeColors = Theme.of(context).themeColors;
+    final authState = ref.watch(authStateChangesProvider);
     return Scaffold(
       backgroundColor: themeColors.dialogBackground,
       body: Stack(
@@ -130,7 +135,19 @@ class LoginPage extends StatelessWidget {
               ),
             ],
           ),
-          const _LoginPanel(),
+          Positioned.fill(
+              child: authState.when(loading: () {
+            return const Center(
+              child: BusyIndicator(),
+            );
+          }, error: (Object error, StackTrace? stackTrace) {
+            return const Center(child: Text('error'));
+          }, data: (AuthUser? data) {
+            if (data == null) {
+              return const _LoginPanel();
+            }
+            return Container();
+          })),
         ],
       ),
     );

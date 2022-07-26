@@ -1,7 +1,6 @@
 import 'package:cupertino_will_pop_scope/cupertino_will_pop_scope.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,11 +8,6 @@ import 'package:totem/app_routes.dart';
 import 'package:totem/services/applinks/index.dart';
 import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
-
-import 'app/auth.dart';
-import 'app/home/home_page.dart';
-import 'app/login/login_page.dart';
-import 'models/index.dart';
 
 class App extends ConsumerStatefulWidget {
   const App({Key? key}) : super(key: key);
@@ -29,7 +23,7 @@ class _AppState extends ConsumerState<App> {
     AppLinks.instance.initialize();
   }
 
-  late final _router = getRouter(ref);
+  late final _router = AppRoutes.instance.getRouter(ref);
 
   @override
   Widget build(BuildContext context) {

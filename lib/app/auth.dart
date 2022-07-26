@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:totem/app_routes.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/applinks/index.dart';
@@ -131,9 +130,7 @@ class _AuthWidget extends ConsumerState<AuthWidget> {
       circle: circle,
     );
     if (!mounted) return;
-    await Navigator.of(context).pushNamed(AppRoutes.circle, arguments: {
-      'session': circle.snapSession,
-    });
+    //await Navigator.of(context).pushNamed(AppRoutes.circleRoute(circle.snapSession.id));
   }
 
   Future<void> _promptMissingCircle() async {

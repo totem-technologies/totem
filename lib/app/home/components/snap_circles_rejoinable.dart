@@ -80,8 +80,6 @@ class SnapCirclesRejoinableState extends ConsumerState<SnapCirclesRejoinable> {
       circle: circle,
     );
     if (!mounted) return;
-    await Navigator.of(context).pushNamed(AppRoutes.circle, arguments: {
-      'session': circle.snapSession,
-    });
+    context.go(AppRoutes.circle(circle.snapSession.id));
   }
 }

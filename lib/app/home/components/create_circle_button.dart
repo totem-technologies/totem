@@ -14,7 +14,7 @@ class CreateCircleButton extends StatelessWidget {
       height: 52,
       onPressed: () {
         // build new circle
-        Navigator.of(context).pushNamed(AppRoutes.snapCircleCreate);
+        context.go(AppRoutes.circleCreate);
       },
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
       child: Wrap(
