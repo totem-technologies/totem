@@ -16,5 +16,6 @@ export 'session_token.dart';
 export 'snap_circle.dart';
 export 'snap_session.dart';
 export 'topic.dart';
+export 'user_auth_account_state.dart';
 export 'user_circle.dart';
 export 'user_profile.dart';
