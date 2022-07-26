@@ -8,6 +8,7 @@ import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
+
 import 'circle_join_dialog.dart';
 
 final activeSessionProvider =
@@ -159,7 +160,8 @@ class CircleSessionPageState extends ConsumerState<CircleSessionPage> {
           await repo.createActiveSession(circle: circle);
         }
         if (true) {
-          await OnboardingScreen.showOnboarding(context, onComplete: (bool result) {
+          await OnboardingScreen.showOnboarding(context,
+              onComplete: (bool result) {
             // show
             Navigator.of(context).pop();
           });
