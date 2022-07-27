@@ -7,6 +7,7 @@ abstract class UserProvider {
   Stream<AccountState> userAccountStateStream({required String uid});
   Future<void> updateAccountStateValue(
       {required String uid, required String key, required dynamic value});
+  Future<AccountState> userAccountState({required String uid});
   Future<UserProfile?> userProfile(
       {required String uid, bool circlesCompleted = false});
   Future<void> updateUserProfile(

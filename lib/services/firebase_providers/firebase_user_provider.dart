@@ -43,16 +43,26 @@ class FirebaseUserProvider extends UserProvider {
   }
 
   @override
+  Future<AccountState> userAccountState({required String uid}) async {
+    final userAccountStateDoc =
+        FirebaseFirestore.instance.collection(Paths.userAccountState).doc(uid);
+    final docSnapshot = await userAccountStateDoc.get();
+    if (docSnapshot.exists) {
+      return AccountState.fromJson(docSnapshot.data()!);
+    } else {
+      return AccountState();
+    }
+  }
+
+  @override
   Future<void> updateAccountStateValue(
       {required String uid,
       required String key,
       required dynamic value}) async {
     try {
       HttpsCallable callable =
-          FirebaseFunctions.instance.httpsCallable('updateAccountStateValue');
-      final data = {
-        key: value,
-      };
+          FirebaseFunctions.instance.httpsCallable('updateAccountState');
+      final data = {"key": key, "value": value};
       await callable(data);
     } on FirebaseException catch (e) {
       throw (ServiceException(code: e.code, message: e.message));

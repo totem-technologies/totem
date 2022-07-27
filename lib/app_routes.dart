@@ -112,7 +112,7 @@ class AppRoutes {
           }
 
           // Check if the route is public (non-login)?
-          final publicPrefixes = [login, dev];
+          final publicPrefixes = ['/login', '/dev'];
           final isPublic =
               publicPrefixes.any((e) => state.subloc.startsWith(e));
           if (isPublic) return null;

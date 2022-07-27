@@ -18,3 +18,31 @@ export const deleteSelf = functions.https.onCall(async (_, {auth}) => {
     return false;
   }
 });
+
+export const updateAccountState = functions.https.onCall(async ({key, value}, {auth}) => {
+  auth = isAuthenticated(auth);
+  if (!key) {
+    throw new functions.https.HttpsError("failed-precondition", "Missing key for account state");
+  }
+  if (!value) {
+    throw new functions.https.HttpsError("failed-precondition", "Missing value for account state");
+  }
+  // Get the user data ref
+  const userAccountStateRef = admin.firestore().collection("userAccountState").doc(auth.uid);
+  try {
+    const data: { [key: string]: any } = {};
+    data[key] = value;
+    const userAccountStateSnapshot = await userAccountStateRef.get();
+    if (!userAccountStateSnapshot.exists) {
+      console.log("Setting " + auth.uid + " key: " + key);
+      await userAccountStateRef.set(data);
+    } else {
+      console.log("updating " + auth.uid + " key: " + key);
+      await userAccountStateRef.update(data);
+    }
+  } catch (ex) {
+    console.log(ex);
+  }
+  // return information
+  return await userAccountStateRef.get();
+});

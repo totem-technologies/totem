@@ -158,7 +158,8 @@ class CircleSessionPageState extends ConsumerState<CircleSessionPage> {
         if (repo.activeSession == null) {
           await repo.createActiveSession(circle: circle);
         }
-        if (true) {
+        final userState = await repo.userAccountState();
+        if (!userState.boolAttribute(AccountState.onboarded)) {
           if (!mounted) return null;
           await OnboardingScreen.showOnboarding(context,
               onComplete: (bool result) {

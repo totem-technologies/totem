@@ -153,6 +153,8 @@ class TotemRepository {
       _userProvider.updateUserProfileImage(imageUrl: imageUrl, uid: user!.uid);
   Stream<AccountState> userAccountStateStream() =>
       _userProvider.userAccountStateStream(uid: user!.uid);
+  Future<AccountState> userAccountState() =>
+      _userProvider.userAccountState(uid: user!.uid);
   Future<void> updateAccountStateValue(String key, dynamic value) =>
       _userProvider.updateAccountStateValue(
           key: key, value: value, uid: user!.uid);

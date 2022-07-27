@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
+import 'package:totem/services/providers.dart';
 import 'package:totem/services/utils/device_type.dart';
 import 'package:totem/theme/index.dart';
 
@@ -117,7 +118,11 @@ class OnboardingScreenState extends ConsumerState<OnboardingScreen>
     );
   }
 
-  Future<void> updateOnboardingState() async {}
+  Future<void> updateOnboardingState() async {
+    await ref
+        .read(repositoryProvider)
+        .updateAccountStateValue(AccountState.onboarded, true);
+  }
 
   PageViewModel _pageWith(
       {required String title, required String body, required String image}) {
