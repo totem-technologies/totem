@@ -14,13 +14,19 @@ import 'package:totem/theme/index.dart';
 
 class OnboardingScreen extends ConsumerStatefulWidget {
   const OnboardingScreen(
-      {Key? key, this.pendingSession, required this.onComplete})
+      {Key? key,
+      this.pendingSession,
+      required this.onComplete,
+      this.updateState = true})
       : super(key: key);
   final Session? pendingSession;
   final Function(bool) onComplete;
+  final bool updateState;
 
   static Future<bool?> showOnboarding(BuildContext context,
-      {Session? pendingSession, required Function(bool) onComplete}) async {
+      {Session? pendingSession,
+      required Function(bool) onComplete,
+      bool updateState = true}) async {
     return DeviceType.isPhone()
         ? showModalBottomSheet<bool?>(
             enableDrag: false,
@@ -32,6 +38,7 @@ class OnboardingScreen extends ConsumerStatefulWidget {
             builder: (_) => OnboardingScreen(
               pendingSession: pendingSession,
               onComplete: onComplete,
+              updateState: updateState,
             ),
           )
         : showDialog(
@@ -41,6 +48,7 @@ class OnboardingScreen extends ConsumerStatefulWidget {
             builder: (BuildContext context) => OnboardingScreen(
               onComplete: onComplete,
               pendingSession: pendingSession,
+              updateState: updateState,
             ),
           );
   }
@@ -148,6 +156,8 @@ class OnboardingScreenState extends ConsumerState<OnboardingScreen>
   @override
   FutureOr<void> afterFirstLayout(BuildContext context) {
     // onboarding has been shown, update the user account state
-    updateOnboardingState();
+    if (widget.updateState) {
+      updateOnboardingState();
+    }
   }
 }
