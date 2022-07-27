@@ -55,7 +55,7 @@ class _LoginPanel extends StatelessWidget {
                         label: t.login,
                         width: 294,
                         onPressed: () {
-                          context.go('/login/phone');
+                          context.goNamed(AppRoutes.loginPhone);
                         },
                       ),
                       if (isSafari)
@@ -74,7 +74,7 @@ class _LoginPanel extends StatelessWidget {
                         label: t.login,
                         width: 294,
                         onPressed: () {
-                          context.go('/login/phone');
+                          context.goNamed(AppRoutes.loginPhone);
                         },
                       )),
           ),

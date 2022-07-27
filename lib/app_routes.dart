@@ -12,17 +12,16 @@ import 'services/index.dart';
 export 'package:go_router/src/misc/extensions.dart';
 
 class AppRoutes {
-  static const String home = '/';
-  static const String login = '/login';
-  static const String loginPhone = '/login/phone';
-  static const String loginGuideline = '/login/guideline';
-  static const String loginOnboarding = '/login/onboarding';
-  static const String circleCreateScheduled = '/scheduledcreate';
-  static const String circleCreate = '/create';
-  static const String appSettings = '/settings';
-  static const String userProfile = '/profile';
+  static const String home = 'home';
+  static const String login = 'login';
+  static const String loginPhone = 'phone';
+  static const String loginGuideline = 'guideline';
+  static const String loginOnboarding = 'onboarding';
+  static const String circle = "circle";
+  static const String circleCreateScheduled = 'scheduledcreate';
+  static const String circleCreate = 'create';
+  static const String userProfile = 'profile';
   static const String dev = '/dev';
-  static String circle(String id) => '/circle/$id';
 
   static AppRoutes? _instance;
   static AppRoutes get instance {
@@ -39,16 +38,19 @@ class AppRoutes {
         ],
         routes: <GoRoute>[
           GoRoute(
-            path: home,
+            name: home,
+            path: '/',
             pageBuilder: (context, state) => _fadeTransitionPage(
                 state: state,
                 child: const WithForegroundTask(child: HomePage())),
             routes: [
               GoRoute(
+                name: userProfile,
                 path: 'profile',
                 builder: (context, state) => const UserProfilePage(),
               ),
               GoRoute(
+                name: circle,
                 path: 'circle/:id',
                 pageBuilder: (context, state) {
                   final id = state.params['id'] ?? '';
@@ -61,6 +63,7 @@ class AppRoutes {
                 },
               ),
               GoRoute(
+                name: circleCreate,
                 path: 'create',
                 pageBuilder: (context, state) => const MaterialPage(
                     child: CircleCreateSnapPage(), fullscreenDialog: true),
@@ -70,14 +73,16 @@ class AppRoutes {
           GoRoute(
             path: dev,
             pageBuilder: (context, state) =>
-                const MaterialPage(child: DevPage()),
+                const NoTransitionPage(child: DevPage()),
           ),
           GoRoute(
-            path: login,
+            name: login,
+            path: '/login',
             pageBuilder: (BuildContext context, GoRouterState state) =>
                 const NoTransitionPage(child: WelcomePage()),
             routes: [
               GoRoute(
+                name: loginPhone,
                 path: 'phone',
                 pageBuilder: (context, state) => _fadeTransitionPage(
                   state: state,
@@ -103,7 +108,7 @@ class AppRoutes {
               return path;
             }
             // otherwise just redirect to home
-            return home;
+            return '/';
           }
 
           // Check if the route is public (non-login)?
@@ -118,7 +123,7 @@ class AppRoutes {
           // login
           if (!loggedIn) {
             _pendingRoute = state.location;
-            return login;
+            return '/login';
           }
           // if this is a snap circle link, redirect to the circle page
           if (state.subloc == home && state.queryParams.containsKey('snap')) {

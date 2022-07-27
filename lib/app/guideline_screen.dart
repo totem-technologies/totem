@@ -99,7 +99,7 @@ class GuidelineScreen extends ConsumerWidget {
             label: t.acceptGuidelines,
             onPressed: () {
               if (authUser != null && authUser.isNewUser) {
-                context.replace(AppRoutes.loginOnboarding);
+                context.replaceNamed(AppRoutes.loginOnboarding);
               } else {
                 Navigator.of(context).pop();
               }

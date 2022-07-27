@@ -74,6 +74,6 @@ class SnapCirclesRejoinableState extends ConsumerState<SnapCirclesRejoinable> {
   }
 
   void _handleShowCircle(BuildContext context, SnapCircle circle) {
-    context.go(AppRoutes.circle(circle.snapSession.id));
+    context.goNamed(AppRoutes.circle, params: {'id': circle.snapSession.id});
   }
 }
