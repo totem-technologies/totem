@@ -123,6 +123,7 @@
     "leaveSessionPromptMessage": "Are you sure you want to leave this circle session?",
     "leaveWithoutSaving": "Leave without Saving",
     "less": "Less",
+    "loadingCircle": "Loading Circle",
     "login": "Login or Signup",
     "me": "Me",
     "memberSince": "Member Since",

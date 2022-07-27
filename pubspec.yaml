@@ -82,6 +82,7 @@ dependencies:
   web_browser_detect: ^2.0.2
   sentry_flutter: ^6.6.3
   audio_streamer: ^2.2.0
+  go_router: ^4.2.1
 
 dev_dependencies:
   flutter_test:

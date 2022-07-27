@@ -1,9 +1,8 @@
-import 'dart:async';
+/*import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:totem/app_routes.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/applinks/index.dart';
@@ -131,9 +130,7 @@ class _AuthWidget extends ConsumerState<AuthWidget> {
       circle: circle,
     );
     if (!mounted) return;
-    await Navigator.of(context).pushNamed(AppRoutes.circle, arguments: {
-      'session': circle.snapSession,
-    });
+    //await Navigator.of(context).pushNamed(AppRoutes.circleRoute(circle.snapSession.id));
   }
 
   Future<void> _promptMissingCircle() async {
@@ -166,75 +163,4 @@ class _AuthWidget extends ConsumerState<AuthWidget> {
       },
     );
   }
-}
-
-class LoggedinGuard extends ConsumerWidget {
-  const LoggedinGuard({Key? key, required this.builder}) : super(key: key);
-  final WidgetBuilder builder;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final authStateChanges = ref.watch(authStateChangesProvider);
-    return authStateChanges.when(
-      data: (user) => _data(context, user),
-      loading: () => const Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
-      ),
-      error: (_, __) => const Scaffold(
-        body: EmptyContent(
-          title: 'Something went wrong',
-          message: 'Can\'t load data right now.',
-        ),
-      ),
-    );
-  }
-
-  Widget _data(BuildContext context, AuthUser? user) {
-    if (user != null && !user.isAnonymous) {
-      return builder(context);
-    }
-    return const EmptyContent(title: 'You are now logged out', message: '');
-  }
-}
-
-class EmptyContent extends StatelessWidget {
-  const EmptyContent({
-    Key? key,
-    this.title = 'Nothing here',
-    this.message = '',
-  }) : super(key: key);
-  final String title;
-  final String message;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              title,
-              style: const TextStyle(fontSize: 32.0, color: Colors.white),
-            ),
-            Text(
-              message,
-              style: const TextStyle(fontSize: 16.0, color: Colors.white),
-            ),
-            const Padding(
-              padding: EdgeInsets.only(top: 50, bottom: 40),
-            ),
-            ThemedRaisedButton(
-                onPressed: () {
-                  Navigator.pushNamedAndRemoveUntil(
-                      context, '/', (Route<dynamic> route) => false);
-                },
-                label: 'Go Home')
-          ],
-        ),
-      ),
-    );
-  }
-}
+} */

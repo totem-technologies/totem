@@ -144,6 +144,6 @@ class HomePage extends StatelessWidget {
   }
 
   void _showProfile(BuildContext context) {
-    Navigator.of(context).pushNamed(AppRoutes.userProfile);
+    context.goNamed(AppRoutes.userProfile);
   }
 }
