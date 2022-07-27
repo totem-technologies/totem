@@ -100,7 +100,7 @@ class AppRoutes {
 
           // Authenticated user should not be hitting the login page,
           // so redirect to the home page if this is the case.
-          if (loggedIn && state.subloc.contains(login)) {
+          if (loggedIn && state.subloc.contains('/login')) {
             // Auth completed here, check for any pending links to circle
             // if there is, redirect to that
             if (_pendingRoute != null) {
