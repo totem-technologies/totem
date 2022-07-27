@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:totem/app/circle/components/circle_participant.dart';
-
 import 'package:totem/app_routes.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
@@ -188,7 +187,7 @@ class CirclePageState extends ConsumerState<CirclePage> {
     await repo.activateSession(session: session);
     if (!mounted) return;
     debugPrint(session.id);
-    context.go('/circle/${session.id}');
+    context.goNamed(AppRoutes.circle, params: {'id': session.id});
   }
 
   void _joinSession(BuildContext context) async {

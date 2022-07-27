@@ -150,7 +150,8 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
           circle: circle,
         );
         if (!mounted) return;
-        context.replace(AppRoutes.circle(circle.snapSession.id));
+        context.replaceNamed(AppRoutes.circle,
+            params: {'id': circle.snapSession.id});
       } /*else {
         // leave session in place or cancel?
         if (!mounted) return;
