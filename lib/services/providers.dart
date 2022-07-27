@@ -14,19 +14,3 @@ final repositoryProvider =
 
 final analyticsProvider = Provider<AnalyticsProvider>(
     (ref) => ref.read(repositoryProvider).analyticsProvider);
-
-final userAccountStateProvider = StreamProvider<AccountState?>((ref) {
-  final authUser = ref.watch(authStateChangesProvider).asData?.value;
-  if (authUser != null) {
-    return ref.read(repositoryProvider).userAccountStateStream();
-  }
-  return Stream<AccountState?>.value(null);
-});
-
-final userAuthAccountStateProvider = StateProvider<UserAuthAccountState>((ref) {
-  final authUser = ref.watch(authStateChangesProvider).asData?.value;
-  final accountState = ref.watch(userAccountStateProvider).asData?.value;
-  return UserAuthAccountState(
-      isLoggedIn: authUser != null && !authUser.isAnonymous,
-      accountState: accountState);
-});
