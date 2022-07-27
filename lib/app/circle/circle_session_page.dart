@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:ui';
 
+import 'package:after_layout/after_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -34,33 +36,40 @@ class CircleSessionPage extends ConsumerStatefulWidget {
   CircleSessionPageState createState() => CircleSessionPageState();
 }
 
-class CircleSessionPageState extends ConsumerState<CircleSessionPage> {
-  late Future<Session?> _loadSession;
-  bool _canceled = false;
+enum SessionPageState {
+  loading,
+  prompt,
+  ready,
+  cancelled,
+  error,
+}
 
+class CircleSessionPageState extends ConsumerState<CircleSessionPage>
+    with AfterLayoutMixin {
+  SessionPageState _sessionState = SessionPageState.loading;
+  Session? _session;
   @override
   void initState() {
-    _loadSession = _loadSessionData();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     ref.watch(communicationsProvider);
-    return FutureBuilder<Session?>(
-      future: _loadSession,
-      builder: (BuildContext context, AsyncSnapshot<Session?> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return _loadingSession(context);
-        }
-        if (snapshot.hasData) {
-          return CircleSessionLivePage(
-            session: snapshot.data!,
-          );
-        }
-        return !_canceled ? _failedToLoadSession(context) : Container();
-      },
-    );
+    switch (_sessionState) {
+      case SessionPageState.loading:
+        return _loadingSession(context);
+      case SessionPageState.ready:
+        return CircleSessionLivePage(
+          session: _session!,
+        );
+      case SessionPageState.error:
+        return _failedToLoadSession(context);
+      case SessionPageState.cancelled:
+      case SessionPageState.prompt:
+      default:
+        return Container();
+    }
   }
 
   Widget _loadingSession(BuildContext context) {
@@ -129,7 +138,7 @@ class CircleSessionPageState extends ConsumerState<CircleSessionPage> {
     );
   }
 
-  Future<Session?> _loadSessionData() async {
+  Future<void> _loadSessionData() async {
     var repo = ref.read(repositoryProvider);
     // find the circle / session first
     SnapCircle? circle = await repo.circleFromId(widget.sessionID);
@@ -159,28 +168,36 @@ class CircleSessionPageState extends ConsumerState<CircleSessionPage> {
           await repo.createActiveSession(circle: circle);
         }
         final userState = await repo.userAccountState();
+        setState(() => _sessionState = SessionPageState.prompt);
         if (!userState.boolAttribute(AccountState.onboarded)) {
-          if (!mounted) return null;
+          if (!mounted) return;
           await OnboardingScreen.showOnboarding(context,
               onComplete: (bool result) {
             // show
             Navigator.of(context).pop();
           });
         }
-        if (!mounted) return null;
+        if (!mounted) return;
         bool? state =
             await CircleJoinDialog.showJoinDialog(context, circle: circle);
         if (state != null && state) {
-          return circle.snapSession;
+          _session = circle.snapSession;
+          setState(() => _sessionState = SessionPageState.ready);
         } else {
-          _canceled = true;
           if (mounted) {
+            setState(() => _sessionState = SessionPageState.cancelled);
             Navigator.of(context).pop();
           }
         }
       }
+    } else {
+      setState(() => _sessionState = SessionPageState.error);
     }
-    return null;
+  }
+
+  @override
+  FutureOr<void> afterFirstLayout(BuildContext context) {
+    _loadSessionData();
   }
 }
 

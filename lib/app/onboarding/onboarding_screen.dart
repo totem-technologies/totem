@@ -138,7 +138,7 @@ class OnboardingScreenState extends ConsumerState<OnboardingScreen>
       ),
       decoration: const PageDecoration(
         titleTextStyle: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-        bodyTextStyle: TextStyle(fontSize: 16, height: 1.5),
+        bodyTextStyle: TextStyle(fontSize: 16, height: 1.7),
         imageFlex: 2,
         bodyFlex: 3,
       ),
