@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:totem/app/circle/index.dart';
-import 'package:totem/app/onboarding/index.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
@@ -167,8 +166,9 @@ class CircleSessionPageState extends ConsumerState<CircleSessionPage>
         if (repo.activeSession == null) {
           await repo.createActiveSession(circle: circle);
         }
-        final userState = await repo.userAccountState();
         setState(() => _sessionState = SessionPageState.prompt);
+        /* Temporarily disabled for now
+        final userState = await repo.userAccountState();
         if (!userState.boolAttribute(AccountState.onboarded)) {
           if (!mounted) return;
           await OnboardingScreen.showOnboarding(context,
@@ -177,6 +177,7 @@ class CircleSessionPageState extends ConsumerState<CircleSessionPage>
             Navigator.of(context).pop();
           });
         }
+         */
         if (!mounted) return;
         bool? state =
             await CircleJoinDialog.showJoinDialog(context, circle: circle);
