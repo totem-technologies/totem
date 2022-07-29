@@ -16,7 +16,7 @@ build-web:
 	rm -rf build/web
 	flutter build web --release
 
-publish-web:
+publish-web: build-web
 	firebase deploy --only hosting
 
 run-web:
