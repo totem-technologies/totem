@@ -6,7 +6,7 @@ import 'package:totem/services/index.dart';
 final authServiceProvider =
     Provider<AuthService>((ref) => FirebaseAuthService());
 
-final authStateChangesProvider = StreamProvider.autoDispose<AuthUser?>(
+final authStateChangesProvider = StreamProvider<AuthUser?>(
     (ref) => ref.read(authServiceProvider).onAuthStateChanged);
 
 final repositoryProvider =
