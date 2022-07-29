@@ -490,8 +490,8 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
             result = t.errorNoSpeakers;
             break;
         }
+        setState(() => _error = result);
       }
-      setState(() => _error = result);
     }
   }
 }
