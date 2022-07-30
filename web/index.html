@@ -11,7 +11,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-title" content="totem">
-  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
 
   <title>totem</title>
   <link rel="manifest" href="manifest.json">
@@ -26,8 +26,11 @@
   <script src="assets/packages/libphonenumber_plugin/js/libphonenumber.js" defer></script>
   <script src="assets/packages/libphonenumber_plugin/js/stringbuffer.js" defer></script>
   <!-- <script src="AudioLevel.js" defer></script> -->
-  
+
   <script>
+    // Force html rendering of the page for now.
+    window.flutterWebRenderer = 'html';
+
     // Allow users to force which renderer to use renderer
     // Add ?r=html or ?r=canvaskit to force a specific renderer
     const urlParams = new URLSearchParams(window.location.search);
