@@ -167,9 +167,9 @@ class CircleSessionPageState extends ConsumerState<CircleSessionPage>
           await repo.createActiveSession(circle: circle);
         }
         setState(() => _sessionState = SessionPageState.prompt);
-        final accountState = await repo.userAccountState();
         if (!mounted) return;
         /* Temporarily disabled for now
+        final accountState = await repo.userAccountState();
         await ref
             .read(accountStateEventManager)
             .handlePreCircleEvents(context, accountState);
