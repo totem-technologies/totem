@@ -3,7 +3,7 @@ import * as chai from "chai";
 import * as sinon from "sinon";
 import * as testFunc from "firebase-functions-test";
 import * as admin from "firebase-admin";
-import {CloudFunction} from "firebase-functions";
+import {CloudFunction, https} from "firebase-functions";
 
 describe("offline api tests", () => {
   admin.initializeApp();
@@ -13,6 +13,7 @@ describe("offline api tests", () => {
     ping: (arg0: Record<string, unknown>, arg1: {send: (data: string) => void}) => void;
     getToken: CloudFunction<unknown>;
     deleteSelf: CloudFunction<unknown>;
+    updateAccountState: CloudFunction<unknown>;
   };
   let adminInitStub: sinon.SinonStub;
 
@@ -59,6 +60,43 @@ describe("offline api tests", () => {
       assert.isTrue(result);
       assert.isTrue(deleteUserStub.calledOnce);
       deleteUserStub.restore();
+    });
+  });
+
+  describe("updateAccountState", () => {
+    // Just testing pre-conditions for now as mocking admin.firestore() offline is too much work
+    it("should throw error if missing key", async () => {
+      const wrapped = test.wrap(myFunctions.updateAccountState);
+      try {
+        await wrapped({value: "test"}, {auth: {uid: "abcdefg123"}});
+        assert.fail("should have thrown error");
+      } catch (e) {
+        const ex: https.HttpsError = e as https.HttpsError;
+        assert.equal(ex.code, "failed-precondition");
+        assert.equal(ex.message, "Missing key for account state");
+      }
+    });
+    it("should throw error if key is not string", async () => {
+      const wrapped = test.wrap(myFunctions.updateAccountState);
+      try {
+        await wrapped({key: 123, value: "test"}, {auth: {uid: "abcdefg123"}});
+        assert.fail("should have thrown error");
+      } catch (e) {
+        const ex: https.HttpsError = e as https.HttpsError;
+        assert.equal(ex.code, "failed-precondition");
+        assert.equal(ex.message, "Key for account state must be string");
+      }
+    });
+    it("should throw error if missing value", async () => {
+      const wrapped = test.wrap(myFunctions.updateAccountState);
+      try {
+        await wrapped({key: "test"}, {auth: {uid: "abcdefg123"}});
+        assert.fail("should have thrown error");
+      } catch (e) {
+        const ex: https.HttpsError = e as https.HttpsError;
+        assert.equal(ex.code, "failed-precondition");
+        assert.equal(ex.message, "Missing value for account state");
+      }
     });
   });
 });
