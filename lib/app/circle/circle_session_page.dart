@@ -167,16 +167,12 @@ class CircleSessionPageState extends ConsumerState<CircleSessionPage>
           await repo.createActiveSession(circle: circle);
         }
         setState(() => _sessionState = SessionPageState.prompt);
+        final accountState = await repo.userAccountState();
+        if (!mounted) return;
         /* Temporarily disabled for now
-        final userState = await repo.userAccountState();
-        if (!userState.boolAttribute(AccountState.onboarded)) {
-          if (!mounted) return;
-          await OnboardingScreen.showOnboarding(context,
-              onComplete: (bool result) {
-            // show
-            Navigator.of(context).pop();
-          });
-        }
+        await ref
+            .read(accountStateEventManager)
+            .handlePreCircleEvents(context, accountState);
          */
         if (!mounted) return;
         bool? state =
