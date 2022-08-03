@@ -161,51 +161,54 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
           : BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 2.5, sigmaY: 2.5),
               child: Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 1000),
+                child: SingleChildScrollView(
                   child: DialogContainer(
                     padding: const EdgeInsets.only(
-                        top: 50, bottom: 80, left: 40, right: 40),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Stack(
-                          children: [
-                            Align(
-                              alignment: Alignment.topCenter,
-                              child: Text(
-                                widget.circle.name,
-                                style: textStyles.headline1!.merge(
-                                    const TextStyle(
-                                        fontWeight: FontWeight.w400)),
-                                textAlign: TextAlign.center,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            Align(
-                              alignment: Alignment.topRight,
-                              child: InkWell(
-                                onTap: () {
-                                  Navigator.of(context).pop(false);
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 5, right: 5, top: 5, bottom: 5),
-                                  child: SvgPicture.asset('assets/close.svg'),
+                        top: 50, bottom: 40, left: 40, right: 40),
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(
+                        maxWidth: 1000,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Stack(
+                            children: [
+                              Align(
+                                alignment: Alignment.topCenter,
+                                child: Text(
+                                  widget.circle.name,
+                                  style: textStyles.headline1!.merge(
+                                      const TextStyle(
+                                          fontWeight: FontWeight.w400)),
+                                  textAlign: TextAlign.center,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-                        const ContentDivider(),
-                        const SizedBox(height: 24),
-                        Center(
-                          child: _desktopUserInfo(context, commProvider),
-                        ),
-                        const SizedBox(height: 16),
-                      ],
+                              Align(
+                                alignment: Alignment.topRight,
+                                child: InkWell(
+                                  onTap: () {
+                                    Navigator.of(context).pop(false);
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 5, right: 5, top: 5, bottom: 5),
+                                    child: SvgPicture.asset('assets/close.svg'),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                          const ContentDivider(),
+                          const SizedBox(height: 24),
+                          Center(
+                            child: _desktopUserInfo(context, commProvider),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -376,13 +379,6 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 500),
-                child: Text(
-                  t.joinCircleMessage,
-                  textAlign: TextAlign.center,
-                ),
-              ),
               const SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -421,10 +417,6 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
                         const SizedBox(
                           height: 16,
                         ),
-                        if (_initialized)
-                          const Center(
-                            child: CircleDeviceSettingsButton(),
-                          ),
                       ]),
                     ),
                   ),
@@ -435,8 +427,11 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
                     child: ConstrainedBox(
                       constraints: BoxConstraints(
                         maxWidth: Theme.of(context).maxRenderWidth,
+                        maxHeight: 260,
                       ),
                       child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           const SizedBox(height: 8),
                           if (_initialized)
@@ -452,6 +447,15 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
                                     : t.leaveSession,
                               ),
                             ),
+                          Text(
+                            t.joinCircleMessage,
+                            textAlign: TextAlign.center,
+                          ),
+                          if (_initialized)
+                            const Center(
+                              child: CircleDeviceSettingsButton(),
+                            ),
+                          const SizedBox(height: 20),
                         ],
                       ),
                     ),

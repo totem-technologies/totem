@@ -35,6 +35,7 @@ class CircleDeviceSettingsButtonState
       onPressed: () {
         _showDeviceSelector();
       },
+      clipBehavior: Clip.hardEdge,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,

@@ -61,7 +61,7 @@
     "endSessionPromptMessage": "Are you sure you want to end this session?",
     "enterTheCodeDetail": "Enter the 6 Digit Code",
     "enterPhonePrompt": "Enter your Phone Number",
-    "enterPhonePromptDetail": "We will send you a 4 Digit code to login",
+    "enterPhonePromptDetail": "We will send you a 6 Digit code to login",
     "errorCamera": "Unable to access camera",
     "errorCantAccessImage": "Unable to access image file",
     "errorCommunicationNoMicrophonePermission": "Totem does not have access to the microphone. This is required to join the circle.",
