@@ -77,6 +77,7 @@
     "errorNoMicrophone": "Unable to access microphone",
     "errorNoProfile": "There is no profile",
     "errorNoSpeakers": "Unable to access device speakers",
+    "errorProfileInfoMissing": "We couldn't find this required information",
     "errorRegister": "An error occurred registering",
     "errorRegisterUnknown": "Unknown error, please contact support",
     "errorSelectAtLeastOneDay": "Select at least one day",
