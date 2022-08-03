@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:totem/theme/index.dart';
 
 class CameraMuted extends StatelessWidget {
@@ -16,7 +15,8 @@ class CameraMuted extends StatelessWidget {
       ),
       child: Align(
         alignment: Alignment.center,
-        child: SvgPicture.asset('assets/cam.svg'),
+        child:
+            Icon(Icons.videocam_off, size: 24, color: themeColors.reversedText),
       ),
     );
   }

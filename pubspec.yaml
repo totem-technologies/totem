@@ -101,9 +101,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/alert.svg
     - assets/android_download.png
-    - assets/arrow_next.svg
     - assets/background_shape.svg
     - assets/cam.svg
     - assets/check.svg
@@ -132,7 +130,6 @@ flutter:
     - assets/unlock.svg
     - assets/view_circle.svg
     - assets/circle_check.svg
-    - assets/active_sharing.svg
     - assets/settings.svg
     - assets/video.svg
     - assets/video_stop.svg

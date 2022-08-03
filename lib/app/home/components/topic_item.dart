@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/theme/index.dart';
 
 class TopicItem extends StatelessWidget {
-  const TopicItem({Key? key, required this.topic, required this.onPressed}) : super(key: key);
+  const TopicItem({Key? key, required this.topic, required this.onPressed})
+      : super(key: key);
   final Topic topic;
   final Function onPressed;
 
@@ -14,7 +14,8 @@ class TopicItem extends StatelessWidget {
     final themeColors = themeData.themeColors;
     final textStyles = themeData.textTheme;
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: themeData.pageHorizontalPadding),
+      padding: EdgeInsets.symmetric(
+          vertical: 8.0, horizontal: themeData.pageHorizontalPadding),
       child: InkWell(
         onTap: () {
           onPressed(topic);
@@ -25,14 +26,12 @@ class TopicItem extends StatelessWidget {
               color: themeColors.itemBackground,
               boxShadow: [
                 BoxShadow(
-                    color: themeColors.shadow, offset: const Offset(0, -8), blurRadius: 24),
+                    color: themeColors.shadow,
+                    offset: const Offset(0, -8),
+                    blurRadius: 24),
               ],
-              border: Border.all(
-                  color: themeColors.itemBorder,
-                  width: 1.0
-              ),
-              borderRadius: const BorderRadius.all( Radius.circular(16))
-          ),
+              border: Border.all(color: themeColors.itemBorder, width: 1.0),
+              borderRadius: const BorderRadius.all(Radius.circular(16))),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -40,8 +39,14 @@ class TopicItem extends StatelessWidget {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(width: 24, child: SvgPicture.asset('assets/alert.svg')), // FIXME - this is some indicator icon
-                    const SizedBox(width: 4,),
+                    Icon(
+                      Icons.error_outline,
+                      size: 24,
+                      color: themeColors.error,
+                    ),
+                    const SizedBox(
+                      width: 4,
+                    ),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -49,15 +54,21 @@ class TopicItem extends StatelessWidget {
                           const SizedBox(height: 2),
                           Text(topic.title, style: textStyles.headline3),
                           const SizedBox(height: 12),
-                          Text(topic.description, style: textStyles.headline4,)
+                          Text(
+                            topic.description,
+                            style: textStyles.headline4,
+                          )
                         ],
                       ),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(width: 8,),
-              SvgPicture.asset('assets/arrow_next.svg'),
+              const SizedBox(
+                width: 8,
+              ),
+              Icon(Icons.arrow_forward,
+                  size: 24, color: themeData.themeColors.secondaryText),
             ],
           ),
         ),
