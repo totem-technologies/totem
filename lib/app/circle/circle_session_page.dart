@@ -147,8 +147,8 @@ class CircleSessionPageState extends ConsumerState<CircleSessionPage>
         // circle is complete or cancelled, so will have to start a new one
         // Make sure there isn't a new one already started as well,
         // should only be 1 that is waiting with a previous circle referencing this one
-        SnapCircle? pending = await repo.circleFromPreviousIdAndNotState(
-            circle.id, [SessionState.cancelled, SessionState.complete]);
+        SnapCircle? pending = await repo.circleFromPreviousIdAndState(circle.id,
+            [SessionState.waiting, SessionState.starting, SessionState.live]);
         if (pending == null) {
           // this is a create new circle moment
           circle = await repo.createSnapCircle(
