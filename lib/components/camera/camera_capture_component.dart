@@ -119,7 +119,7 @@ class CameraCaptureScreenState extends State<CameraCapture>
   Widget build(BuildContext context) {
     super.build(context);
     final themeColor = Theme.of(context).themeColors;
-    if (_permissionError != null) {
+    if (_permissionError != null || _generalCameraError != null) {
       return _buildCameraError(context);
     }
     if (_controller != null) {
