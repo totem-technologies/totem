@@ -56,7 +56,7 @@ class CircleItem extends StatelessWidget {
                 width: 8,
               ),
               Icon(Icons.arrow_forward,
-                  size: 24, color: themeData.themeColors.secondaryText),
+                  size: 24, color: themeData.themeColors.iconNext),
             ],
           ),
         ),

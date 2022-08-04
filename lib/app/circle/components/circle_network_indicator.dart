@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/theme/index.dart';
 
@@ -18,8 +17,10 @@ class CircleNetworkUnstable extends StatelessWidget {
           shape: BoxShape.circle,
           color: themeColors.alertBackground,
         ),
-        child: SvgPicture.asset(
-          "assets/wifi.svg",
+        child: Icon(
+          Icons.wifi,
+          size: 24,
+          color: themeColors.reversedText,
         ),
       );
     }
@@ -32,8 +33,10 @@ class CircleNetworkUnstable extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          SvgPicture.asset(
-            "assets/wifi.svg",
+          Icon(
+            Icons.wifi,
+            size: 24,
+            color: themeColors.reversedText,
           ),
           const SizedBox(width: 4),
           if (participant != null)

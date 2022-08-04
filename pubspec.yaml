@@ -103,37 +103,16 @@ flutter:
   assets:
     - assets/android_download.png
     - assets/background_shape.svg
-    - assets/cam.svg
-    - assets/check.svg
-    - assets/close.svg
     - assets/face.svg
-    - assets/fast_forward.svg
     - assets/home_logo.svg
-    - assets/info.svg
     - assets/ios_download.png
-    - assets/leave.svg
-    - assets/microphone.svg
-    - assets/microphone_mute.svg
-    - assets/microphone_force.svg
-    - assets/less.svg
-    - assets/more.svg
-    - assets/more_info.svg
     - assets/onboarding_finish_flag.png
     - assets/onboarding_help_book.png
     - assets/onboarding_pass_baton.png
     - assets/onboarding_play_button.png
     - assets/onboarding_talking_person.png
     - assets/onboarding_totem_icon.png
-    - assets/profile.svg
-    - assets/send.svg
-    - assets/sort.svg
-    - assets/unlock.svg
     - assets/view_circle.svg
-    - assets/circle_check.svg
-    - assets/settings.svg
-    - assets/video.svg
-    - assets/video_stop.svg
-    - assets/wifi.svg
 
   fonts:
     - family: Raleway

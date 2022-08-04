@@ -290,8 +290,7 @@ class CameraCaptureScreenState extends State<CameraCapture>
           ThemedControlButton(
             label: _muted ? t.unmute : t.mute,
             labelColor: themeColors.reversedText,
-            svgImage:
-                _muted ? 'assets/microphone_mute.svg' : 'assets/microphone.svg',
+            icon: _muted ? Icons.mic_off : Icons.mic,
             onPressed: () {
               setState(() => _muted = !_muted);
               debugPrint('mute pressed');
@@ -303,8 +302,7 @@ class CameraCaptureScreenState extends State<CameraCapture>
           ThemedControlButton(
             label: _videoMuted ? t.startVideo : t.stopVideo,
             labelColor: themeColors.reversedText,
-            svgImage:
-                _videoMuted ? 'assets/video.svg' : 'assets/video_stop.svg',
+            icon: _videoMuted ? Icons.videocam : Icons.videocam_off,
             onPressed: () {
               if (!_videoMuted) {
                 _controller!.pausePreview();

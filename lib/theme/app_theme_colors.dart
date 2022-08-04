@@ -1,41 +1,43 @@
 import 'package:flutter/material.dart';
 
 class AppThemeColors {
-  AppThemeColors(
-      {required this.alternateButtonBackground,
-      required this.blurBackground,
-      required this.busyIndicator,
-      required this.screenBackground,
-      required this.primaryText,
-      required this.secondaryText,
-      required this.reversedText,
-      required this.linkText,
-      required this.profileBackground,
-      required this.primary,
-      required this.primaryButtonBackground,
-      required this.dialogBackground,
-      required this.trayBackground,
-      required this.trayBorder,
-      required this.shadow,
-      required this.error,
-      required this.primaryGradient,
-      required this.secondaryGradient,
-      required this.welcomeGradient,
-      required this.itemBackground,
-      required this.itemBorder,
-      required this.divider,
-      required this.profileGradient,
-      required this.controlButtonBackground,
-      required this.participantBorder,
-      required this.sliderBackground,
-      required this.altBackground,
-      required this.containerBackground,
-      required this.titleBarGradient,
-      required this.cameraBorder,
-      required this.contentDivider,
-      required this.alertBackground,
-      required this.videoOverlayBackground,
-      required this.secondaryButtonBackground});
+  AppThemeColors({
+    required this.alternateButtonBackground,
+    required this.blurBackground,
+    required this.busyIndicator,
+    required this.screenBackground,
+    required this.primaryText,
+    required this.secondaryText,
+    required this.reversedText,
+    required this.linkText,
+    required this.profileBackground,
+    required this.primary,
+    required this.primaryButtonBackground,
+    required this.dialogBackground,
+    required this.trayBackground,
+    required this.trayBorder,
+    required this.shadow,
+    required this.error,
+    required this.primaryGradient,
+    required this.secondaryGradient,
+    required this.welcomeGradient,
+    required this.itemBackground,
+    required this.itemBorder,
+    required this.divider,
+    required this.profileGradient,
+    required this.controlButtonBackground,
+    required this.participantBorder,
+    required this.sliderBackground,
+    required this.altBackground,
+    required this.containerBackground,
+    required this.titleBarGradient,
+    required this.cameraBorder,
+    required this.contentDivider,
+    required this.alertBackground,
+    required this.videoOverlayBackground,
+    required this.secondaryButtonBackground,
+    required this.iconNext,
+  });
 
   final Color alternateButtonBackground;
   final Color secondaryButtonBackground;
@@ -66,6 +68,7 @@ class AppThemeColors {
   final Color contentDivider;
   final Color alertBackground;
   final Color videoOverlayBackground;
+  final Color iconNext;
   final List<Color> primaryGradient;
   final List<Color> secondaryGradient;
   final List<Color> welcomeGradient;
