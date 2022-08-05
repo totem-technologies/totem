@@ -9,4 +9,5 @@ export 'service_exception.dart';
 export 'session_provider.dart';
 export 'topics_provider.dart';
 export 'totem_repository.dart';
+export 'user_account_state_provider.dart';
 export 'user_provider.dart';
