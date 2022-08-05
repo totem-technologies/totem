@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:totem/components/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
@@ -135,7 +134,8 @@ class ProfileImage extends ConsumerWidget {
       context,
       child: useIcon
           ? Center(
-              child: SvgPicture.asset('assets/profile.svg'),
+              child: Icon(Icons.person_outline,
+                  size: 24, color: themeColors.primaryText),
             )
           : Text(
               userProfile?.userInitials ?? "",

@@ -128,7 +128,7 @@ class HomePage extends StatelessWidget {
                               ? Theme.of(context).pageHorizontalPadding
                               : 80,
                           vertical: 10),
-                      child: SvgPicture.asset('assets/profile.svg'),
+                      child: const Icon(Icons.person_outline, size: 24),
                     ),
                     onTap: () {
                       _showProfile(context);

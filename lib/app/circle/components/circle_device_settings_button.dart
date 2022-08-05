@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:totem/app/circle/index.dart';
 import 'package:totem/theme/index.dart';
 
@@ -39,7 +38,7 @@ class CircleDeviceSettingsButtonState
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
-          SvgPicture.asset('assets/settings.svg'),
+          const Icon(Icons.settings_outlined, size: 24),
           const SizedBox(
             width: 6,
           ),

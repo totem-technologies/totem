@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_reorderable_list/flutter_reorderable_list.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:totem/components/index.dart';
 import 'package:totem/models/index.dart';
+import 'package:totem/services/providers.dart';
 import 'package:totem/theme/index.dart';
-
-import '../../../services/providers.dart';
 
 class CircleSessionParticipantListItem extends ConsumerWidget {
   const CircleSessionParticipantListItem(
@@ -67,7 +65,11 @@ class CircleSessionParticipantListItem extends ConsumerWidget {
               child: Container(
                 padding: const EdgeInsets.only(right: 18.0, left: 18.0),
                 child: Center(
-                  child: SvgPicture.asset('assets/sort.svg'),
+                  child: Icon(
+                    Icons.reorder,
+                    size: 24,
+                    color: Theme.of(context).themeColors.secondaryText,
+                  ),
                 ),
               ),
             ),
