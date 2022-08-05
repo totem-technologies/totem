@@ -2,10 +2,10 @@ import 'dart:async';
 
 import 'package:after_layout/after_layout.dart';
 import 'package:flutter/material.dart';
+import 'package:totem/app/circle/components/circle_network_indicator.dart';
 import 'package:totem/app/circle/index.dart';
 import 'package:totem/app/onboarding/index.dart';
-import 'package:totem/components/widgets/index.dart';
-import 'package:totem/components/widgets/index.dart';
+import 'package:totem/components/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/utils/device_type.dart';
 import 'package:totem/theme/app_theme_styles.dart';
@@ -21,7 +21,7 @@ Widget getParticipant(int i, double d) {
       children: [
         Container(
           decoration: BoxDecoration(
-            color: Colors.grey,
+            color: Colors.white,
             borderRadius: BorderRadius.circular(10),
           ),
         ),
@@ -31,6 +31,16 @@ Widget getParticipant(int i, double d) {
           child: CircleNameLabel(
             name: "Participant ${i + 1}",
           ),
+        ),
+        const PositionedDirectional(
+          top: 10,
+          end: 10,
+          child: MuteIndicator(),
+        ),
+        const Positioned(
+          top: 10,
+          left: 10,
+          child: CircleNetworkUnstable(),
         ),
       ],
     ),
@@ -296,7 +306,7 @@ class CircleUserProfileTestState extends State<CircleUserProfileTest> {
                   child: Center(
                     child: ThemedRaisedButton(
                       onPressed: () {
-                        CircleSessionParticipantDialog.showDialog(
+                        CircleSessionParticipantDialog.showParticipantDialog(
                           context,
                           participant: _testParticipant,
                           overrideMe: true,

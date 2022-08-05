@@ -28,7 +28,7 @@ class CircleSessionParticipant extends ConsumerWidget {
     final commProvider = ref.watch(communicationsProvider);
     return GestureDetector(
       onTap: () {
-        CircleSessionParticipantDialog.showDialog(
+        CircleSessionParticipantDialog.showParticipantDialog(
           context,
           participant: participant,
         );
@@ -94,8 +94,8 @@ class CircleSessionParticipant extends ConsumerWidget {
                         child: CircleNetworkUnstable(),
                       ),
                     PositionedDirectional(
-                      top: 5,
-                      end: 5,
+                      top: 10,
+                      end: 10,
                       child: _muteIndicator(context, participant),
                     ),
                   ],

@@ -19,6 +19,7 @@
             "count": {}
         }
     },
+    "circle": "Circle",
     "circleCreateNewMessage": "The circle named {name} is not available.\n\nDo you want to start a new circle with the same name and keeper?",
     "@circleCreateNewMessage": {
         "placeholders": {

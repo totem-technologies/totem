@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:totem/app/circle/index.dart';
+import 'package:totem/app_routes.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
@@ -235,12 +236,18 @@ class CircleSessionLivePageState extends ConsumerState<CircleSessionLivePage> {
     debugPrint('active session change');
     final activeSession = ref.read(activeSessionProvider);
     final commProvider = ref.read(communicationsProvider);
-    if ((activeSession.state == SessionState.cancelled ||
-            activeSession.state == SessionState.complete) &&
-        commProvider.state == CommunicationState.active) {
+    if (activeSession.state == SessionState.cancelled ||
+        activeSession.state == SessionState.complete ||
+        activeSession.state == SessionState.removed) {
       // the session has been ended remotely... trigger leave session
-      commProvider.leaveSession(requested: false);
-      debugPrint('triggering leave session for session that has ended');
+      if (commProvider.state == CommunicationState.active) {
+        commProvider.leaveSession(requested: false);
+        debugPrint('triggering leave session for session that has ended');
+      }
+      context.replaceNamed(AppRoutes.circleEnded, extra: {
+        'removed': activeSession.state == SessionState.removed,
+        'circle': activeSession.circle
+      });
     }
   }
 }

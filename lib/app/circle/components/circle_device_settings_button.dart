@@ -38,7 +38,8 @@ class CircleDeviceSettingsButtonState
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.settings_outlined, size: 24),
+          Icon(Icons.settings_outlined,
+              size: 24, color: themeColors.primaryText),
           const SizedBox(
             width: 6,
           ),

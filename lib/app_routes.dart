@@ -20,6 +20,7 @@ class AppRoutes {
   static const String circle = "circle";
   static const String circleCreateScheduled = 'scheduledcreate';
   static const String circleCreate = 'create';
+  static const String circleEnded = 'circleEnded';
   static const String userProfile = 'profile';
   static const String dev = '/dev';
 
@@ -69,6 +70,26 @@ class AppRoutes {
                 pageBuilder: (context, state) => const MaterialPage(
                     child: CircleCreateSnapPage(), fullscreenDialog: true),
               ),
+              GoRoute(
+                name: circleEnded,
+                path: 'ended',
+                pageBuilder: (context, state) {
+                  Map<String, dynamic> extra = Map<String, dynamic>.from(
+                      state.extra as Map? ?? <String, dynamic>{});
+                  final bool removed = extra['removed'] as bool? ?? false;
+                  final Circle? circle = extra['circle'] as Circle?;
+                  final SessionState sessionState =
+                      extra['state'] as SessionState? ?? SessionState.complete;
+                  return _fadeTransitionPage(
+                      state: state,
+                      child: CircleSessionEndedPage(
+                          removed: removed,
+                          circle: circle,
+                          sessionState: sessionState),
+                      opaque: false,
+                      fullscreenDialog: true);
+                },
+              )
             ],
           ),
           GoRoute(
@@ -130,6 +151,13 @@ class AppRoutes {
           if (state.subloc == home && state.queryParams.containsKey('snap')) {
             return '${home}circle/${state.queryParams['snap']}';
           }
+
+          // the ended path can only be accessed if the extra data is
+          // provided, otherwise redirect to the home page
+          if (state.subloc == '/ended' && state.extra == null) {
+            return null; // '/';
+          }
+
           // no need to redirect at all
           return null;
         },

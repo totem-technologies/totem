@@ -3,7 +3,6 @@ import 'dart:ui';
 import 'package:flutter/material.dart' hide ReorderableList;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:totem/app/circle/index.dart';
 import 'package:totem/components/widgets/index.dart';
@@ -20,7 +19,7 @@ class CircleSessionParticipantDialog extends ConsumerStatefulWidget {
   final SessionParticipant participant;
   final bool overrideMe;
 
-  static Future<String?> showDialog(
+  static Future<String?> showParticipantDialog(
     BuildContext context, {
     required SessionParticipant participant,
     bool overrideMe = false,
@@ -76,130 +75,138 @@ class CircleSessionParticipantDialogState
           padding: const EdgeInsets.only(
             top: 50,
           ),
-          child: BottomTrayContainer(
-            fullScreen: true,
-            padding: const EdgeInsets.symmetric(
-              vertical: 10,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Row(
-                  children: [
-                    Expanded(child: Container()),
-                    IconButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      icon: Icon(
-                        Icons.close,
-                        color: themeColors.primaryText,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                  ],
+          child: Center(
+            child: ConstrainedBox(
+              constraints:
+                  BoxConstraints(maxWidth: Theme.of(context).maxRenderWidth),
+              child: BottomTrayContainer(
+                fullScreen: true,
+                padding: const EdgeInsets.symmetric(
+                  vertical: 10,
                 ),
-                Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: Theme.of(context).pageHorizontalPadding),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Row(
                       children: [
-                        Text(
-                          widget.participant.name,
-                          style: textStyles.headline2,
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 33),
-                        Expanded(
-                          child: FutureBuilder<UserProfile?>(
-                            future: _userProfile,
-                            builder: (BuildContext context,
-                                AsyncSnapshot<dynamic> snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return const Center(
-                                  child: BusyIndicator(),
-                                );
-                              }
-                              UserProfile? profile = snapshot.data;
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  if (profile == null)
-                                    Text(
-                                      t.unableToReadProfile,
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  if (profile != null) ...[
-                                    Center(
-                                      child: ProfileImage(
-                                        size: 100,
-                                        shape: BoxShape.rectangle,
-                                        profile: profile,
-                                        borderRadius: 8,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 40),
-                                    Row(
-                                      children: [
-                                        Expanded(
-                                          child: Text(
-                                            t.memberSince,
-                                            style: textStyles.headline3,
-                                          ),
-                                        ),
-                                        const SizedBox(
-                                          width: 10,
-                                        ),
-                                        Text(
-                                            timeFormat
-                                                .format(profile.createdOn),
-                                            style: textStyles.bodyText1)
-                                      ],
-                                    ),
-                                    Divider(
-                                      thickness: 1,
-                                      height: 32,
-                                      color: themeColors.divider,
-                                    ),
-                                    Row(
-                                      children: [
-                                        Expanded(
-                                          child: Text(
-                                            t.circlesDone,
-                                            style: textStyles.headline3,
-                                          ),
-                                        ),
-                                        const SizedBox(
-                                          width: 10,
-                                        ),
-                                        Text(
-                                          profile.completedCircles
-                                                  ?.toString() ??
-                                              "0",
-                                          style: textStyles.bodyText1,
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 24),
-                                    Expanded(child: Container()),
-                                    if (!widget.participant.me &&
-                                        me != null &&
-                                        me!.role == Role.keeper)
-                                      ..._removeButton(context),
-                                  ]
-                                ],
-                              );
-                            },
+                        Expanded(child: Container()),
+                        IconButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          icon: Icon(
+                            Icons.close,
+                            color: themeColors.primaryText,
                           ),
                         ),
+                        const SizedBox(width: 8),
                       ],
                     ),
-                  ),
+                    Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal:
+                                Theme.of(context).pageHorizontalPadding),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Text(
+                              widget.participant.name,
+                              style: textStyles.headline2,
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 33),
+                            Expanded(
+                              child: FutureBuilder<UserProfile?>(
+                                future: _userProfile,
+                                builder: (BuildContext context,
+                                    AsyncSnapshot<dynamic> snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return const Center(
+                                      child: BusyIndicator(),
+                                    );
+                                  }
+                                  UserProfile? profile = snapshot.data;
+                                  return Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.stretch,
+                                    children: [
+                                      if (profile == null)
+                                        Text(
+                                          t.unableToReadProfile,
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      if (profile != null) ...[
+                                        Center(
+                                          child: ProfileImage(
+                                            size: 100,
+                                            shape: BoxShape.rectangle,
+                                            profile: profile,
+                                            borderRadius: 8,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 40),
+                                        Row(
+                                          children: [
+                                            Expanded(
+                                              child: Text(
+                                                t.memberSince,
+                                                style: textStyles.headline3,
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              width: 10,
+                                            ),
+                                            Text(
+                                                timeFormat
+                                                    .format(profile.createdOn),
+                                                style: textStyles.bodyText1)
+                                          ],
+                                        ),
+                                        Divider(
+                                          thickness: 1,
+                                          height: 32,
+                                          color: themeColors.divider,
+                                        ),
+                                        Row(
+                                          children: [
+                                            Expanded(
+                                              child: Text(
+                                                t.circlesDone,
+                                                style: textStyles.headline3,
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              width: 10,
+                                            ),
+                                            Text(
+                                              profile.completedCircles
+                                                      ?.toString() ??
+                                                  "0",
+                                              style: textStyles.bodyText1,
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 24),
+                                        Expanded(child: Container()),
+                                        if (!widget.participant.me &&
+                                            me != null &&
+                                            me!.role == Role.keeper)
+                                          ..._removeButton(context),
+                                      ]
+                                    ],
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         ),
@@ -222,7 +229,7 @@ class CircleSessionParticipantDialogState
         },
         child: Row(
           children: [
-            SvgPicture.asset('assets/erase.svg'),
+            Icon(Icons.delete, color: themeColors.primaryText),
             const SizedBox(width: 10),
             Text(AppLocalizations.of(context)!.removeFromCircle,
                 style: textStyles.button),
@@ -245,7 +252,11 @@ class CircleSessionParticipantDialogState
       barrierColor: Theme.of(context).themeColors.blurBackground,
       builder: (_) => AlertDialog(
         title: Text(t.removeFromCircle),
-        content: Text(t.removeFromCirclePrompt(widget.participant.name)),
+        content: ConstrainedBox(
+          constraints:
+              BoxConstraints(maxWidth: Theme.of(context).maxRenderWidth),
+          child: Text(t.removeFromCirclePrompt(widget.participant.name)),
+        ),
         actions: [
           TextButton(
             child: Text(t.no),
@@ -262,7 +273,7 @@ class CircleSessionParticipantDialogState
         ],
       ),
     );
-    if (result == true) {
+    if (result != null && result == true) {
       //await _removeUser();
       bool result =
           await ref.read(communicationsProvider).removeUserFromSession(
