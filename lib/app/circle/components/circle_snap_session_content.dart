@@ -9,11 +9,12 @@ import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-final audioLevelStream = StreamProvider.autoDispose<AudioLevelData>((ref) {
-  final audioLevel = AudioLevel();
-  return audioLevel.stream;
-});
+// final audioLevelStream = StreamProvider.autoDispose<AudioLevelData>((ref) {
+//   final audioLevel = AudioLevel();
+//   return audioLevel.stream;
+// });
 
 class CircleSnapSessionContent extends ConsumerStatefulWidget {
   const CircleSnapSessionContent({
@@ -50,7 +51,7 @@ class _CircleSnapSessionContentState
     final t = AppLocalizations.of(context)!;
     final commProvider = ref.watch(communicationsProvider);
     final sessionProvider = ref.watch(activeSessionProvider);
-    ref.watch(audioLevelStream);
+    // ref.watch(audioLevelStream);
     return GradientBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
@@ -293,6 +294,20 @@ class _CircleSnapSessionContentState
               Navigator.of(context).pop();
             },
           ),
+          if (sessionProvider.state == SessionState.complete)
+            Padding(
+              padding: const EdgeInsets.only(top: 60),
+              child: ThemedRaisedButton(
+                backgroundColor:
+                    Theme.of(context).themeColors.secondaryButtonBackground,
+                label: t.sessionFeedbackRequest,
+                textStyle:
+                    textStyles.button!.merge(const TextStyle(fontSize: 14)),
+                onPressed: () async {
+                  _launchUserFeedback();
+                },
+              ),
+            )
         ],
       );
     }
@@ -517,5 +532,8 @@ class _CircleSnapSessionContentState
         ),
         fullScreenSize: fullscreenSize);
   }
-//  }
+
+  void _launchUserFeedback() async {
+    await launchUrl(Uri.parse(DataUrls.userFeedback));
+  }
 }

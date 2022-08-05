@@ -1,5 +1,10 @@
+import 'dart:async';
+
+import 'package:after_layout/after_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:totem/app/circle/index.dart';
+import 'package:totem/app/onboarding/index.dart';
+import 'package:totem/components/widgets/index.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/utils/device_type.dart';
@@ -12,20 +17,23 @@ Widget getParticipant(int i, double d) {
     height: d,
     width: d,
     padding: const EdgeInsets.all(5),
-    child: Stack(children: [
-      Container(
-        decoration: BoxDecoration(
-          color: Colors.red,
-          borderRadius: BorderRadius.circular(10),
+    child: Stack(
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.grey,
+            borderRadius: BorderRadius.circular(10),
+          ),
         ),
-      ),
-      Positioned(
+        Positioned(
           bottom: 5,
           left: 5,
           child: CircleNameLabel(
             name: "Participant ${i + 1}",
-          )),
-    ]),
+          ),
+        ),
+      ],
+    ),
   );
 }
 
@@ -177,6 +185,51 @@ class ListenLiveLayoutState extends State<ListenLiveLayoutTest> {
         );
       },
     );
+  }
+}
+
+class OnboardingDialogTest extends StatefulWidget {
+  const OnboardingDialogTest({Key? key}) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() => OnboardingDialogTestState();
+}
+
+class OnboardingDialogTestState extends State<OnboardingDialogTest>
+    with AfterLayoutMixin<OnboardingDialogTest> {
+  bool showing = true;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.grey,
+      child: showing
+          ? Container()
+          : Center(
+              child: ThemedRaisedButton(
+                label: 'Show Onboarding',
+                onPressed: () {
+                  showOnboarding();
+                },
+              ),
+            ),
+    );
+  }
+
+  @override
+  FutureOr<void> afterFirstLayout(BuildContext context) {
+    showOnboarding();
+  }
+
+  Future<void> showOnboarding() async {
+    if (!showing) {
+      setState(() => showing = true);
+    }
+    await OnboardingScreen.showOnboarding(context, onComplete: (bool result) {
+      // show
+      Navigator.of(context).pop();
+    }, updateState: false);
+    setState(() => showing = false);
   }
 }
 

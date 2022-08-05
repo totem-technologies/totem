@@ -4,7 +4,6 @@ import 'package:agora_rtc_engine/rtc_local_view.dart' as rtc_local_view;
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:totem/app/circle/circle_session_page.dart';
 import 'package:totem/app/circle/components/circle_device_settings_button.dart';
 import 'package:totem/components/camera/index.dart';
@@ -21,19 +20,28 @@ class CircleJoinDialog extends ConsumerStatefulWidget {
   final Circle circle;
   final bool cropEnabled;
 
-  static Future<bool?> showDialog(BuildContext context,
+  static Future<bool?> showJoinDialog(BuildContext context,
       {required Circle circle}) async {
-    return showModalBottomSheet<bool?>(
-      enableDrag: false,
-      isScrollControlled: true,
-      isDismissible: false,
-      context: context,
-      backgroundColor: Colors.transparent,
-      barrierColor: Theme.of(context).themeColors.blurBackground,
-      builder: (_) => CircleJoinDialog(
-        circle: circle,
-      ),
-    );
+    return DeviceType.isPhone()
+        ? showModalBottomSheet<bool?>(
+            enableDrag: false,
+            isScrollControlled: true,
+            isDismissible: false,
+            context: context,
+            backgroundColor: Colors.transparent,
+            barrierColor: Theme.of(context).themeColors.blurBackground,
+            builder: (_) => CircleJoinDialog(
+              circle: circle,
+            ),
+          )
+        : showDialog(
+            context: context,
+            barrierColor: Theme.of(context).themeColors.blurBackground,
+            barrierDismissible: false,
+            builder: (BuildContext context) => CircleJoinDialog(
+              circle: circle,
+            ),
+          );
   }
 
   @override
@@ -66,208 +74,216 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
     final themeColors = Theme.of(context).themeColors;
     final textStyles = Theme.of(context).textStyles;
     final commProvider = ref.watch(communicationsProvider);
-    return (DeviceType.isPhone())
-        ? BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 2.5, sigmaY: 2.5),
-            child: SafeArea(
-              top: true,
-              bottom: false,
-              child: Padding(
-                padding: const EdgeInsets.only(
-                  top: 50,
-                ),
-                child: BottomTrayContainer(
-                  fullScreen: true,
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 10,
+    return Material(
+      color: Colors.transparent,
+      child: DeviceType.isPhone()
+          ? BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 2.5, sigmaY: 2.5),
+              child: SafeArea(
+                top: true,
+                bottom: false,
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                    top: 50,
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(child: Container()),
-                          IconButton(
-                            onPressed: () {
-                              Navigator.of(context).pop(false);
-                            },
-                            icon: Icon(
-                              Icons.close,
-                              color: themeColors.primaryText,
+                  child: BottomTrayContainer(
+                    fullScreen: true,
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 10,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(child: Container()),
+                            IconButton(
+                              onPressed: () {
+                                Navigator.of(context).pop(false);
+                              },
+                              icon: Icon(
+                                Icons.close,
+                                color: themeColors.primaryText,
+                              ),
                             ),
+                            const SizedBox(width: 8),
+                          ],
+                        ),
+                        Expanded(
+                          child: LayoutBuilder(
+                            builder: (context, constraint) {
+                              return SingleChildScrollView(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: Theme.of(context)
+                                        .pageHorizontalPadding),
+                                child: ConstrainedBox(
+                                  constraints: BoxConstraints(
+                                      minHeight: constraint.maxHeight),
+                                  child: IntrinsicHeight(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.stretch,
+                                      children: [
+                                        Text(
+                                          widget.circle.name,
+                                          style: textStyles.headline1!.merge(
+                                              const TextStyle(
+                                                  fontWeight: FontWeight.w400)),
+                                          textAlign: TextAlign.center,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        const SizedBox(height: 24),
+                                        Divider(
+                                          thickness: 1,
+                                          height: 1,
+                                          color: themeColors.divider,
+                                        ),
+                                        const SizedBox(height: 24),
+                                        Expanded(
+                                            child: _userInfo(
+                                                context, commProvider)),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
                           ),
-                          const SizedBox(width: 8),
-                        ],
-                      ),
-                      Expanded(
-                        child: LayoutBuilder(
-                          builder: (context, constraint) {
-                            return SingleChildScrollView(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal:
-                                      Theme.of(context).pageHorizontalPadding),
-                              child: ConstrainedBox(
-                                constraints: BoxConstraints(
-                                    minHeight: constraint.maxHeight),
-                                child: IntrinsicHeight(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.stretch,
-                                    children: [
-                                      Text(
-                                        widget.circle.name,
-                                        style: textStyles.headline1!.merge(
-                                            const TextStyle(
-                                                fontWeight: FontWeight.w400)),
-                                        textAlign: TextAlign.center,
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                      const SizedBox(height: 24),
-                                      Divider(
-                                        thickness: 1,
-                                        height: 1,
-                                        color: themeColors.divider,
-                                      ),
-                                      const SizedBox(height: 24),
-                                      Expanded(
-                                          child:
-                                              _userInfo(context, commProvider)),
-                                    ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            )
+          : BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 2.5, sigmaY: 2.5),
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 1000),
+                  child: DialogContainer(
+                    padding: const EdgeInsets.only(
+                        top: 50, bottom: 80, left: 40, right: 40),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Stack(
+                          children: [
+                            Align(
+                              alignment: Alignment.topCenter,
+                              child: Text(
+                                widget.circle.name,
+                                style: textStyles.headline1!.merge(
+                                    const TextStyle(
+                                        fontWeight: FontWeight.w400)),
+                                textAlign: TextAlign.center,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            Align(
+                              alignment: Alignment.topRight,
+                              child: InkWell(
+                                onTap: () {
+                                  Navigator.of(context).pop(false);
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 5, right: 5, top: 5, bottom: 5),
+                                  child: Icon(
+                                    Icons.close,
+                                    size: 24,
+                                    color: themeColors.primaryText,
                                   ),
                                 ),
                               ),
-                            );
-                          },
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
+                        const SizedBox(height: 10),
+                        const ContentDivider(),
+                        const SizedBox(height: 24),
+                        Center(
+                          child: _desktopUserInfo(context, commProvider),
+                        ),
+                        const SizedBox(height: 16),
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
-          )
-        : BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 2.5, sigmaY: 2.5),
-            child: Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 1000),
-                child: DialogContainer(
-                  padding: const EdgeInsets.only(
-                      top: 50, bottom: 80, left: 40, right: 40),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Stack(
-                        children: [
-                          Align(
-                            alignment: Alignment.topCenter,
-                            child: Text(
-                              widget.circle.name,
-                              style: textStyles.headline1!.merge(
-                                  const TextStyle(fontWeight: FontWeight.w400)),
-                              textAlign: TextAlign.center,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                          Align(
-                            alignment: Alignment.topRight,
-                            child: InkWell(
-                              onTap: () {
-                                Navigator.of(context).pop(false);
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 5, right: 5, top: 5, bottom: 5),
-                                child: SvgPicture.asset('assets/close.svg'),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      const ContentDivider(),
-                      const SizedBox(height: 24),
-                      Center(
-                        child: _desktopUserInfo(context, commProvider),
-                      ),
-                      const SizedBox(height: 16),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          );
+    );
   }
 
   Widget _cameraPreview(CommunicationProvider commProvider) {
     final themeColors = Theme.of(context).themeColors;
     final t = AppLocalizations.of(context)!;
-    return Stack(children: [
-      Stack(
-        children: [
-          const rtc_local_view.SurfaceView(),
-          if (commProvider.videoMuted)
-            const Positioned.fill(
-              child: CameraMuted(),
-            ),
-        ],
-      ),
-      Positioned(
-        left: 0,
-        right: 0,
-        bottom: 8,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+    return Stack(
+      children: [
+        Stack(
           children: [
-            ThemedControlButton(
-              label: commProvider.muted ? t.unmute : t.mute,
-              labelColor: themeColors.reversedText,
-              svgImage: commProvider.muted
-                  ? 'assets/microphone_mute.svg'
-                  : 'assets/microphone.svg',
-              onPressed: () {
-                commProvider.muteAudio(!commProvider.muted);
-                debugPrint('mute pressed');
-              },
-            ),
-            const SizedBox(
-              width: 15,
-            ),
-            ThemedControlButton(
-              label: commProvider.videoMuted ? t.startVideo : t.stopVideo,
-              labelColor: themeColors.reversedText,
-              svgImage: commProvider.videoMuted
-                  ? 'assets/video_stop.svg'
-                  : 'assets/video.svg',
-              onPressed: () {
-                commProvider.muteVideo(!commProvider.videoMuted);
-                debugPrint('video pressed');
-              },
-            ),
-            if (DeviceType.isMobile()) ...[
+            const rtc_local_view.SurfaceView(),
+            if (commProvider.videoMuted)
+              const Positioned.fill(
+                child: CameraMuted(),
+              ),
+          ],
+        ),
+        Positioned(
+          left: 0,
+          right: 0,
+          bottom: 8,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ThemedControlButton(
+                label: commProvider.muted ? t.unmute : t.mute,
+                labelColor: themeColors.reversedText,
+                icon: commProvider.muted ? Icons.mic_off : Icons.mic,
+                onPressed: () {
+                  commProvider.muteAudio(!commProvider.muted);
+                  debugPrint('mute pressed');
+                },
+              ),
               const SizedBox(
                 width: 15,
               ),
               ThemedControlButton(
-                label: t.camera,
+                label: commProvider.videoMuted ? t.startVideo : t.stopVideo,
                 labelColor: themeColors.reversedText,
-                child: Icon(
-                  Icons.cameraswitch_outlined,
-                  size: 24,
-                  color: themeColors.primaryText,
-                ),
+                icon: commProvider.videoMuted
+                    ? Icons.videocam_off
+                    : Icons.videocam,
                 onPressed: () {
-                  commProvider.switchCamera();
-                  debugPrint('video switch');
+                  commProvider.muteVideo(!commProvider.videoMuted);
+                  debugPrint('video pressed');
                 },
               ),
-            ]
-          ],
+              if (DeviceType.isMobile()) ...[
+                const SizedBox(
+                  width: 15,
+                ),
+                ThemedControlButton(
+                  label: t.camera,
+                  labelColor: themeColors.reversedText,
+                  child: Icon(
+                    Icons.cameraswitch_outlined,
+                    size: 24,
+                    color: themeColors.primaryText,
+                  ),
+                  onPressed: () {
+                    commProvider.switchCamera();
+                    debugPrint('video switch');
+                  },
+                ),
+              ]
+            ],
+          ),
         ),
-      ),
-    ]);
+      ],
+    );
   }
 
   Widget _userInfo(BuildContext context, CommunicationProvider commProvider) {
@@ -475,8 +491,8 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
             result = t.errorNoSpeakers;
             break;
         }
+        setState(() => _error = result);
       }
-      setState(() => _error = result);
     }
   }
 }

@@ -332,7 +332,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
           if (enableVideo) {
             await _engine!.setVideoEncoderConfiguration(
                 VideoEncoderConfiguration(
-                    dimensions: VideoDimensions(
+                    dimensions: const VideoDimensions(
                         width: videoWidth, height: videoHeight)));
             await _engine!.enableVideo();
             await _engine!.startPreview();
@@ -407,6 +407,12 @@ class AgoraCommunicationProvider extends CommunicationProvider {
               const Duration(seconds: networkTimeoutDuration),
               _handleNetworkTimeout);
           _updateState(CommunicationState.networkConnectivity);
+          break;
+        // ignore: deprecated_member_use
+        case ErrorCode.StartCamera:
+          // This seems to be benign like the AdmGeneralError error.
+          // also its deprecated so its odd that its being generated.
+          debugPrint('error: ${error.name} -> Ignoring');
           break;
         default:
           // all other errors are fatal for now
@@ -655,8 +661,8 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     bool networkUnstable =
         isBadConnection(qualityTx) || isBadConnection(qualityRx);
     uid = uid == 0 ? commUid : uid;
-    debugPrint(
-        'Network quality: ${qualityTx.name}, tx: ${qualityRx.name} unstable: $networkUnstable  for user: $uid');
+    // debugPrint(
+    //     'Network quality: ${qualityTx.name}, tx: ${qualityRx.name} unstable: $networkUnstable  for user: $uid');
     sessionProvider.activeSession?.updateUnstableNetworkForUser(
         sessionUserId: uid.toString(), unstable: networkUnstable);
   }
@@ -664,7 +670,6 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   bool isBadConnection(NetworkQuality quality) {
     return quality == NetworkQuality.Bad ||
         quality == NetworkQuality.VBad ||
-        quality == NetworkQuality.Poor ||
         quality == NetworkQuality.Down;
   }
 

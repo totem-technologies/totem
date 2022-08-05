@@ -87,10 +87,6 @@ class SnapCirclesListState extends ConsumerState<SnapCirclesList> {
                 color: themeData.themeColors.secondaryText, fontSize: 16),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(
-            height: 24,
-          ),
-          const CreateCircleButton(),
         ],
       ),
     );
@@ -98,27 +94,7 @@ class SnapCirclesListState extends ConsumerState<SnapCirclesList> {
 
   Future<void> _handleShowCircle(
       BuildContext context, SnapCircle circle) async {
-    var repo = ref.read(repositoryProvider);
-    await repo.createActiveSession(
-      circle: circle,
-    );
     if (!mounted) return;
-    await Navigator.of(context).pushNamed(AppRoutes.circle, arguments: {
-      'session': circle.snapSession,
-    });
-/*REMOVE    var repo = ref.read(repositoryProvider);
-    Map<String, bool>? state =
-        await CircleJoinDialog.showDialog(context, circle: circle);
-    if (state != null) {
-      await repo.createActiveSession(
-        circle: circle,
-      );
-      Future.delayed(const Duration(milliseconds: 300), () async {
-        Navigator.of(context).pushNamed(AppRoutes.circle, arguments: {
-          'session': circle.snapSession,
-          'state': state,
-        });
-      });
-    } */
+    context.goNamed(AppRoutes.circle, params: {'id': circle.snapSession.id});
   }
 }

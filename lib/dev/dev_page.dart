@@ -11,6 +11,7 @@ final widgetList = <String, Function>{
   "Waiting Room Layout": WaitingRoomDevLayout.new,
   "Listen Live Layout": ListenLiveLayoutTest.new,
   "Circle Session": ActiveSessionLayoutTest.new,
+  "Onboarding Dialog": OnboardingDialogTest.new,
   "Circle User Profile": CircleUserProfileTest.new,
   "Buttons": ButtonsScreen.new
 };

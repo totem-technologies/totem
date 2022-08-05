@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/theme/index.dart';
 
@@ -11,6 +10,20 @@ class CircleNetworkUnstable extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeColors = Theme.of(context).themeColors;
+    if (participant == null) {
+      return Container(
+        padding: const EdgeInsets.all(3),
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: themeColors.alertBackground,
+        ),
+        child: Icon(
+          Icons.wifi,
+          size: 24,
+          color: themeColors.reversedText,
+        ),
+      );
+    }
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 11),
       decoration: BoxDecoration(
@@ -20,18 +33,21 @@ class CircleNetworkUnstable extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          SvgPicture.asset(
-            "assets/wifi.svg",
+          Icon(
+            Icons.wifi,
+            size: 24,
+            color: themeColors.reversedText,
           ),
           const SizedBox(width: 4),
-          Text(
-            networkText(context),
-            style: TextStyle(
-              color: themeColors.reversedText,
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
+          if (participant != null)
+            Text(
+              networkText(context),
+              style: TextStyle(
+                color: themeColors.reversedText,
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
             ),
-          ),
         ],
       ),
     );

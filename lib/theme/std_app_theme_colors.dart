@@ -18,6 +18,7 @@ class StdThemePalette {
   static const red2 = Color(0xffCB0E14);
   static const brown = Color(0xffa47817);
   static const grey = Color(0xff696b76);
+  static const mediumGrey = Color(0xffa5a6ac);
   static const lightGrey = Color(0xffc9c9cd);
   static const lighterGrey = Color(0xffd8d8d8);
   static const transparentGrey = Color(0x99444654);
@@ -36,6 +37,7 @@ class StdThemePalette {
 class StdAppThemeColors extends AppThemeColors {
   StdAppThemeColors()
       : super(
+          alternateButtonBackground: StdThemePalette.baseWhite,
           busyIndicator: StdThemePalette.baseBlack,
           primary: StdThemePalette.yellow,
           primaryButtonBackground: StdThemePalette.yellow,
@@ -68,5 +70,7 @@ class StdAppThemeColors extends AppThemeColors {
           contentDivider: StdThemePalette.grey,
           alertBackground: StdThemePalette.red2,
           videoOverlayBackground: StdThemePalette.transparentGrey,
+          secondaryButtonBackground: StdThemePalette.lightYellow,
+          iconNext: StdThemePalette.mediumGrey,
         );
 }

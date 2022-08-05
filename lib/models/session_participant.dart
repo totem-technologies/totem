@@ -33,9 +33,6 @@ class SessionParticipant extends ChangeNotifier {
     name = json['name'] ?? "";
     status = json['status'];
     if (json['role'] != null) {
-      for (var element in Role.values) {
-        debugPrint(element.name);
-      }
       role = Role.values.byName(json['role']);
     }
 //    _muted = json['muted'] ?? _muted;
