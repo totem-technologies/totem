@@ -162,16 +162,22 @@ class CircleDeviceSelectorState extends ConsumerState<ConsumerStatefulWidget> {
       dropDownMenus.add(
         DropdownMenuItem(
           value: v,
-          child: Text(v.name),
+          child: Text(v.name, overflow: TextOverflow.ellipsis),
         ),
       );
     }
-    return DropdownButton<CommunicationDevice>(
-      items: dropDownMenus,
-      value: selected,
-      onChanged: (v) {
-        onChanged(v);
-      },
+    return SizedBox(
+      height: 40,
+      child: Expanded(
+        child: DropdownButton<CommunicationDevice>(
+          isExpanded: true,
+          items: dropDownMenus,
+          value: selected,
+          onChanged: (v) {
+            onChanged(v);
+          },
+        ),
+      ),
     );
   }
 }

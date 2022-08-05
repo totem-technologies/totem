@@ -4,7 +4,8 @@ import 'package:after_layout/after_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:totem/app/circle/components/circle_network_indicator.dart';
 import 'package:totem/app/circle/index.dart';
-import 'package:totem/app/onboarding/index.dart';
+import 'package:totem/components/widgets/index.dart';
+import 'package:totem/services/account_state/index.dart';
 import 'package:totem/components/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/utils/device_type.dart';
@@ -235,10 +236,8 @@ class OnboardingDialogTestState extends State<OnboardingDialogTest>
     if (!showing) {
       setState(() => showing = true);
     }
-    await OnboardingScreen.showOnboarding(context, onComplete: (bool result) {
-      // show
-      Navigator.of(context).pop();
-    }, updateState: false);
+    await AccountStateDialog.showEvent(context,
+        event: OnboardingCircleEvent(testOnly: true));
     setState(() => showing = false);
   }
 }

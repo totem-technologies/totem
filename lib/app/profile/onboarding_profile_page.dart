@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:io';
 
+import 'package:after_layout/after_layout.dart';
 import 'package:camera/camera.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/foundation.dart';
@@ -12,13 +14,17 @@ import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
 
 class OnboardingProfilePage extends ConsumerStatefulWidget {
-  const OnboardingProfilePage({Key? key}) : super(key: key);
+  const OnboardingProfilePage({Key? key, this.onProfileUpdated, this.profile})
+      : super(key: key);
+  final Function(UserProfile)? onProfileUpdated;
+  final UserProfile? profile;
 
   @override
   OnboardingProfilePageState createState() => OnboardingProfilePageState();
 }
 
-class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage> {
+class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage>
+    with AfterLayoutMixin {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
@@ -28,6 +34,7 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage> {
   final GlobalKey<FileUploaderState> _uploader = GlobalKey();
   File? _pendingImageChangeFile;
   XFile? _pendingImageChange;
+  final List<String> _errors = [];
 
   bool get hasChanged {
     return (_userProfile!.name != _nameController.text ||
@@ -43,6 +50,9 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage> {
       AuthUser? user = ref.read(authServiceProvider).currentUser();
       repo.user = user;
     }
+    _userProfile = widget.profile;
+    _nameController.text = _userProfile?.name ?? "";
+    _emailController.text = _userProfile?.email ?? "";
     _userProfileFetch = repo.userProfile();
     super.initState();
   }
@@ -53,7 +63,11 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage> {
       await ref.read(repositoryProvider).updateUserProfile(_userProfile!);
       setState(() => _busy = false);
       if (!mounted) return;
-      Navigator.of(context).pop();
+      if (widget.onProfileUpdated == null) {
+        Navigator.of(context).pop();
+      } else {
+        widget.onProfileUpdated!(_userProfile!);
+      }
     } else {
       setState(() => _busy = false);
       await _showUploadError(context, error);
@@ -92,6 +106,22 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   _header(context),
+                  AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 300),
+                    child: _errors.isEmpty
+                        ? Container()
+                        : Center(
+                            child: ConstrainedBox(
+                              constraints: BoxConstraints(
+                                  maxWidth: Theme.of(context).maxRenderWidth),
+                              child: Padding(
+                                padding: const EdgeInsets.only(bottom: 20),
+                                child: ErrorInfoBlock(
+                                    errorContent: _errorPrompt(context)),
+                              ),
+                            ),
+                          ),
+                  ),
                   Expanded(
                     child: LayoutBuilder(
                       builder: (context, constraint) {
@@ -101,43 +131,52 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage> {
                             right: themeData.pageHorizontalPadding,
                           ),
                           child: ConstrainedBox(
-                            constraints:
-                                BoxConstraints(minHeight: constraint.maxHeight),
+                            constraints: BoxConstraints(
+                              minHeight: constraint.maxHeight,
+                            ),
                             child: IntrinsicHeight(
-                              child: Column(
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
+                              child: Center(
+                                child: ConstrainedBox(
+                                  constraints: BoxConstraints(
+                                      maxWidth:
+                                          Theme.of(context).maxRenderWidth),
+                                  child: Column(
                                     children: [
-                                      Text(t.addProfilePicture,
-                                          style: textStyles.headline3),
-                                      const SizedBox(width: 6),
-                                      InkWell(
-                                        onTap: () {
-                                          BottomTrayHelpDialog.showTrayHelp(
-                                            context,
-                                            title: t.profilePicture,
-                                            detail: t.helpPublicInformation,
-                                          );
-                                        },
-                                        child: Icon(Icons.help_outline,
-                                            size: 24,
-                                            color: themeColors.primaryText),
-                                      )
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text(t.addProfilePicture,
+                                              style: textStyles.headline3),
+                                          const SizedBox(width: 6),
+                                          InkWell(
+                                            onTap: () {
+                                              BottomTrayHelpDialog.showTrayHelp(
+                                                context,
+                                                title: t.profilePicture,
+                                                detail: t.helpPublicInformation,
+                                              );
+                                            },
+                                            child: Icon(Icons.help_outline,
+                                                size: 24,
+                                                color: themeColors.primaryText),
+                                          )
+                                        ],
+                                      ),
+                                      const SizedBox(height: 10),
+                                      _profileEditForm(context),
+                                      const SizedBox(height: 20),
+                                      ThemedRaisedButton(
+                                        label: t.finish,
+                                        busy: _busy,
+                                        onPressed: !_busy ? _saveForm : null,
+                                        width: Theme.of(context)
+                                            .standardButtonWidth,
+                                      ),
+                                      const SizedBox(height: 20),
                                     ],
                                   ),
-                                  const SizedBox(height: 10),
-                                  _profileEditForm(context),
-                                  const SizedBox(height: 20),
-                                  ThemedRaisedButton(
-                                    label: t.finish,
-                                    busy: _busy,
-                                    onPressed: !_busy ? _saveForm : null,
-                                    width:
-                                        Theme.of(context).standardButtonWidth,
-                                  ),
-                                  const SizedBox(height: 20),
-                                ],
+                                ),
                               ),
                             ),
                           ),
@@ -151,6 +190,29 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _errorPrompt(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          AppLocalizations.of(context)!.errorProfileInfoMissing,
+        ),
+        const SizedBox(height: 10),
+        ..._errors.map((error) =>
+            Row(mainAxisSize: MainAxisSize.min, children: [
+              const Icon(
+                Icons.circle,
+                size: 8,
+              ),
+              const SizedBox(
+                width: 10,
+              ),
+              Text(error, style: const TextStyle(fontWeight: FontWeight.w600)),
+            ])),
+      ],
     );
   }
 
@@ -192,7 +254,10 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage> {
     if (_userProfile!.name != _nameController.text ||
         _userProfile!.email != _emailController.text ||
         _pendingImageChange != null) {
-      setState(() => _busy = true);
+      setState(() {
+        _busy = true;
+        _errors.clear();
+      });
       _formKey.currentState!.save();
       _userProfile!.name = _nameController.text;
       _userProfile!.email = _emailController.text;
@@ -204,11 +269,14 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage> {
       } else {
         // just save the profile
         await ref.read(repositoryProvider).updateUserProfile(_userProfile!);
-        setState(() => _busy = false);
       }
     }
     if (!mounted) return;
-    Navigator.of(context).pop();
+    if (widget.onProfileUpdated == null) {
+      Navigator.of(context).pop();
+    } else {
+      widget.onProfileUpdated!(_userProfile!);
+    }
   }
 
   Widget _profileEditForm(BuildContext context) {
@@ -469,5 +537,24 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage> {
         );
       },
     );
+  }
+
+  @override
+  FutureOr<void> afterFirstLayout(BuildContext context) {
+    if (widget.profile != null) {
+      final t = AppLocalizations.of(context)!;
+      if (_userProfile!.name.isEmpty) {
+        _errors.add(t.name);
+      }
+      if (_userProfile!.email == null || _userProfile!.email!.isEmpty) {
+        _errors.add(t.email);
+      }
+      Future.delayed(const Duration(milliseconds: 100), () {
+        if (_errors.isNotEmpty) {
+          setState(() {});
+        }
+        _formKey.currentState!.validate();
+      });
+    }
   }
 }

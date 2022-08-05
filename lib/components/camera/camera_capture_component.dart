@@ -46,6 +46,7 @@ class CameraCaptureScreenState extends State<CameraCapture>
   bool _videoMuted = false;
   CameraImage? _savedImage;
   PermissionStatus? _permissionError;
+  String? _generalCameraError;
 
   bool get muted {
     return _muted;
@@ -68,7 +69,12 @@ class CameraCaptureScreenState extends State<CameraCapture>
         return;
       }
     }
-    _cameras = await availableCameras();
+    try {
+      _cameras = await availableCameras();
+    } on CameraException catch (e) {
+      _showCameraException(e);
+      return;
+    }
     if (_cameras!.isNotEmpty) {
       int startIndex = 0;
       // start with the front facing camera if available
@@ -113,7 +119,7 @@ class CameraCaptureScreenState extends State<CameraCapture>
   Widget build(BuildContext context) {
     super.build(context);
     final themeColor = Theme.of(context).themeColors;
-    if (_permissionError != null) {
+    if (_permissionError != null || _generalCameraError != null) {
       return _buildCameraError(context);
     }
     if (_controller != null) {
@@ -216,6 +222,23 @@ class CameraCaptureScreenState extends State<CameraCapture>
                       });
                       _initCamera();
                     }
+                  },
+                ),
+              ),
+            ],
+            if (_generalCameraError != null) ...[
+              const SizedBox(height: 30),
+              Text(
+                _generalCameraError!,
+                style: errorStyle,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 20),
+              Center(
+                child: ThemedRaisedButton(
+                  label: t.ok,
+                  onPressed: () {
+                    Navigator.of(context).pop();
                   },
                 ),
               ),
@@ -442,7 +465,12 @@ class CameraCaptureScreenState extends State<CameraCapture>
 
   void _showCameraException(CameraException e) {
     logError(e.code, e.description ?? "");
-    showInSnackBar('Error: ${e.code}\n${e.description}');
+//    showInSnackBar('Error: ${e.code}\n${e.description}');
+    setState(() {
+      _generalCameraError = 'Error: ${e.code}\n${e.description}';
+      _error = true;
+      _retry = false;
+    });
   }
 
   void showInSnackBar(String message) {
