@@ -212,85 +212,91 @@ class UserProfilePageState extends ConsumerState<UserProfilePage> {
                                                                   horizontal:
                                                                       15,
                                                                   vertical: 5),
-                                                          child: Icon(
-                                                              Icons
-                                                                  .help_outline,
-                                                              size: 24,
-                                                              color: themeColors
-                                                                  .primaryText),
-                                                        ),
+                                                              child: Icon(
+                                                                  Icons
+                                                                      .help_outline,
+                                                                  size: 24,
+                                                                  color: themeColors
+                                                                      .primaryText),
+                                                            ),
+                                                          ),
+                                                        ],
                                                       ),
+                                                      TextButton(
+                                                          style: TextButton
+                                                              .styleFrom(
+                                                            minimumSize:
+                                                                Size.zero,
+                                                            padding:
+                                                                const EdgeInsets
+                                                                        .only(
+                                                                    top: 8,
+                                                                    bottom: 8,
+                                                                    right: 20),
+                                                            tapTargetSize:
+                                                                MaterialTapTargetSize
+                                                                    .shrinkWrap,
+                                                            alignment: Alignment
+                                                                .centerLeft,
+                                                          ),
+                                                          onPressed: () =>
+                                                              _getUserImage(
+                                                                  context),
+                                                          child:
+                                                              Text(t.change)),
                                                     ],
                                                   ),
-                                                  TextButton(
-                                                      style:
-                                                          TextButton.styleFrom(
-                                                        minimumSize: Size.zero,
-                                                        padding:
-                                                            const EdgeInsets
-                                                                    .only(
-                                                                top: 8,
-                                                                bottom: 8,
-                                                                right: 20),
-                                                        tapTargetSize:
-                                                            MaterialTapTargetSize
-                                                                .shrinkWrap,
-                                                        alignment: Alignment
-                                                            .centerLeft,
-                                                      ),
-                                                      onPressed: () =>
-                                                          _getUserImage(
-                                                              context),
-                                                      child: Text(t.change)),
-                                                ],
-                                              ),
+                                                ),
+                                              ],
                                             ),
+                                            const SizedBox(height: 16),
+                                            Divider(
+                                              color:
+                                                  themeData.themeColors.divider,
+                                              height: 1,
+                                              thickness: 1,
+                                            ),
+                                            const SizedBox(height: 22),
+                                            _profileEditForm(context),
+                                            Expanded(
+                                              child: Container(),
+                                            ),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                TextButton(
+                                                  onPressed: !_busy
+                                                      ? () {
+                                                          _promptSignOut(
+                                                              context);
+                                                        }
+                                                      : null,
+                                                  child: Text(t.signOut),
+                                                ),
+                                              ],
+                                            ),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                TextButton(
+                                                  onPressed: !_busy
+                                                      ? () {
+                                                          _promptDeleteAccount(
+                                                              context);
+                                                        }
+                                                      : null,
+                                                  child: Text(t.deleteAccount),
+                                                ),
+                                              ],
+                                            ),
+                                            const SizedBox(height: 4),
+                                            const VersionInfo(),
+                                            const SizedBox(height: 40),
                                           ],
                                         ),
-                                        const SizedBox(height: 16),
-                                        Divider(
-                                          color: themeData.themeColors.divider,
-                                          height: 1,
-                                          thickness: 1,
-                                        ),
-                                        const SizedBox(height: 22),
-                                        _profileEditForm(context),
-                                        Expanded(
-                                          child: Container(),
-                                        ),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            TextButton(
-                                              onPressed: !_busy
-                                                  ? () {
-                                                      _promptSignOut(context);
-                                                    }
-                                                  : null,
-                                              child: Text(t.signOut),
-                                            ),
-                                          ],
-                                        ),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            TextButton(
-                                              onPressed: !_busy
-                                                  ? () {
-                                                      _promptDeleteAccount(
-                                                          context);
-                                                    }
-                                                  : null,
-                                              child: Text(t.deleteAccount),
-                                            ),
-                                          ],
-                                        ),
-                                        const SizedBox(height: 4),
-                                        const VersionInfo(),
-                                        const SizedBox(height: 40),
-                                      ],
+                                      ),
                                     ),
                                   ),
                                 ),
