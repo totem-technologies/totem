@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:totem/app/circle/index.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
@@ -105,8 +106,7 @@ class TestSessionControlsState extends ConsumerState<TestSessionControls> {
         ),
         ThemedControlButton(
           label: muted ? t.unmute : t.mute,
-          svgImage:
-              muted ? 'assets/microphone_mute.svg' : 'assets/microphone.svg',
+          icon: muted ? Icons.mic_off : Icons.mic,
           onPressed: () {
             setState(() => muted = !muted);
           },
@@ -114,7 +114,7 @@ class TestSessionControlsState extends ConsumerState<TestSessionControls> {
         const SizedBox(width: _btnSpacing),
         ThemedControlButton(
           label: videoMuted ? t.startVideo : t.stopVideo,
-          svgImage: !videoMuted ? 'assets/video.svg' : 'assets/video_stop.svg',
+          icon: !videoMuted ? Icons.videocam : Icons.videocam_off,
           onPressed: () {
             setState(() => videoMuted = !videoMuted);
           },
@@ -125,18 +125,22 @@ class TestSessionControlsState extends ConsumerState<TestSessionControls> {
             label: t.start,
             size: 48,
             iconHeight: 20,
-            svgImage: widget.sessionState == SessionState.waiting
-                ? 'assets/view_circle.svg'
-                : 'assets/view_circle.svg',
             backgroundColor: themeColors.primary,
             iconPadding: const EdgeInsets.all(6),
             onPressed: () {},
+            child: SizedBox(
+              height: 24,
+              width: 24,
+              child: widget.sessionState == SessionState.waiting
+                  ? SvgPicture.asset('assets/view_circle.svg')
+                  : SvgPicture.asset('assets/view_circle.svg'),
+            ),
           ),
         ],
         const SizedBox(width: _btnSpacing),
         ThemedControlButton(
           label: t.info,
-          svgImage: 'assets/info.svg',
+          icon: Icons.info_outline,
           onPressed: () {
             debugPrint('info pressed');
           },
@@ -166,9 +170,7 @@ class TestSessionControlsState extends ConsumerState<TestSessionControls> {
                 ThemedControlButton(
                   label: muted ? t.unmute : t.mute,
                   labelColor: themeColors.reversedText,
-                  svgImage: muted
-                      ? 'assets/microphone_mute.svg'
-                      : 'assets/microphone.svg',
+                  icon: muted ? Icons.mic_off : Icons.mic,
                   onPressed: () {
                     setState(() => muted = !muted);
                   },
@@ -179,9 +181,7 @@ class TestSessionControlsState extends ConsumerState<TestSessionControls> {
                 ThemedControlButton(
                   label: videoMuted ? t.startVideo : t.stopVideo,
                   labelColor: themeColors.reversedText,
-                  svgImage: !videoMuted
-                      ? 'assets/video.svg'
-                      : 'assets/video_stop.svg',
+                  icon: !videoMuted ? Icons.videocam : Icons.videocam_off,
                   onPressed: () {
                     setState(() => videoMuted = !videoMuted);
                   },
@@ -193,7 +193,7 @@ class TestSessionControlsState extends ConsumerState<TestSessionControls> {
                   ThemedControlButton(
                     label: !_more ? t.more : t.less,
                     labelColor: themeColors.reversedText,
-                    svgImage: !_more ? 'assets/more.svg' : 'assets/less.svg',
+                    icon: !_more ? Icons.more_horiz : Icons.more_vert,
                     onPressed: () {
                       setState(() => _more = !_more);
                     },
@@ -204,7 +204,7 @@ class TestSessionControlsState extends ConsumerState<TestSessionControls> {
                   ThemedControlButton(
                     label: t.leaveSession,
                     labelColor: themeColors.reversedText,
-                    svgImage: 'assets/leave.svg',
+                    icon: Icons.exit_to_app,
                     onPressed: () {},
                   ),
                 ],
@@ -225,7 +225,7 @@ class TestSessionControlsState extends ConsumerState<TestSessionControls> {
                   ThemedControlButton(
                     label: t.next,
                     labelColor: themeColors.reversedText,
-                    svgImage: 'assets/fast_forward.svg',
+                    icon: Icons.fast_forward,
                     onPressed: () {},
                   ),
                   const SizedBox(
@@ -234,14 +234,14 @@ class TestSessionControlsState extends ConsumerState<TestSessionControls> {
                   ThemedControlButton(
                     label: t.endSession,
                     labelColor: themeColors.reversedText,
-                    svgImage: 'assets/leave.svg',
+                    icon: Icons.exit_to_app,
                     onPressed: () {},
                   ),
                   const SizedBox(width: _btnSpacing),
                   ThemedControlButton(
                     label: t.info,
                     labelColor: themeColors.reversedText,
-                    svgImage: 'assets/info.svg',
+                    icon: Icons.info_outline,
                     onPressed: () {
                       debugPrint('info pressed');
                     },

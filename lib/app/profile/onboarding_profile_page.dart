@@ -6,7 +6,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:totem/components/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
@@ -66,6 +65,7 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage> {
     final t = AppLocalizations.of(context)!;
     final themeData = Theme.of(context);
     final textStyles = themeData.textStyles;
+    final themeColors = themeData.themeColors;
     return GradientBackground(
       rotation: themeData.backgroundGradientRotation,
       child: Scaffold(
@@ -120,8 +120,9 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage> {
                                             detail: t.helpPublicInformation,
                                           );
                                         },
-                                        child: SvgPicture.asset(
-                                            'assets/more_info.svg'),
+                                        child: Icon(Icons.help_outline,
+                                            size: 24,
+                                            color: themeColors.primaryText),
                                       )
                                     ],
                                   ),
@@ -197,7 +198,8 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage> {
       _userProfile!.email = _emailController.text;
       if (_pendingImageChange != null) {
         AuthUser user = ref.read(authServiceProvider).currentUser()!;
-        await _uploader.currentState!.profileImageUpload(_pendingImageChange!, user);
+        await _uploader.currentState!
+            .profileImageUpload(_pendingImageChange!, user);
         return;
       } else {
         // just save the profile
@@ -213,6 +215,7 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage> {
     final t = AppLocalizations.of(context)!;
     final themeData = Theme.of(context);
     final textStyles = themeData.textStyles;
+    final themeColors = themeData.themeColors;
     return FutureBuilder<UserProfile?>(
       future: _userProfileFetch,
       builder: (context, asyncSnapshot) {
@@ -316,11 +319,8 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage> {
                     child: Padding(
                       padding:
                           const EdgeInsets.only(bottom: 5, top: 5, left: 4),
-                      child: SizedBox(
-                        width: 24,
-                        height: 24,
-                        child: SvgPicture.asset('assets/more_info.svg'),
-                      ),
+                      child: Icon(Icons.help_outline,
+                          size: 24, color: themeColors.primaryText),
                     ),
                   )
                 ],
@@ -363,11 +363,8 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage> {
                     child: Padding(
                       padding:
                           const EdgeInsets.only(bottom: 5, top: 5, left: 4),
-                      child: SizedBox(
-                        width: 24,
-                        height: 24,
-                        child: SvgPicture.asset('assets/more_info.svg'),
-                      ),
+                      child: Icon(Icons.help_outline,
+                          size: 24, color: themeColors.primaryText),
                     ),
                   )
                 ],

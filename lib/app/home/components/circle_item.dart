@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:totem/theme/index.dart';
 
 class CircleItem extends StatelessWidget {
@@ -31,10 +30,11 @@ class CircleItem extends StatelessWidget {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(
-                        width: 24,
-                        child: SvgPicture.asset(
-                            'assets/alert.svg')), // FIXME - this is some indicator icon
+                    Icon(
+                      Icons.error_outline,
+                      size: 24,
+                      color: themeData.themeColors.error,
+                    ),
                     const SizedBox(
                       width: 4,
                     ),
@@ -55,7 +55,8 @@ class CircleItem extends StatelessWidget {
               const SizedBox(
                 width: 8,
               ),
-              SvgPicture.asset('assets/arrow_next.svg'),
+              Icon(Icons.arrow_forward,
+                  size: 24, color: themeData.themeColors.iconNext),
             ],
           ),
         ),

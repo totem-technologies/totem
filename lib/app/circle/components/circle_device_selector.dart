@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:totem/app/circle/circle_session_page.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
@@ -24,6 +23,7 @@ class CircleDeviceSelectorState extends ConsumerState<ConsumerStatefulWidget> {
     final commProvider = ref.watch(communicationsProvider);
     final t = AppLocalizations.of(context)!;
     final textStyles = Theme.of(context).textStyles;
+    final themeColors = Theme.of(context).themeColors;
     return Material(
       color: Colors.transparent,
       child: Center(
@@ -52,7 +52,11 @@ class CircleDeviceSelectorState extends ConsumerState<ConsumerStatefulWidget> {
                       child: Padding(
                         padding: const EdgeInsets.only(
                             left: 10, right: 10, top: 5, bottom: 5),
-                        child: SvgPicture.asset('assets/close.svg'),
+                        child: Icon(
+                          Icons.close,
+                          size: 24,
+                          color: themeColors.primaryText,
+                        ),
                       ),
                     ),
                   ],

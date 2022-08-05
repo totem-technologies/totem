@@ -4,7 +4,6 @@ import 'package:agora_rtc_engine/rtc_local_view.dart' as rtc_local_view;
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:totem/app/circle/circle_session_page.dart';
 import 'package:totem/app/circle/components/circle_device_settings_button.dart';
 import 'package:totem/components/camera/index.dart';
@@ -195,7 +194,11 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
                                   child: Padding(
                                     padding: const EdgeInsets.only(
                                         left: 5, right: 5, top: 5, bottom: 5),
-                                    child: SvgPicture.asset('assets/close.svg'),
+                                    child: Icon(
+                                      Icons.close,
+                                      size: 24,
+                                      color: themeColors.primaryText,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -241,9 +244,7 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
               ThemedControlButton(
                 label: commProvider.muted ? t.unmute : t.mute,
                 labelColor: themeColors.reversedText,
-                svgImage: commProvider.muted
-                    ? 'assets/microphone_mute.svg'
-                    : 'assets/microphone.svg',
+                icon: commProvider.muted ? Icons.mic_off : Icons.mic,
                 onPressed: () {
                   commProvider.muteAudio(!commProvider.muted);
                   debugPrint('mute pressed');
@@ -255,9 +256,9 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
               ThemedControlButton(
                 label: commProvider.videoMuted ? t.startVideo : t.stopVideo,
                 labelColor: themeColors.reversedText,
-                svgImage: commProvider.videoMuted
-                    ? 'assets/video_stop.svg'
-                    : 'assets/video.svg',
+                icon: commProvider.videoMuted
+                    ? Icons.videocam_off
+                    : Icons.videocam,
                 onPressed: () {
                   commProvider.muteVideo(!commProvider.videoMuted);
                   debugPrint('video pressed');
