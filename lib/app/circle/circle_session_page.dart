@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:totem/app/circle/index.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
+import 'package:totem/services/account_state/account_state_event_manager.dart';
 import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
 
@@ -168,12 +169,9 @@ class CircleSessionPageState extends ConsumerState<CircleSessionPage>
         }
         setState(() => _sessionState = SessionPageState.prompt);
         if (!mounted) return;
-        /* Temporarily disabled for now
-        final accountState = await repo.userAccountState();
         await ref
             .read(accountStateEventManager)
-            .handlePreCircleEvents(context, accountState);
-         */
+            .handleEvents(context, type: AccountStateEventType.preCircle);
         if (!mounted) return;
         bool? state =
             await CircleJoinDialog.showJoinDialog(context, circle: circle);
