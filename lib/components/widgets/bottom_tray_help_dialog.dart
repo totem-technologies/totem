@@ -1,7 +1,6 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:totem/components/widgets/bottom_tray_container.dart';
 import 'package:totem/theme/index.dart';
 
@@ -28,6 +27,7 @@ class BottomTrayHelpDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textStyles = Theme.of(context).textStyles;
+    final themeColors = Theme.of(context).themeColors;
     return BackdropFilter(
       filter: ImageFilter.blur(sigmaX: 2.5, sigmaY: 2.5),
       child: BottomTrayContainer(
@@ -71,7 +71,11 @@ class BottomTrayHelpDialog extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.only(
                         left: 10, right: 10, top: 5, bottom: 5),
-                    child: SvgPicture.asset('assets/close.svg'),
+                    child: Icon(
+                      Icons.close,
+                      size: 24,
+                      color: themeColors.primaryText,
+                    ),
                   ),
                 ),
               )

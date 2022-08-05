@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:keybinder/keybinder.dart';
 import 'package:provider/provider.dart' as prov;
 import 'package:slide_to_act/slide_to_act.dart';
@@ -302,8 +301,8 @@ class _CircleLiveVideoSessionState
                               color: themeColors.primary,
                             ),
                             child: Center(
-                              child:
-                                  SvgPicture.asset('assets/circle_check.svg'),
+                              child: Icon(Icons.check_circle_outline,
+                                  size: 24, color: themeColors.primaryText),
                             ),
                           ),
                           submittedIcon: const SizedBox(height: 48, width: 48),
@@ -357,8 +356,8 @@ class _CircleLiveVideoSessionState
                           sliderButtonIconPadding: 0,
                           sliderButtonIcon:
                               const SizedBox(height: 48, width: 48),
-                          submittedIcon:
-                              SvgPicture.asset('assets/circle_check.svg'),
+                          submittedIcon: Icon(Icons.check_circle_outline,
+                              size: 24, color: themeColors.primaryText),
                           onSubmit: !_processingRequest
                               ? () {
                                   // delay to allow for animation to complete

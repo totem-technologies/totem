@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/theme/index.dart';
 
@@ -47,8 +46,8 @@ class ParticipantRoundedRectImage extends StatelessWidget {
   }
 
   Widget _genericUserImage(BuildContext context) {
-    return Center(
-      child: SvgPicture.asset('assets/profile.svg'),
+    return const Center(
+      child: Icon(Icons.person_outline, size: 24),
     );
   }
 }

@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:totem/theme/index.dart';
 
 class ThemedControlButton extends StatelessWidget {
   const ThemedControlButton({
     Key? key,
     required this.label,
-    this.svgImage,
+    this.icon,
     this.child,
     this.onPressed,
     this.enabled = true,
@@ -18,7 +17,7 @@ class ThemedControlButton extends StatelessWidget {
     this.iconHeight,
   }) : super(key: key);
   final String label;
-  final String? svgImage;
+  final IconData? icon;
   final Widget? child;
   final bool enabled;
   final double size;
@@ -49,13 +48,8 @@ class ThemedControlButton extends StatelessWidget {
               child: Center(
                 child: Padding(
                   padding: iconPadding,
-                  child: svgImage != null
-                      ? SvgPicture.asset(
-                          svgImage!,
-                          color: imageColor,
-                          fit: BoxFit.contain,
-                          height: iconHeight,
-                        )
+                  child: icon != null
+                      ? Icon(icon, size: iconHeight, color: imageColor)
                       : child,
                 ),
               ),

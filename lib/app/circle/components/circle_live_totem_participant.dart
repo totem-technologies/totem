@@ -2,7 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:totem/app/circle/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/communication_provider.dart';
@@ -41,7 +40,11 @@ class _CircleLiveTotemParticipantState
                       const SizedBox(
                         width: 6,
                       ),
-                      SvgPicture.asset('assets/active_sharing.svg'),
+                      Icon(
+                        Icons.settings_input_antenna,
+                        size: 24,
+                        color: Theme.of(context).themeColors.primaryText,
+                      ),
                     ],
                   ), // FIXME - replace with design item
           ),
