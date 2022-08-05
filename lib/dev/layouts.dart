@@ -3,15 +3,13 @@ import 'dart:async';
 import 'package:after_layout/after_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:totem/app/circle/components/circle_network_indicator.dart';
+import 'package:totem/app/circle/components/layouts.dart';
 import 'package:totem/app/circle/index.dart';
-import 'package:totem/components/widgets/index.dart';
-import 'package:totem/services/account_state/index.dart';
 import 'package:totem/components/index.dart';
 import 'package:totem/models/index.dart';
+import 'package:totem/services/account_state/index.dart';
 import 'package:totem/services/utils/device_type.dart';
 import 'package:totem/theme/app_theme_styles.dart';
-
-import '../app/circle/components/layouts.dart';
 
 Widget getParticipant(int i, double d) {
   return Container(
