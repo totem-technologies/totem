@@ -144,24 +144,41 @@ class CircleSessionPageState extends ConsumerState<CircleSessionPage>
     // find the circle / session first
     SnapCircle? circle = await repo.circleFromId(widget.sessionID);
     if (circle != null) {
-      if (circle.state == SessionState.complete ||
-          circle.state == SessionState.cancelled) {
-        // circle is complete or cancelled, so will have to start a new one
-        // Make sure there isn't a new one already started as well,
-        // should only be 1 that is waiting with a previous circle referencing this one
-        SnapCircle? pending = await repo.circleFromPreviousIdAndState(circle.id,
-            [SessionState.waiting, SessionState.starting, SessionState.live]);
-        if (pending == null) {
-          // this is a create new circle moment
-          circle = await repo.createSnapCircle(
+      bool canJoin = (circle.canJoin && await repo.canJoinCircle(circle.id));
+      if (canJoin) {
+        if (circle.state == SessionState.complete ||
+            circle.state == SessionState.cancelled) {
+          // circle is complete or cancelled, so will have to start a new one
+          // Make sure there isn't a new one already started as well,
+          // should only be 1 that is waiting with a previous circle referencing this one
+          SnapCircle? pending = await repo.circleFromPreviousIdAndState(
+              circle.id,
+              [SessionState.waiting, SessionState.starting, SessionState.live]);
+          if (pending == null) {
+            // this is a create new circle moment
+            circle = await repo.createSnapCircle(
               name: circle.name,
               description: circle.description,
               keeper: circle.keeper,
-              previousCircle: circle.id);
-        } else {
-          // join the pending one
-          circle = pending;
+              previousCircle: circle.id,
+              removedParticipants: circle.removedParticipants,
+            );
+          } else {
+            // join the pending one
+            circle = pending;
+          }
         }
+      } else {
+        // User cannot join this circle, so show a removed message & ended
+        if (mounted) {
+          context.replaceNamed(AppRoutes.circleEnded, extra: {
+            'removed': true,
+            'circle': circle,
+            'state': SessionState.removed
+          });
+        }
+        circle = null;
+        return;
       }
       if (circle != null) {
         // Create the active session if needed
@@ -182,7 +199,7 @@ class CircleSessionPageState extends ConsumerState<CircleSessionPage>
         } else {
           if (mounted) {
             setState(() => _sessionState = SessionPageState.cancelled);
-            Navigator.of(context).pop();
+            context.pop();
           }
         }
       }
