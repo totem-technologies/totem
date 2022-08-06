@@ -72,11 +72,30 @@ class CircleSessionEndedPage extends StatelessWidget {
         Text(t.sessionUserRemoved, style: textStyles.headline3),
         const SizedBox(height: 20),
         ThemedRaisedButton(
-          label: t.leaveSession,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.exit_to_app),
+              const SizedBox(width: 10),
+              Text(t.exit),
+            ],
+          ),
           onPressed: () async {
             context.pop();
           },
         ),
+        Padding(
+          padding: const EdgeInsets.only(top: 60),
+          child: ThemedRaisedButton(
+            backgroundColor:
+                Theme.of(context).themeColors.secondaryButtonBackground,
+            label: t.sessionFeedbackRequest,
+            textStyle: textStyles.button!.merge(const TextStyle(fontSize: 14)),
+            onPressed: () async {
+              _launchUserFeedback();
+            },
+          ),
+        )
       ],
     );
   }

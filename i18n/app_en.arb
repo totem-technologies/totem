@@ -90,6 +90,7 @@
     "errorEnablePermissions": "Please go to your device settings to enable permissions.",
     "errorDeviceSettings": "Go to device settings",
     "errorRetryStart": "Retry permissions",
+    "exit": "Exit",
     "finish": "Finish!",
     "forceUnMute": "Force Unmute",
     "getStarted": "Get Started",
