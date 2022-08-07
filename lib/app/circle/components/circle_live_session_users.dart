@@ -5,9 +5,12 @@ import 'package:totem/app/circle/index.dart';
 import 'layouts.dart';
 
 class CircleLiveSessionUsers extends ConsumerWidget {
-  const CircleLiveSessionUsers({Key? key, this.speakerView = false})
+  const CircleLiveSessionUsers(
+      {Key? key, this.speakerView = false, required this.isPhoneLayout})
       : super(key: key);
   final bool speakerView;
+  final bool isPhoneLayout;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final activeSession = ref.watch(activeSessionProvider);
@@ -19,6 +22,7 @@ class CircleLiveSessionUsers extends ConsumerWidget {
       child: (participants.isNotEmpty)
           ? (!speakerView
               ? ParticipantListLayout(
+                  direction: isPhoneLayout ? Axis.horizontal : Axis.vertical,
                   maxAllowedDimension: 1,
                   maxChildSize: 180,
                   count: participants.length,

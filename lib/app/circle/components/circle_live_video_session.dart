@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:keybinder/keybinder.dart';
 import 'package:slide_to_act/slide_to_act.dart';
 import 'package:totem/app/circle/index.dart';
@@ -99,11 +100,10 @@ class _CircleLiveVideoSessionState
                                             const Duration(milliseconds: 500),
                                         child: activeSession.totemReceived &&
                                                 (totemParticipant.me)
-                                            ? _speakerUserView(
-                                                context,
+                                            ? _speakerUserView(context,
                                                 activeSession: activeSession,
                                                 participants: participants,
-                                              )
+                                                isPhoneLayout: isPhoneLayout)
                                             : ListenerUserLayout(
                                                 constrainSpeaker:
                                                     activeSession.totemReceived,
@@ -127,7 +127,9 @@ class _CircleLiveVideoSessionState
                                                   },
                                                 ),
                                                 userList:
-                                                    const CircleLiveSessionUsers(),
+                                                    CircleLiveSessionUsers(
+                                                        isPhoneLayout:
+                                                            isPhoneLayout),
                                                 isPhoneLayout: isPhoneLayout,
                                               ),
                                       )
@@ -221,13 +223,13 @@ class _CircleLiveVideoSessionState
     return Container();
   } */
 
-  Widget _speakerUserView(
-    BuildContext context, {
-    required List<SessionParticipant> participants,
-    required ActiveSession activeSession,
-  }) {
-    return const CircleLiveSessionUsers(
+  Widget _speakerUserView(BuildContext context,
+      {required List<SessionParticipant> participants,
+      required ActiveSession activeSession,
+      required bool isPhoneLayout}) {
+    return CircleLiveSessionUsers(
       speakerView: true,
+      isPhoneLayout: isPhoneLayout,
     );
   }
 
@@ -266,12 +268,20 @@ class _CircleLiveVideoSessionState
                       width: 200,
                       height: 50,
                       backgroundColor: themeColors.alternateButtonBackground,
-                      label: t.pass,
                       onPressed: !_processingRequest
                           ? () {
                               _endTurn(context, participant);
                             }
                           : null,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          FaIcon(FontAwesomeIcons.hand,
+                              size: 20, color: themeColors.primaryText),
+                          const SizedBox(width: 10),
+                          Text(t.pass)
+                        ],
+                      ),
                     )
                   : ThemedRaisedButton(
                       width: 200,

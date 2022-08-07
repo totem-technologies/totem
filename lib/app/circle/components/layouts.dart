@@ -13,7 +13,7 @@ class ParticipantListLayout extends StatelessWidget {
     this.maxAllowedDimension = 2,
     this.maxChildSize = 150,
     this.minChildSize = 100,
-    this.direction = Axis.horizontal,
+    this.direction = Axis.vertical,
   }) : super(key: key);
   final double maxChildSize;
   final double minChildSize;

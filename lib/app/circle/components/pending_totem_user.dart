@@ -16,7 +16,7 @@ class PendingTotemUser extends StatelessWidget {
   final Function()? onSettings;
 
   static const double titleSpacing = 14;
-  static const double buttonSize = 400;
+  static const double buttonSize = 330;
   static const double buttonSizeVertical = 220;
   static const double labelFontSize = 20;
   static const double standardFontSize = 15;
@@ -45,22 +45,54 @@ class PendingTotemUser extends StatelessWidget {
             ),
           );
         }
-        return Container(
-          color: Colors.black,
-          child: Row(
-            children: [
-              Expanded(child: _receiveTotem(context)),
-              const SizedBox(
-                width: 15,
-              ),
-              Expanded(child: _passTotem(context)),
-              const SizedBox(
-                width: 15,
-              ),
-              Expanded(child: _settingsVideo(context)),
-            ],
+        final themeColors = Theme.of(context).themeColors;
+        return Stack(children: [
+          Positioned.fill(
+            child: LayoutBuilder(
+                builder: (BuildContext context, BoxConstraints constraints) {
+              final sizeOfVideo =
+                  min(constraints.maxWidth, constraints.maxHeight);
+              return Center(
+                child: SizedBox(
+                  width: sizeOfVideo,
+                  height: sizeOfVideo,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.black,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                          width: 1, color: themeColors.controlButtonBackground),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: const BorderRadius.all(Radius.circular(16)),
+                      child: userVideo,
+                    ),
+                  ),
+                ),
+              );
+            }),
           ),
-        );
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 10,
+            child: Row(
+              children: [
+                Expanded(child: Container()),
+                _receiveTotem(context),
+                const SizedBox(
+                  width: 15,
+                ),
+                _passTotem(context),
+                Expanded(child: Container()),
+                /*const SizedBox(
+                width: 15,
+              ),
+              Expanded(child: _settingsVideo(context)), */
+              ],
+            ),
+          ),
+        ]);
       },
     );
   }
@@ -173,43 +205,47 @@ class PendingTotemUser extends StatelessWidget {
     final themeColors = Theme.of(context).themeColors;
     final style =
         TextStyle(color: themeColors.primaryText, fontSize: standardFontSize);
-    return ThemedRaisedButton(
-      backgroundColor: themeColors.controlButtonBackground,
-      horzPadding: 0,
-      height: !vertical ? buttonSize : buttonSizeVertical,
-      onPressed: () {
-        if (onPressed != null) {
-          onPressed();
-        }
-      },
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          SizedBox(
-            height: !vertical ? 30 : 0,
-          ),
-          Center(
-            child: image,
-          ),
-          Text(
-            label,
-            style: style.merge(const TextStyle(
-                fontWeight: FontWeight.bold, fontSize: labelFontSize)),
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(
-            height: !vertical ? 30 : 5,
-          ),
-          Text(
-            message,
-            style: style,
-          ),
-          SizedBox(
-            height: !vertical ? 14 : 5,
-          ),
-          ...items,
-          if (!vertical) Expanded(child: Container()),
-        ],
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 350),
+      child: ThemedRaisedButton(
+        backgroundColor: themeColors.controlButtonBackground,
+        horzPadding: 0,
+        height: !vertical ? buttonSize : buttonSizeVertical,
+        width: !vertical ? 250 : null,
+        onPressed: () {
+          if (onPressed != null) {
+            onPressed();
+          }
+        },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            SizedBox(
+              height: !vertical ? 30 : 0,
+            ),
+            Center(
+              child: image,
+            ),
+            Text(
+              label,
+              style: style.merge(const TextStyle(
+                  fontWeight: FontWeight.bold, fontSize: labelFontSize)),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(
+              height: !vertical ? 30 : 5,
+            ),
+            Text(
+              message,
+              style: style,
+            ),
+            SizedBox(
+              height: !vertical ? 14 : 5,
+            ),
+            ...items,
+            if (!vertical) Expanded(child: Container()),
+          ],
+        ),
       ),
     );
   }
