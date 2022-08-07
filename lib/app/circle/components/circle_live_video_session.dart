@@ -1,16 +1,11 @@
-import 'dart:math';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:keybinder/keybinder.dart';
-import 'package:provider/provider.dart' as prov;
 import 'package:slide_to_act/slide_to_act.dart';
-import 'package:totem/app/circle/components/circle_network_indicator.dart';
 import 'package:totem/app/circle/index.dart';
-import 'package:totem/components/camera/index.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/utils/device_type.dart';
@@ -85,25 +80,18 @@ class _CircleLiveVideoSessionState
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                              if (isPhoneLayout) ...[
-                                Text(
-                                  activeSession.circle.name,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: textStyles.headline2!.merge(
-                                    TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        color: themeColors.reversedText),
-                                  ),
+                              const SizedBox(height: 10),
+                              Text(
+                                activeSession.circle.name,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: textStyles.headline2!.merge(
+                                  TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      color: themeColors.reversedText),
                                 ),
-                                const SizedBox(
-                                  height: 14,
-                                ),
-                              ],
-                              if (!isPhoneLayout)
-                                const SizedBox(
-                                  height: 20,
-                                ),
+                              ),
+                              const SizedBox(height: 10),
                               Expanded(
                                 child: participants.isNotEmpty
                                     ? AnimatedSwitcher(
@@ -117,8 +105,27 @@ class _CircleLiveVideoSessionState
                                                 participants: participants,
                                               )
                                             : ListenerUserLayout(
-                                                speaker: _speakerVideoView(
-                                                    context, activeSession),
+                                                constrainSpeaker:
+                                                    activeSession.totemReceived,
+                                                speaker: SpeakerVideoView(
+                                                  onReceive: () {
+                                                    final participant =
+                                                        activeSession
+                                                            .totemParticipant;
+                                                    _receiveTurn(
+                                                        context, participant!);
+                                                  },
+                                                  onPass: () {
+                                                    final participant =
+                                                        activeSession
+                                                            .totemParticipant;
+                                                    _endTurn(
+                                                        context, participant!);
+                                                  },
+                                                  onSettings: () {
+                                                    _showDeviceSettings();
+                                                  },
+                                                ),
                                                 userList:
                                                     const CircleLiveSessionUsers(),
                                                 isPhoneLayout: isPhoneLayout,
@@ -137,7 +144,8 @@ class _CircleLiveVideoSessionState
                               ),
                             ],
                           ),
-                          if (totemParticipant.me)
+                          if (activeSession.totemReceived &&
+                              totemParticipant.me)
                             _speakerControlsView(
                               context,
                               participants: participants,
@@ -164,7 +172,7 @@ class _CircleLiveVideoSessionState
     return Container();
   }
 
-  Widget _speakerVideoView(BuildContext context, ActiveSession activeSession) {
+/*  Widget _speakerVideoView(BuildContext context, ActiveSession activeSession) {
     if (activeSession.totemParticipant != null &&
         (!activeSession.totemReceived ||
             !(activeSession.totemParticipant!.me))) {
@@ -211,7 +219,7 @@ class _CircleLiveVideoSessionState
       );
     }
     return Container();
-  }
+  } */
 
   Widget _speakerUserView(
     BuildContext context, {
@@ -428,5 +436,15 @@ class _CircleLiveVideoSessionState
     } else {
       setState(() => _processingRequest = false);
     }
+  }
+
+  Future<void> _showDeviceSettings() async {
+    await showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return const CircleDeviceSelector();
+      },
+    );
   }
 }

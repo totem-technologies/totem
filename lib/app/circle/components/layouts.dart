@@ -13,6 +13,7 @@ class ParticipantListLayout extends StatelessWidget {
     this.maxAllowedDimension = 2,
     this.maxChildSize = 150,
     this.minChildSize = 100,
+    this.direction = Axis.horizontal,
   }) : super(key: key);
   final double maxChildSize;
   final double minChildSize;
@@ -20,6 +21,7 @@ class ParticipantListLayout extends StatelessWidget {
   static const double spacing = 0;
   final int count;
   final Widget Function(int, double) generate;
+  final Axis direction;
 
   @override
   Widget build(BuildContext context) {
@@ -76,6 +78,7 @@ class ParticipantListLayout extends StatelessWidget {
             height: height,
             width: width,
             child: SingleChildScrollView(
+              scrollDirection: direction,
               child: Wrap(
                 runSpacing: spacing,
                 spacing: spacing,

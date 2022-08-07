@@ -392,8 +392,8 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
             ),
           ],
         ),
-        CircleLiveTrayTitle(
-            title: activeSession.circle.name, maxWidth: maxWidth),
+/*        CircleLiveTrayTitle(
+            title: activeSession.circle.name, maxWidth: maxWidth), */
       ],
     );
   }

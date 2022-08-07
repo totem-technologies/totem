@@ -4,13 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:totem/theme/index.dart';
 
 class ListenerUserLayout extends StatelessWidget {
-  const ListenerUserLayout(
-      {Key? key,
-      required this.speaker,
-      required this.userList,
-      required this.isPhoneLayout,
-      this.minUserImageSize = 135})
-      : super(key: key);
+  const ListenerUserLayout({
+    Key? key,
+    required this.speaker,
+    required this.userList,
+    required this.isPhoneLayout,
+    this.minUserImageSize = 135,
+    this.constrainSpeaker = true,
+  }) : super(key: key);
 
   static const double verticalDivider = 34;
   static const double horizontalDivider = 66;
@@ -18,6 +19,7 @@ class ListenerUserLayout extends StatelessWidget {
   final Widget userList;
   final double minUserImageSize;
   final bool isPhoneLayout;
+  final bool constrainSpeaker;
 
   @override
   Widget build(BuildContext context) {
@@ -27,19 +29,22 @@ class ListenerUserLayout extends StatelessWidget {
           return Row(
             children: [
               Expanded(
-                child: LayoutBuilder(
-                  builder: (BuildContext context, BoxConstraints constraints) {
-                    final sizeOfVideo =
-                        min(constraints.maxHeight, constraints.maxWidth);
-                    return Center(
-                      child: SizedBox(
-                        width: sizeOfVideo,
-                        height: sizeOfVideo,
-                        child: speaker,
-                      ),
-                    );
-                  },
-                ),
+                child: (constrainSpeaker)
+                    ? LayoutBuilder(
+                        builder:
+                            (BuildContext context, BoxConstraints constraints) {
+                          final sizeOfVideo =
+                              min(constraints.maxHeight, constraints.maxWidth);
+                          return Center(
+                            child: SizedBox(
+                              width: sizeOfVideo,
+                              height: sizeOfVideo,
+                              child: speaker,
+                            ),
+                          );
+                        },
+                      )
+                    : speaker,
               ),
               _divider(context, true, constraints.maxHeight),
               userList,
@@ -50,19 +55,22 @@ class ListenerUserLayout extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Expanded(
-              child: LayoutBuilder(
-                builder: (BuildContext context, BoxConstraints constraints) {
-                  final sizeOfVideo =
-                      min(constraints.maxHeight, constraints.maxWidth);
-                  return Center(
-                    child: SizedBox(
-                      width: sizeOfVideo,
-                      height: sizeOfVideo,
-                      child: speaker,
-                    ),
-                  );
-                },
-              ),
+              child: (constrainSpeaker)
+                  ? LayoutBuilder(
+                      builder:
+                          (BuildContext context, BoxConstraints constraints) {
+                        final sizeOfVideo =
+                            min(constraints.maxHeight, constraints.maxWidth);
+                        return Center(
+                          child: SizedBox(
+                            width: sizeOfVideo,
+                            height: sizeOfVideo,
+                            child: speaker,
+                          ),
+                        );
+                      },
+                    )
+                  : speaker,
             ),
             _divider(context, false, constraints.maxHeight),
             userList,

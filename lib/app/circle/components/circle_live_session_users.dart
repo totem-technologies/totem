@@ -16,30 +16,33 @@ class CircleLiveSessionUsers extends ConsumerWidget {
         .where((element) => element.uid != totemId)
         .toList();
     return CircleNetworkConnectivityLayer(
-      child: !speakerView
-          ? ParticipantListLayout(
-              maxChildSize: 180,
-              count: participants.length,
-              generate: (i, dimension) => CircleSessionParticipant(
-                dimension: dimension,
-                participant: participants[i],
-                hasTotem:
-                    activeSession.totemUser == participants[i].sessionUserId,
-                annotate: false,
-                next: i == 0,
-              ),
-            )
-          : WaitingRoomListLayout(
-              generate: (i, dimension) => CircleSessionParticipant(
-                dimension: dimension,
-                participant: participants[i],
-                hasTotem:
-                    activeSession.totemUser == participants[i].sessionUserId,
-                annotate: false,
-                next: i == 0,
-              ),
-              count: participants.length,
-            ),
+      child: (participants.isNotEmpty)
+          ? (!speakerView
+              ? ParticipantListLayout(
+                  maxAllowedDimension: 1,
+                  maxChildSize: 180,
+                  count: participants.length,
+                  generate: (i, dimension) => CircleSessionParticipant(
+                    dimension: dimension,
+                    participant: participants[i],
+                    hasTotem: activeSession.totemUser ==
+                        participants[i].sessionUserId,
+                    annotate: false,
+                    next: i == 0,
+                  ),
+                )
+              : WaitingRoomListLayout(
+                  generate: (i, dimension) => CircleSessionParticipant(
+                    dimension: dimension,
+                    participant: participants[i],
+                    hasTotem: activeSession.totemUser ==
+                        participants[i].sessionUserId,
+                    annotate: false,
+                    next: i == 0,
+                  ),
+                  count: participants.length,
+                ))
+          : Container(),
     );
   }
 }

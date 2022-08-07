@@ -6,7 +6,6 @@ import 'package:agora_rtc_engine/rtc_engine.dart';
 import 'package:collection/collection.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
@@ -17,8 +16,8 @@ class AgoraCommunicationProvider extends CommunicationProvider {
 
   // These are used as default values for the video preview, modify
   // as needed to define a different default as these get set on the engine
-  static const int videoHeight = 350;
-  static const int videoWidth = 350;
+  static const int videoHeight = 360;
+  static const int videoWidth = 360;
   // Communication streams
   static const int statsStream = 0;
   static const int notifyDuration = 10; // seconds
@@ -46,7 +45,6 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   StreamController<CommunicationAudioVolumeIndication>?
       _audioIndicatorStreamController;
   dynamic _channel;
-  late Size _fullscreenSize;
   Timer? _updateTimer;
   Timer? _networkErrorTimeout;
   int? _statsStreamId;
@@ -172,9 +170,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     required Session session,
     required CommunicationHandler handler,
     bool enableVideo = false,
-    required Size fullScreenSize,
   }) async {
-    _fullscreenSize = fullScreenSize;
     _handler = handler;
     _session = session;
     _lastError = null;
@@ -322,11 +318,17 @@ class AgoraCommunicationProvider extends CommunicationProvider {
           await _engine!.setDefaultAudioRouteToSpeakerphone(true);
           await _engine!.enableDeepLearningDenoise(true);
           await _engine!.enableAudioVolumeIndication(200, 3, true);
+          await _engine!.setChannelProfile(ChannelProfile.Communication);
+          await _engine!.setVideoEncoderConfiguration(
+            VideoEncoderConfiguration(
+              bitrate: 260,
+              degradationPreference: DegradationPreference.MaintainFramerate,
+              frameRate: VideoFrameRate.Fps15,
+              dimensions:
+                  const VideoDimensions(width: videoWidth, height: videoHeight),
+            ),
+          );
           if (enableVideo) {
-            await _engine!.setVideoEncoderConfiguration(
-                VideoEncoderConfiguration(
-                    dimensions: const VideoDimensions(
-                        width: videoWidth, height: videoHeight)));
             await _engine!.enableVideo();
             await _engine!.startPreview();
           }
@@ -758,7 +760,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   @override
   Future<void> muteVideo(bool mute) async {
     if (mute != videoMuted) {
-      await _engine?.enableLocalVideo(!mute);
+      await _engine?.muteLocalVideoStream(mute);
       // Right now it seems that the
       // video publishing changes made locally are
       // not coming, so to work around this,
@@ -781,11 +783,11 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   Future<void> setHasTotem(bool hasTotem) async {
     if (_hasTotem != hasTotem) {
       _hasTotem = hasTotem;
-      await _engine!.setVideoEncoderConfiguration(VideoEncoderConfiguration(
+      /*await _engine!.setVideoEncoderConfiguration(VideoEncoderConfiguration(
           dimensions: VideoDimensions(
               width: _hasTotem ? _fullscreenSize.width.toInt() : videoWidth,
               height:
-                  _hasTotem ? _fullscreenSize.height.toInt() : videoHeight)));
+                  _hasTotem ? _fullscreenSize.height.toInt() : videoHeight))); */
     }
   }
 
@@ -844,7 +846,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
       }
       return true;
     } catch (ex) {
-      debugPrint('unable to setCamera: $ex');
+      debugPrint('unable to setAudioInput: $ex');
     }
     return false;
   }
@@ -875,7 +877,11 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     try {
       if (device != _camera) {
         await _engine!.stopPreview();
+        await _engine!.disableVideo();
+//        await _engine!.enableLocalVideo(false);
         await _engine!.deviceManager.setVideoDevice(device.id);
+//        await _engine!.enableLocalVideo(true);
+        await _engine!.enableVideo();
         await _engine!.startPreview();
         _camera = device;
         notifyListeners();

@@ -19,4 +19,7 @@ export 'circle_session_participant.dart';
 export 'circle_session_participant_list_item.dart';
 export 'circle_snap_session_content.dart';
 export 'listener_user_layout.dart';
+export 'pending_totem_user.dart';
 export 'scheduled_session_item.dart';
+export 'speaker_video_view.dart';
+export 'waiting_for_totem_user.dart';
