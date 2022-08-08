@@ -35,7 +35,7 @@ export class FirebaseDynamicLinks {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Referer": referer,
+        Referer: referer,
       },
     };
 
