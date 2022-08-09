@@ -14,6 +14,7 @@ describe("offline api tests", () => {
     getToken: CloudFunction<unknown>;
     deleteSelf: CloudFunction<unknown>;
     updateAccountState: CloudFunction<unknown>;
+    updateRoles: CloudFunction<unknown>;
   };
   let adminInitStub: sinon.SinonStub;
 
@@ -96,6 +97,17 @@ describe("offline api tests", () => {
         const ex: https.HttpsError = e as https.HttpsError;
         assert.equal(ex.code, "failed-precondition");
         assert.equal(ex.message, "Missing value for account state");
+      }
+    });
+    it("should throw error if key is protected", async () => {
+      const wrapped = test.wrap(myFunctions.updateAccountState);
+      try {
+        await wrapped({key: "auth", value: {permissions: {roled: ["admin"]}}}, {auth: {uid: "abcdefg123"}});
+        assert.fail("should have thrown error");
+      } catch (e) {
+        const ex: https.HttpsError = e as https.HttpsError;
+        assert.equal(ex.code, "failed-precondition");
+        assert.equal(ex.message, "Key for account state is protected");
       }
     });
   });

@@ -13,7 +13,7 @@ service cloud.firestore {
     }
     match /userAccountState/{uid}/{documents=**} {
       allow read: if request.auth != null && isDocOwner(uid);
-      allow write: false;
+      allow write: if false;
     }
     match /users/{uid}/{documents=**} {
       allow read: if request.auth != null;
