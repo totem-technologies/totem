@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:totem/app/circle/index.dart';
 import 'package:totem/dev/layouts.dart';
 import 'package:totem/dev/test_session_controls.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/theme/app_theme_styles.dart';
 
 import '../app/circle/components/layouts.dart';
-import '../app/circle/components/listener_user_layout.dart';
 import '../services/utils/device_type.dart';
 
 class ActiveSessionLayoutTest extends StatefulWidget {
@@ -18,6 +18,8 @@ class ActiveSessionLayoutTest extends StatefulWidget {
 class ActiveSessionLayoutTestState extends State<ActiveSessionLayoutTest> {
   int participantCount = 7;
   bool waiting = true;
+  bool waitingForTotem = false;
+  bool totemUser = false;
   final String circleName = "This is a test circle with a pretty long name";
   @override
   Widget build(BuildContext context) {
@@ -40,6 +42,43 @@ class ActiveSessionLayoutTestState extends State<ActiveSessionLayoutTest> {
                   ),
                 ],
               ),
+              const SizedBox(
+                width: 10,
+              ),
+              if (!waiting) ...[
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Checkbox(
+                        value: waitingForTotem,
+                        onChanged: (value) =>
+                            setState(() => waitingForTotem = value!)),
+                    const Text(
+                      'Waiting for Totem',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Checkbox(
+                        value: totemUser,
+                        onChanged: (value) =>
+                            setState(() => totemUser = value!)),
+                    const Text(
+                      'Totem User',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+              ],
               TextButton(
                   onPressed: () {
                     setState(() {
@@ -116,38 +155,42 @@ class ActiveSessionLayoutTestState extends State<ActiveSessionLayoutTest> {
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            if (isPhoneLayout) ...[
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 20),
-                                child: Text(
-                                  circleName,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: textStyles.headline2!.merge(
-                                    TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        color: themeColors.reversedText),
-                                  ),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 20, right: 20, top: 10),
+                              child: Text(
+                                circleName,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: textStyles.headline2!.merge(
+                                  TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      color: themeColors.reversedText),
                                 ),
                               ),
-                              const SizedBox(
-                                height: 14,
-                              ),
-                            ],
+                            ),
                             Expanded(
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 20, vertical: 20),
                                 child: ListenerUserLayout(
+                                  constrainSpeaker: !totemUser,
                                   userList: ParticipantListLayout(
-                                      maxAllowedDimension: 2,
+                                      maxAllowedDimension:
+                                          isPhoneLayout ? 1 : 2,
                                       maxChildSize: isPhoneLayout ? 100 : 180,
+                                      direction: isPhoneLayout
+                                          ? Axis.horizontal
+                                          : Axis.vertical,
                                       generate: getParticipant,
                                       count: participantCount),
-                                  speaker: Container(
-                                    color: Colors.yellow,
-                                  ),
+                                  speaker: !waitingForTotem
+                                      ? Container(
+                                          color: Colors.yellow,
+                                        )
+                                      : (totemUser
+                                          ? const PendingTotemUser()
+                                          : const WaitingForTotemUser()),
                                   isPhoneLayout: isPhoneLayout,
                                 ),
                               ),

@@ -168,15 +168,13 @@ class CircleDeviceSelectorState extends ConsumerState<ConsumerStatefulWidget> {
     }
     return SizedBox(
       height: 40,
-      child: Expanded(
-        child: DropdownButton<CommunicationDevice>(
-          isExpanded: true,
-          items: dropDownMenus,
-          value: selected,
-          onChanged: (v) {
-            onChanged(v);
-          },
-        ),
+      child: DropdownButton<CommunicationDevice>(
+        isExpanded: true,
+        items: dropDownMenus,
+        value: selected,
+        onChanged: (v) {
+          onChanged(v);
+        },
       ),
     );
   }

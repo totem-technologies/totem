@@ -40,7 +40,6 @@ abstract class CommunicationProvider extends ChangeNotifier {
     required Session session,
     required CommunicationHandler handler,
     bool enableVideo,
-    required Size fullScreenSize,
   });
   Future<void> leaveSession({bool requested = true});
   Future<void> endSession();

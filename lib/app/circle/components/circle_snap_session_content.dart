@@ -513,24 +513,22 @@ class _CircleSnapSessionContentState
   }
 
   void _joinSession() {
-    Size fullscreenSize = const Size(600, 600);
-//    if (widget.circle != null) {
     final provider = ref.read(communicationsProvider);
     provider.joinSession(
-        session: SnapSession.fromJson({}, circle: widget.circle),
-        enableVideo: true,
-        handler: CommunicationHandler(
-          joinedCircle: (String sessionId, String sessionUserId) {
-            debugPrint("joined circle as: $sessionUserId");
-          },
-          leaveCircle: () {
-            // prompt?
-            Future.delayed(const Duration(milliseconds: 0), () {
-              // Navigator.of(context).pop();
-            });
-          },
-        ),
-        fullScreenSize: fullscreenSize);
+      session: SnapSession.fromJson({}, circle: widget.circle),
+      enableVideo: true,
+      handler: CommunicationHandler(
+        joinedCircle: (String sessionId, String sessionUserId) {
+          debugPrint("joined circle as: $sessionUserId");
+        },
+        leaveCircle: () {
+          // prompt?
+          Future.delayed(const Duration(milliseconds: 0), () {
+            // Navigator.of(context).pop();
+          });
+        },
+      ),
+    );
   }
 
   void _launchUserFeedback() async {
