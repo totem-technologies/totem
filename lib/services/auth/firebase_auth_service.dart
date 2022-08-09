@@ -84,6 +84,7 @@ class FirebaseAuthService implements AuthService {
                     idToken =
                         await _firebaseAuth.currentUser!.getIdTokenResult(true);
                     _currentUser!.updateFromIdToken(idToken);
+                    streamController?.add(_currentUser);
                   }
                 }
               }
