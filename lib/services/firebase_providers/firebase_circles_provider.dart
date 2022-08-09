@@ -137,13 +137,14 @@ class FirebaseCirclesProvider extends CirclesProvider {
     String? description,
     String? keeper,
     String? previousCircle,
+    List<String>? removedParticipants,
   }) async {
     final DocumentReference userRef =
         FirebaseFirestore.instance.collection(Paths.users).doc(keeper ?? uid);
     try {
       HttpsCallable callable =
           FirebaseFunctions.instance.httpsCallable('createSnapCircle');
-      final data = {
+      final data = <String, dynamic>{
         "name": name,
       };
       if (description != null) {
@@ -154,6 +155,9 @@ class FirebaseCirclesProvider extends CirclesProvider {
       }
       if (previousCircle != null) {
         data['previousCircle'] = previousCircle;
+      }
+      if (removedParticipants != null) {
+        data['removedParticipants'] = removedParticipants;
       }
       final result = await callable(data);
       final String id = result.data['id'];
@@ -438,14 +442,14 @@ class FirebaseCirclesProvider extends CirclesProvider {
   }
 
   @override
-  Future<SnapCircle?> circleFromId(String id) async {
+  Future<SnapCircle?> circleFromId(String id, String uid) async {
     try {
       final DocumentReference circleRef =
           FirebaseFirestore.instance.collection(Paths.snapCircles).doc(id);
       DocumentSnapshot circleSnapshot = await circleRef.get();
       Map<String, dynamic> data = circleSnapshot.data() as Map<String, dynamic>;
       SnapCircle circle =
-          SnapCircle.fromJson(data, id: id, ref: circleRef.path);
+          SnapCircle.fromJson(data, id: id, ref: circleRef.path, uid: uid);
       DocumentReference ref = data["createdBy"] as DocumentReference;
       circle.createdBy = await _userFromRef(ref);
       if (data['activeSession'] != null) {
@@ -460,7 +464,9 @@ class FirebaseCirclesProvider extends CirclesProvider {
 
   @override
   Future<SnapCircle?> circleFromPreviousIdAndState(
-      String previousId, List<SessionState> state) async {
+      {required String previousId,
+      required List<SessionState> state,
+      required String uid}) async {
     try {
       final query = FirebaseFirestore.instance
           .collection(Paths.snapCircles)
@@ -483,7 +489,9 @@ class FirebaseCirclesProvider extends CirclesProvider {
 
   @override
   Future<SnapCircle?> circleFromPreviousIdAndNotState(
-      String previousId, List<SessionState> state) async {
+      {required String previousId,
+      required List<SessionState> state,
+      required String uid}) async {
     try {
       final query = FirebaseFirestore.instance
           .collection(Paths.snapCircles)
@@ -502,5 +510,29 @@ class FirebaseCirclesProvider extends CirclesProvider {
       debugPrint(ex.toString());
     }
     return null;
+  }
+
+  @override
+  Future<bool> canJoinCircle(
+      {required String circleId, required String uid}) async {
+    try {
+      final query = FirebaseFirestore.instance
+          .collection(Paths.snapCircles)
+          .where('previousCircle', isEqualTo: circleId)
+          .orderBy('createdOn', descending: true)
+          .limit(1);
+      QuerySnapshot<Map<String, dynamic>> result = await query.get();
+      if (result.docs.isNotEmpty) {
+        QueryDocumentSnapshot<Map<String, dynamic>> snapshot = result.docs[0];
+        List<String> removedParticipants = List<String>.from(
+            snapshot.data()['removedParticipants'] as List? ?? []);
+        if (removedParticipants.contains(uid)) {
+          return false;
+        }
+      }
+    } catch (ex) {
+      debugPrint(ex.toString());
+    }
+    return true;
   }
 }

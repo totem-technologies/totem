@@ -30,4 +30,6 @@ abstract class SessionProvider extends ChangeNotifier {
       required bool muted,
       required bool videoMuted,
       required bool userChange});
+  Future<bool> removeParticipantFromActiveSession(
+      {required String sessionUserId});
 }

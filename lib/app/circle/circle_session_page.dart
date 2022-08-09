@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:totem/app/circle/index.dart';
+import 'package:totem/app_routes.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/account_state/account_state_event_manager.dart';
@@ -143,24 +144,41 @@ class CircleSessionPageState extends ConsumerState<CircleSessionPage>
     // find the circle / session first
     SnapCircle? circle = await repo.circleFromId(widget.sessionID);
     if (circle != null) {
-      if (circle.state == SessionState.complete ||
-          circle.state == SessionState.cancelled) {
-        // circle is complete or cancelled, so will have to start a new one
-        // Make sure there isn't a new one already started as well,
-        // should only be 1 that is waiting with a previous circle referencing this one
-        SnapCircle? pending = await repo.circleFromPreviousIdAndState(circle.id,
-            [SessionState.waiting, SessionState.starting, SessionState.live]);
-        if (pending == null) {
-          // this is a create new circle moment
-          circle = await repo.createSnapCircle(
+      bool canJoin = (circle.canJoin && await repo.canJoinCircle(circle.id));
+      if (canJoin) {
+        if (circle.state == SessionState.complete ||
+            circle.state == SessionState.cancelled) {
+          // circle is complete or cancelled, so will have to start a new one
+          // Make sure there isn't a new one already started as well,
+          // should only be 1 that is waiting with a previous circle referencing this one
+          SnapCircle? pending = await repo.circleFromPreviousIdAndState(
+              circle.id,
+              [SessionState.waiting, SessionState.starting, SessionState.live]);
+          if (pending == null) {
+            // this is a create new circle moment
+            circle = await repo.createSnapCircle(
               name: circle.name,
               description: circle.description,
               keeper: circle.keeper,
-              previousCircle: circle.id);
-        } else {
-          // join the pending one
-          circle = pending;
+              previousCircle: circle.id,
+              removedParticipants: circle.removedParticipants,
+            );
+          } else {
+            // join the pending one
+            circle = pending;
+          }
         }
+      } else {
+        // User cannot join this circle, so show a removed message & ended
+        if (mounted) {
+          context.replaceNamed(AppRoutes.circleEnded, extra: {
+            'removed': true,
+            'circle': circle,
+            'state': SessionState.removed
+          });
+        }
+        circle = null;
+        return;
       }
       if (circle != null) {
         // Create the active session if needed
@@ -181,7 +199,7 @@ class CircleSessionPageState extends ConsumerState<CircleSessionPage>
         } else {
           if (mounted) {
             setState(() => _sessionState = SessionPageState.cancelled);
-            Navigator.of(context).pop();
+            context.pop();
           }
         }
       }
@@ -229,12 +247,18 @@ class CircleSessionLivePageState extends ConsumerState<CircleSessionLivePage> {
     debugPrint('active session change');
     final activeSession = ref.read(activeSessionProvider);
     final commProvider = ref.read(communicationsProvider);
-    if ((activeSession.state == SessionState.cancelled ||
-            activeSession.state == SessionState.complete) &&
-        commProvider.state == CommunicationState.active) {
+    if (activeSession.state == SessionState.cancelled ||
+        activeSession.state == SessionState.complete ||
+        activeSession.state == SessionState.removed) {
       // the session has been ended remotely... trigger leave session
-      commProvider.leaveSession(requested: false);
-      debugPrint('triggering leave session for session that has ended');
+      if (commProvider.state == CommunicationState.active) {
+        commProvider.leaveSession(requested: false);
+        debugPrint('triggering leave session for session that has ended');
+      }
+      context.replaceNamed(AppRoutes.circleEnded, extra: {
+        'removed': activeSession.state == SessionState.removed,
+        'circle': activeSession.circle
+      });
     }
   }
 }

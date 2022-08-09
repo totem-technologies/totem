@@ -17,7 +17,7 @@ extension AppThemeStyles on ThemeData {
   double get backgroundGradientRotation => -26.0;
   double get titleTopPadding => 40.0;
   double get standardButtonWidth => 294.0;
-  double get maxRenderWidth => 400;
+  double get maxRenderWidth => 500;
   double get portraitBreak => 1000;
   double get mobileBreak => 702;
   bool isMobile(BuildContext context) =>

@@ -285,6 +285,13 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     return false;
   }
 
+  @override
+  Future<bool> removeUserFromSession({required String sessionUserId}) async {
+    // first user from the session
+    return sessionProvider.removeParticipantFromActiveSession(
+        sessionUserId: sessionUserId);
+  }
+
   void _cancelStateUpdates() {
     _updateTimer?.cancel();
     _updateTimer = null;
@@ -654,8 +661,8 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     bool networkUnstable =
         isBadConnection(qualityTx) || isBadConnection(qualityRx);
     uid = uid == 0 ? commUid : uid;
-    // debugPrint(
-    //     'Network quality: ${qualityTx.name}, tx: ${qualityRx.name} unstable: $networkUnstable  for user: $uid');
+    debugPrint(
+        'Network quality: ${qualityTx.name}, tx: ${qualityRx.name} unstable: $networkUnstable  for user: $uid');
     sessionProvider.activeSession?.updateUnstableNetworkForUser(
         sessionUserId: uid.toString(), unstable: networkUnstable);
   }

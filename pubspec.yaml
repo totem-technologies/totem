@@ -38,6 +38,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   cupertino_will_pop_scope: ^1.2.0
   datetime_picker_formfield: ^2.0.0
+  decorated_icon: ^1.2.1
   diffutil_dart: ^3.0.0
   email_validator: ^2.0.1
   firebase_analytics: ^9.1.10

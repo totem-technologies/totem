@@ -11,11 +11,13 @@ class CircleSessionParticipantListItem extends ConsumerWidget {
       {Key? key,
       required this.participant,
       this.reorder = false,
-      this.horizontalPadding})
+      this.horizontalPadding,
+      this.onRemove})
       : super(key: key);
   final SessionParticipant participant;
   final bool reorder;
   final double? horizontalPadding;
+  final Function(SessionParticipant)? onRemove;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Padding(
@@ -60,6 +62,12 @@ class CircleSessionParticipantListItem extends ConsumerWidget {
           Expanded(
             child: Text(participant.name),
           ),
+          if (onRemove != null && !participant.me)
+            IconButton(
+                onPressed: () {
+                  onRemove!(participant);
+                },
+                icon: const Icon(Icons.delete, size: 24)),
           if (reorder)
             ReorderableListener(
               child: Container(

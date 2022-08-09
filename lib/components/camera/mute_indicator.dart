@@ -1,3 +1,4 @@
+import 'package:decorated_icon/decorated_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:totem/theme/index.dart';
 
@@ -8,10 +9,18 @@ class MuteIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeColors = Theme.of(context).themeColors;
-    return Icon(
+    return DecoratedIcon(
       Icons.mic_off,
       size: size,
       color: themeColors.reversedText,
+      shadows: const [
+        BoxShadow(
+          color: Colors.black87,
+          blurRadius: 5,
+          spreadRadius: 0,
+          offset: Offset.zero,
+        ),
+      ],
     );
   }
 }

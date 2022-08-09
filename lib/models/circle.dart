@@ -14,12 +14,15 @@ abstract class Circle {
   String? link;
   String? keeper;
   String? previousCircle;
+  List<String>? removedParticipants;
+  bool _canJoin = true;
 
   Circle.fromJson(Map<String, dynamic> json,
       {required this.id,
       required this.ref,
       UserProfile? createdUser,
-      this.activeSession}) {
+      this.activeSession,
+      String? uid}) {
     name = json['name'] ?? "";
     description = json['description'];
     createdBy = createdUser;
@@ -29,7 +32,15 @@ abstract class Circle {
     link = json['link'];
     keeper = json['keeper'];
     previousCircle = json['previousCircle'];
+    if (json['removedParticipants'] != null) {
+      removedParticipants = List<String>.from(json['removedParticipants']);
+    }
+    if (uid != null && removedParticipants != null) {
+      _canJoin = !removedParticipants!.contains(uid);
+    }
   }
+
+  bool get canJoin => _canJoin;
 
   Role participantRole(String participantId);
 
@@ -44,6 +55,9 @@ abstract class Circle {
     }
     if (updatedOn != null) {
       data["updatedOn"] = updatedOn!;
+    }
+    if (removedParticipants != null) {
+      data["removedParticipants"] = removedParticipants!;
     }
     return data;
   }

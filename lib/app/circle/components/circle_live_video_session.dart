@@ -196,8 +196,8 @@ class _CircleLiveVideoSessionState
                           ),
                         if (participant.muted)
                           const PositionedDirectional(
-                            top: 5,
-                            end: 5,
+                            top: 10,
+                            end: 10,
                             child: MuteIndicator(),
                           ),
                       ],

@@ -24,14 +24,20 @@ abstract class CirclesProvider {
     required String uid,
     String? keeper,
     String? previousCircle,
+    List<String>? removedParticipants,
   });
 
   Future<bool> removeSnapCircle(
       {required SnapCircle circle, required String uid});
   Stream<ScheduledCircle> scheduledCircle(String circleId, String uid);
-  Future<SnapCircle?> circleFromId(String id);
+  Future<SnapCircle?> circleFromId(String id, String uid);
   Future<SnapCircle?> circleFromPreviousIdAndState(
-      String previousId, List<SessionState> state);
+      {required String previousId,
+      required List<SessionState> state,
+      required String uid});
   Future<SnapCircle?> circleFromPreviousIdAndNotState(
-      String previousId, List<SessionState> state);
+      {required String previousId,
+      required List<SessionState> state,
+      required String uid});
+  Future<bool> canJoinCircle({required String circleId, required String uid});
 }

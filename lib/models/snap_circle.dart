@@ -12,11 +12,13 @@ class SnapCircle extends Circle {
     required String id,
     required String ref,
     UserProfile? createdUser,
+    String? uid,
   }) : super.fromJson(
           json,
           id: id,
           ref: ref,
           createdUser: createdUser,
+          uid: uid,
         ) {
     if (json['state'] != null) {
       state = SessionState.values.byName(json['state']);
