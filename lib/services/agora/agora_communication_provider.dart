@@ -18,6 +18,10 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   // as needed to define a different default as these get set on the engine
   static const int videoHeight = 360;
   static const int videoWidth = 360;
+
+  static const int fullScreenHeight = 600;
+  static const int fullScreenWidth = 600;
+
   // Communication streams
   static const int statsStream = 0;
   static const int notifyDuration = 10; // seconds
@@ -321,9 +325,6 @@ class AgoraCommunicationProvider extends CommunicationProvider {
           await _engine!.setChannelProfile(ChannelProfile.Communication);
           await _engine!.setVideoEncoderConfiguration(
             VideoEncoderConfiguration(
-              bitrate: 260,
-              degradationPreference: DegradationPreference.MaintainFramerate,
-              frameRate: VideoFrameRate.Fps15,
               dimensions:
                   const VideoDimensions(width: videoWidth, height: videoHeight),
             ),
@@ -783,11 +784,10 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   Future<void> setHasTotem(bool hasTotem) async {
     if (_hasTotem != hasTotem) {
       _hasTotem = hasTotem;
-      /*await _engine!.setVideoEncoderConfiguration(VideoEncoderConfiguration(
+      await _engine!.setVideoEncoderConfiguration(VideoEncoderConfiguration(
           dimensions: VideoDimensions(
-              width: _hasTotem ? _fullscreenSize.width.toInt() : videoWidth,
-              height:
-                  _hasTotem ? _fullscreenSize.height.toInt() : videoHeight))); */
+              width: _hasTotem ? fullScreenWidth : videoWidth,
+              height: _hasTotem ? fullScreenHeight : videoHeight)));
     }
   }
 
