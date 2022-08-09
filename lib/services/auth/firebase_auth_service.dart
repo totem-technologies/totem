@@ -13,6 +13,7 @@ class FirebaseAuthService implements AuthService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   StreamSubscription<User?>? _listener;
+  StreamSubscription<DocumentSnapshot?>? _reauthListener;
   BehaviorSubject<AuthUser?>? streamController;
   AuthUser? _currentUser;
   String? _pendingVerificationId;
@@ -62,6 +63,35 @@ class FirebaseAuthService implements AuthService {
           _currentUser = _userFromFirebase(_firebaseAuth.currentUser);
         }
         if (_currentUser != null) {
+          IdTokenResult idToken =
+              await _firebaseAuth.currentUser!.getIdTokenResult();
+          _currentUser!.updateFromIdToken(idToken);
+          _reauthListener ??= FirebaseFirestore.instance
+              .collection(Paths.userAccountState)
+              .doc(_currentUser!.uid)
+              .collection("auth")
+              .doc("controls")
+              .snapshots()
+              .listen((DocumentSnapshot snapshot) async {
+            try {
+              if (snapshot.exists) {
+                Map<String, dynamic> data =
+                    snapshot.data() as Map<String, dynamic>;
+                if (data.containsKey("refresh")) {
+                  Timestamp refresh = snapshot["refresh"];
+                  if (idToken.issuedAtTime == null ||
+                      refresh.toDate().isAfter(idToken.issuedAtTime!)) {
+                    idToken =
+                        await _firebaseAuth.currentUser!.getIdTokenResult(true);
+                    _currentUser!.updateFromIdToken(idToken);
+                  }
+                }
+              }
+            } catch (ex) {
+              debugPrint('error getting user permissions: $ex');
+            }
+          });
+
           // this is a load event
           streamController?.add(_currentUser);
         }
