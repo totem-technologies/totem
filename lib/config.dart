@@ -68,3 +68,7 @@ class DefaultFirebaseOptions {
     iosBundleId: 'io.kbl.totem',
   );
 }
+
+class AppConfig {
+  static const agoriaAppID = '4880737da9bf47e290f46d847cd1c3b1';
+}

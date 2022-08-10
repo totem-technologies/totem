@@ -8,7 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:totem/app.dart';
-import 'package:totem/firebase_options.dart';
+import 'package:totem/config.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

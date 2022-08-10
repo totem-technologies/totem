@@ -9,10 +9,11 @@ import 'package:flutter/foundation.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
+import 'package:totem/config.dart';
 import 'package:wakelock/wakelock.dart';
 
 class AgoraCommunicationProvider extends CommunicationProvider {
-  static const String appId = "2031ec39de0444d3b7cb29387e017063";
+  static const String appId = AppConfig.agoriaAppID;
 
   // These are used as default values for the video preview, modify
   // as needed to define a different default as these get set on the engine
