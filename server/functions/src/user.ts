@@ -66,12 +66,33 @@ export const updateRoles = functions.firestore
     const {roles = []} = change.after.data() ?? {};
     console.info(`Updating roles for user ${uid} to [${roles}]`);
     // Set custom user claims
-    await admin.auth().setCustomUserClaims(uid, {roles});
-    await admin
-      .firestore()
-      .collection("userAccountState")
-      .doc(uid)
-      .collection("auth")
-      .doc("controls")
-      .set({refresh: now}, {merge: true});
+    try {
+      await admin.auth().setCustomUserClaims(uid, {roles});
+      await admin
+        .firestore()
+        .collection("userAccountState")
+        .doc(uid)
+        .collection("auth")
+        .doc("controls")
+        .set({refresh: now}, {merge: true});
+    } catch (ex) {
+      console.error(`Failed updating roles for user ${uid}: ${ex}`);
+    }
   });
+
+export const seedUserAccountState = functions.auth.user().onCreate(async (user) => {
+  const {uid} = user;
+  const permissionsRef = admin
+    .firestore()
+    .collection("userAccountState")
+    .doc(uid)
+    .collection("auth")
+    .doc("permissions");
+  const permissionsSnapshot = await permissionsRef.get();
+  console.log(`Seeding userAccountState for user ${uid}`);
+  if (!permissionsSnapshot.exists) {
+    await permissionsRef.set({
+      roles: [],
+    });
+  }
+});
