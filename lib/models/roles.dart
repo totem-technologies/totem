@@ -1,1 +1,1 @@
-enum Role { keeper, member }
+enum Role { keeper, member, admin }
