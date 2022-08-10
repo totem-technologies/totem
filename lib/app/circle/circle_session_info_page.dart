@@ -237,7 +237,12 @@ class CircleSessionInfoPageState extends ConsumerState<CircleSessionInfoPage> {
               // for a live session, the first user in the list is the current
               // totem user. Don't allow them to be reordered for this case
               return CircleSessionParticipantListItem(
-                  horizontalPadding: 0, participant: participants[index]);
+                horizontalPadding: 0,
+                participant: participants[index],
+                onRemove: (participant) {
+                  _promptRemoveUser(context, participant);
+                },
+              );
             }
             return ReorderableItem(
               key: ValueKey(participant.sessionUserId!),
@@ -246,6 +251,9 @@ class CircleSessionInfoPageState extends ConsumerState<CircleSessionInfoPage> {
                   participant: participants[index],
                   reorder: true,
                   horizontalPadding: 0,
+                  onRemove: (participant) {
+                    _promptRemoveUser(context, participant);
+                  },
                 );
               },
             );
@@ -287,6 +295,65 @@ class CircleSessionInfoPageState extends ConsumerState<CircleSessionInfoPage> {
       } catch (ex) {
         debugPrint(
             'ERROR copying ${_activeSession.circle.link} to clipboard: ${ex.toString()}');
+      }
+    }
+  }
+
+  Future<void> _promptRemoveUser(
+      BuildContext context, SessionParticipant participant) async {
+    final t = AppLocalizations.of(context)!;
+    bool? result = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      barrierColor: Theme.of(context).themeColors.blurBackground,
+      builder: (_) => AlertDialog(
+        title: Text(t.removeFromCircle),
+        content: ConstrainedBox(
+          constraints:
+              BoxConstraints(maxWidth: Theme.of(context).maxRenderWidth),
+          child: Text(t.removeFromCirclePrompt(participant.name)),
+        ),
+        actions: [
+          TextButton(
+            child: Text(t.no),
+            onPressed: () {
+              Navigator.of(context).pop(false);
+            },
+          ),
+          TextButton(
+            child: Text(t.yes),
+            onPressed: () {
+              Navigator.of(context).pop(true);
+            },
+          ),
+        ],
+      ),
+    );
+    if (result != null && result == true) {
+      //await _removeUser();
+      bool result =
+          await ref.read(communicationsProvider).removeUserFromSession(
+                sessionUserId: participant.sessionUserId!,
+              );
+      if (!mounted) return;
+      if (!result) {
+        await showDialog(
+          context: context,
+          barrierDismissible: false,
+          barrierColor: Theme.of(context).themeColors.blurBackground,
+          builder: (_) => AlertDialog(
+            title: Text(t.unableToRemoveUser),
+            content: Text(t.unableToRemoveUserMessage(participant.name)),
+            actions: [
+              TextButton(
+                child: Text(t.ok),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
+        );
       }
     }
   }

@@ -40,7 +40,6 @@ abstract class CommunicationProvider extends ChangeNotifier {
     required Session session,
     required CommunicationHandler handler,
     bool enableVideo,
-    required Size fullScreenSize,
   });
   Future<void> leaveSession({bool requested = true});
   Future<void> endSession();
@@ -56,6 +55,7 @@ abstract class CommunicationProvider extends ChangeNotifier {
   Future<bool> doneActiveSessionTotem({required String sessionUserId});
   Future<bool> forceNextActiveSessionTotem();
   Future<void> setHasTotem(bool hasTotem);
+  Future<bool> removeUserFromSession({required String sessionUserId});
 
   Stream<CommunicationAudioVolumeIndication> get audioIndicatorStream;
 

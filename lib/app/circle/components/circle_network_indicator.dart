@@ -1,3 +1,4 @@
+import 'package:decorated_icon/decorated_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:totem/models/index.dart';
@@ -11,18 +12,30 @@ class CircleNetworkUnstable extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeColors = Theme.of(context).themeColors;
     if (participant == null) {
-      return Container(
+      return DecoratedIcon(
+        Icons.signal_wifi_statusbar_connected_no_internet_4,
+        size: 32,
+        color: themeColors.reversedText,
+        shadows: const [
+          BoxShadow(
+            color: Colors.black87,
+            blurRadius: 6,
+            spreadRadius: 0,
+            offset: Offset.zero,
+          ),
+        ],
+      ); /*Container(
         padding: const EdgeInsets.all(3),
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: themeColors.alertBackground,
         ),
         child: Icon(
-          Icons.wifi,
+          Icons.signal_wifi_statusbar_connected_no_internet_4,
           size: 24,
           color: themeColors.reversedText,
         ),
-      );
+      );*/
     }
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 11),
@@ -34,7 +47,7 @@ class CircleNetworkUnstable extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
-            Icons.wifi,
+            Icons.signal_wifi_statusbar_connected_no_internet_4,
             size: 24,
             color: themeColors.reversedText,
           ),

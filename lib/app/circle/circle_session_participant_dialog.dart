@@ -14,12 +14,15 @@ class CircleSessionParticipantDialog extends ConsumerStatefulWidget {
   const CircleSessionParticipantDialog({
     Key? key,
     required this.participant,
+    this.overrideMe = false,
   }) : super(key: key);
   final SessionParticipant participant;
+  final bool overrideMe;
 
-  static Future<String?> showDialog(
+  static Future<String?> showParticipantDialog(
     BuildContext context, {
     required SessionParticipant participant,
+    bool overrideMe = false,
   }) async {
     return showModalBottomSheet<String>(
       enableDrag: true,
@@ -30,6 +33,7 @@ class CircleSessionParticipantDialog extends ConsumerStatefulWidget {
       barrierColor: Theme.of(context).themeColors.blurBackground,
       builder: (_) => CircleSessionParticipantDialog(
         participant: participant,
+        overrideMe: overrideMe,
       ),
     );
   }
@@ -50,7 +54,9 @@ class CircleSessionParticipantDialogState
     _userProfile = ref
         .read(repositoryProvider)
         .userProfileWithId(uid: widget.participant.uid, circlesCompleted: true);
-    me = ref.read(activeSessionProvider).me();
+    me = !widget.overrideMe
+        ? ref.read(activeSessionProvider).me()
+        : widget.participant;
     super.initState();
   }
 
@@ -69,135 +75,234 @@ class CircleSessionParticipantDialogState
           padding: const EdgeInsets.only(
             top: 50,
           ),
-          child: BottomTrayContainer(
-            fullScreen: true,
-            padding: const EdgeInsets.symmetric(
-              vertical: 10,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Row(
-                  children: [
-                    Expanded(child: Container()),
-                    IconButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      icon: Icon(
-                        Icons.close,
-                        color: themeColors.primaryText,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                  ],
+          child: Center(
+            child: ConstrainedBox(
+              constraints:
+                  BoxConstraints(maxWidth: Theme.of(context).maxRenderWidth),
+              child: BottomTrayContainer(
+                fullScreen: true,
+                padding: const EdgeInsets.symmetric(
+                  vertical: 10,
                 ),
-                Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: Theme.of(context).pageHorizontalPadding),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Row(
                       children: [
-                        Text(
-                          widget.participant.name,
-                          style: textStyles.headline2,
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 33),
-                        Expanded(
-                          child: FutureBuilder<UserProfile?>(
-                            future: _userProfile,
-                            builder: (BuildContext context,
-                                AsyncSnapshot<dynamic> snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return const Center(
-                                  child: BusyIndicator(),
-                                );
-                              }
-                              UserProfile? profile = snapshot.data;
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  if (profile == null)
-                                    Text(
-                                      t.unableToReadProfile,
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  if (profile != null) ...[
-                                    Center(
-                                      child: ProfileImage(
-                                        size: 100,
-                                        shape: BoxShape.rectangle,
-                                        profile: profile,
-                                        borderRadius: 8,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 40),
-                                    Row(
-                                      children: [
-                                        Expanded(
-                                          child: Text(
-                                            t.memberSince,
-                                            style: textStyles.headline3,
-                                          ),
-                                        ),
-                                        const SizedBox(
-                                          width: 10,
-                                        ),
-                                        Text(
-                                            timeFormat
-                                                .format(profile.createdOn),
-                                            style: textStyles.bodyText1)
-                                      ],
-                                    ),
-                                    Divider(
-                                      thickness: 1,
-                                      height: 32,
-                                      color: themeColors.divider,
-                                    ),
-                                    Row(
-                                      children: [
-                                        Expanded(
-                                          child: Text(
-                                            t.circlesDone,
-                                            style: textStyles.headline3,
-                                          ),
-                                        ),
-                                        const SizedBox(
-                                          width: 10,
-                                        ),
-                                        Text(
-                                          profile.completedCircles
-                                                  ?.toString() ??
-                                              "0",
-                                          style: textStyles.bodyText1,
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 24),
-                                    Expanded(child: Container()),
-                                    if (me != null && me!.role == Role.keeper)
-                                      Padding(
-                                        padding: const EdgeInsets.only(top: 10),
-                                        child: Container(),
-                                      ),
-                                  ]
-                                ],
-                              );
-                            },
+                        Expanded(child: Container()),
+                        IconButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          icon: Icon(
+                            Icons.close,
+                            color: themeColors.primaryText,
                           ),
                         ),
+                        const SizedBox(width: 8),
                       ],
                     ),
-                  ),
+                    Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal:
+                                Theme.of(context).pageHorizontalPadding),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Text(
+                              widget.participant.name,
+                              style: textStyles.headline2,
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 33),
+                            Expanded(
+                              child: FutureBuilder<UserProfile?>(
+                                future: _userProfile,
+                                builder: (BuildContext context,
+                                    AsyncSnapshot<dynamic> snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return const Center(
+                                      child: BusyIndicator(),
+                                    );
+                                  }
+                                  UserProfile? profile = snapshot.data;
+                                  return Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.stretch,
+                                    children: [
+                                      if (profile == null)
+                                        Text(
+                                          t.unableToReadProfile,
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      if (profile != null) ...[
+                                        Center(
+                                          child: ProfileImage(
+                                            size: 100,
+                                            shape: BoxShape.rectangle,
+                                            profile: profile,
+                                            borderRadius: 8,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 40),
+                                        Row(
+                                          children: [
+                                            Expanded(
+                                              child: Text(
+                                                t.memberSince,
+                                                style: textStyles.headline3,
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              width: 10,
+                                            ),
+                                            Text(
+                                                timeFormat
+                                                    .format(profile.createdOn),
+                                                style: textStyles.bodyText1)
+                                          ],
+                                        ),
+                                        Divider(
+                                          thickness: 1,
+                                          height: 32,
+                                          color: themeColors.divider,
+                                        ),
+                                        Row(
+                                          children: [
+                                            Expanded(
+                                              child: Text(
+                                                t.circlesDone,
+                                                style: textStyles.headline3,
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              width: 10,
+                                            ),
+                                            Text(
+                                              profile.completedCircles
+                                                      ?.toString() ??
+                                                  "0",
+                                              style: textStyles.bodyText1,
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 24),
+                                        Expanded(child: Container()),
+                                        if (!widget.participant.me &&
+                                            me != null &&
+                                            me!.role == Role.keeper)
+                                          ..._removeButton(context),
+                                      ]
+                                    ],
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         ),
       ),
     );
+  }
+
+  List<Widget> _removeButton(BuildContext context) {
+    final themeColors = Theme.of(context).themeColors;
+    final textStyles = Theme.of(context).textStyles;
+    return [
+      Divider(
+        thickness: 1,
+        height: 32,
+        color: themeColors.divider,
+      ),
+      InkWell(
+        onTap: () {
+          _promptRemoveUser(context);
+        },
+        child: Row(
+          children: [
+            Icon(Icons.delete, color: themeColors.primaryText),
+            const SizedBox(width: 10),
+            Text(AppLocalizations.of(context)!.removeFromCircle,
+                style: textStyles.button),
+          ],
+        ),
+      ),
+      Divider(
+        thickness: 1,
+        height: 32,
+        color: themeColors.divider,
+      ),
+    ];
+  }
+
+  Future<void> _promptRemoveUser(BuildContext context) async {
+    final t = AppLocalizations.of(context)!;
+    bool? result = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      barrierColor: Theme.of(context).themeColors.blurBackground,
+      builder: (_) => AlertDialog(
+        title: Text(t.removeFromCircle),
+        content: ConstrainedBox(
+          constraints:
+              BoxConstraints(maxWidth: Theme.of(context).maxRenderWidth),
+          child: Text(t.removeFromCirclePrompt(widget.participant.name)),
+        ),
+        actions: [
+          TextButton(
+            child: Text(t.no),
+            onPressed: () {
+              Navigator.of(context).pop(false);
+            },
+          ),
+          TextButton(
+            child: Text(t.yes),
+            onPressed: () {
+              Navigator.of(context).pop(true);
+            },
+          ),
+        ],
+      ),
+    );
+    if (result != null && result == true) {
+      //await _removeUser();
+      bool result =
+          await ref.read(communicationsProvider).removeUserFromSession(
+                sessionUserId: widget.participant.sessionUserId!,
+              );
+      if (!mounted) {
+        return;
+      }
+      if (result) {
+        Navigator.of(context).pop();
+      } else {
+        await showDialog(
+          context: context,
+          barrierDismissible: false,
+          barrierColor: Theme.of(context).themeColors.blurBackground,
+          builder: (_) => AlertDialog(
+            title: Text(t.unableToRemoveUser),
+            content: Text(t.unableToRemoveUserMessage(widget.participant.name)),
+            actions: [
+              TextButton(
+                child: Text(t.ok),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
+        );
+      }
+    }
   }
 }

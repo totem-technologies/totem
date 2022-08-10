@@ -107,7 +107,7 @@ export const startSnapSession = functions.https.onCall(async ({circleId}, {auth}
   return false;
 });
 
-export const createSnapCircle = functions.https.onCall(async ({name, description, keeper, previousCircle}, {auth}) => {
+export const createSnapCircle = functions.https.onCall(async ({name, description, keeper, previousCircle, removedParticipants}, {auth}) => {
   auth = isAuthenticated(auth);
   if (!name) {
     throw new functions.https.HttpsError("failed-precondition", "Missing name for snap circle");
@@ -133,6 +133,7 @@ export const createSnapCircle = functions.https.onCall(async ({name, description
     description?: string,
     link?: string,
     previousCircle?: string,
+    removedParticipants?: string[],
   } = {
     name,
     createdOn: created,
@@ -145,6 +146,9 @@ export const createSnapCircle = functions.https.onCall(async ({name, description
   }
   if (previousCircle) {
     data.previousCircle = previousCircle;
+  }
+  if (removedParticipants) {
+    data.removedParticipants = removedParticipants;
   }
   const ref = await admin.firestore().collection("snapCircles").add(data);
   await admin.firestore().collection("activeCircles").doc(ref.id).set({participants: {}});

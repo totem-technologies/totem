@@ -22,7 +22,7 @@ class CircleLiveSessionParticipant extends StatelessWidget {
         value: participant,
         child: GestureDetector(
           onTap: () {
-            CircleSessionParticipantDialog.showDialog(
+            CircleSessionParticipantDialog.showParticipantDialog(
               context,
               participant: participant,
             );

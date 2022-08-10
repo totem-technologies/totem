@@ -249,6 +249,9 @@ class _CircleSnapSessionContentState
         sessionProvider.state == SessionState.cancelling) {
       return _circleStartingOrEnding(context, sessionProvider.state);
     }
+    if (sessionProvider.state == SessionState.removed) {
+      return _circleUserRemoved(context);
+    }
     switch (commProvider.state) {
       case CommunicationState.failed:
         return _errorSession(context);
@@ -309,6 +312,24 @@ class _CircleSnapSessionContentState
       );
     }
     return Container();
+  }
+
+  Widget _circleUserRemoved(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
+    final textStyles = Theme.of(context).textStyles;
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(t.sessionUserRemoved, style: textStyles.headline3),
+        const SizedBox(height: 20),
+        ThemedRaisedButton(
+          label: t.leaveSession,
+          onPressed: () async {
+            Navigator.of(context).pop();
+          },
+        ),
+      ],
+    );
   }
 
   Widget _errorSession(BuildContext context) {
@@ -492,24 +513,22 @@ class _CircleSnapSessionContentState
   }
 
   void _joinSession() {
-    Size fullscreenSize = const Size(600, 600);
-//    if (widget.circle != null) {
     final provider = ref.read(communicationsProvider);
     provider.joinSession(
-        session: SnapSession.fromJson({}, circle: widget.circle),
-        enableVideo: true,
-        handler: CommunicationHandler(
-          joinedCircle: (String sessionId, String sessionUserId) {
-            debugPrint("joined circle as: $sessionUserId");
-          },
-          leaveCircle: () {
-            // prompt?
-            Future.delayed(const Duration(milliseconds: 0), () {
-              // Navigator.of(context).pop();
-            });
-          },
-        ),
-        fullScreenSize: fullscreenSize);
+      session: SnapSession.fromJson({}, circle: widget.circle),
+      enableVideo: true,
+      handler: CommunicationHandler(
+        joinedCircle: (String sessionId, String sessionUserId) {
+          debugPrint("joined circle as: $sessionUserId");
+        },
+        leaveCircle: () {
+          // prompt?
+          Future.delayed(const Duration(milliseconds: 0), () {
+            // Navigator.of(context).pop();
+          });
+        },
+      ),
+    );
   }
 
   void _launchUserFeedback() async {

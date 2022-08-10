@@ -20,6 +20,7 @@
             "count": {}
         }
     },
+    "circle": "Circle",
     "circleCreateNewMessage": "The circle named {name} is not available.\n\nDo you want to start a new circle with the same name and keeper?",
     "@circleCreateNewMessage": {
         "placeholders": {
@@ -43,6 +44,15 @@
     },
     "circleReturnToApp": "Tap to return to Totem",
     "circleStarting": "Circle is starting",
+    "circleTotemPass": "Skips sharing by:",
+    "circleTotemPassLine1": "muting microphone",
+    "circleTotemPassLine2": "hiding video or image",
+    "circleTotemPassLine3": "passing to next person",
+    "circleTotemReceive": "Begins sharing by:",
+    "circleTotemReceiveLine1": "un-muting microphone",
+    "circleTotemReceiveLine2": "showing video or image",
+    "circleTotemSettings": "To make changes to your microphone, speakers, or camera, select here",
+    "circleWaitForUser": "Please wait while the next person gets ready to share.",
     "circleWeeksSession": "This Weeks Session",
     "copiedToClipboard": "The link to the circle has been copied to your clipboard.",
     "createCircle": "Create Circle",
@@ -90,6 +100,7 @@
     "errorEnablePermissions": "Please go to your device settings to enable permissions.",
     "errorDeviceSettings": "Go to device settings",
     "errorRetryStart": "Retry permissions",
+    "exit": "Exit",
     "finish": "Finish!",
     "forceUnMute": "Force Unmute",
     "getStarted": "Get Started",
@@ -136,6 +147,7 @@
     "name": "Name",
     "next": "Next",
     "nextSession": "Next Session",
+    "no": "No",
     "noCirclesMessage": "You are not a part of any circles",
     "noParticipantsActiveSession": "There are no participants in this session.",
     "noSnapCirclesMessage": "seems like there are no active circles",
@@ -153,9 +165,17 @@
     },
     "pass": "Pass",
     "phoneNumber": "Phone Number",
+    "preview": "Preview",
     "profilePicture": "Profile Picture",
     "receive": "Receive",
     "rejoinCircle": "Rejoin circle in progress",
+    "removeFromCircle": "Remove from circle",
+    "removeFromCirclePrompt": "This will remove {name} from the circle and they won't be able to rejoin.\n\nDo you want to remove {name} from this circle?",
+    "@removeFromCirclePrompt": {
+        "placeholders": {
+            "name": {}
+        }
+    },
     "retake": "Retake",
     "retryPhone": "Didn’t receive a code?\nEnter a new number",
     "retrySignin": "Retry",
@@ -166,13 +186,15 @@
     "selectPhotoExisting": "Existing photo",
     "selectPhotoCamera": "Take a new photo",
     "sendCode": "Send Code",
-    "sessionFeedbackRequest": "Tell us about your Totem experience", 
+    "sessionFeedbackRequest": "Tell us about your Totem experience",
     "sessionInProgress": "Session in progress",
     "sessionsCompleted": "All session completed",
     "sessionStateCancelled": "The session was cancelled",
     "sessionStateComplete": "The session has ended.",
     "sessionsUpcoming": "Upcoming sessions",
+    "sessionUserRemoved": "You were removed from the circle",
     "sessionWaiting": "Waiting to start",
+    "settings": "Settings",
     "share": "Share",
     "signup": "Signup",
     "signOut": "Sign Out",
@@ -194,6 +216,13 @@
         }
     },
     "unableToReadProfile": "Unable to read profile",
+    "unableToRemoveUser": "Unable to remove",
+    "unableToRemoveUserMessage": "Unable to remove {name} from the circle. Please try again.",
+    "@unableToRemoveUserMessage": {
+        "placeholders": {
+            "name": {}
+        }
+    },
     "unmute": "Unmute",
     "unstableNetwork": "Unstable Network",
     "unstableNetworkUser": "{name}'s network is unstable",
@@ -211,6 +240,7 @@
     "welcome": "Welcome to Totem",
     "welcomeDetail": "We are a Community, made to let you share and participate with others, by communicating your thoughts on a topic of your interest.",
     "worksBestChrome": "This works best in Chrome browsers",
+    "yes": "Yes",
     "youAreSharing": "You are sharing",
     "yourTurn": "Your Turn"
   }

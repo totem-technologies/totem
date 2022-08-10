@@ -78,6 +78,7 @@ class TotemRepository {
     String? description,
     String? keeper,
     String? previousCircle,
+    List<String>? removedParticipants,
     bool addAsMember = true,
   }) =>
       _circlesProvider.createSnapCircle(
@@ -86,6 +87,7 @@ class TotemRepository {
         uid: user!.uid,
         keeper: keeper,
         previousCircle: previousCircle,
+        removedParticipants: removedParticipants,
       );
   Future<bool> removeSnapCircle({required SnapCircle circle}) =>
       _circlesProvider.removeSnapCircle(circle: circle, uid: user!.uid);
@@ -97,13 +99,17 @@ class TotemRepository {
   Stream<ScheduledCircle> scheduledCircle({required String circleId}) =>
       _circlesProvider.scheduledCircle(circleId, user!.uid);
   Future<SnapCircle?> circleFromId(String id) =>
-      _circlesProvider.circleFromId(id);
+      _circlesProvider.circleFromId(id, user!.uid);
   Future<SnapCircle?> circleFromPreviousIdAndState(
           String previousId, List<SessionState> state) =>
-      _circlesProvider.circleFromPreviousIdAndState(previousId, state);
+      _circlesProvider.circleFromPreviousIdAndState(
+          previousId: previousId, state: state, uid: user!.uid);
   Future<SnapCircle?> circleFromPreviousIdAndNotState(
           String previousId, List<SessionState> state) =>
-      _circlesProvider.circleFromPreviousIdAndNotState(previousId, state);
+      _circlesProvider.circleFromPreviousIdAndNotState(
+          previousId: previousId, state: state, uid: user!.uid);
+  Future<bool> canJoinCircle(String circleId) =>
+      _circlesProvider.canJoinCircle(circleId: circleId, uid: user!.uid);
 
   // Sessions
   Future<ActiveSession> activateSession({required ScheduledSession session}) =>

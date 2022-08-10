@@ -7,7 +7,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:totem/app/circle/index.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
-import 'package:totem/services/utils/device_type.dart';
 import 'package:totem/theme/index.dart';
 
 class TestSessionControls extends ConsumerStatefulWidget {
@@ -44,8 +43,8 @@ class TestSessionControlsState extends ConsumerState<TestSessionControls> {
       builder: (BuildContext context, BoxConstraints constraints) {
         debugPrint(
             'Live Controls width: ${constraints.maxWidth} <= ${Theme.of(context).portraitBreak}');
-        bool isPhoneLayout = DeviceType.isPhone() ||
-            constraints.maxWidth <= Theme.of(context).portraitBreak;
+        bool isPhoneLayout =
+            true; // DeviceType.isPhone() || constraints.maxWidth <= Theme.of(context).portraitBreak;
         return Stack(
           children: [
             BottomTrayContainer(
