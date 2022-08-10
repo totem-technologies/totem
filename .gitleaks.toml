@@ -1,0 +1,14 @@
+name = "Totem GitLeaks"
+
+[extend]
+# useDefault will extend the base configuration with the default gitleaks config:
+# https://github.com/zricethezav/gitleaks/blob/master/config/gitleaks.toml
+useDefault = true
+
+[allowlist]
+paths = [
+  '.gitleaks\.toml',
+  'ios/Podfile.lock',
+  'macos/Podfile.lock',
+  'android/app/google-services.json',
+]
