@@ -4,6 +4,10 @@
 - flutter
 - xcode
 - fastlane
+- gitleaks (brew install gitleaks)
+
+## Setup
+1. Run `make install_hooks` to make sure no secrets are committed.
 
 ## Release Mobile
 
