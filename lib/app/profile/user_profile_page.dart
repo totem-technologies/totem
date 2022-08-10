@@ -680,6 +680,27 @@ class UserProfilePageState extends ConsumerState<UserProfilePage> {
                 height: 1,
                 thickness: 1,
               ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  Text(
+                    t.role,
+                    style: textStyles.inputLabel,
+                  ),
+                  Expanded(
+                    child: Text(
+                      user.roleName(t),
+                      textAlign: TextAlign.right,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              Divider(
+                color: themeData.themeColors.divider,
+                height: 1,
+                thickness: 1,
+              ),
             ],
           ),
         );
