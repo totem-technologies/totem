@@ -12,7 +12,7 @@ import 'package:totem/services/index.dart';
 import 'package:wakelock/wakelock.dart';
 
 class AgoraCommunicationProvider extends CommunicationProvider {
-  static const String appId = "4880737da9bf47e290f46d847cd1c3b1";
+  static const String appId = "2031ec39de0444d3b7cb29387e017063";
 
   // These are used as default values for the video preview, modify
   // as needed to define a different default as these get set on the engine
