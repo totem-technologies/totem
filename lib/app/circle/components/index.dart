@@ -22,4 +22,5 @@ export 'listener_user_layout.dart';
 export 'pending_totem_user.dart';
 export 'scheduled_session_item.dart';
 export 'speaker_video_view.dart';
+export 'user_feedback_button.dart';
 export 'waiting_for_totem_user.dart';
