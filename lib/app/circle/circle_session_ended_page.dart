@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:totem/app/index.dart';
 import 'package:totem/app_routes.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/theme/index.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class CircleSessionEndedPage extends StatelessWidget {
   const CircleSessionEndedPage(
@@ -84,18 +84,7 @@ class CircleSessionEndedPage extends StatelessWidget {
             context.pop();
           },
         ),
-        Padding(
-          padding: const EdgeInsets.only(top: 60),
-          child: ThemedRaisedButton(
-            backgroundColor:
-                Theme.of(context).themeColors.secondaryButtonBackground,
-            label: t.sessionFeedbackRequest,
-            textStyle: textStyles.button!.merge(const TextStyle(fontSize: 14)),
-            onPressed: () async {
-              _launchUserFeedback();
-            },
-          ),
-        )
+        _donateAndFeedbackButtons(),
       ],
     );
   }
@@ -123,26 +112,21 @@ class CircleSessionEndedPage extends StatelessWidget {
             },
           ),
           if (sessionState == SessionState.complete && circle != null)
-            Padding(
-              padding: const EdgeInsets.only(top: 60),
-              child: ThemedRaisedButton(
-                backgroundColor:
-                    Theme.of(context).themeColors.secondaryButtonBackground,
-                label: t.sessionFeedbackRequest,
-                textStyle:
-                    textStyles.button!.merge(const TextStyle(fontSize: 14)),
-                onPressed: () async {
-                  _launchUserFeedback();
-                },
-              ),
-            )
+            _donateAndFeedbackButtons(),
         ],
       );
     }
     return Container();
   }
 
-  void _launchUserFeedback() async {
-    await launchUrl(Uri.parse(DataUrls.userFeedback));
+  Widget _donateAndFeedbackButtons() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 60),
+      child: Row(mainAxisAlignment: MainAxisAlignment.center, children: const [
+        DonateButton(),
+        SizedBox(width: 60),
+        UserFeedbackButton(),
+      ]),
+    );
   }
 }
