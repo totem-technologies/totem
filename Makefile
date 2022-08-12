@@ -12,7 +12,7 @@ build-ios:
 publish-ios:
 	fastlane ios internal
 
-build-web:
+build-web: clean
 	rm -rf build/web
 	flutter build web --release
 

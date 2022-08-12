@@ -21,8 +21,8 @@
 
 ## Release Web
 
-1. Run `make build-web`
 1. Run `make publish-web`
+1. Make sure (https://app.heytotem.com/) loads
 
 ## iOS build notes
 
