@@ -485,7 +485,6 @@ class UserProfilePageState extends ConsumerState<UserProfilePage> {
       setState(() => _busy = true);
       await ref.read(authServiceProvider).signOut();
       if (!mounted) return;
-      Navigator.of(context).pop();
     }
   }
 
