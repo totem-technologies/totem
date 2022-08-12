@@ -9,6 +9,7 @@ import 'package:flutter/foundation.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:totem/config.dart';
 import 'package:totem/models/index.dart';
+import 'package:totem/models/system_video.dart';
 import 'package:totem/services/index.dart';
 import 'package:wakelock/wakelock.dart';
 
@@ -29,8 +30,10 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   static const int networkTimeoutDuration = 20; // seconds
   static const bool useAgoraStream = false;
 
-  AgoraCommunicationProvider(
-      {required this.sessionProvider, required this.userId}) {
+  AgoraCommunicationProvider({
+    required this.sessionProvider,
+    required this.userId,
+  }) {
     sessionProvider.addListener(_updateCommunicationFromSession);
   }
   bool _hasTotem = false;
@@ -60,6 +63,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   CommunicationDevice? _camera;
   CommunicationDevice? _audioInput;
   CommunicationDevice? _audioOutput;
+  SystemVideo systemVideo = SystemVideo();
 
   @override
   String? get lastError {
@@ -84,8 +88,12 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   }
 
   @override
-  Future<String?> initialDevicePreview({bool enableVideo = true}) async {
+  Future<String?> initialDevicePreview(
+      {bool enableVideo = true, SystemVideo? video}) async {
     String? errorMessage;
+    if (video != null) {
+      systemVideo = video;
+    }
     try {
       await _assertEngine(enableVideo);
 
@@ -335,10 +343,10 @@ class AgoraCommunicationProvider extends CommunicationProvider {
           await _engine!.setVideoEncoderConfiguration(
             // Agora recommends setting the video resolution
             VideoEncoderConfiguration(
-              frameRate: VideoFrameRate.Fps15,
-              bitrate: 400,
-              dimensions: const VideoDimensions(
-                  width: fullScreenWidth, height: fullScreenHeight),
+              frameRate: frameRateFromInt(systemVideo.frameRate),
+              bitrate: systemVideo.bitRate,
+              dimensions: VideoDimensions(
+                  width: systemVideo.videoSize, height: systemVideo.videoSize),
             ),
           );
           if (enableVideo) {
@@ -942,6 +950,22 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   void switchCamera() async {
     if (_engine != null) {
       await _engine!.switchCamera();
+    }
+  }
+
+  VideoFrameRate frameRateFromInt(int frameRate) {
+    switch (frameRate) {
+      case 15:
+        return VideoFrameRate.Fps15;
+      case 30:
+        return VideoFrameRate.Fps30;
+      case 60:
+        return VideoFrameRate.Fps60;
+      case 10:
+        return VideoFrameRate.Fps10;
+      case 24:
+      default:
+        return VideoFrameRate.Fps24;
     }
   }
 }

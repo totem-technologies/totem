@@ -8,6 +8,7 @@ import 'package:totem/services/circles_provider.dart';
 import 'package:totem/services/firebase_providers/firebase_analytics_provider.dart';
 import 'package:totem/services/firebase_providers/firebase_circles_provider.dart';
 import 'package:totem/services/firebase_providers/firebase_session_provider.dart';
+import 'package:totem/services/firebase_providers/firebase_system_provider.dart';
 import 'package:totem/services/firebase_providers/firebase_user_provider.dart';
 import 'package:totem/services/index.dart';
 
@@ -32,6 +33,7 @@ class TotemRepository {
   late final UserProvider _userProvider;
   late final SessionProvider _sessionProvider;
   late final AnalyticsProvider _analyticsProvider;
+  late final SystemProvider _systemProvider;
   AuthUser? user;
   String? pendingSessionId;
 
@@ -40,6 +42,7 @@ class TotemRepository {
     _topicsProvider = FirebaseTopicsProvider();
     _circlesProvider = FirebaseCirclesProvider();
     _userProvider = FirebaseUserProvider();
+    _systemProvider = FirebaseSystemProvider();
     _sessionProvider =
         FirebaseSessionProvider(analyticsProvider: _analyticsProvider);
     final serv = ref.read(authServiceProvider);
@@ -164,4 +167,7 @@ class TotemRepository {
   Future<void> updateAccountStateValue(String key, dynamic value) =>
       _userProvider.updateAccountStateValue(
           key: key, value: value, uid: user!.uid);
+
+  // System
+  Future<SystemVideo> getSystemVideo() => _systemProvider.getSystemVideo();
 }
