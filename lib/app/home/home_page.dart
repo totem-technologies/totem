@@ -10,19 +10,12 @@ import 'package:totem/theme/index.dart';
 
 import '../../services/providers.dart';
 
-class HomePage extends ConsumerStatefulWidget {
+class HomePage extends ConsumerWidget {
   const HomePage({Key? key}) : super(key: key);
-
-  @override
-  ConsumerState<ConsumerStatefulWidget> createState() => HomePageState();
-}
-
-class HomePageState extends ConsumerState<HomePage> {
   final double maxContainerWidth = 654;
-  HomePageState();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final themeData = Theme.of(context);
     final themeColors = themeData.themeColors;
     AuthUser user = ref.read(authServiceProvider).currentUser()!;
