@@ -235,6 +235,8 @@ class FirebaseAuthService implements AuthService {
     bool isNewUser = credential.additionalUserInfo?.isNewUser ?? false;
     await _assertUserProfile(credential.user!.uid);
     _currentUser = _userFromFirebase(credential.user, isNewUser: isNewUser);
+    IdTokenResult idToken = await _firebaseAuth.currentUser!.getIdTokenResult();
+    _currentUser!.updateFromIdToken(idToken);
     streamController?.add(_currentUser);
   }
 
