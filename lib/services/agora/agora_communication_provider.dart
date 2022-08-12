@@ -795,10 +795,6 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   Future<void> setHasTotem(bool hasTotem) async {
     if (_hasTotem != hasTotem) {
       _hasTotem = hasTotem;
-      /*await _engine!.setVideoEncoderConfiguration(VideoEncoderConfiguration(
-          dimensions: VideoDimensions(
-              width: _hasTotem ? fullScreenWidth : videoWidth,
-              height: _hasTotem ? fullScreenHeight : videoHeight))); */
     }
   }
 
