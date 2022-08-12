@@ -7,9 +7,9 @@ import 'package:collection/collection.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:totem/config.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
-import 'package:totem/config.dart';
 import 'package:wakelock/wakelock.dart';
 
 class AgoraCommunicationProvider extends CommunicationProvider {
@@ -490,6 +490,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
       StreamPublishState oldState, StreamPublishState newState, int elapsed) {
     debugPrint('video state changed: $oldState > $newState');
     bool muteVideo = newState == StreamPublishState.NoPublished;
+    debugPrint('local video muted: $muteVideo');
     if (videoMuted != muteVideo) {
       videoMuted = muteVideo;
       sessionProvider.activeSession?.updateVideoMutedStateForUser(
@@ -546,6 +547,8 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     // handle changes to the audio state for a given user. This will be called
     // when people are muted so that we can register the audio status of that
     // user for display
+    debugPrint(
+        'local video state changed: $uid state: ${state.name} reason: ${reason.name}');
     if (state == VideoRemoteState.Stopped &&
         reason == VideoRemoteStateReason.RemoteMuted) {
       sessionProvider.activeSession?.updateVideoMutedStateForUser(
@@ -792,10 +795,6 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   Future<void> setHasTotem(bool hasTotem) async {
     if (_hasTotem != hasTotem) {
       _hasTotem = hasTotem;
-      await _engine!.setVideoEncoderConfiguration(VideoEncoderConfiguration(
-          dimensions: VideoDimensions(
-              width: _hasTotem ? fullScreenWidth : videoWidth,
-              height: _hasTotem ? fullScreenHeight : videoHeight)));
     }
   }
 
