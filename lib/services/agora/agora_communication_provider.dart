@@ -20,8 +20,8 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   static const int videoHeight = 360;
   static const int videoWidth = 360;
 
-  static const int fullScreenHeight = 600;
-  static const int fullScreenWidth = 600;
+  static const int fullScreenHeight = 500;
+  static const int fullScreenWidth = 500;
 
   // Communication streams
   static const int statsStream = 0;
@@ -331,10 +331,14 @@ class AgoraCommunicationProvider extends CommunicationProvider {
           await _engine!.enableDeepLearningDenoise(true);
           await _engine!.enableAudioVolumeIndication(200, 3, true);
           await _engine!.setChannelProfile(ChannelProfile.Communication);
+          await _engine!.enableDualStreamMode(true);
           await _engine!.setVideoEncoderConfiguration(
+            // Agora recommends setting the video resolution
             VideoEncoderConfiguration(
-              dimensions:
-                  const VideoDimensions(width: videoWidth, height: videoHeight),
+              frameRate: VideoFrameRate.Fps15,
+              bitrate: 400,
+              dimensions: const VideoDimensions(
+                  width: fullScreenWidth, height: fullScreenHeight),
             ),
           );
           if (enableVideo) {
