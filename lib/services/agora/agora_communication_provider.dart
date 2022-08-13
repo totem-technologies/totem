@@ -340,6 +340,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
           await _engine!.enableAudioVolumeIndication(200, 3, true);
           await _engine!.setChannelProfile(ChannelProfile.Communication);
           await _engine!.enableDualStreamMode(true);
+
           await _engine!.setVideoEncoderConfiguration(
             // Agora recommends setting the video resolution
             VideoEncoderConfiguration(
@@ -656,7 +657,16 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   }
 
   void _handleUserJoined(int user, int elapsed) {
+    if (user == commUid) {
+      return;
+    }
     sessionProvider.activeSession?.userJoined(sessionUserId: user.toString());
+    if (sessionProvider.activeSession?.state == SessionState.live) {
+      _updateVideoStreamState(user, VideoRemoteState.Decoding,
+          VideoRemoteStateReason.RemoteUnmuted);
+    } else {
+      _engine!.setRemoteVideoStreamType(user, VideoStreamType.Low);
+    }
     debugPrint('User joined event: $user elapsed $elapsed');
   }
 
@@ -745,7 +755,30 @@ class AgoraCommunicationProvider extends CommunicationProvider {
           _engine?.leaveChannel();
         }
       }
+      if (session.lastChange == ActiveSessionChange.totemChange ||
+          session.lastChange == ActiveSessionChange.started) {
+        SessionParticipant? participant = session.totemParticipant;
+        debugPrint('updating video stream state for users');
+        _updateVideoStreamState(participant);
+      }
       _lastState = session.state;
+    }
+  }
+
+  void _updateVideoStreamState() {
+    ActiveSession? session = sessionProvider.activeSession;
+    if (session != null) {
+      SessionParticipant? totemParticipant = session.totemParticipant;
+      String? totemSessionId = totemParticipant?.sessionUserId;
+      for (final participant in session.activeParticipants) {
+        if (participant.sessionUserId != null) {
+          _engine?.setRemoteVideoStreamType(
+              int.parse(participant.sessionUserId!),
+              participant.sessionUserId == totemSessionId
+                  ? VideoStreamType.High
+                  : VideoStreamType.Low);
+        }
+      }
     }
   }
 
