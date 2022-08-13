@@ -9,7 +9,6 @@ import 'package:flutter/foundation.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:totem/config.dart';
 import 'package:totem/models/index.dart';
-import 'package:totem/models/system_video.dart';
 import 'package:totem/services/index.dart';
 import 'package:wakelock/wakelock.dart';
 
@@ -662,8 +661,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     }
     sessionProvider.activeSession?.userJoined(sessionUserId: user.toString());
     if (sessionProvider.activeSession?.state == SessionState.live) {
-      _updateVideoStreamState(user, VideoRemoteState.Decoding,
-          VideoRemoteStateReason.RemoteUnmuted);
+      _updateVideoStreamState();
     } else {
       _engine!.setRemoteVideoStreamType(user, VideoStreamType.Low);
     }
@@ -757,9 +755,8 @@ class AgoraCommunicationProvider extends CommunicationProvider {
       }
       if (session.lastChange == ActiveSessionChange.totemChange ||
           session.lastChange == ActiveSessionChange.started) {
-        SessionParticipant? participant = session.totemParticipant;
         debugPrint('updating video stream state for users');
-        _updateVideoStreamState(participant);
+        _updateVideoStreamState();
       }
       _lastState = session.state;
     }
