@@ -27,7 +27,7 @@ class SpeakerVideoViewState extends ConsumerState<SpeakerVideoView> {
   @override
   Widget build(BuildContext context) {
     final activeSession = ref.watch(activeSessionProvider);
-    final commProvider = ref.watch(communicationsProvider);
+    ref.watch(communicationsProvider);
     final totemParticipant = activeSession.totemParticipant;
     final bool totemReceived = activeSession.totemReceived;
     if (totemParticipant != null) {
