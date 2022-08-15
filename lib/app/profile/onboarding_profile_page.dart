@@ -41,6 +41,7 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage>
   final List<String> _errors = [];
   bool _ageCheck = false;
   bool _tAndCCheck = false;
+  bool _newUser = false;
 
   bool get hasChanged {
     return (_userProfile!.name != _nameController.text ||
@@ -58,6 +59,7 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage>
       AuthUser? user = ref.read(authServiceProvider).currentUser();
       repo.user = user;
     }
+    _newUser = repo.user!.isNewUser;
     _userProfile = widget.profile;
     _nameController.text = _userProfile?.name ?? "";
     _emailController.text = _userProfile?.email ?? "";
@@ -647,13 +649,19 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage>
 
   @override
   FutureOr<void> afterFirstLayout(BuildContext context) {
-    if (widget.profile != null) {
+    if (widget.profile != null && !_newUser) {
       final t = AppLocalizations.of(context)!;
       if (_userProfile!.name.isEmpty) {
         _errors.add(t.name);
       }
       if (_userProfile!.email == null || _userProfile!.email!.isEmpty) {
         _errors.add(t.email);
+      }
+      if (!_userProfile!.ageVerified) {
+        _errors.add(t.ageMissing);
+      }
+      if (!_userProfile!.acceptedTOS) {
+        _errors.add(t.termsOfService);
       }
       Future.delayed(const Duration(milliseconds: 100), () {
         if (_errors.isNotEmpty) {
