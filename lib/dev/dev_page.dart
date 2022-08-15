@@ -13,6 +13,7 @@ final widgetList = <String, Function>{
   "Circle Session": ActiveSessionLayoutTest.new,
   "Onboarding Dialog": OnboardingDialogTest.new,
   "Circle User Profile": CircleUserProfileTest.new,
+  "Onboarding Profile Dialog": OnboardingProfilePageTest.new,
   "Buttons": ButtonsScreen.new
 };
 
