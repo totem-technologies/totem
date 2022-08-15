@@ -16,7 +16,7 @@ class CameraMuted extends StatelessWidget {
       child: Align(
         alignment: Alignment.center,
         child:
-            Icon(Icons.videocam_off, size: 24, color: themeColors.reversedText),
+            Icon(Icons.videocam_off, size: 32, color: themeColors.reversedText),
       ),
     );
   }
