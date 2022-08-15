@@ -1,19 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:totem/app/home/components/index.dart';
 import 'package:totem/app_routes.dart';
 import 'package:totem/components/widgets/index.dart';
+import 'package:totem/models/index.dart';
 import 'package:totem/theme/index.dart';
 
-class HomePage extends StatelessWidget {
+import '../../services/providers.dart';
+
+class HomePage extends ConsumerWidget {
   const HomePage({Key? key}) : super(key: key);
   final double maxContainerWidth = 654;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final themeData = Theme.of(context);
     final themeColors = themeData.themeColors;
+    AuthUser user = ref.read(authServiceProvider).currentUser()!;
     bool isMobile = Theme.of(context).isMobile(context);
     return Scaffold(
       backgroundColor: themeColors.altBackground,
@@ -24,13 +29,14 @@ class HomePage extends StatelessWidget {
               top: true,
               bottom: false,
               child: isMobile
-                  ? _homeContent(context, isMobile: isMobile)
+                  ? _homeContent(context, isMobile: isMobile, user: user)
                   : Center(
                       child: ConstrainedBox(
                         constraints: BoxConstraints(
                             maxWidth: maxContainerWidth +
                                 (Theme.of(context).pageHorizontalPadding * 2)),
-                        child: _homeContent(context, isMobile: isMobile),
+                        child: _homeContent(context,
+                            isMobile: isMobile, user: user),
                       ),
                     ),
             ),
@@ -58,8 +64,10 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _homeContent(BuildContext context, {required bool isMobile}) {
+  Widget _homeContent(BuildContext context,
+      {required bool isMobile, required AuthUser user}) {
     final t = AppLocalizations.of(context)!;
+    bool isKeeper = user.hasRole(Role.keeper);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -68,10 +76,10 @@ class HomePage extends StatelessWidget {
         ),
         TotemHeader(
           text: t.circles,
-          trailing: !isMobile ? const CreateCircleButton() : null,
+          trailing: !isMobile && isKeeper ? const CreateCircleButton() : null,
         ),
         SizedBox(height: isMobile ? 30 : 20),
-        if (isMobile)
+        if (isMobile && isKeeper)
           Padding(
             padding: EdgeInsets.only(
                 bottom: 20,
