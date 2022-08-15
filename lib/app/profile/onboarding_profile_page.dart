@@ -299,8 +299,6 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage>
     final themeData = Theme.of(context);
     final textStyles = themeData.textStyles;
     final themeColors = themeData.themeColors;
-    final descriptionTheme =
-        TextStyle(color: themeColors.secondaryText, fontSize: 12);
     return FutureBuilder<UserProfile?>(
       future: _userProfileFetch,
       builder: (context, asyncSnapshot) {
@@ -551,35 +549,6 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage>
           ),
           TextSpan(text: parts2.last),
         ]);
-  }
-
-  Widget _checkBox(
-      {required bool value,
-      required Widget child,
-      CrossAxisAlignment alignment = CrossAxisAlignment.center,
-      required Function(bool) onChanged}) {
-    return InkWell(
-      onTap: () {
-        onChanged(!value);
-      },
-      child: Row(
-        crossAxisAlignment: alignment,
-        children: <Widget>[
-          Checkbox(
-            visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
-            activeColor: Theme.of(context).themeColors.primaryText,
-            splashRadius: 0,
-            value: value,
-            onChanged: (bool? newValue) {
-              onChanged(newValue!);
-            },
-          ),
-          const SizedBox(width: 8),
-          Expanded(child: child),
-        ],
-      ),
-    );
-    ;
   }
 
   Widget _emptyProfileImage(BuildContext context) {
