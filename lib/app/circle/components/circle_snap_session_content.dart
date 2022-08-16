@@ -83,7 +83,10 @@ class _CircleSnapSessionContentState
                                     SubPageHeader(
                                       title: widget.circle.name,
                                       onClose: (commProvider.state !=
-                                              CommunicationState.disconnecting)
+                                                  CommunicationState
+                                                      .disconnecting &&
+                                              sessionProvider.state !=
+                                                  SessionState.ending)
                                           ? () async {
                                               if (commProvider.state !=
                                                   CommunicationState.active) {
