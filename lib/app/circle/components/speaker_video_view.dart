@@ -27,6 +27,7 @@ class SpeakerVideoViewState extends ConsumerState<SpeakerVideoView> {
   @override
   Widget build(BuildContext context) {
     final activeSession = ref.watch(activeSessionProvider);
+    ref.watch(communicationsProvider);
     final totemParticipant = activeSession.totemParticipant;
     final bool totemReceived = activeSession.totemReceived;
     if (totemParticipant != null) {
@@ -76,7 +77,19 @@ class SpeakerVideoViewState extends ConsumerState<SpeakerVideoView> {
       // if totem recipient is me, show the pending totem view
       if (totemParticipant.me) {
         return PendingTotemUser(
-          userVideo: CircleLiveSessionVideo(participant: totemParticipant),
+          userVideo: Stack(children: [
+            CircleLiveSessionVideo(participant: totemParticipant),
+            if (totemParticipant.videoMuted)
+              const Positioned.fill(
+                child: CameraMuted(),
+              ),
+            if (totemParticipant.muted)
+              const PositionedDirectional(
+                top: 5,
+                end: 5,
+                child: MuteIndicator(),
+              ),
+          ]),
           onPass: widget.onPass,
           onReceive: widget.onReceive,
           onSettings: widget.onSettings,
