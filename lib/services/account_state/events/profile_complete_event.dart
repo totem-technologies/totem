@@ -27,7 +27,9 @@ class ProfileCompleteEvent extends AccountStateEvent {
     if (_userProfile != null) {
       if (_userProfile!.name.isEmpty ||
           _userProfile!.email == null ||
-          _userProfile!.email!.isEmpty) {
+          _userProfile!.email!.isEmpty ||
+          !_userProfile!.acceptedTOS ||
+          !_userProfile!.ageVerified) {
         return true;
       }
       return false;

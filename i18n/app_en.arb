@@ -4,6 +4,8 @@
     "acceptGuidelines": "Accept Guidelines",
     "addProfilePicture": "Add a profile picture",
     "admin": "Admin",
+    "ageMissing": "Age verification",
+    "ageVerification": "I am at least 18 years of age",
     "areYouSureSignOut": "Are you sure you want to sign out?",
     "audioInput": "Audio Input",
     "audioOutput": "Audio Output",
@@ -168,6 +170,7 @@
     "pass": "Pass",
     "phoneNumber": "Phone Number",
     "preview": "Preview",
+    "privacyPolicy": "Privacy Policy",
     "profilePicture": "Profile Picture",
     "receive": "Receive",
     "rejoinCircle": "Rejoin circle in progress",
@@ -211,6 +214,14 @@
     "startTime": "Start Time",
     "startVideo": "Start Video",
     "stopVideo": "Stop Video",
+    "tAndC": "I have read, understand and agree with the {privacyPolicy} and {termsOfService}",
+    "@tAndC": {
+        "placeholders": {
+            "privacyPolicy": {},
+            "termsOfService": {}
+        }
+    },
+    "termsOfService": "Terms of Service",
     "textSentTo": "Text sent to {number}",
     "@textSentTo": {
         "placeholders": {
@@ -237,6 +248,7 @@
     "uploadErrorGeneric": "An unknown error occurred trying to save your image.",
     "uploadErrorTitle": "Unable to save image",
     "useImage": "Use Image",
+    "verificationDescription": "You must meet this requirement in order for us to provide services",
     "version": "Version",
     "videoSettings": "Video Settings",
     "welcome": "Welcome to Totem",

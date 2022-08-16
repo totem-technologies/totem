@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:totem/app/circle/components/circle_network_indicator.dart';
 import 'package:totem/app/circle/components/layouts.dart';
 import 'package:totem/app/circle/index.dart';
+import 'package:totem/app/profile/onboarding_profile_page.dart';
 import 'package:totem/components/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/account_state/index.dart';
@@ -317,5 +318,49 @@ class CircleUserProfileTestState extends State<CircleUserProfileTest> {
         );
       },
     );
+  }
+}
+
+class OnboardingProfilePageTest extends StatefulWidget {
+  const OnboardingProfilePageTest({Key? key}) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() => OnboardingProfilePageTestState();
+}
+
+class OnboardingProfilePageTestState extends State<OnboardingProfilePageTest>
+    with AfterLayoutMixin<OnboardingProfilePageTest> {
+  bool showing = true;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.grey,
+      child: showing
+          ? OnboardingProfilePage(
+              onProfileUpdated: (UserProfile profile) {
+                setState(() => showing = false);
+              },
+            )
+          : Center(
+              child: ThemedRaisedButton(
+                label: 'Show Onboarding Profile Page',
+                onPressed: () {
+                  showDialog();
+                },
+              ),
+            ),
+    );
+  }
+
+  @override
+  FutureOr<void> afterFirstLayout(BuildContext context) {
+    showDialog();
+  }
+
+  Future<void> showDialog() async {
+    if (!showing) {
+      setState(() => showing = true);
+    }
   }
 }

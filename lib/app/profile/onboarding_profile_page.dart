@@ -5,13 +5,17 @@ import 'package:after_layout/after_layout.dart';
 import 'package:camera/camera.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl_phone_number_input/intl_phone_number_input.dart';
+import 'package:libphonenumber_plugin/libphonenumber_plugin.dart';
 import 'package:totem/components/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class OnboardingProfilePage extends ConsumerStatefulWidget {
   const OnboardingProfilePage({Key? key, this.onProfileUpdated, this.profile})
@@ -35,12 +39,17 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage>
   File? _pendingImageChangeFile;
   XFile? _pendingImageChange;
   final List<String> _errors = [];
+  bool _ageCheck = false;
+  bool _tAndCCheck = false;
+  bool _newUser = false;
 
   bool get hasChanged {
     return (_userProfile!.name != _nameController.text ||
         (_userProfile!.email != null &&
                 _userProfile!.email != _emailController.text ||
-            _pendingImageChange != null));
+            _pendingImageChange != null ||
+            _ageCheck != _userProfile!.ageVerified ||
+            _tAndCCheck != _userProfile!.acceptedTOS));
   }
 
   @override
@@ -50,9 +59,12 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage>
       AuthUser? user = ref.read(authServiceProvider).currentUser();
       repo.user = user;
     }
+    _newUser = repo.user!.isNewUser;
     _userProfile = widget.profile;
     _nameController.text = _userProfile?.name ?? "";
     _emailController.text = _userProfile?.email ?? "";
+    _ageCheck = _userProfile?.ageVerified ?? false;
+    _tAndCCheck = _userProfile?.acceptedTOS ?? false;
     _userProfileFetch = repo.userProfile();
     super.initState();
   }
@@ -80,6 +92,7 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage>
     final themeData = Theme.of(context);
     final textStyles = themeData.textStyles;
     final themeColors = themeData.themeColors;
+    final authUser = ref.read(authServiceProvider).currentUser();
     return GradientBackground(
       rotation: themeData.backgroundGradientRotation,
       child: Scaffold(
@@ -164,7 +177,7 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage>
                                         ],
                                       ),
                                       const SizedBox(height: 10),
-                                      _profileEditForm(context),
+                                      _profileEditForm(context, authUser),
                                       const SizedBox(height: 20),
                                       ThemedRaisedButton(
                                         label: t.finish,
@@ -253,7 +266,9 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage>
     }
     if (_userProfile!.name != _nameController.text ||
         _userProfile!.email != _emailController.text ||
-        _pendingImageChange != null) {
+        _pendingImageChange != null ||
+        _userProfile!.ageVerified != _ageCheck ||
+        _userProfile!.acceptedTOS != _tAndCCheck) {
       setState(() {
         _busy = true;
         _errors.clear();
@@ -261,6 +276,8 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage>
       _formKey.currentState!.save();
       _userProfile!.name = _nameController.text;
       _userProfile!.email = _emailController.text;
+      _userProfile!.ageVerified = _ageCheck;
+      _userProfile!.acceptedTOS = _tAndCCheck;
       if (_pendingImageChange != null) {
         AuthUser user = ref.read(authServiceProvider).currentUser()!;
         await _uploader.currentState!
@@ -279,7 +296,7 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage>
     }
   }
 
-  Widget _profileEditForm(BuildContext context) {
+  Widget _profileEditForm(BuildContext context, AuthUser? user) {
     final t = AppLocalizations.of(context)!;
     final themeData = Theme.of(context);
     final textStyles = themeData.textStyles;
@@ -350,7 +367,18 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage>
                   ),
                 ],
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 24),
+              Text(t.phoneNumber, style: textStyles.inputLabel),
+              const SizedBox(height: 4),
+              (user != null
+                  ? FutureBuilder<String>(
+                      future: _formatPhoneNumber(user.phoneNumber),
+                      builder: (context, asyncSnapshot) {
+                        return Text(asyncSnapshot.data ?? user.phoneNumber);
+                      },
+                    )
+                  : const Text("")),
+              const SizedBox(height: 24),
               Text(t.name, style: textStyles.inputLabel),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -437,12 +465,92 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage>
                   )
                 ],
               ),
+              const SizedBox(height: 24),
+              CheckboxFormField(
+                  context: context,
+                  value: _ageCheck,
+                  initialValue: _userProfile?.ageVerified ?? _ageCheck,
+                  onChanged: (value) {
+                    setState(() {
+                      _ageCheck = value ?? false;
+                    });
+                  },
+                  validator: (value) {
+                    if (value == null || !value) {
+                      return t.verificationDescription;
+                    }
+                    return null;
+                  },
+                  child: Text(t.ageVerification,
+                      style: const TextStyle(fontWeight: FontWeight.bold))),
+              const SizedBox(height: 16),
+              CheckboxFormField(
+                context: context,
+                alignment: CrossAxisAlignment.start,
+                value: _tAndCCheck,
+                initialValue: _userProfile?.acceptedTOS ?? _tAndCCheck,
+                onChanged: (value) {
+                  setState(() {
+                    _tAndCCheck = value ?? false;
+                  });
+                },
+                validator: (value) {
+                  if (value == null || !value) {
+                    return t.verificationDescription;
+                  }
+                  return null;
+                },
+                child: RichText(
+                  text: _generateTextSpan(),
+                ),
+              ),
               const SizedBox(height: 20),
             ],
           ),
         );
       },
     );
+  }
+
+  TextSpan _generateTextSpan() {
+    final themeColors = Theme.of(context).themeColors;
+    final textStyles = Theme.of(context).textStyles;
+    final t = AppLocalizations.of(context)!;
+    String text = t.tAndC(t.privacyPolicy, t.termsOfService);
+    List<String> parts = text.split(t.privacyPolicy);
+    List<String> parts2 = parts[1].split(t.termsOfService);
+    return TextSpan(
+        text: parts[0],
+        style: textStyles.bodyText1!
+            .merge(const TextStyle(height: 1.3, fontWeight: FontWeight.bold)),
+        children: [
+          TextSpan(
+            text: t.privacyPolicy,
+            style: TextStyle(
+              color: themeColors.linkText,
+              decoration: TextDecoration.underline,
+            ),
+            recognizer: TapGestureRecognizer()
+              ..onTap = () {
+                debugPrint('Privacy Policy');
+                launchUrl(Uri.parse(DataUrls.privacyPolicy));
+              },
+          ),
+          TextSpan(text: parts2.first),
+          TextSpan(
+            text: t.termsOfService,
+            style: TextStyle(
+              color: themeColors.linkText,
+              decoration: TextDecoration.underline,
+            ),
+            recognizer: TapGestureRecognizer()
+              ..onTap = () {
+                debugPrint('Terms of Service');
+                launchUrl(Uri.parse(DataUrls.termsOfService));
+              },
+          ),
+          TextSpan(text: parts2.last),
+        ]);
   }
 
   Widget _emptyProfileImage(BuildContext context) {
@@ -541,13 +649,19 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage>
 
   @override
   FutureOr<void> afterFirstLayout(BuildContext context) {
-    if (widget.profile != null) {
+    if (widget.profile != null && !_newUser) {
       final t = AppLocalizations.of(context)!;
       if (_userProfile!.name.isEmpty) {
         _errors.add(t.name);
       }
       if (_userProfile!.email == null || _userProfile!.email!.isEmpty) {
         _errors.add(t.email);
+      }
+      if (!_userProfile!.ageVerified) {
+        _errors.add(t.ageMissing);
+      }
+      if (!_userProfile!.acceptedTOS) {
+        _errors.add(t.termsOfService);
       }
       Future.delayed(const Duration(milliseconds: 100), () {
         if (_errors.isNotEmpty) {
@@ -556,5 +670,13 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage>
         _formKey.currentState!.validate();
       });
     }
+  }
+
+  Future<String> _formatPhoneNumber(String phoneNumber) async {
+    PhoneNumber num =
+        await PhoneNumber.getRegionInfoFromPhoneNumber(phoneNumber);
+    String? formattedNumber =
+        await PhoneNumberUtil.formatAsYouType(num.phoneNumber!, num.isoCode!);
+    return formattedNumber ?? "";
   }
 }
