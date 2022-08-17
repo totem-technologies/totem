@@ -733,6 +733,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     // check the session state
     ActiveSession? session = sessionProvider.activeSession;
     if (session != null && _session != null) {
+      bool updateStreamState = false;
       if (session.state == SessionState.live && !session.userStatus) {
         // have to manage mute state based on changes to the state
         bool started = (_lastState == SessionState.starting &&
@@ -740,6 +741,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
         if (started ||
             session.lastChange == ActiveSessionChange.totemChange ||
             session.lastChange == ActiveSessionChange.totemReceive) {
+          updateStreamState = true;
           SessionParticipant? participant = session.totemParticipant;
           if (participant != null) {
             setHasTotem(participant.me);
@@ -753,8 +755,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
           _engine?.leaveChannel();
         }
       }
-      if (session.lastChange == ActiveSessionChange.totemChange ||
-          session.lastChange == ActiveSessionChange.started) {
+      if (updateStreamState) {
         debugPrint('updating video stream state for users');
         _updateVideoStreamState();
       }
@@ -772,7 +773,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
           _engine?.setRemoteVideoStreamType(
               int.parse(participant.sessionUserId!),
               participant.sessionUserId == totemSessionId
-                  ? VideoStreamType.High
+                  ? VideoStreamType.Low
                   : VideoStreamType.Low);
           debugPrint(
               'Setting video stream for ${participant.name} to ${participant.sessionUserId == totemSessionId ? 'high' : 'low'}');
