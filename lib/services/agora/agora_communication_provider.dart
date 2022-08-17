@@ -663,7 +663,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     if (sessionProvider.activeSession?.state == SessionState.live) {
       _updateVideoStreamState();
     } else {
-      _engine!.setRemoteVideoStreamType(user, VideoStreamType.Low);
+      _engine!.setRemoteVideoStreamType(user, VideoStreamType.High);
     }
     debugPrint('User joined event: $user elapsed $elapsed');
   }
@@ -773,8 +773,8 @@ class AgoraCommunicationProvider extends CommunicationProvider {
           _engine?.setRemoteVideoStreamType(
               int.parse(participant.sessionUserId!),
               participant.sessionUserId == totemSessionId
-                  ? VideoStreamType.Low
-                  : VideoStreamType.Low);
+                  ? VideoStreamType.High
+                  : VideoStreamType.High);
           debugPrint(
               'Setting video stream for ${participant.name} to ${participant.sessionUserId == totemSessionId ? 'high' : 'low'}');
         }
