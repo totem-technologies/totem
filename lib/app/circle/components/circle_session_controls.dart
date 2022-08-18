@@ -217,6 +217,16 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
                 },
               ),
               if (role == Role.keeper) ...[
+                const SizedBox(width: _btnSpacing),
+                ThemedControlButton(
+                  label: t.reverse,
+                  labelColor: themeColors.reversedText,
+                  icon: Icons.refresh,
+                  onPressed: () {
+                    debugPrint('info pressed');
+                    _reverseOrder(context, ref);
+                  },
+                ),
                 const SizedBox(
                   width: _btnSpacing,
                 ),
@@ -362,6 +372,16 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
                   ),
                   const SizedBox(width: _btnSpacing),
                   ThemedControlButton(
+                    label: t.reverse,
+                    labelColor: themeColors.reversedText,
+                    icon: Icons.refresh,
+                    onPressed: () {
+                      debugPrint('info pressed');
+                      _reverseOrder(context, ref);
+                    },
+                  ),
+                  const SizedBox(width: _btnSpacing),
+                  ThemedControlButton(
                     label: t.info,
                     labelColor: themeColors.reversedText,
                     icon: Icons.info_outline,
@@ -464,5 +484,27 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
     _timer = Timer(const Duration(milliseconds: 350), () {
       func();
     });
+  }
+
+  Future<void> _reverseOrder(BuildContext context, WidgetRef ref) async {
+    FocusScope.of(context).unfocus();
+    final repo = ref.read(repositoryProvider);
+    final activeSession = ref.read(activeSessionProvider);
+    if (activeSession.speakOrderParticipants.length == 1) {
+      return;
+    }
+    List<SessionParticipant> participants =
+        List<SessionParticipant>.from(activeSession.speakOrderParticipants)
+            .sublist(1);
+    if (participants.length > 1) {
+      participants = [
+        activeSession.speakOrderParticipants.first,
+        ...participants.reversed.toList(growable: false)
+      ];
+      await repo.updateActiveSession(repo.activeSession!.reorderParticipants(
+          participants
+              .map((element) => element.sessionUserId!)
+              .toList(growable: false)));
+    }
   }
 }
