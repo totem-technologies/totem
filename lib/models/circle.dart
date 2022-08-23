@@ -12,7 +12,7 @@ abstract class Circle {
   String? activeSession;
   int participantCount = 0;
   String? link;
-  String? keeper;
+  late String keeper;
   String? previousCircle;
   List<String>? removedParticipants;
   bool _canJoin = true;
@@ -42,7 +42,9 @@ abstract class Circle {
 
   bool get canJoin => _canJoin;
 
-  Role participantRole(String participantId);
+  Role participantRole(String participantId) {
+    return keeper == participantId ? Role.keeper : Role.member;
+  }
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> data = {

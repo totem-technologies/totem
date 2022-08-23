@@ -10,6 +10,19 @@ Bringing people together to heal.
 ## Setup
 1. Run `make install_hooks` to make sure no secrets are committed.
 
+## Firebase emulator
+
+1. You will need to run this command once:
+   - `cd server/functions; firebase functions:config:get > .runtimeconfig.json`
+   - ***NOTE:*** This file should never be checked in as it contains secrets (it's in the .gitignore)
+2. Start the local firebase emulator:
+   - From the terminal: `cd server/functions; npm run serve`
+   - From VSCode click the start button next to the "serve" line under 'NPM Scripts'
+3. Run the totem flutter application with the environment variable `USE_EMULATOR=true`
+   - For VSCode there is a checked in configuration in the `launch.json` file.
+   - For Android Studio, create a new configuration with the run args `--dart-define=USE_EMULATOR=true`
+4. Since the emulator runs on localhost, you will need to either use web or a device emulator as the target device.
+
 ## Release
 
 1. Switch to 'main' branch: `git checkout main`
