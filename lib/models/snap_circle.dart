@@ -37,14 +37,6 @@ class SnapCircle extends Circle {
   }
 
   @override
-  Role participantRole(String participantId) {
-    if (createdBy != null && createdBy!.uid == participantId) {
-      return Role.keeper;
-    }
-    return Role.member;
-  }
-
-  @override
   Map<String, dynamic> toJson({bool includeParticipants = true}) {
     Map<String, dynamic> data = super.toJson();
     data["state"] = state.name;

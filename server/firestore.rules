@@ -19,18 +19,28 @@ service cloud.firestore {
       allow read: if request.auth != null;
       allow write: if request.auth != null && isDocOwner(uid);
     }
-    match /circles/{circleId}/{documents=**} {
+    match /circles/{circleId} {
       allow read: if request.auth != null;
-      allow write: if request.auth != null; // Fix me - should be role based/Testing only
+      allow create: if hasAnyRole(["keeper"]);
+      match /{documents=**} {
+        allow read: if request.auth != null;
+        allow write: if isDocOwner(resource.data.keeper); // Only circle keeper can update
+      }
     }
-    match /snapCircles/{circleId}/{documents=**} {
+    match /snapCircles/{circleId} {
       allow read: if request.auth != null;
-      allow write: if request.auth != null; // Fix me - should be role based/Testing only
+      allow create: if false; // Only created by cloud function
+      match /{documents=**} {
+        allow read: if request.auth != null;
+        allow write: if isDocOwner(resource.data.keeper); // Only circle keeper can update
+      }
     }
     match /activeCircles/{circleId}/{documents=**} {
       allow read: if request.auth != null;
-      allow write: if request.auth != null; // Fix me - should be role based/Testing only
+      allow write: if request.auth != null;
     }
-
+		match /system/{type}/{documents=**} {
+      allow read: if request.auth != null;
+    }
   }
 }
