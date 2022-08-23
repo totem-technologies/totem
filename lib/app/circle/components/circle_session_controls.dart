@@ -12,7 +12,7 @@ import 'package:totem/models/index.dart';
 import 'package:totem/services/providers.dart';
 import 'package:totem/services/utils/device_type.dart';
 import 'package:totem/theme/index.dart';
-import 'package:universal_html/html.dart';
+import 'package:universal_html/html.dart' show document;
 
 class CircleSessionControls extends ConsumerStatefulWidget {
   const CircleSessionControls({Key? key}) : super(key: key);
