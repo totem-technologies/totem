@@ -23,6 +23,7 @@ class CircleSessionControls extends ConsumerStatefulWidget {
 
 class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
   var _more = false;
+  var _fullscreen = false;
   Timer? _timer;
   static const double _btnSpacing = 6;
   @override
@@ -242,6 +243,16 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
                 ),
               ],
               if (role != Role.keeper) ...[
+                if (kIsWeb) ...[
+                  const SizedBox(width: _btnSpacing),
+                  ThemedControlButton(
+                    label: _fullscreen ? t.exit_fullscreen : t.fullscreen,
+                    labelColor: themeColors.reversedText,
+                    icon:
+                        _fullscreen ? Icons.close_fullscreen : Icons.fullscreen,
+                    onPressed: _toggleFullscreen,
+                  ),
+                ],
                 const SizedBox(width: _btnSpacing),
                 ThemedControlButton(
                   label: t.leaveSession,
@@ -287,9 +298,10 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
                 if (kIsWeb) ...[
                   const SizedBox(width: _btnSpacing),
                   ThemedControlButton(
-                    label: t.fullscreen,
+                    label: _fullscreen ? t.exit_fullscreen : t.fullscreen,
                     labelColor: themeColors.reversedText,
-                    icon: Icons.fullscreen,
+                    icon:
+                        _fullscreen ? Icons.close_fullscreen : Icons.fullscreen,
                     onPressed: _toggleFullscreen,
                   ),
                 ],
@@ -359,6 +371,17 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
                   },
                 ),
                 if (role != Role.keeper) ...[
+                  if (kIsWeb) ...[
+                    const SizedBox(width: _btnSpacing),
+                    ThemedControlButton(
+                      label: _fullscreen ? t.exit_fullscreen : t.fullscreen,
+                      labelColor: themeColors.reversedText,
+                      icon: _fullscreen
+                          ? Icons.close_fullscreen
+                          : Icons.fullscreen,
+                      onPressed: _toggleFullscreen,
+                    ),
+                  ],
                   const SizedBox(width: _btnSpacing),
                   ThemedControlButton(
                     label: t.leaveSession,
@@ -404,9 +427,11 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
                   if (kIsWeb) ...[
                     const SizedBox(width: _btnSpacing),
                     ThemedControlButton(
-                      label: t.fullscreen,
+                      label: _fullscreen ? t.exit_fullscreen : t.fullscreen,
                       labelColor: themeColors.reversedText,
-                      icon: Icons.fullscreen,
+                      icon: _fullscreen
+                          ? Icons.close_fullscreen
+                          : Icons.fullscreen,
                       onPressed: _toggleFullscreen,
                     ),
                   ],
@@ -436,6 +461,9 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
 
   void _toggleFullscreen() {
     var fullscreen = document.fullscreenElement != null;
+    setState(() {
+      _fullscreen = !fullscreen;
+    });
     if (!fullscreen) {
       document.documentElement?.requestFullscreen();
     } else {
