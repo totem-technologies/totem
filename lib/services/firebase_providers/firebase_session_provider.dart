@@ -463,8 +463,6 @@ class FirebaseSessionProvider extends SessionProvider {
             sessionData['participants'] = participants;
             sessionData['userStatus'] = false;
             transaction.update(ref, sessionData);
-            int count = participants.length;
-            transaction.update(circleRef, {'participantCount': count});
           }
         }
       }
@@ -511,8 +509,6 @@ class FirebaseSessionProvider extends SessionProvider {
       String sessionUserId, String? sessionImage,
       {bool muted = false, bool videoMuted = false}) async {
     await FirebaseFirestore.instance.runTransaction((transaction) async {
-      DocumentReference circleRef =
-          FirebaseFirestore.instance.doc(session.circle.ref);
       DocumentReference activeCircleRef = FirebaseFirestore.instance
           .collection(Paths.activeCircles)
           .doc(session.circle.id);
@@ -571,9 +567,6 @@ class FirebaseSessionProvider extends SessionProvider {
         activeSession["speakingOrder"] = speakingOrder;
         activeSession["userStatus"] = false;
         transaction.update(activeCircleRef, activeSession);
-
-        int count = (participants.length);
-        transaction.update(circleRef, {"participantCount": count});
       }
     });
     return true;

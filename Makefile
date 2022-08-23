@@ -23,7 +23,6 @@ run-web:
 
 release: test
 	./scripts/tag_release.sh
-	$(MAKE) publish-web
 
 test:
 	flutter analyze
