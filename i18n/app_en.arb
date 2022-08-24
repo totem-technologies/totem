@@ -105,6 +105,8 @@
     "errorRetryStart": "Retry permissions",
     "exit": "Exit",
     "feedback": "Feedback",
+    "fullscreen": "Fullscreen",
+    "exit_fullscreen": "Exit Fullscreen",
     "finish": "Finish!",
     "forceUnMute": "Force Unmute",
     "getStarted": "Get Started",
