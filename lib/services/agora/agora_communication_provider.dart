@@ -12,6 +12,11 @@ import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
 import 'package:wakelock/wakelock.dart';
 
+enum PermissionType {
+  video,
+  audio,
+}
+
 class AgoraCommunicationProvider extends CommunicationProvider {
   static const String appId = AppConfig.agoriaAppID;
 
@@ -194,6 +199,12 @@ class AgoraCommunicationProvider extends CommunicationProvider {
       int uid = Random().nextInt(100000);
       _sessionToken = await sessionProvider.requestSessionTokenWithUID(
           session: session, uid: uid);
+      bool hasAudioPermission = await checkPermissions(PermissionType.audio);
+      // Check to ensure there is at least one microphone connected
+      if (!hasAudioPermission) {
+        _updateState(CommunicationState.failed);
+        return false;
+      }
       await _engine!.joinChannel(_sessionToken.token, session.id, null, uid);
     } catch (ex) {
       debugPrint('unable to activate agora session: $ex');
@@ -337,7 +348,9 @@ class AgoraCommunicationProvider extends CommunicationProvider {
                   const VideoDimensions(width: videoWidth, height: videoHeight),
             ),
           );
-          if (enableVideo) {
+          bool hasVideoPermission =
+              await checkPermissions(PermissionType.video);
+          if (enableVideo && hasVideoPermission) {
             await _engine!.enableVideo();
             await _engine!.startPreview();
           }
@@ -938,6 +951,24 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   void switchCamera() async {
     if (_engine != null) {
       await _engine!.switchCamera();
+    }
+  }
+
+  Future<bool> checkPermissions(PermissionType type) async {
+    try {
+      switch (type) {
+        case PermissionType.video:
+          List<MediaDeviceInfo> videoDevices =
+              await _engine!.deviceManager.enumerateVideoDevices();
+          return videoDevices.isNotEmpty && videoDevices[0].deviceId.isNotEmpty;
+        case PermissionType.audio:
+          List<MediaDeviceInfo> audioInputDevices =
+              await _engine!.deviceManager.enumerateAudioRecordingDevices();
+          return audioInputDevices.isNotEmpty &&
+              audioInputDevices[0].deviceId.isNotEmpty;
+      }
+    } catch (e) {
+      return false;
     }
   }
 }
