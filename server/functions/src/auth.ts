@@ -15,12 +15,12 @@ export enum Role {
  */
 export function isAuthenticated(auth: AuthData | undefined, roles: Role[] | undefined = undefined): AuthData {
   if (!auth || !auth.uid) {
-    throw new functions.https.HttpsError("failed-precondition", "The function must be called while authenticated.");
+    throw new functions.https.HttpsError("unauthenticated", "The function must be called while authenticated.");
   }
   if (roles && roles.length > 0) {
     if (!hasAnyRole(auth, roles)) {
       throw new functions.https.HttpsError(
-        "failed-precondition",
+        "permission-denied",
         `The function must be called by a user with one of the roles: ${roles.join(", ")}.`
       );
     }
