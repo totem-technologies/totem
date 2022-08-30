@@ -75,7 +75,7 @@ class _AppState extends ConsumerState<App> {
       textTheme: textStyles,
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
-            primary: themeColors.linkText,
+            foregroundColor: themeColors.linkText,
             textStyle: textStyles.textLinkButton),
       ),
       pageTransitionsTheme: const PageTransitionsTheme(
