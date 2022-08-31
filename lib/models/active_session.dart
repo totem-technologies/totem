@@ -41,7 +41,7 @@ class ActiveSession extends ChangeNotifier {
   List<String> _speakingOrder = [];
   SessionState _state = SessionState.waiting;
   bool _userStatus = false;
-  List<String> _removedUsers = [];
+  Map<String, dynamic> _removedUsers = {};
 
   @override
   void dispose() {
@@ -160,11 +160,11 @@ class ActiveSession extends ChangeNotifier {
 
   void updateSessionState(Map<String, dynamic> data) {
     _removedUsers =
-        List<String>.from(data['removedParticipants'] as List? ?? []);
+        Map<String, dynamic>.from(data['bannedParticipants'] as Map? ?? {});
     SessionState newState = data["state"] != null
         ? SessionState.values.byName(data["state"]!)
         : SessionState.waiting;
-    bool removed = _removedUsers.isNotEmpty && _removedUsers.contains(userId);
+    bool removed = _removedUsers[userId] != null;
     if (newState != _state && !removed) {
       _state = newState;
       notifyListeners();

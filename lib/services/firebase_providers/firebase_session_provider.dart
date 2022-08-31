@@ -188,6 +188,12 @@ class FirebaseSessionProvider extends SessionProvider {
           FirebaseFunctions.instance.httpsCallable('getTokenWithUserId');
       final result = await callable({"channelName": session.id, "userId": uid});
       return SessionToken.fromJson(result.data);
+    } on FirebaseFunctionsException catch (ex) {
+      throw ServiceException(
+        code: ex.code,
+        message: ex.message,
+        reference: session.ref,
+      );
     } catch (ex) {
       throw ServiceException(code: "token_error", reference: session.ref);
     }

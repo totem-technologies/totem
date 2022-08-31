@@ -41,7 +41,7 @@ const assertUserCanJoinCircle = async (uid: string, circleId: string) => {
   const {bannedParticipants} = circleSnapshot.data() ?? {};
   if (bannedParticipants && bannedParticipants[uid]) {
     console.log(`User ${uid} tried to join circle ${circleId} but they are banned`);
-    throw new functions.https.HttpsError("permission-denied", "User is banned from this circle.");
+    throw new functions.https.HttpsError("permission-denied", "User has been removed from this circle.");
   }
 };
 

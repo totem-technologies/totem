@@ -122,7 +122,7 @@ interface SnapCircleResponse {
 }
 
 export const createSnapCircle = functions.https.onCall(
-  async ({name, description, previousCircle, removedParticipants}, {auth}): Promise<SnapCircleResponse> => {
+  async ({name, description, previousCircle, bannedParticipants}, {auth}): Promise<SnapCircleResponse> => {
     auth = isAuthenticated(auth, [Role.KEEPER]);
     if (!name) {
       throw new functions.https.HttpsError("invalid-argument", "Missing name for snap circle");
@@ -142,7 +142,7 @@ export const createSnapCircle = functions.https.onCall(
       description?: string;
       link?: string;
       previousCircle?: string;
-      removedParticipants?: string[];
+      bannedParticipants?: Map<string, {bannedOn: Timestamp}>;
     } = {
       name,
       createdOn: created,
@@ -157,8 +157,8 @@ export const createSnapCircle = functions.https.onCall(
     if (previousCircle) {
       data.previousCircle = previousCircle;
     }
-    if (removedParticipants) {
-      data.removedParticipants = removedParticipants;
+    if (bannedParticipants) {
+      data.bannedParticipants = bannedParticipants;
     }
     const ref = await admin.firestore().collection("snapCircles").add(data);
     await admin.firestore().collection("activeCircles").doc(ref.id).set({participants: {}});
