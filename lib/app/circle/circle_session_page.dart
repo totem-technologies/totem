@@ -161,7 +161,7 @@ class CircleSessionPageState extends ConsumerState<CircleSessionPage>
               description: circle.description,
               keeper: circle.keeper,
               previousCircle: circle.id,
-              removedParticipants: circle.removedParticipants,
+              bannedParticipants: circle.bannedParticipants,
             );
           } else {
             // join the pending one

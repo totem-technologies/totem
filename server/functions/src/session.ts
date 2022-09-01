@@ -1,9 +1,10 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
-// eslint-disable-next-line import/no-unresolved
+// eslint-disable-next-line import/no-unresolved -- https://github.com/firebase/firebase-admin-node/issues/1827#issuecomment-1226224988
 import {Timestamp} from "firebase-admin/firestore";
 import * as dynamicLinks from "./dynamic-links";
 import {hasAnyRole, isAuthenticated, Role} from "./auth";
+import {kickUserFromSession} from "./agora";
 
 // The Firebase Admin SDK to access the Firebase Realtime Database.
 // make sure that this initializeApp call hasn't already
@@ -25,7 +26,7 @@ const SessionState = {
   ending: "ending",
 };
 
-export const endSnapSession = functions.https.onCall(async ({circleId}, {auth}) => {
+export const endSnapSession = functions.https.onCall(async ({circleId}, {auth}): Promise<boolean> => {
   auth = isAuthenticated(auth);
   if (circleId) {
     const circleRef = admin.firestore().collection("snapCircles").doc(circleId);
@@ -34,7 +35,7 @@ export const endSnapSession = functions.https.onCall(async ({circleId}, {auth}) 
       const {circleParticipants, state, keeper} = circleSnapshot.data() ?? {};
       if (auth.uid !== keeper && !hasAnyRole(auth, [Role.ADMIN])) {
         throw new functions.https.HttpsError(
-          "failed-precondition",
+          "permission-denied",
           "The function can only be called by the keeper of the circle or an admin."
         );
       }
@@ -67,7 +68,7 @@ export const endSnapSession = functions.https.onCall(async ({circleId}, {auth}) 
   return false;
 });
 
-export const startSnapSession = functions.https.onCall(async ({circleId}, {auth}) => {
+export const startSnapSession = functions.https.onCall(async ({circleId}, {auth}): Promise<boolean> => {
   auth = isAuthenticated(auth);
   if (circleId) {
     const ref = admin.firestore().collection("snapCircles").doc(circleId);
@@ -76,7 +77,7 @@ export const startSnapSession = functions.https.onCall(async ({circleId}, {auth}
       const {state, keeper} = circleSnapshot.data() ?? {};
       if (auth.uid !== keeper) {
         throw new functions.https.HttpsError(
-          "failed-precondition",
+          "permission-denied",
           "The function can only be called by the keeper of the circle."
         );
       }
@@ -116,11 +117,15 @@ export const startSnapSession = functions.https.onCall(async ({circleId}, {auth}
   return false;
 });
 
+interface SnapCircleResponse {
+  id: string;
+}
+
 export const createSnapCircle = functions.https.onCall(
-  async ({name, description, previousCircle, removedParticipants}, {auth}) => {
+  async ({name, description, previousCircle, bannedParticipants}, {auth}): Promise<SnapCircleResponse> => {
     auth = isAuthenticated(auth, [Role.KEEPER]);
     if (!name) {
-      throw new functions.https.HttpsError("failed-precondition", "Missing name for snap circle");
+      throw new functions.https.HttpsError("invalid-argument", "Missing name for snap circle");
     }
     // Get the user ref
     const keeper = auth.uid;
@@ -137,7 +142,7 @@ export const createSnapCircle = functions.https.onCall(
       description?: string;
       link?: string;
       previousCircle?: string;
-      removedParticipants?: string[];
+      bannedParticipants?: Map<string, {bannedOn: Timestamp}>;
     } = {
       name,
       createdOn: created,
@@ -152,8 +157,8 @@ export const createSnapCircle = functions.https.onCall(
     if (previousCircle) {
       data.previousCircle = previousCircle;
     }
-    if (removedParticipants) {
-      data.removedParticipants = removedParticipants;
+    if (bannedParticipants) {
+      data.bannedParticipants = bannedParticipants;
     }
     const ref = await admin.firestore().collection("snapCircles").add(data);
     await admin.firestore().collection("activeCircles").doc(ref.id).set({participants: {}});
@@ -188,6 +193,56 @@ export const createSnapCircle = functions.https.onCall(
 );
 
 /**
+ * Kicks the current session user id out of the agora session and bans the user from joining the circle again
+ * @param circleId The id of the circle to ban the user from
+ * @param userId The user id of the user to ban
+ * @param sessionUserId The id of the user within the current agora session
+ */
+export const banUserFromCircle = functions.https.onCall(async ({circleId, uid, sessionUserId}, {auth}) => {
+  if (!circleId || !uid || !sessionUserId) {
+    throw new functions.https.HttpsError(
+      "invalid-argument",
+      "The function must be called with a circleId, uid and sessionUserId."
+    );
+  }
+  try {
+    await admin.firestore().runTransaction(async (transaction) => {
+      auth = isAuthenticated(auth);
+      const circleRef = admin.firestore().collection("snapCircles").doc(circleId);
+      const circleSnapshot = await transaction.get(circleRef);
+      const {bannedParticipants = {}, circleParticipants = [], keeper} = circleSnapshot.data() ?? {};
+      if (auth.uid !== keeper && !hasAnyRole(auth, [Role.ADMIN])) {
+        throw new functions.https.HttpsError(
+          "permission-denied",
+          "The function can only be called by the keeper of the circle or an admin."
+        );
+      }
+      // Ban the user's current session user id from the Agora session
+      const banData: {bannedOn: Timestamp; sessionBan?: {sessionUserId: string; ruleId: number}} = {
+        bannedOn: Timestamp.now(),
+      };
+      const {success, ruleId} = await kickUserFromSession(circleId, sessionUserId);
+      if (!success) {
+        console.warn(`Failed to kick user ${uid} from agora session as ${sessionUserId}`);
+      } else {
+        // Keep a record of the session ban in case we need to reference it later
+        banData.sessionBan = {sessionUserId, ruleId: ruleId ?? -1};
+      }
+      // Add a record to the circle's list of banned participants
+      bannedParticipants[uid] = banData;
+      if (circleParticipants.includes(uid)) {
+        circleParticipants.splice(circleParticipants.indexOf(uid), 1);
+      }
+      transaction.update(circleRef, {bannedParticipants, circleParticipants});
+    });
+    return true;
+  } catch (ex) {
+    console.error(`Failed to ban user from circle: ${ex}`);
+  }
+  return false;
+});
+
+/**
  * Update the snap circle with the new participant count when active session is updated
  * The activeCircle is updated by a normal member, but snapCircles can only be updated by the keeper
  * @param circleId The id of the circle to update
@@ -197,11 +252,52 @@ export const updateParticipants = functions.firestore
   .onUpdate(async (change, context) => {
     const {circleId} = context.params;
     const {participants: participantsBefore} = change.before.data() ?? {};
-    const {participants: participantsAfter} = change.after.data() ?? {};
-    const numBefore = Object.keys(participantsBefore).length;
+    let {
+      participants: participantsAfter,
+      totemReceived = false,
+      totemUser = "",
+      speakingOrder = [],
+    } = change.after.data() ?? {};
+    const previousUids = Object.keys(participantsBefore);
+    const numBefore = previousUids.length;
     const numAfter = Object.keys(participantsAfter).length;
     if (numAfter !== numBefore) {
-      const ref = admin.firestore().collection("snapCircles").doc(circleId);
-      await ref.update({participantCount: numAfter});
+      // The number of participants has changed, so update the snap circle
+      try {
+        await admin.firestore().runTransaction(async (transaction) => {
+          const circleRef = admin.firestore().collection("snapCircles").doc(circleId);
+          transaction.update(circleRef, {participantCount: numAfter});
+
+          // Users were removed from the session, so we need to update the speaking order
+          if (numAfter < numBefore) {
+            // Get the list of uids no longer in the session
+            const removedUids = previousUids.filter((uid) => !participantsAfter[uid]);
+            for (const uid of removedUids) {
+              // Get the user index in the speaking order
+              const index = speakingOrder.indexOf(uid);
+              if (totemUser === uid) {
+                // If the user was the speaker, update to the next speaker in the list
+                let nextTotemUser = "";
+                if (index < speakingOrder.length - 1) {
+                  nextTotemUser = speakingOrder[index + 1];
+                } else {
+                  nextTotemUser = speakingOrder[0];
+                }
+                totemReceived = false;
+                totemUser = nextTotemUser;
+              }
+              if (index > -1) {
+                // Remove the user from the speaking order list
+                speakingOrder.splice(index, 1);
+              }
+            }
+            // Update the session data
+            const sessionRef = admin.firestore().collection("activeCircles").doc(circleId);
+            transaction.update(sessionRef, {totemReceived, totemUser, speakingOrder});
+          }
+        });
+      } catch (e) {
+        console.error(`Failed to update circle ${circleId} after participant change: `, e);
+      }
     }
   });

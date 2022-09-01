@@ -14,7 +14,7 @@ abstract class Circle {
   String? link;
   late String keeper;
   String? previousCircle;
-  List<String>? removedParticipants;
+  Map<String, dynamic>? bannedParticipants;
   bool _canJoin = true;
 
   Circle.fromJson(Map<String, dynamic> json,
@@ -32,11 +32,12 @@ abstract class Circle {
     link = json['link'];
     keeper = json['keeper'];
     previousCircle = json['previousCircle'];
-    if (json['removedParticipants'] != null) {
-      removedParticipants = List<String>.from(json['removedParticipants']);
+    if (json['bannedParticipants'] != null) {
+      bannedParticipants =
+          Map<String, dynamic>.from(json['bannedParticipants']);
     }
-    if (uid != null && removedParticipants != null) {
-      _canJoin = !removedParticipants!.contains(uid);
+    if (uid != null && bannedParticipants != null) {
+      _canJoin = bannedParticipants![uid] == null;
     }
   }
 
@@ -58,8 +59,8 @@ abstract class Circle {
     if (updatedOn != null) {
       data["updatedOn"] = updatedOn!;
     }
-    if (removedParticipants != null) {
-      data["removedParticipants"] = removedParticipants!;
+    if (bannedParticipants != null) {
+      data["bannedParticipants"] = bannedParticipants!;
     }
     return data;
   }

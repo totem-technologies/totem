@@ -206,6 +206,9 @@ class AgoraCommunicationProvider extends CommunicationProvider {
         return false;
       }
       await _engine!.joinChannel(_sessionToken.token, session.id, null, uid);
+    } on ServiceException catch (ex) {
+      _lastError = ex.message;
+      _updateState(CommunicationState.failed);
     } catch (ex) {
       debugPrint('unable to activate agora session: $ex');
       _updateState(CommunicationState.failed);
