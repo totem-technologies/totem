@@ -44,33 +44,38 @@ class OnboardingCircleEvent extends AccountStateEvent {
       skip: Text(t.skip),
       pages: [
         _pageWith(
-            title: t.introScreenTitle1,
-            body: t.introScreenMessage1,
+            title: "Welcome to Totem",
+            body: """This is not a meeting. 
+This is a confidential space for us to share and grow.
+The Keeper, a discussion facilitator, will be your guide.""",
             image: "onboarding_totem_icon",
             isPhone: isPhone),
         _pageWith(
-            title: t.introScreenTitle2,
-            body: t.introScreenMessage2,
+            title: "Listening",
+            body: """You’ll start by listening.
+The person with the totem, or talking piece, is the speaker.
+Once the speaker is done, they will pass the totem to the next person in the circle.
+""",
             image: "onboarding_play_button",
             isPhone: isPhone),
         _pageWith(
-            title: t.introScreenTitle3,
-            body: t.introScreenMessage3,
+            title: "Sharing",
+            body:
+                """Press “Receive” to accept the totem when it’s your turn to share.
+You can respond to the prompt, share a story, or react to a share.
+Always speak from your own experience, do not offer advice.
+It’s always OK to not say anything at all.
+Press “Pass” to hand the totem to the next person.
+""",
             image: "onboarding_talking_person",
             isPhone: isPhone),
         _pageWith(
-            title: t.introScreenTitle4,
-            body: t.introScreenMessage4,
-            image: "onboarding_pass_baton",
-            isPhone: isPhone),
-        _pageWith(
-            title: t.introScreenTitle5,
-            body: t.introScreenMessage5,
-            image: "onboarding_help_book",
-            isPhone: isPhone),
-        _pageWith(
-            title: t.introScreenTitle6,
-            body: t.introScreenMessage6,
+            title: "Let’s Begin!",
+            body:
+                """Make sure you are in a quiet place where you are unlikely to be distracted.
+Disable all notifications, put everything on silent.
+Enjoy this rare opportunity to be heard without interruption.
+""",
             image: "onboarding_finish_flag",
             isPhone: isPhone),
       ],
@@ -106,7 +111,7 @@ class OnboardingCircleEvent extends AccountStateEvent {
       decoration: PageDecoration(
         titleTextStyle:
             const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-        bodyTextStyle: const TextStyle(fontSize: 16, height: 1.7),
+        bodyTextStyle: const TextStyle(fontSize: 16, height: 2),
         imageFlex: (isPhone ? 1 : 2),
         bodyFlex: 3,
       ),
