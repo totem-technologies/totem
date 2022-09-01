@@ -1,5 +1,4 @@
 import 'package:totem/models/index.dart';
-import 'package:universal_html/html.dart';
 
 abstract class Circle {
   late final String id;
@@ -34,7 +33,8 @@ abstract class Circle {
     keeper = json['keeper'];
     previousCircle = json['previousCircle'];
     if (json['bannedParticipants'] != null) {
-      bannedParticipants = Map<String, dynamic>.from(json['bannedParticipants']);
+      bannedParticipants =
+          Map<String, dynamic>.from(json['bannedParticipants']);
     }
     if (uid != null && bannedParticipants != null) {
       _canJoin = bannedParticipants![uid] == null;
