@@ -334,7 +334,16 @@ class AgoraCommunicationProvider extends CommunicationProvider {
               statusValue != PermissionStatus.limited) {
             debugPrint('Failed requesting bluetooth connect!');
           }
+          statusValue = await Permission.camera.request();
+          if (statusValue != PermissionStatus.granted &&
+              statusValue != PermissionStatus.limited) {
+            debugPrint('Failed requesting camera!');
+          }
           statusValue = await Permission.microphone.request();
+          if (statusValue != PermissionStatus.granted &&
+              statusValue != PermissionStatus.limited) {
+            debugPrint('Failed requesting microphone!');
+          }
         }
         if (statusValue == PermissionStatus.granted ||
             statusValue == PermissionStatus.limited) {
@@ -961,14 +970,23 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     try {
       switch (type) {
         case PermissionType.video:
-          List<MediaDeviceInfo> videoDevices =
-              await _engine!.deviceManager.enumerateVideoDevices();
-          return videoDevices.isNotEmpty && videoDevices[0].deviceId.isNotEmpty;
+          if (kIsWeb) {
+            List<MediaDeviceInfo> videoDevices =
+                await _engine!.deviceManager.enumerateVideoDevices();
+            return videoDevices.isNotEmpty &&
+                videoDevices[0].deviceId.isNotEmpty;
+          } else {
+            return Permission.camera.request().isGranted;
+          }
         case PermissionType.audio:
-          List<MediaDeviceInfo> audioInputDevices =
-              await _engine!.deviceManager.enumerateAudioRecordingDevices();
-          return audioInputDevices.isNotEmpty &&
-              audioInputDevices[0].deviceId.isNotEmpty;
+          if (kIsWeb) {
+            List<MediaDeviceInfo> audioInputDevices =
+                await _engine!.deviceManager.enumerateAudioRecordingDevices();
+            return audioInputDevices.isNotEmpty &&
+                audioInputDevices[0].deviceId.isNotEmpty;
+          } else {
+            return Permission.microphone.request().isGranted;
+          }
       }
     } catch (e) {
       return false;
