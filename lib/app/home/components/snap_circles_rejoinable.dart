@@ -5,6 +5,7 @@ import 'package:totem/app_routes.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 final rejoinableCircles = StreamProvider.autoDispose<List<SnapCircle>>((ref) {
   final repo = ref.read(repositoryProvider);
@@ -23,6 +24,7 @@ class SnapCirclesRejoinable extends ConsumerStatefulWidget {
 class SnapCirclesRejoinableState extends ConsumerState<SnapCirclesRejoinable> {
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
     return ref.watch(rejoinableCircles).when(
           data: (List<SnapCircle> data) {
             if (data.isNotEmpty) {
@@ -33,7 +35,7 @@ class SnapCirclesRejoinableState extends ConsumerState<SnapCirclesRejoinable> {
                     padding: EdgeInsets.symmetric(
                         horizontal: Theme.of(context).pageHorizontalPadding),
                     child: Text(
-                      "Rejoin circle",
+                      t.rejoinCircle,
                       style: Theme.of(context).textStyles.headline2,
                     ),
                   ),
@@ -59,7 +61,7 @@ class SnapCirclesRejoinableState extends ConsumerState<SnapCirclesRejoinable> {
                         vertical: 8.0,
                         horizontal: Theme.of(context).pageHorizontalPadding),
                     child: Text(
-                      "Other circles",
+                      t.otherCircles,
                       style: Theme.of(context).textStyles.headline2,
                     ),
                   ),
