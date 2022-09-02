@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:agora_rtc_engine/rtc_local_view.dart' as rtc_local_view;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -227,7 +228,9 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
       children: [
         Stack(
           children: [
-            const rtc_local_view.SurfaceView(),
+            kIsWeb
+                ? const rtc_local_view.SurfaceView()
+                : const rtc_local_view.TextureView(),
             if (commProvider.videoMuted)
               const Positioned.fill(
                 child: CameraMuted(),
