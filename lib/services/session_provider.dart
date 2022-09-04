@@ -32,4 +32,6 @@ abstract class SessionProvider extends ChangeNotifier {
       required bool userChange});
   Future<bool> removeParticipantFromActiveSession(
       {required String sessionUserId});
+  Future<void> muteAllExceptTotem();
+  Stream<SessionDataMessage?> get messageStream;
 }

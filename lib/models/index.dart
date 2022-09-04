@@ -11,6 +11,7 @@ export 'roles.dart';
 export 'scheduled_circle.dart';
 export 'scheduled_session.dart';
 export 'session.dart';
+export 'session_data_message.dart';
 export 'session_participant.dart';
 export 'session_token.dart';
 export 'snap_circle.dart';

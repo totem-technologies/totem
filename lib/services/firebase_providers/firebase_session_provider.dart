@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/analytics_provider.dart';
 import 'package:totem/services/auth/auth_exception.dart';
+import 'package:totem/services/communication_provider.dart';
 import 'package:totem/services/firebase_providers/paths.dart';
 import 'package:totem/services/service_exception.dart';
 import 'package:totem/services/session_provider.dart';
@@ -16,6 +17,9 @@ class FirebaseSessionProvider extends SessionProvider {
   StreamSubscription? _sessionSubscription;
   StreamSubscription? _circleSubscription;
   AnalyticsProvider analyticsProvider;
+  String? userId;
+  final StreamController<SessionDataMessage?> _messageStreamController =
+      StreamController<SessionDataMessage?>.broadcast();
 
   FirebaseSessionProvider({required this.analyticsProvider});
 
@@ -27,6 +31,7 @@ class FirebaseSessionProvider extends SessionProvider {
   @override
   void clear() {
     // stop listening to updates for the session and clear the data
+    _messageStreamController.add(null);
     _sessionSubscription?.cancel();
     _circleSubscription?.cancel();
     _sessionSubscription = null;
@@ -34,6 +39,10 @@ class FirebaseSessionProvider extends SessionProvider {
     _activeSession = null;
     notifyListeners();
   }
+
+  @override
+  Stream<SessionDataMessage?> get messageStream =>
+      _messageStreamController.stream;
 
   @override
   Future<ActiveSession> activateSession(
@@ -45,6 +54,7 @@ class FirebaseSessionProvider extends SessionProvider {
       return _activeSession!;
     }
     if (session.circle.participantRole(uid) == Role.keeper) {
+      userId = uid;
       DocumentReference ref =
           FirebaseFirestore.instance.doc(session.circle.ref);
       WriteBatch batch = FirebaseFirestore.instance.batch();
@@ -94,6 +104,7 @@ class FirebaseSessionProvider extends SessionProvider {
           reference: session.circle.ref,
         );
       }
+      userId = uid;
 
       // Log analytics
       if (session is SnapSession) {
@@ -407,6 +418,16 @@ class FirebaseSessionProvider extends SessionProvider {
         // have to update the user
         await updateActiveSession(requestedUpdate);
       }
+      if (sessionData["lastMessage"] != null) {
+        SessionDataMessage message =
+            SessionDataMessage.fromJson(sessionData["lastMessage"]);
+        if (DateTime.now().difference(message.sent).inMilliseconds < 1000) {
+          Future.delayed(const Duration(milliseconds: 10), () {
+            _messageStreamController.add(message);
+          });
+          return;
+        }
+      }
       notifyListeners();
     }
   }
@@ -667,5 +688,36 @@ class FirebaseSessionProvider extends SessionProvider {
       }
     }
     return result;
+  }
+
+  @override
+  Future<void> muteAllExceptTotem() async {
+    if (activeSession != null && userId != null) {
+      return _sendMessage(SessionDataMessage(
+          sent: DateTime.now(),
+          from: userId!,
+          type: CommunicationMessageType.muteAllExceptTotem));
+    }
+  }
+
+  Future<void> _sendMessage(SessionDataMessage message) async {
+    if (_activeSession != null) {
+      await FirebaseFirestore.instance.runTransaction((transaction) async {
+        DocumentReference activeCircleRef = FirebaseFirestore.instance
+            .collection(Paths.activeCircles)
+            .doc(_activeSession!.circle.id);
+        DocumentSnapshot activeSnapshot =
+            await transaction.get(activeCircleRef);
+        // Make sure the active session is present
+        if (activeSnapshot.data() != null) {
+          try {
+            transaction
+                .update(activeCircleRef, {"lastMessage": message.toJson()});
+          } catch (ex) {
+            debugPrint('error sending message: $ex');
+          }
+        }
+      });
+    }
   }
 }
