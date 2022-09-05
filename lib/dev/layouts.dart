@@ -20,7 +20,7 @@ Widget getParticipant(int i, double d) {
   participant.videoMuted = true;
   participant.networkUnstable = true;
   if (i == 0 || i == 3) {
-    participant.sessionImage = "assets/testuser.png";
+    participant.sessionImage = "https://www.w3schools.com/howto/img_avatar.png";
   }
   return Container(
     height: d,
