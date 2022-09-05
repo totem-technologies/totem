@@ -19,8 +19,10 @@ class CircleSnapSessionContent extends ConsumerStatefulWidget {
   const CircleSnapSessionContent({
     Key? key,
     required this.circle,
+    required this.userProfile,
   }) : super(key: key);
   final SnapCircle circle;
+  final UserProfile userProfile;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
@@ -514,6 +516,7 @@ class _CircleSnapSessionContentState
   void _joinSession() {
     final provider = ref.read(communicationsProvider);
     provider.joinSession(
+      sessionImage: widget.userProfile.image,
       session: SnapSession.fromJson({}, circle: widget.circle),
       enableVideo: true,
       handler: CommunicationHandler(

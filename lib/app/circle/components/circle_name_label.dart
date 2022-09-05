@@ -1,33 +1,58 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:totem/models/index.dart';
 import 'package:totem/theme/index.dart';
 
 class CircleNameLabel extends StatelessWidget {
-  const CircleNameLabel({Key? key, required this.name}) : super(key: key);
+  const CircleNameLabel(
+      {Key? key, required this.name, this.fontSize = 13, required this.role})
+      : super(key: key);
   final String name;
+  final double fontSize;
+  final Role role;
 
   @override
   Widget build(BuildContext context) {
     final themeColors = Theme.of(context).themeColors;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return ClipRRect(
+          borderRadius: BorderRadius.circular(2),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 2.5, sigmaY: 2.5),
+            child: Container(
+              padding: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                color: themeColors.videoOverlayBackground,
+                borderRadius: BorderRadius.circular(2),
+              ),
+              child: role == Role.member
+                  ? userName(context)
+                  : Row(
+                      children: [
+                        Expanded(child: userName(context)),
+                        const SizedBox(width: 5),
+                        Icon(Icons.star,
+                            color: themeColors.reversedText, size: 16),
+                      ],
+                    ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget userName(BuildContext context) {
+    final themeColors = Theme.of(context).themeColors;
     final textStyles = Theme.of(context).textStyles;
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(2),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 2.5, sigmaY: 2.5),
-        child: Container(
-          padding: const EdgeInsets.all(4),
-          decoration: BoxDecoration(
-            color: themeColors.videoOverlayBackground,
-            borderRadius: BorderRadius.circular(2),
-          ),
-          child: Text(
-            name,
-            style: textStyles.headline4!
-                .merge(TextStyle(color: themeColors.reversedText)),
-          ),
-        ),
-      ),
+    return Text(
+      name,
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+      style: textStyles.headline4!.merge(
+          TextStyle(color: themeColors.reversedText, fontSize: fontSize)),
     );
   }
 }

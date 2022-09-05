@@ -179,10 +179,12 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   Future<bool> joinSession({
     required Session session,
     required CommunicationHandler handler,
+    String? sessionImage,
     bool enableVideo = false,
   }) async {
     _handler = handler;
     _session = session;
+    _sessionImage = sessionImage;
     _lastError = null;
     _audioIndicatorStreamController =
         StreamController<CommunicationAudioVolumeIndication>.broadcast(

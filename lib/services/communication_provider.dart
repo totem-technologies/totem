@@ -39,6 +39,7 @@ abstract class CommunicationProvider extends ChangeNotifier {
   Future<bool> joinSession({
     required Session session,
     required CommunicationHandler handler,
+    String? sessionImage,
     bool enableVideo,
   });
   Future<void> leaveSession({bool requested = true});

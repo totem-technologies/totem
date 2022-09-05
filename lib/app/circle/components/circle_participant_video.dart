@@ -1,79 +1,144 @@
+import 'dart:math';
+
 import 'package:agora_rtc_engine/rtc_local_view.dart' as rtc_local_view;
 import 'package:agora_rtc_engine/rtc_remote_view.dart' as rtc_remote_view;
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:totem/app/circle/components/circle_network_indicator.dart';
 import 'package:totem/app/circle/index.dart';
-import 'package:totem/components/camera/camera_muted.dart';
+import 'package:totem/components/camera/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/theme/index.dart';
 
-class CircleParticipantVideo extends ConsumerWidget {
+class CircleParticipantVideo extends StatelessWidget {
   const CircleParticipantVideo({
     Key? key,
     required this.participant,
     this.hasTotem = false,
     this.annotate = true,
-    this.showMe = false,
+    this.next = false,
+    required this.channelId,
   }) : super(key: key);
   final SessionParticipant participant;
   final bool hasTotem;
   final bool annotate;
-  final bool showMe;
+  final String channelId;
+  final bool next;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final commProvider = ref.watch(communicationsProvider);
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-            color: hasTotem
-                ? Theme.of(context).themeColors.primary
-                : Colors.transparent,
-            width: 1),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(8),
-        child: Stack(
-          children: [
-            Container(
-              color: Colors.black,
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final double iconSize =
+            min(max(14, (constraints.maxWidth / 6).roundToDouble()), 32.0);
+        final double fontSize =
+            min(max(10, (constraints.maxHeight / 12).roundToDouble()), 13.0);
+        bool noVideoImage = (participant.videoMuted &&
+            (participant.sessionImage == null ||
+                participant.sessionImage!.isEmpty));
+        final overlayColor = noVideoImage
+            ? Theme.of(context).themeColors.primaryText
+            : Theme.of(context).themeColors.reversedText;
+        return Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+                color: hasTotem
+                    ? Theme.of(context).themeColors.primary
+                    : Colors.transparent,
+                width: 1),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: Stack(
+              children: [
+                Container(
+                  color: Colors.black,
+                ),
+                if (!hasTotem &&
+                    participant.me &&
+                    participant.sessionUserId != null)
+                  rtc_local_view.SurfaceView(
+                      key: ValueKey(participant.sessionUserId)),
+                if (!hasTotem &&
+                    !participant.me &&
+                    participant.sessionUserId != null)
+                  rtc_remote_view.SurfaceView(
+                    key: ValueKey(participant.sessionUserId),
+                    channelId: channelId,
+                    uid: int.parse(participant.sessionUserId!),
+                  ),
+                if (participant.videoMuted)
+                  Positioned.fill(
+                    child: CameraMuted(
+                      userImage: participant.sessionImage,
+                      imageSize: iconSize * 2,
+                    ),
+                  ),
+                if (annotate)
+                  PositionedDirectional(
+                    bottom: 4,
+                    start: 4,
+                    child: ConstrainedBox(
+                      constraints:
+                          BoxConstraints(maxWidth: constraints.maxWidth - 10),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (next)
+                            Padding(
+                                padding: const EdgeInsets.only(bottom: 3),
+                                child: CircleNextLabel(
+                                  fontSize: fontSize,
+                                  reversed: !noVideoImage,
+                                )),
+                          CircleNameLabel(
+                            name: participant.name,
+                            fontSize: fontSize,
+                            role: participant.role,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                if (!participant.me && participant.networkUnstable)
+                  Align(
+                    alignment: Alignment.topCenter,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: CircleNetworkUnstable(
+                        size: iconSize,
+                        color: overlayColor,
+                        shadow: !noVideoImage,
+                      ),
+                    ),
+                  ),
+                if (participant.muted)
+                  Positioned(
+                    top: 10,
+                    right: 10,
+                    child: MuteIndicator(
+                      size: iconSize,
+                      color: overlayColor,
+                      shadow: !noVideoImage,
+                    ),
+                  ),
+                if (participant.videoMuted)
+                  Positioned(
+                    top: 10,
+                    left: 10,
+                    child: CameraMuteIndicator(
+                      size: iconSize,
+                      color: overlayColor,
+                      shadow: !noVideoImage,
+                    ),
+                  )
+              ],
             ),
-            if (!hasTotem &&
-                participant.me &&
-                participant.sessionUserId != null)
-              rtc_local_view.SurfaceView(
-                  key: ValueKey(participant.sessionUserId)),
-            if (!hasTotem &&
-                !participant.me &&
-                participant.sessionUserId != null)
-              rtc_remote_view.SurfaceView(
-                key: ValueKey(participant.sessionUserId),
-                channelId: commProvider.channelId,
-                uid: int.parse(participant.sessionUserId!),
-              ),
-            if (participant.videoMuted)
-              const Positioned.fill(
-                child: CameraMuted(),
-              ),
-            /*if (hasTotem ||
-                (participant.me && participant.videoMuted) ||
-                (!participant.me && participant.videoMuted))
-              _renderUserImage(context, participant), */
-            PositionedDirectional(
-              bottom: 4,
-              start: 4,
-              child: CircleNameLabel(
-                name: participant.name,
-              ),
-            ),
-            if (showMe && participant.me) renderMe(context),
-            if (annotate && participant.role == Role.keeper && !participant.me)
-              renderKeeperLabel(context)
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
