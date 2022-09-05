@@ -117,14 +117,6 @@ class _CircleSnapSessionContentState
                                         crossAxisAlignment:
                                             CrossAxisAlignment.stretch,
                                         children: [
-                                          Text(
-                                            t.circleDescription,
-                                            style: textStyles.headline3,
-                                          ),
-                                          const SizedBox(
-                                            height: 4,
-                                          ),
-                                          //Text(widget.circle.description!),
                                           TrimmedText(
                                             widget.circle.description!,
                                             trimLines: 3,
