@@ -31,6 +31,8 @@ class CircleParticipantVideo extends StatelessWidget {
       builder: (context, constraints) {
         final double iconSize =
             min(max(14, (constraints.maxWidth / 6).roundToDouble()), 32.0);
+        final double videoIconSize =
+            min(max(14, (constraints.maxHeight / 3).roundToDouble()), 160.0);
         final double fontSize =
             min(max(10, (constraints.maxHeight / 12).roundToDouble()), 13.0);
         bool noVideoImage = (participant.videoMuted &&
@@ -72,7 +74,7 @@ class CircleParticipantVideo extends StatelessWidget {
                   Positioned.fill(
                     child: CameraMuted(
                       userImage: participant.sessionImage,
-                      imageSize: iconSize * 2,
+                      imageSize: videoIconSize,
                     ),
                   ),
                 if (annotate)

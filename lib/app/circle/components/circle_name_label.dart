@@ -30,8 +30,16 @@ class CircleNameLabel extends StatelessWidget {
               child: role == Role.member
                   ? userName(context)
                   : Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        Expanded(child: userName(context)),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 2),
+                          child: ConstrainedBox(
+                            constraints: BoxConstraints(
+                                maxWidth: constraints.maxWidth - 30),
+                            child: userName(context),
+                          ),
+                        ),
                         const SizedBox(width: 5),
                         Icon(Icons.star,
                             color: themeColors.reversedText, size: 16),
