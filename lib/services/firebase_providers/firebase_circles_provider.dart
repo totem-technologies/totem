@@ -137,7 +137,7 @@ class FirebaseCirclesProvider extends CirclesProvider {
     String? description,
     String? keeper,
     String? previousCircle,
-    List<String>? removedParticipants,
+    Map<String, dynamic>? bannedParticipants,
   }) async {
     final DocumentReference userRef =
         FirebaseFirestore.instance.collection(Paths.users).doc(keeper ?? uid);
@@ -156,8 +156,8 @@ class FirebaseCirclesProvider extends CirclesProvider {
       if (previousCircle != null) {
         data['previousCircle'] = previousCircle;
       }
-      if (removedParticipants != null) {
-        data['removedParticipants'] = removedParticipants;
+      if (bannedParticipants != null) {
+        data['bannedParticipants'] = bannedParticipants;
       }
       final result = await callable(data);
       final String id = result.data['id'];
@@ -524,9 +524,9 @@ class FirebaseCirclesProvider extends CirclesProvider {
       QuerySnapshot<Map<String, dynamic>> result = await query.get();
       if (result.docs.isNotEmpty) {
         QueryDocumentSnapshot<Map<String, dynamic>> snapshot = result.docs[0];
-        List<String> removedParticipants = List<String>.from(
-            snapshot.data()['removedParticipants'] as List? ?? []);
-        if (removedParticipants.contains(uid)) {
+        Map<String, dynamic> bannedParticipants = Map<String, dynamic>.from(
+            snapshot.data()['bannedParticipants'] as Map? ?? {});
+        if (bannedParticipants[uid] != null) {
           return false;
         }
       }

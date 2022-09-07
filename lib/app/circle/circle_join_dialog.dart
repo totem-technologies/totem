@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:agora_rtc_engine/rtc_local_view.dart' as rtc_local_view;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -20,10 +21,10 @@ class CircleJoinDialog extends ConsumerStatefulWidget {
   final Circle circle;
   final bool cropEnabled;
 
-  static Future<bool?> showJoinDialog(BuildContext context,
+  static Future<UserProfile?> showJoinDialog(BuildContext context,
       {required Circle circle}) async {
     return DeviceType.isPhone()
-        ? showModalBottomSheet<bool?>(
+        ? showModalBottomSheet<UserProfile?>(
             enableDrag: false,
             isScrollControlled: true,
             isDismissible: false,
@@ -220,17 +221,21 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
     );
   }
 
-  Widget _cameraPreview(CommunicationProvider commProvider) {
+  Widget _cameraPreview(CommunicationProvider commProvider, UserProfile user) {
     final themeColors = Theme.of(context).themeColors;
     final t = AppLocalizations.of(context)!;
     return Stack(
       children: [
         Stack(
           children: [
-            const rtc_local_view.SurfaceView(),
+            kIsWeb
+                ? const rtc_local_view.SurfaceView()
+                : const rtc_local_view.TextureView(),
             if (commProvider.videoMuted)
-              const Positioned.fill(
-                child: CameraMuted(),
+              Positioned.fill(
+                child: CameraMuted(
+                  userImage: user.image,
+                ),
               ),
           ],
         ),
@@ -302,7 +307,7 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
           );
         }
         if (asyncSnapshot.hasData) {
-          //  UserProfile user = asyncSnapshot.data!;
+          UserProfile user = asyncSnapshot.data!;
           return Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -326,7 +331,7 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
                           child: AnimatedSwitcher(
                             duration: const Duration(milliseconds: 300),
                             child: _initialized
-                                ? _cameraPreview(commProvider)
+                                ? _cameraPreview(commProvider, user)
                                 : Center(
                                     child: Text(
                                       _error ?? t.initializingCamera,
@@ -346,7 +351,7 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
                       Center(
                         child: ThemedRaisedButton(
                           onPressed: () {
-                            _join();
+                            _join(user);
                           },
                           label: _error == null ? t.joinCircle : t.leaveSession,
                         ),
@@ -376,7 +381,7 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
           );
         }
         if (asyncSnapshot.hasData) {
-          // UserProfile user = asyncSnapshot.data!;
+          UserProfile user = asyncSnapshot.data!;
           return Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -400,7 +405,7 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
                               child: AnimatedSwitcher(
                                 duration: const Duration(milliseconds: 300),
                                 child: _initialized
-                                    ? _cameraPreview(commProvider)
+                                    ? _cameraPreview(commProvider, user)
                                     : Center(
                                         child: Text(
                                           _error ?? t.initializingCamera,
@@ -440,7 +445,7 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
                               child: ThemedRaisedButton(
                                 onPressed: () {
                                   _error == null
-                                      ? _join()
+                                      ? _join(user)
                                       : Navigator.of(context).pop(false);
                                 },
                                 label: _error == null
@@ -471,8 +476,8 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
     );
   }
 
-  void _join() {
-    Navigator.of(context).pop(true);
+  void _join(UserProfile user) {
+    Navigator.of(context).pop(user);
   }
 
   void initializeProvider() async {

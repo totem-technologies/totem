@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:after_layout/after_layout.dart';
 import 'package:flutter/material.dart';
-import 'package:totem/app/circle/components/circle_network_indicator.dart';
 import 'package:totem/app/circle/components/layouts.dart';
 import 'package:totem/app/circle/index.dart';
 import 'package:totem/app/profile/onboarding_profile_page.dart';
@@ -13,34 +12,26 @@ import 'package:totem/services/utils/device_type.dart';
 import 'package:totem/theme/app_theme_styles.dart';
 
 Widget getParticipant(int i, double d) {
+  SessionParticipant participant = SessionParticipant.fromJson({
+    "name": "Participant ${i + 1}",
+    "role": i == 0 ? Role.keeper.name : Role.member.name,
+  });
+  participant.muted = true;
+  participant.videoMuted = true;
+  participant.networkUnstable = true;
+  if (i == 0 || i == 3) {
+    participant.sessionImage = "https://www.w3schools.com/howto/img_avatar.png";
+  }
   return Container(
     height: d,
     width: d,
     padding: const EdgeInsets.all(5),
     child: Stack(
       children: [
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(10),
-          ),
-        ),
-        Positioned(
-          bottom: 5,
-          left: 5,
-          child: CircleNameLabel(
-            name: "Participant ${i + 1}",
-          ),
-        ),
-        const PositionedDirectional(
-          top: 10,
-          end: 10,
-          child: MuteIndicator(),
-        ),
-        const Positioned(
-          top: 10,
-          left: 10,
-          child: CircleNetworkUnstable(),
+        CircleParticipantVideo(
+          participant: participant,
+          channelId: "",
+          next: i == 0,
         ),
       ],
     ),

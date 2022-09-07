@@ -22,6 +22,7 @@ class StdThemePalette {
   static const lightGrey = Color(0xffc9c9cd);
   static const lighterGrey = Color(0xffd8d8d8);
   static const transparentGrey = Color(0x99444654);
+  static const transparentYellow = Color(0xbbffcc59);
   static const profileGradient = [
     Color.fromRGBO(49, 53, 84, 0),
     Color.fromRGBO(28, 30, 51, 0.78),
@@ -70,6 +71,7 @@ class StdAppThemeColors extends AppThemeColors {
           contentDivider: StdThemePalette.grey,
           alertBackground: StdThemePalette.red2,
           videoOverlayBackground: StdThemePalette.transparentGrey,
+          reversedVideoOverlayBackground: StdThemePalette.transparentYellow,
           secondaryButtonBackground: StdThemePalette.lightYellow,
           iconNext: StdThemePalette.mediumGrey,
         );

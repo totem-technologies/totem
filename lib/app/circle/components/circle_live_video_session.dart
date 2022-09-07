@@ -174,55 +174,6 @@ class _CircleLiveVideoSessionState
     return Container();
   }
 
-/*  Widget _speakerVideoView(BuildContext context, ActiveSession activeSession) {
-    if (activeSession.totemParticipant != null &&
-        (!activeSession.totemReceived ||
-            !(activeSession.totemParticipant!.me))) {
-      return prov.ChangeNotifierProvider<SessionParticipant>.value(
-        value: activeSession.totemParticipant!,
-        child: LayoutBuilder(
-          builder: (BuildContext context, BoxConstraints constraints) {
-            final sizeOfVideo =
-                min(constraints.maxWidth, constraints.maxHeight);
-            return SizedBox(
-              width: sizeOfVideo,
-              height: sizeOfVideo,
-              child: prov.Consumer<SessionParticipant>(
-                builder: (_, participant, __) {
-                  return ClipRRect(
-                    borderRadius: const BorderRadius.all(Radius.circular(8)),
-                    child: Stack(
-                      children: [
-                        CircleLiveSessionVideo(participant: participant),
-                        if (participant.videoMuted)
-                          const Positioned.fill(
-                            child: CameraMuted(),
-                          ),
-                        if (!participant.me && participant.networkUnstable)
-                          const Positioned(
-                            top: 10,
-                            left: 10,
-                            child: CircleNetworkUnstable(),
-                          ),
-                        if (participant.muted)
-                          const PositionedDirectional(
-                            top: 10,
-                            end: 10,
-                            child: MuteIndicator(),
-                          ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            );
-          },
-        ),
-      );
-    }
-    return Container();
-  } */
-
   Widget _speakerUserView(BuildContext context,
       {required List<SessionParticipant> participants,
       required ActiveSession activeSession,

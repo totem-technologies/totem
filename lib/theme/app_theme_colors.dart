@@ -35,6 +35,7 @@ class AppThemeColors {
     required this.contentDivider,
     required this.alertBackground,
     required this.videoOverlayBackground,
+    required this.reversedVideoOverlayBackground,
     required this.secondaryButtonBackground,
     required this.iconNext,
   });
@@ -68,6 +69,7 @@ class AppThemeColors {
   final Color contentDivider;
   final Color alertBackground;
   final Color videoOverlayBackground;
+  final Color reversedVideoOverlayBackground;
   final Color iconNext;
   final List<Color> primaryGradient;
   final List<Color> secondaryGradient;
