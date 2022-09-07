@@ -241,14 +241,11 @@ class _CircleLiveVideoSessionState
     return Column(
       children: [
         Expanded(child: Container()),
-        SizedBox(
-          height: 60,
-          child: AnimatedSwitcher(
-            duration: const Duration(milliseconds: 250),
-            child: _sessionControl(context, activeSession),
-          ),
+        AnimatedSwitcher(
+          duration: const Duration(milliseconds: 250),
+          child: _sessionControl(context, activeSession),
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 15),
       ],
     );
   }
@@ -264,24 +261,18 @@ class _CircleLiveVideoSessionState
         return Center(
           child: !isMobile
               ? ((activeSession.totemReceived)
-                  ? ThemedRaisedButton(
-                      width: 200,
-                      height: 50,
-                      backgroundColor: themeColors.alternateButtonBackground,
+                  ? TotemActionButton(
+                      image: FaIcon(FontAwesomeIcons.hand,
+                          size: 30, color: themeColors.primaryText),
+                      label: t.pass,
+                      message: t.circleTotemPass,
+                      showToolTips: false,
+                      vertical: false,
                       onPressed: !_processingRequest
                           ? () {
                               _endTurn(context, participant);
                             }
                           : null,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          FaIcon(FontAwesomeIcons.hand,
-                              size: 20, color: themeColors.primaryText),
-                          const SizedBox(width: 10),
-                          Text(t.pass)
-                        ],
-                      ),
                     )
                   : ThemedRaisedButton(
                       width: 200,
