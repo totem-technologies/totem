@@ -23,7 +23,7 @@ Bringing people together to heal.
    - For Android Studio, create a new configuration with the run args `--dart-define=USE_EMULATOR=true`
 4. Since the emulator runs on localhost, you will need to either use web or a device emulator as the target device.
 
-## Release
+## Release!
 
 1. Switch to 'main' branch: `git checkout main`
 1. Edit `pubspec.yaml` to increase the version number. At minimum bump the build number (after the `+`).
