@@ -20,4 +20,3 @@ jobs:
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_TOTEM_DEV_184F1 }}'
-          projectId: totem-dev-184f1
