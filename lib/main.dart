@@ -1,11 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
+
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:flutter/foundation.dart'
-    show kDebugMode, kIsWeb, defaultTargetPlatform;
+import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -16,11 +12,7 @@ import 'package:totem/config.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-
-  if (const String.fromEnvironment('USE_EMULATOR') == 'true') {
-    await _connectToFirebaseEmulator();
-  }
+  await initConfig();
   // remove # from url
   GoRouter.setUrlPathStrategy(UrlPathStrategy.path);
 
@@ -62,18 +54,4 @@ Future<void> main() async {
       ));
     },
   );
-}
-
-Future _connectToFirebaseEmulator() async {
-  final emulatorHost = defaultTargetPlatform == TargetPlatform.android
-      ? '10.0.2.2'
-      : 'localhost';
-
-  FirebaseFirestore.instance.settings = Settings(
-    host: '$emulatorHost:8080',
-    sslEnabled: false,
-    persistenceEnabled: false,
-  );
-  FirebaseFunctions.instance.useFunctionsEmulator(emulatorHost, 5001);
-  await FirebaseAuth.instance.useAuthEmulator(emulatorHost, 9099);
 }

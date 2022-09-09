@@ -12,7 +12,7 @@ platform :ios do
       use_automatic_signing: false,
       path: "ios/Runner.xcodeproj"
     )
-    sh("flutter build ipa")
+    sh("flutter build --dart-define='ENVIRONMENT=$ENVIRONMENT' ipa")
     build_app(scheme: "Runner",
       workspace: "ios/Runner.xcworkspace",
       export_method: "app-store",

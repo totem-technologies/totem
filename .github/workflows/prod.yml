@@ -9,6 +9,8 @@ on:
 jobs:
   build_web:
     runs-on: ubuntu-latest
+    environment:
+      ENVIRONMENT: prod
     steps:
       - uses: actions/checkout@v2
       - name: Install Flutter
@@ -30,30 +32,34 @@ jobs:
           channelId: live
           projectId: totem-26659
   build_ios:
-   runs-on: macos-11
-   steps:
-    - uses: actions/checkout@v2
-    - name: Install Flutter
-      uses: subosito/flutter-action@v2
-      with:
-        flutter-version: '3.3.x'
-        cache: true
-    - uses: webfactory/ssh-agent@v0.5.4
-      with:
-        ssh-private-key: ${{ secrets.MATCH_REPO_PRIVATE_KEY }}
-    - run: fastlane ios build
-      env:
-        MATCH_PASSWORD: ${{ secrets.FASTLANE_MATCH_PASSWORD }}
-    - name: Release
-      uses: softprops/action-gh-release@v1
-      with:
-        files: totem.ipa
-        body: Produciton release
-    - run: fastlane ios internal
-      env:
-        APPLE_STORE_CONNECT_API_KEY: ${{ secrets.APPLE_STORE_CONNECT_API_KEY }}
+    runs-on: macos-11
+    environment:
+      ENVIRONMENT: prod
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.3.x'
+          cache: true
+      - uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{ secrets.MATCH_REPO_PRIVATE_KEY }}
+      - run: fastlane ios build
+        env:
+          MATCH_PASSWORD: ${{ secrets.FASTLANE_MATCH_PASSWORD }}
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: totem.ipa
+          body: Produciton release
+      - run: fastlane ios internal
+        env:
+          APPLE_STORE_CONNECT_API_KEY: ${{ secrets.APPLE_STORE_CONNECT_API_KEY }}
   build_android:
     runs-on: ubuntu-latest
+    environment:
+      ENVIRONMENT: prod
     steps:
       - uses: actions/checkout@v2
       - name: Install Flutter

@@ -1,7 +1,9 @@
+export ENVIRONMENT ?= dev
+
 build: build-android build-ios .git/hooks/pre-commit
 
 build-android:
-	flutter build appbundle
+	flutter build --dart-define='ENVIRONMENT=${ENVIRONMENT}' appbundle
 
 publish-android:
 	fastlane android internal
@@ -13,7 +15,7 @@ publish-ios:
 	fastlane ios internal
 
 build-web: clean
-	flutter build web --release
+	flutter build --dart-define='ENVIRONMENT=${ENVIRONMENT}' web --release
 
 publish-web: build-web
 	firebase deploy --only hosting
