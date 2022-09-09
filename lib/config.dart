@@ -53,6 +53,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '35349008308',
     projectId: 'totem-26659',
     storageBucket: 'totem-26659.appspot.com',
+    androidClientId:
+        '35349008308-0niklmq603bp7hopttpdc1amjhav36ue.apps.googleusercontent.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
@@ -61,8 +63,6 @@ class DefaultFirebaseOptions {
     messagingSenderId: '35349008308',
     projectId: 'totem-26659',
     storageBucket: 'totem-26659.appspot.com',
-    androidClientId:
-        '35349008308-0niklmq603bp7hopttpdc1amjhav36ue.apps.googleusercontent.com',
     iosClientId:
         '35349008308-f0i832q0bgd158ptsr8d68h2eb2purhd.apps.googleusercontent.com',
     iosBundleId: 'io.kbl.totem',

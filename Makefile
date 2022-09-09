@@ -3,7 +3,7 @@ build: build-android build-ios .git/hooks/pre-commit
 build-android:
 	flutter build appbundle
 
-publish-andorid:
+publish-android:
 	fastlane android internal
 
 build-ios:

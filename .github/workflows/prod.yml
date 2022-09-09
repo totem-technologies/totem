@@ -1,0 +1,78 @@
+name: Release Production
+on:
+  workflow_dispatch:
+  push:
+    # Sequence of patterns matched against refs/tags
+    tags:
+      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+
+jobs:
+  build_web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.3.x'
+          cache: true
+      - run: make build-web
+      - run: zip -r web build/web
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: web.zip
+          body: Internal release
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_TOTEM_26659 }}'
+          channelId: live
+  build_ios:
+   runs-on: macos-11
+   steps:
+    - uses: actions/checkout@v2
+    - name: Install Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.3.x'
+        cache: true
+    - uses: webfactory/ssh-agent@v0.5.4
+      with:
+        ssh-private-key: ${{ secrets.MATCH_REPO_PRIVATE_KEY }}
+    - run: fastlane ios build
+      env:
+        MATCH_PASSWORD: ${{ secrets.FASTLANE_MATCH_PASSWORD }}
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: totem.ipa
+        body: Internal release
+    - run: fastlane ios internal
+      env:
+        APPLE_STORE_CONNECT_API_KEY: ${{ secrets.APPLE_STORE_CONNECT_API_KEY }}
+  build_android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.3.x'
+          cache: true
+      - name: Setup secrets
+        run: |
+          echo "$PLAY_KEYSTORE_B64" | base64 --decode > android/keystore.jks
+          echo "$PLAY_KEYSTORE_PROPERTIES" > android/key.properties
+        env:
+          PLAY_KEYSTORE_B64: ${{ secrets.PLAY_KEYSTORE_B64 }}
+          PLAY_KEYSTORE_PROPERTIES: ${{ secrets.PLAY_KEYSTORE_PROPERTIES }}
+      - run: flutter build appbundle
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: build/app/outputs/bundle/release/app-release.aab
+          body: Internal release
+      - run: fastlane android internal
+        env:
+          PLAY_DEPLOY_KEY: ${{ secrets.PLAY_DEPLOY_KEY }}
