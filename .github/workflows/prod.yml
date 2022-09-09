@@ -9,7 +9,7 @@ on:
 jobs:
   build_web:
     runs-on: ubuntu-latest
-    environment:
+    env:
       ENVIRONMENT: prod
     steps:
       - uses: actions/checkout@v2
@@ -33,7 +33,7 @@ jobs:
           projectId: totem-26659
   build_ios:
     runs-on: macos-11
-    environment:
+    env:
       ENVIRONMENT: prod
     steps:
       - uses: actions/checkout@v2
@@ -58,7 +58,7 @@ jobs:
           APPLE_STORE_CONNECT_API_KEY: ${{ secrets.APPLE_STORE_CONNECT_API_KEY }}
   build_android:
     runs-on: ubuntu-latest
-    environment:
+    env:
       ENVIRONMENT: prod
     steps:
       - uses: actions/checkout@v2
