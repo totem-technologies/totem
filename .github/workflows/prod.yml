@@ -22,12 +22,13 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: web.zip
-          body: Internal release
+          body: Produciton release
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_TOTEM_26659 }}'
           channelId: live
+          projectId: totem-26659
   build_ios:
    runs-on: macos-11
    steps:
@@ -47,7 +48,7 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: totem.ipa
-        body: Internal release
+        body: Produciton release
     - run: fastlane ios internal
       env:
         APPLE_STORE_CONNECT_API_KEY: ${{ secrets.APPLE_STORE_CONNECT_API_KEY }}
@@ -72,7 +73,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: build/app/outputs/bundle/release/app-release.aab
-          body: Internal release
+          body: Produciton release
       - run: fastlane android internal
         env:
           PLAY_DEPLOY_KEY: ${{ secrets.PLAY_DEPLOY_KEY }}
