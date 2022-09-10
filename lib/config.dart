@@ -3,7 +3,7 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart'
-    show TargetPlatform, debugPrint, defaultTargetPlatform;
+    show defaultTargetPlatform, TargetPlatform;
 
 import './firebase_options_dev.dart' as dev;
 import './firebase_options_prod.dart' as prod;
@@ -21,10 +21,7 @@ Future<void> initConfig() async {
     'dev': dev.DefaultFirebaseOptions.currentPlatform,
     'prod': prod.DefaultFirebaseOptions.currentPlatform
   };
-  const String environment =
-      String.fromEnvironment('ENVIRONMENT', defaultValue: 'dev');
-  debugPrint('Initializing Firebase with ${environment} config');
-  await Firebase.initializeApp(options: environemnts[environment]);
+  await Firebase.initializeApp(options: environemnts[AppConfig.environemnt]);
 
   if (AppConfig.useEmulator) {
     await _connectToFirebaseEmulator();
