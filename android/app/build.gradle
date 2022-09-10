@@ -62,6 +62,20 @@ android {
             signingConfig signingConfigs.release
         }
     }
+
+    flavorDimensions "app"
+    productFlavors {
+        dev {
+            dimension "app"
+            resValue "string", "app_name", "Totem Dev"
+            applicationIdSuffix ".dev"
+        }
+        prod {
+            dimension "app"
+            resValue "string", "app_name", "Totem"
+        }
+    }
+
 }
 
 flutter {
