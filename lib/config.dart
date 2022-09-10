@@ -10,18 +10,18 @@ import './firebase_options_prod.dart' as prod;
 
 class AppConfig {
   static const agoriaAppID = '4880737da9bf47e290f46d847cd1c3b1';
-  static const environemnt =
+  static const environment =
       String.fromEnvironment('ENVIRONMENT', defaultValue: 'dev');
   static const useEmulator = String.fromEnvironment('USE_EMULATOR') == 'true';
-  static const isDev = environemnt == 'dev';
+  static const isDev = environment == 'dev';
 }
 
 Future<void> initConfig() async {
-  var environemnts = {
+  var environments = {
     'dev': dev.DefaultFirebaseOptions.currentPlatform,
     'prod': prod.DefaultFirebaseOptions.currentPlatform
   };
-  await Firebase.initializeApp(options: environemnts[AppConfig.environemnt]);
+  await Firebase.initializeApp(options: environments[AppConfig.environment]);
 
   if (AppConfig.useEmulator) {
     await _connectToFirebaseEmulator();
