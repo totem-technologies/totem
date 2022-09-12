@@ -13,7 +13,7 @@ platform :ios do
       path: "ios/Runner.xcodeproj"
     )
     sh("flutter build ipa --flavor #{ENV["ENVIRONMENT"]} --dart-define='ENVIRONMENT=#{ENV["ENVIRONMENT"]}'")
-    build_app(scheme: "Runner",
+    build_app(scheme: "Release-prod",
       workspace: "ios/Runner.xcworkspace",
       export_method: "app-store",
       output_name: "totem.ipa",

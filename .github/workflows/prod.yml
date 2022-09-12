@@ -33,8 +33,6 @@ jobs:
           projectId: totem-26659
   build_ios:
     runs-on: macos-11
-    env:
-      ENVIRONMENT: prod
     steps:
       - uses: actions/checkout@v2
       - name: Install Flutter
@@ -45,7 +43,7 @@ jobs:
       - uses: webfactory/ssh-agent@v0.5.4
         with:
           ssh-private-key: ${{ secrets.MATCH_REPO_PRIVATE_KEY }}
-      - run: fastlane ios build
+      - run: ENVIRONMENT=prod make build-ios
         env:
           MATCH_PASSWORD: ${{ secrets.FASTLANE_MATCH_PASSWORD }}
       - name: Release
@@ -58,8 +56,6 @@ jobs:
           APPLE_STORE_CONNECT_API_KEY: ${{ secrets.APPLE_STORE_CONNECT_API_KEY }}
   build_android:
     runs-on: ubuntu-latest
-    env:
-      ENVIRONMENT: prod
     steps:
       - uses: actions/checkout@v2
       - name: Install Flutter
@@ -74,11 +70,11 @@ jobs:
         env:
           PLAY_KEYSTORE_B64: ${{ secrets.PLAY_KEYSTORE_B64 }}
           PLAY_KEYSTORE_PROPERTIES: ${{ secrets.PLAY_KEYSTORE_PROPERTIES }}
-      - run: flutter build appbundle
+      - run: ENVIRONMENT=prod make build-android
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          files: build/app/outputs/bundle/release/app-release.aab
+          files: build/app/outputs/bundle/prodRelease/app-prod-release.aab
           body: Produciton release
       - run: fastlane android internal
         env:
