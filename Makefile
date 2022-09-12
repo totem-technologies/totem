@@ -1,9 +1,9 @@
-export ENVIRONMENT ?= dev
+export ENVIRONMENT ?= dev # dev or prod
 
 build: build-android build-ios .git/hooks/pre-commit
 
 build-android:
-	flutter build appbundle --dart-define='ENVIRONMENT=${ENVIRONMENT}'
+	flutter build appbundle --flavor ${ENVIRONMENT} --dart-define='ENVIRONMENT=${ENVIRONMENT}'
 
 publish-android:
 	fastlane android internal
