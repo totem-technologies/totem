@@ -12,6 +12,8 @@ import 'package:totem/models/index.dart';
 import 'package:totem/services/utils/device_type.dart';
 import 'package:totem/theme/index.dart';
 
+import 'layouts.dart';
+
 class CircleLiveVideoSession extends ConsumerStatefulWidget {
   const CircleLiveVideoSession({Key? key}) : super(key: key);
 
@@ -102,7 +104,6 @@ class _CircleLiveVideoSessionState
                                                 (totemParticipant.me)
                                             ? _speakerUserView(context,
                                                 activeSession: activeSession,
-                                                participants: participants,
                                                 isPhoneLayout: isPhoneLayout)
                                             : ListenerUserLayout(
                                                 constrainSpeaker:
@@ -175,12 +176,20 @@ class _CircleLiveVideoSessionState
   }
 
   Widget _speakerUserView(BuildContext context,
-      {required List<SessionParticipant> participants,
-      required ActiveSession activeSession,
-      required bool isPhoneLayout}) {
-    return CircleLiveSessionUsers(
-      speakerView: true,
-      isPhoneLayout: isPhoneLayout,
+      {required ActiveSession activeSession, required bool isPhoneLayout}) {
+    final totemId = activeSession.totemParticipant?.uid;
+    final participants = activeSession.speakOrderParticipants
+        .where((element) => element.uid != totemId)
+        .toList();
+
+    return WaitingRoomListLayout(
+      generate: (i, dimension) => CircleSessionParticipant(
+        dimension: dimension,
+        participant: participants[i],
+        hasTotem: activeSession.totemUser == participants[i].sessionUserId,
+        next: i == 0,
+      ),
+      count: participants.length,
     );
   }
 
