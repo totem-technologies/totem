@@ -100,7 +100,7 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
                             Expanded(child: Container()),
                             IconButton(
                               onPressed: () {
-                                Navigator.of(context).pop(false);
+                                Navigator.of(context).pop();
                               },
                               icon: Icon(
                                 Icons.close,
@@ -190,7 +190,7 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
                                 alignment: Alignment.topRight,
                                 child: InkWell(
                                   onTap: () {
-                                    Navigator.of(context).pop(false);
+                                    Navigator.of(context).pop();
                                   },
                                   child: Padding(
                                     padding: const EdgeInsets.only(
@@ -446,7 +446,7 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
                                 onPressed: () {
                                   _error == null
                                       ? _join(user)
-                                      : Navigator.of(context).pop(false);
+                                      : Navigator.of(context).pop();
                                 },
                                 label: _error == null
                                     ? t.joinCircle
