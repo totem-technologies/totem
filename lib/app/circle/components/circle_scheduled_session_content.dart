@@ -12,9 +12,11 @@ import 'package:totem/theme/index.dart';
 import 'circle_session_controls.dart';
 
 class CircleScheduledSessionContent extends ConsumerStatefulWidget {
-  const CircleScheduledSessionContent({Key? key, required this.session})
+  const CircleScheduledSessionContent(
+      {Key? key, required this.session, required this.userProfile})
       : super(key: key);
   final Session session;
+  final UserProfile userProfile;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
@@ -282,6 +284,7 @@ class _CircleScheduledSessionContentState
     final provider = ref.read(communicationsProvider);
     provider.joinSession(
       session: widget.session,
+      sessionImage: widget.userProfile.image,
       handler: CommunicationHandler(
           joinedCircle: (String sessionId, String sessionUserId) {
         debugPrint("joined circle as: $sessionUserId");

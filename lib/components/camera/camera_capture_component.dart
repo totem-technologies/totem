@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:after_layout/after_layout.dart';
 import 'package:camera/camera.dart';

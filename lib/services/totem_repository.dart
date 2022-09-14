@@ -81,7 +81,7 @@ class TotemRepository {
     String? description,
     String? keeper,
     String? previousCircle,
-    List<String>? removedParticipants,
+    Map<String, dynamic>? bannedParticipants,
     bool addAsMember = true,
   }) =>
       _circlesProvider.createSnapCircle(
@@ -90,7 +90,7 @@ class TotemRepository {
         uid: user!.uid,
         keeper: keeper,
         previousCircle: previousCircle,
-        removedParticipants: removedParticipants,
+        bannedParticipants: bannedParticipants,
       );
   Future<bool> removeSnapCircle({required SnapCircle circle}) =>
       _circlesProvider.removeSnapCircle(circle: circle, uid: user!.uid);

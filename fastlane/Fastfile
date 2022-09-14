@@ -12,8 +12,8 @@ platform :ios do
       use_automatic_signing: false,
       path: "ios/Runner.xcodeproj"
     )
-    sh("flutter build ipa")
-    build_app(scheme: "Runner",
+    sh("flutter build ipa --flavor #{ENV["ENVIRONMENT"]} --dart-define='ENVIRONMENT=#{ENV["ENVIRONMENT"]}'")
+    build_app(scheme: "prod",
       workspace: "ios/Runner.xcworkspace",
       export_method: "app-store",
       output_name: "totem.ipa",
@@ -46,6 +46,6 @@ platform :android do
     else
       key_data = IO.read("../play-deploy-key.json")
     end
-    upload_to_play_store(track: 'internal', json_key_data: key_data, aab: "build/app/outputs/bundle/release/app-release.aab")
+    upload_to_play_store(track: 'internal', json_key_data: key_data, aab: "build/app/outputs/bundle/prodRelease/app-prod-release.aab")
   end
 end

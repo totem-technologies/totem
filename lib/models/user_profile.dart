@@ -9,6 +9,8 @@ class UserProfile with ChangeNotifier {
   late String uid;
   late String ref;
   int? completedCircles;
+  late bool acceptedTOS;
+  late bool ageVerified;
 
   bool get hasImage {
     return image != null && image!.isNotEmpty;
@@ -36,6 +38,8 @@ class UserProfile with ChangeNotifier {
     name = json['name'] ?? "";
     image = json['image'];
     email = json['email'];
+    acceptedTOS = json['acceptedTOS'] ?? false;
+    ageVerified = json['ageVerified'] ?? false;
     createdOn = DateTimeEx.fromMapValue(json['created_on']) ?? DateTime.now();
   }
 
@@ -43,6 +47,8 @@ class UserProfile with ChangeNotifier {
     Map<String, dynamic> data = {
       "name": name,
       "created_on": createdOn,
+      "acceptedTOS": acceptedTOS,
+      "ageVerified": ageVerified,
     };
     if (image != null) {
       data["image"] = image!;
@@ -53,6 +59,7 @@ class UserProfile with ChangeNotifier {
     if (updated) {
       data["updated_on"] = DateTime.now();
     }
+
     return data;
   }
 }

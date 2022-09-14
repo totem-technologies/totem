@@ -12,6 +12,11 @@ import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
 import 'package:wakelock/wakelock.dart';
 
+enum PermissionType {
+  video,
+  audio,
+}
+
 class AgoraCommunicationProvider extends CommunicationProvider {
   static const String appId = AppConfig.agoriaAppID;
 
@@ -20,8 +25,8 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   static const int videoHeight = 360;
   static const int videoWidth = 360;
 
-  static const int fullScreenHeight = 500;
-  static const int fullScreenWidth = 500;
+  static const int fullScreenHeight = 600;
+  static const int fullScreenWidth = 600;
 
   // Communication streams
   static const int statsStream = 0;
@@ -181,10 +186,12 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   Future<bool> joinSession({
     required Session session,
     required CommunicationHandler handler,
+    String? sessionImage,
     bool enableVideo = false,
   }) async {
     _handler = handler;
     _session = session;
+    _sessionImage = sessionImage;
     _lastError = null;
     _audioIndicatorStreamController =
         StreamController<CommunicationAudioVolumeIndication>.broadcast(
@@ -201,7 +208,16 @@ class AgoraCommunicationProvider extends CommunicationProvider {
       int uid = Random().nextInt(100000);
       _sessionToken = await sessionProvider.requestSessionTokenWithUID(
           session: session, uid: uid);
+      bool hasAudioPermission = await checkPermissions(PermissionType.audio);
+      // Check to ensure there is at least one microphone connected
+      if (!hasAudioPermission) {
+        _updateState(CommunicationState.failed);
+        return false;
+      }
       await _engine!.joinChannel(_sessionToken.token, session.id, null, uid);
+    } on ServiceException catch (ex) {
+      _lastError = ex.message;
+      _updateState(CommunicationState.failed);
     } catch (ex) {
       debugPrint('unable to activate agora session: $ex');
       _updateState(CommunicationState.failed);
@@ -327,7 +343,16 @@ class AgoraCommunicationProvider extends CommunicationProvider {
               statusValue != PermissionStatus.limited) {
             debugPrint('Failed requesting bluetooth connect!');
           }
+          statusValue = await Permission.camera.request();
+          if (statusValue != PermissionStatus.granted &&
+              statusValue != PermissionStatus.limited) {
+            debugPrint('Failed requesting camera!');
+          }
           statusValue = await Permission.microphone.request();
+          if (statusValue != PermissionStatus.granted &&
+              statusValue != PermissionStatus.limited) {
+            debugPrint('Failed requesting microphone!');
+          }
         }
         if (statusValue == PermissionStatus.granted ||
             statusValue == PermissionStatus.limited) {
@@ -349,7 +374,9 @@ class AgoraCommunicationProvider extends CommunicationProvider {
                   width: systemVideo.videoSize, height: systemVideo.videoSize),
             ),
           );
-          if (enableVideo) {
+          bool hasVideoPermission =
+              await checkPermissions(PermissionType.video);
+          if (enableVideo && hasVideoPermission) {
             await _engine!.enableVideo();
             await _engine!.startPreview();
           }
@@ -983,6 +1010,33 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   void switchCamera() async {
     if (_engine != null) {
       await _engine!.switchCamera();
+    }
+  }
+
+  Future<bool> checkPermissions(PermissionType type) async {
+    try {
+      switch (type) {
+        case PermissionType.video:
+          if (kIsWeb) {
+            List<MediaDeviceInfo> videoDevices =
+                await _engine!.deviceManager.enumerateVideoDevices();
+            return videoDevices.isNotEmpty &&
+                videoDevices[0].deviceId.isNotEmpty;
+          } else {
+            return Permission.camera.request().isGranted;
+          }
+        case PermissionType.audio:
+          if (kIsWeb) {
+            List<MediaDeviceInfo> audioInputDevices =
+                await _engine!.deviceManager.enumerateAudioRecordingDevices();
+            return audioInputDevices.isNotEmpty &&
+                audioInputDevices[0].deviceId.isNotEmpty;
+          } else {
+            return Permission.microphone.request().isGranted;
+          }
+      }
+    } catch (e) {
+      return false;
     }
   }
 

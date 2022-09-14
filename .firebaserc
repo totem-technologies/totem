@@ -1,5 +1,8 @@
 {
   "projects": {
-    "default": "totem-26659"
-  }
+    "prod": "totem-26659",
+    "default": "totem-dev-184f1"
+  },
+  "targets": {},
+  "etags": {}
 }

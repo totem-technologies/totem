@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,6 +12,7 @@ import 'package:totem/models/index.dart';
 import 'package:totem/services/providers.dart';
 import 'package:totem/services/utils/device_type.dart';
 import 'package:totem/theme/index.dart';
+import 'package:universal_html/html.dart' show document;
 
 class CircleSessionControls extends ConsumerStatefulWidget {
   const CircleSessionControls({Key? key}) : super(key: key);
@@ -20,7 +22,8 @@ class CircleSessionControls extends ConsumerStatefulWidget {
 }
 
 class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
-  bool _more = false;
+  var _more = false;
+  var _fullscreen = false;
   Timer? _timer;
   static const double _btnSpacing = 6;
   @override
@@ -217,6 +220,16 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
                 },
               ),
               if (role == Role.keeper) ...[
+                const SizedBox(width: _btnSpacing),
+                ThemedControlButton(
+                  label: t.reverse,
+                  labelColor: themeColors.reversedText,
+                  icon: Icons.refresh,
+                  onPressed: () {
+                    debugPrint('info pressed');
+                    _reverseOrder(context, ref);
+                  },
+                ),
                 const SizedBox(
                   width: _btnSpacing,
                 ),
@@ -230,6 +243,16 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
                 ),
               ],
               if (role != Role.keeper) ...[
+                if (kIsWeb) ...[
+                  const SizedBox(width: _btnSpacing),
+                  ThemedControlButton(
+                    label: _fullscreen ? t.exit_fullscreen : t.fullscreen,
+                    labelColor: themeColors.reversedText,
+                    icon:
+                        _fullscreen ? Icons.close_fullscreen : Icons.fullscreen,
+                    onPressed: _toggleFullscreen,
+                  ),
+                ],
                 const SizedBox(width: _btnSpacing),
                 ThemedControlButton(
                   label: t.leaveSession,
@@ -272,6 +295,16 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
                     _showCircleInfo(context);
                   },
                 ),
+                if (kIsWeb) ...[
+                  const SizedBox(width: _btnSpacing),
+                  ThemedControlButton(
+                    label: _fullscreen ? t.exit_fullscreen : t.fullscreen,
+                    labelColor: themeColors.reversedText,
+                    icon:
+                        _fullscreen ? Icons.close_fullscreen : Icons.fullscreen,
+                    onPressed: _toggleFullscreen,
+                  ),
+                ],
                 const SizedBox(
                   width: _btnSpacing,
                 ),
@@ -338,6 +371,17 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
                   },
                 ),
                 if (role != Role.keeper) ...[
+                  if (kIsWeb) ...[
+                    const SizedBox(width: _btnSpacing),
+                    ThemedControlButton(
+                      label: _fullscreen ? t.exit_fullscreen : t.fullscreen,
+                      labelColor: themeColors.reversedText,
+                      icon: _fullscreen
+                          ? Icons.close_fullscreen
+                          : Icons.fullscreen,
+                      onPressed: _toggleFullscreen,
+                    ),
+                  ],
                   const SizedBox(width: _btnSpacing),
                   ThemedControlButton(
                     label: t.leaveSession,
@@ -362,6 +406,16 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
                   ),
                   const SizedBox(width: _btnSpacing),
                   ThemedControlButton(
+                    label: t.reverse,
+                    labelColor: themeColors.reversedText,
+                    icon: Icons.refresh,
+                    onPressed: () {
+                      debugPrint('info pressed');
+                      _reverseOrder(context, ref);
+                    },
+                  ),
+                  const SizedBox(width: _btnSpacing),
+                  ThemedControlButton(
                     label: t.info,
                     labelColor: themeColors.reversedText,
                     icon: Icons.info_outline,
@@ -370,9 +424,18 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
                       _showCircleInfo(context);
                     },
                   ),
-                  const SizedBox(
-                    width: _btnSpacing,
-                  ),
+                  if (kIsWeb) ...[
+                    const SizedBox(width: _btnSpacing),
+                    ThemedControlButton(
+                      label: _fullscreen ? t.exit_fullscreen : t.fullscreen,
+                      labelColor: themeColors.reversedText,
+                      icon: _fullscreen
+                          ? Icons.close_fullscreen
+                          : Icons.fullscreen,
+                      onPressed: _toggleFullscreen,
+                    ),
+                  ],
+                  const SizedBox(width: _btnSpacing),
                   ThemedControlButton(
                     backgroundColor: themeColors.error,
                     imageColor: themeColors.reversedText,
@@ -392,10 +455,20 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
             ),
           ],
         ),
-/*        CircleLiveTrayTitle(
-            title: activeSession.circle.name, maxWidth: maxWidth), */
       ],
     );
+  }
+
+  void _toggleFullscreen() {
+    var fullscreen = document.fullscreenElement != null;
+    setState(() {
+      _fullscreen = !fullscreen;
+    });
+    if (!fullscreen) {
+      document.documentElement?.requestFullscreen();
+    } else {
+      document.exitFullscreen();
+    }
   }
 
   void _nextUser(BuildContext context, WidgetRef ref) async {
@@ -464,5 +537,27 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
     _timer = Timer(const Duration(milliseconds: 350), () {
       func();
     });
+  }
+
+  Future<void> _reverseOrder(BuildContext context, WidgetRef ref) async {
+    FocusScope.of(context).unfocus();
+    final repo = ref.read(repositoryProvider);
+    final activeSession = ref.read(activeSessionProvider);
+    if (activeSession.speakOrderParticipants.length == 1) {
+      return;
+    }
+    List<SessionParticipant> participants =
+        List<SessionParticipant>.from(activeSession.speakOrderParticipants)
+            .sublist(1);
+    if (participants.length > 1) {
+      participants = [
+        activeSession.speakOrderParticipants.first,
+        ...participants.reversed.toList(growable: false)
+      ];
+      await repo.updateActiveSession(repo.activeSession!.reorderParticipants(
+          participants
+              .map((element) => element.sessionUserId!)
+              .toList(growable: false)));
+    }
   }
 }

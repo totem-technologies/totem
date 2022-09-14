@@ -19,8 +19,10 @@ class CircleSnapSessionContent extends ConsumerStatefulWidget {
   const CircleSnapSessionContent({
     Key? key,
     required this.circle,
+    required this.userProfile,
   }) : super(key: key);
   final SnapCircle circle;
+  final UserProfile userProfile;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
@@ -83,7 +85,10 @@ class _CircleSnapSessionContentState
                                     SubPageHeader(
                                       title: widget.circle.name,
                                       onClose: (commProvider.state !=
-                                              CommunicationState.disconnecting)
+                                                  CommunicationState
+                                                      .disconnecting &&
+                                              sessionProvider.state !=
+                                                  SessionState.ending)
                                           ? () async {
                                               if (commProvider.state !=
                                                   CommunicationState.active) {
@@ -114,14 +119,6 @@ class _CircleSnapSessionContentState
                                         crossAxisAlignment:
                                             CrossAxisAlignment.stretch,
                                         children: [
-                                          Text(
-                                            t.circleDescription,
-                                            style: textStyles.headline3,
-                                          ),
-                                          const SizedBox(
-                                            height: 4,
-                                          ),
-                                          //Text(widget.circle.description!),
                                           TrimmedText(
                                             widget.circle.description!,
                                             trimLines: 3,
@@ -511,6 +508,7 @@ class _CircleSnapSessionContentState
   void _joinSession() {
     final provider = ref.read(communicationsProvider);
     provider.joinSession(
+      sessionImage: widget.userProfile.image,
       session: SnapSession.fromJson({}, circle: widget.circle),
       enableVideo: true,
       handler: CommunicationHandler(

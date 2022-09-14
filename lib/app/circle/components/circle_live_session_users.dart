@@ -31,7 +31,6 @@ class CircleLiveSessionUsers extends ConsumerWidget {
                     participant: participants[i],
                     hasTotem: activeSession.totemUser ==
                         participants[i].sessionUserId,
-                    annotate: false,
                     next: i == 0,
                   ),
                 )
@@ -41,7 +40,6 @@ class CircleLiveSessionUsers extends ConsumerWidget {
                     participant: participants[i],
                     hasTotem: activeSession.totemUser ==
                         participants[i].sessionUserId,
-                    annotate: false,
                     next: i == 0,
                   ),
                   count: participants.length,

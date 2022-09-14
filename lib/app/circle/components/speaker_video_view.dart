@@ -3,9 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:provider/provider.dart' as prov;
-import 'package:totem/app/circle/components/circle_network_indicator.dart';
 import 'package:totem/app/index.dart';
-import 'package:totem/components/index.dart';
 import 'package:totem/models/index.dart';
 
 class SpeakerVideoView extends ConsumerStatefulWidget {
@@ -27,6 +25,7 @@ class SpeakerVideoViewState extends ConsumerState<SpeakerVideoView> {
   @override
   Widget build(BuildContext context) {
     final activeSession = ref.watch(activeSessionProvider);
+    final commProvider = ref.watch(communicationsProvider);
     final totemParticipant = activeSession.totemParticipant;
     final bool totemReceived = activeSession.totemReceived;
     if (totemParticipant != null) {
@@ -44,12 +43,18 @@ class SpeakerVideoViewState extends ConsumerState<SpeakerVideoView> {
                   builder: (_, participant, __) {
                     return ClipRRect(
                       borderRadius: const BorderRadius.all(Radius.circular(8)),
-                      child: Stack(
+                      child: CircleParticipantVideo(
+                        participant: participant,
+                        channelId: commProvider.channelId ?? "",
+                      ),
+                      /*Stack(
                         children: [
                           CircleLiveSessionVideo(participant: participant),
                           if (participant.videoMuted)
-                            const Positioned.fill(
-                              child: CameraMuted(),
+                            Positioned.fill(
+                              child: CameraMuted(
+                                userImage: participant.sessionImage,
+                              ),
                             ),
                           if (!participant.me && participant.networkUnstable)
                             const Positioned(
@@ -64,7 +69,7 @@ class SpeakerVideoViewState extends ConsumerState<SpeakerVideoView> {
                               child: MuteIndicator(),
                             ),
                         ],
-                      ),
+                      ), */
                     );
                   },
                 ),
@@ -76,7 +81,11 @@ class SpeakerVideoViewState extends ConsumerState<SpeakerVideoView> {
       // if totem recipient is me, show the pending totem view
       if (totemParticipant.me) {
         return PendingTotemUser(
-          userVideo: CircleLiveSessionVideo(participant: totemParticipant),
+          userVideo: CircleParticipantVideo(
+            participant: totemParticipant,
+            channelId: commProvider.channelId ?? "",
+            annotate: false,
+          ),
           onPass: widget.onPass,
           onReceive: widget.onReceive,
           onSettings: widget.onSettings,

@@ -12,9 +12,9 @@ abstract class Circle {
   String? activeSession;
   int participantCount = 0;
   String? link;
-  String? keeper;
+  late String keeper;
   String? previousCircle;
-  List<String>? removedParticipants;
+  Map<String, dynamic>? bannedParticipants;
   bool _canJoin = true;
 
   Circle.fromJson(Map<String, dynamic> json,
@@ -32,17 +32,20 @@ abstract class Circle {
     link = json['link'];
     keeper = json['keeper'];
     previousCircle = json['previousCircle'];
-    if (json['removedParticipants'] != null) {
-      removedParticipants = List<String>.from(json['removedParticipants']);
+    if (json['bannedParticipants'] != null) {
+      bannedParticipants =
+          Map<String, dynamic>.from(json['bannedParticipants']);
     }
-    if (uid != null && removedParticipants != null) {
-      _canJoin = !removedParticipants!.contains(uid);
+    if (uid != null && bannedParticipants != null) {
+      _canJoin = bannedParticipants![uid] == null;
     }
   }
 
   bool get canJoin => _canJoin;
 
-  Role participantRole(String participantId);
+  Role participantRole(String participantId) {
+    return keeper == participantId ? Role.keeper : Role.member;
+  }
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> data = {
@@ -56,8 +59,8 @@ abstract class Circle {
     if (updatedOn != null) {
       data["updatedOn"] = updatedOn!;
     }
-    if (removedParticipants != null) {
-      data["removedParticipants"] = removedParticipants!;
+    if (bannedParticipants != null) {
+      data["bannedParticipants"] = bannedParticipants!;
     }
     return data;
   }

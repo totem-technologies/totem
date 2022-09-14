@@ -19,7 +19,7 @@ class DayOfWeekFormField extends FormField<List<int>> {
             builder: (FormFieldState<List<int>> state) {
               final themeColors = Theme.of(state.context).themeColors;
               final textStyles = Theme.of(state.context).textStyles;
-              Widget _dayOfWeekItem(String item, int index) {
+              Widget dayOfWeekItem(String item, int index) {
                 return InkWell(
                   onTap: () {
                     if (state.value!.contains(index)) {
@@ -48,7 +48,7 @@ class DayOfWeekFormField extends FormField<List<int>> {
                 );
               }
 
-              List<Widget> _rowItems() {
+              List<Widget> rowItems() {
                 final t = AppLocalizations.of(state.context)!;
                 final locale = t.localeName;
                 final daysOfWeek = dateTimeSymbolMap()[locale].WEEKDAYS;
@@ -58,10 +58,10 @@ class DayOfWeekFormField extends FormField<List<int>> {
                   int secondIndex = index < 3 ? index + 4 : 0;
                   items.add(Row(
                     children: [
-                      Expanded(child: _dayOfWeekItem(daysOfWeek[index], index)),
+                      Expanded(child: dayOfWeekItem(daysOfWeek[index], index)),
                       Expanded(
                           child: (index < 4)
-                              ? _dayOfWeekItem(
+                              ? dayOfWeekItem(
                                   daysOfWeek[secondIndex], secondIndex)
                               : Container()),
                     ],
@@ -73,7 +73,7 @@ class DayOfWeekFormField extends FormField<List<int>> {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  ..._rowItems(),
+                  ...rowItems(),
                   state.hasError
                       ? Text(
                           state.errorText!,
