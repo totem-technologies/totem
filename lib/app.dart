@@ -5,10 +5,9 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:totem/app_routes.dart';
-import 'package:totem/services/applinks/index.dart';
+import 'package:totem/config.dart';
 import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
-import 'package:totem/config.dart';
 
 Widget _wrapWithBanner(Widget child) {
   if (!AppConfig.isDev) {
@@ -37,12 +36,6 @@ class App extends ConsumerStatefulWidget {
 }
 
 class _AppState extends ConsumerState<App> {
-  @override
-  void initState() {
-    super.initState();
-    AppLinks.instance.initialize();
-  }
-
   late final _router = AppRoutes.instance.getRouter(ref);
 
   @override
