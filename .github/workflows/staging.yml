@@ -40,5 +40,5 @@ jobs:
           cache: 'npm'
           cache-dependency-path: server/functions/package-lock.json
       - run: npm -g install firebase-tools
-      - run: firebase use default
+      - run: firebase --token ${{ secrets.FIREBASE_SERVICE_ACCOUNT_TOTEM_DEV_184F1 }} use default
       - run: cd server && make deploy
