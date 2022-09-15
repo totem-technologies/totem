@@ -42,4 +42,4 @@ jobs:
           cache: 'npm'
           cache-dependency-path: server/functions/package-lock.json
       - run: npm -g install firebase-tools
-      - run: firebase use default && cd server && make deploy
+      - run: cd server && make deploy
