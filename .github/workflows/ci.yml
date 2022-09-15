@@ -23,6 +23,7 @@ jobs:
         with:
           node-version: 16
           cache: 'npm'
+          cache-dependency-path: server/functions/package-lock.json
       - run: npm install
       - run: npm run lint
       - run: npm run build
