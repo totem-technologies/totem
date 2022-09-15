@@ -36,6 +36,21 @@ jobs:
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_TOTEM_26659 }}'
           channelId: live
           projectId: totem-26659
+  build_and_deploy_server:
+    environment: dev
+    env:
+      FIREBASE_TOKEN: "${{ secrets.FIREBASE_TOKEN }}"
+      PROJECT_ID: totem-26659
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: 'npm'
+          cache-dependency-path: server/functions/package-lock.json
+      - run: npm -g install firebase-tools
+      - run: cd server && make deploy
   build_ios:
     runs-on: macos-11
     steps:
