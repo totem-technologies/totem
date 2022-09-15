@@ -31,6 +31,8 @@ jobs:
           projectId: totem-dev-184f1
   build_and_deploy_server:
     environment: dev
+    env:
+      FIREBASE_TOKEN: "${{ secrets.FIREBASE_TOKEN }}"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -40,5 +42,5 @@ jobs:
           cache: 'npm'
           cache-dependency-path: server/functions/package-lock.json
       - run: npm -g install firebase-tools
-      - run: firebase --token ${{ secrets.FIREBASE_SERVICE_ACCOUNT_TOTEM_DEV_184F1 }} use default
+      - run: firebase use default
       - run: cd server && make deploy
