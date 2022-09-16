@@ -11,10 +11,10 @@ describe("offline api tests", () => {
   const test = testFunc();
   let myFunctions: {
     ping: (arg0: Record<string, unknown>, arg1: {send: (data: string) => void}) => void;
-    getToken: CloudFunction<unknown>;
-    deleteSelf: CloudFunction<unknown>;
-    updateAccountState: CloudFunction<unknown>;
-    updateRoles: CloudFunction<unknown>;
+    getToken: CloudFunction<{channelName: string}>;
+    deleteSelf: CloudFunction<object>;
+    updateAccountState: CloudFunction<{key?: string|number, value?: string|object}>;
+    updateRoles: CloudFunction<object>;
   };
   let adminInitStub: sinon.SinonStub;
 
