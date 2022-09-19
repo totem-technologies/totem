@@ -407,7 +407,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
         }
       } catch (ex, stack) {
         // error initializing engine
-        reportError(ex, stack);
+        await reportError(ex, stack);
         _lastError = CommunicationErrors.communicationError;
         _updateState(CommunicationState.failed);
       }
