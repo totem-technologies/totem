@@ -5,6 +5,7 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/foundation.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/circles_provider.dart';
+import 'package:totem/services/error_report.dart';
 import 'package:totem/services/firebase_providers/paths.dart';
 import 'package:totem/services/index.dart';
 
@@ -174,12 +175,14 @@ class FirebaseCirclesProvider extends CirclesProvider {
         circle.createdBy = await _userFromRef(userRef);
         return circle;
       }
-    } on FirebaseException catch (e) {
+    } on FirebaseException catch (ex, stack) {
       // TODO: throw specific exception here
-      throw (ServiceException(code: e.code, message: e.message));
-    } catch (e) {
+      await reportError(ex, stack);
+      throw (ServiceException(code: ex.code, message: ex.message));
+    } catch (ex, stack) {
+      await reportError(ex, stack);
       throw (ServiceException(
-          code: ServiceException.errorCodeUnknown, message: e.toString()));
+          code: ServiceException.errorCodeUnknown, message: ex.toString()));
     }
     return null;
   }
@@ -243,8 +246,9 @@ class FirebaseCirclesProvider extends CirclesProvider {
             .add(userCircleData);
         return true;
       }
-    } catch (ex) {
+    } catch (ex, stack) {
       debugPrint('Unable to add user to collection: $ex');
+      await reportError(ex, stack);
     }
     return false;
   }
@@ -336,8 +340,9 @@ class FirebaseCirclesProvider extends CirclesProvider {
         DocumentReference ref = data["createdBy"] as DocumentReference;
         circle.createdBy = await _userFromRef(ref);
         circles.add(circle);
-      } catch (ex) {
+      } catch (ex, stack) {
         debugPrint(ex.toString());
+        await reportError(ex, stack);
       }
     }
     sink.add(circles);
@@ -357,8 +362,9 @@ class FirebaseCirclesProvider extends CirclesProvider {
           SnapSession.fromJson(data['activeSession'], circle: circle);
         }
         circles.add(circle);
-      } catch (ex) {
+      } catch (ex, stack) {
         debugPrint(ex.toString());
+        await reportError(ex, stack);
       }
     }
     sink.add(circles);
@@ -414,8 +420,9 @@ class FirebaseCirclesProvider extends CirclesProvider {
             circleRef.collection(Paths.scheduledSessions).doc();
         batch.set(ref, session);
         sessions.add(ref);
-      } catch (ex) {
+      } catch (ex, stack) {
         debugPrint("unable to create session: $ex");
+        await reportError(ex, stack);
       }
     }
     await batch.commit();
@@ -435,8 +442,9 @@ class FirebaseCirclesProvider extends CirclesProvider {
           .doc(circle.id);
       await activeCircleRef.delete();
       return true;
-    } catch (ex) {
+    } catch (ex, stack) {
       debugPrint(ex.toString());
+      await reportError(ex, stack);
     }
     return false;
   }
@@ -456,8 +464,9 @@ class FirebaseCirclesProvider extends CirclesProvider {
         SnapSession.fromJson(data['activeSession'], circle: circle);
       }
       return circle;
-    } catch (ex) {
+    } catch (ex, stack) {
       debugPrint(ex.toString());
+      await reportError(ex, stack);
     }
     return null;
   }
@@ -481,8 +490,9 @@ class FirebaseCirclesProvider extends CirclesProvider {
             id: snapshot.id, ref: snapshot.reference.path);
         return snapCircle;
       }
-    } catch (ex) {
+    } catch (ex, stack) {
       debugPrint(ex.toString());
+      await reportError(ex, stack);
     }
     return null;
   }
@@ -506,8 +516,9 @@ class FirebaseCirclesProvider extends CirclesProvider {
             id: snapshot.id, ref: snapshot.reference.path);
         return snapCircle;
       }
-    } catch (ex) {
+    } catch (ex, stack) {
       debugPrint(ex.toString());
+      await reportError(ex, stack);
     }
     return null;
   }
@@ -530,8 +541,9 @@ class FirebaseCirclesProvider extends CirclesProvider {
           return false;
         }
       }
-    } catch (ex) {
+    } catch (ex, stack) {
       debugPrint(ex.toString());
+      await reportError(ex, stack);
     }
     return true;
   }
