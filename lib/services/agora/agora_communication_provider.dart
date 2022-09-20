@@ -9,9 +9,9 @@ import 'package:flutter/foundation.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:totem/config.dart';
 import 'package:totem/models/index.dart';
+import 'package:totem/services/error_report.dart';
 import 'package:totem/services/index.dart';
 import 'package:wakelock/wakelock.dart';
-import 'package:totem/services/error_report.dart';
 
 enum PermissionType {
   video,
