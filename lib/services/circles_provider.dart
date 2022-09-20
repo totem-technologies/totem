@@ -4,8 +4,9 @@ abstract class CirclesProvider {
   Stream<List<ScheduledCircle>> scheduledCircles(String? uid);
 
   Stream<List<SnapCircle>> snapCircles();
-
   Stream<List<SnapCircle>> rejoinableSnapCircles(String uid);
+  Stream<List<SnapCircle>> mySnapCircles(
+      String uid, {bool privateOnly, bool activeOnly});
 
   Future<ScheduledCircle?> createScheduledCircle({
     required String name,
