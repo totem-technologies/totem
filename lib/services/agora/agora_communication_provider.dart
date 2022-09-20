@@ -11,6 +11,7 @@ import 'package:totem/config.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
 import 'package:wakelock/wakelock.dart';
+import 'package:totem/services/error_report.dart';
 
 enum PermissionType {
   video,
@@ -86,7 +87,8 @@ class AgoraCommunicationProvider extends CommunicationProvider {
       _engine = null;
       _audioIndicatorStreamController?.close();
       super.dispose();
-    } catch (ex) {
+    } catch (ex, stack) {
+      reportError(ex, stack);
       debugPrint("unable to break down engine: $ex");
     }
   }
@@ -120,8 +122,9 @@ class AgoraCommunicationProvider extends CommunicationProvider {
                   : speaker.id == "default");
         }
         _audioOutput ??= _audioOutputs.first;
-      } catch (ex) {
+      } catch (ex, stack) {
         debugPrint('unable to get devices: $ex');
+        await reportError(ex, stack);
       }
 
       // Microphones
@@ -146,8 +149,9 @@ class AgoraCommunicationProvider extends CommunicationProvider {
         if (_audioInput == null) {
           return "errorNoMicrophone";
         }
-      } catch (ex) {
+      } catch (ex, stack) {
         debugPrint('unable to get audioInput devices, not supported $ex');
+        await reportError(ex, stack);
       }
 
       // Cameras
@@ -170,12 +174,14 @@ class AgoraCommunicationProvider extends CommunicationProvider {
         if (_camera == null) {
           return "errorCamera";
         }
-      } catch (ex) {
+      } catch (ex, stack) {
         debugPrint('unable to get camera devices, not supported $ex');
+        await reportError(ex, stack);
       }
       return null;
-    } catch (ex) {
+    } catch (ex, stack) {
       debugPrint('unable to activate agora session: $ex');
+      await reportError(ex, stack);
       _updateState(CommunicationState.failed);
       errorMessage = ex.toString();
     }
@@ -215,11 +221,13 @@ class AgoraCommunicationProvider extends CommunicationProvider {
         return false;
       }
       await _engine!.joinChannel(_sessionToken.token, session.id, null, uid);
-    } on ServiceException catch (ex) {
+    } on ServiceException catch (ex, stack) {
+      await reportError(ex, stack);
       _lastError = ex.message;
       _updateState(CommunicationState.failed);
-    } catch (ex) {
+    } catch (ex, stack) {
       debugPrint('unable to activate agora session: $ex');
+      await reportError(ex, stack);
       _updateState(CommunicationState.failed);
     }
     return false;
@@ -409,8 +417,9 @@ class AgoraCommunicationProvider extends CommunicationProvider {
           _lastError = CommunicationErrors.noMicrophonePermission;
           _updateState(CommunicationState.failed);
         }
-      } catch (ex) {
+      } catch (ex, stack) {
         // error initializing engine
+        await reportError(ex, stack);
         _lastError = CommunicationErrors.communicationError;
         _updateState(CommunicationState.failed);
       }
@@ -552,8 +561,9 @@ class AgoraCommunicationProvider extends CommunicationProvider {
         try {
           await _engine!.enableLocalAudio(false);
           await _engine!.enableLocalAudio(true);
-        } catch (ex) {
+        } catch (ex, stack) {
           debugPrint('Failed resetting local audio $ex');
+          await reportError(ex, stack);
         } finally {
           if (muted) {
             await _engine!.muteLocalAudioStream(true);
@@ -666,9 +676,10 @@ class AgoraCommunicationProvider extends CommunicationProvider {
         await sessionProvider.leaveSession(
             session: _session!, sessionUid: commUid.toString());
       }
-    } on ServiceException catch (ex) {
+    } on ServiceException catch (ex, stack) {
       // just log this for now
       debugPrint('Got exception trying to leave session: ${ex.toString()}');
+      await reportError(ex, stack);
     }
     _pendingComplete = false;
     // update state
@@ -924,8 +935,9 @@ class AgoraCommunicationProvider extends CommunicationProvider {
         notifyListeners();
       }
       return true;
-    } catch (ex) {
+    } catch (ex, stack) {
       debugPrint('unable to setAudioInput: $ex');
+      await reportError(ex, stack);
     }
     return false;
   }
@@ -944,8 +956,9 @@ class AgoraCommunicationProvider extends CommunicationProvider {
         notifyListeners();
       }
       return true;
-    } catch (ex) {
+    } catch (ex, stack) {
       debugPrint('unable to setAudioOutput: $ex');
+      await reportError(ex, stack);
     }
     return false;
   }
@@ -966,8 +979,9 @@ class AgoraCommunicationProvider extends CommunicationProvider {
         notifyListeners();
       }
       return true;
-    } catch (ex) {
+    } catch (ex, stack) {
       debugPrint('unable to setCamera: $ex');
+      await reportError(ex, stack);
     }
     return false;
   }
@@ -1035,7 +1049,8 @@ class AgoraCommunicationProvider extends CommunicationProvider {
             return Permission.microphone.request().isGranted;
           }
       }
-    } catch (e) {
+    } catch (ex, stack) {
+      await reportError(ex, stack);
       return false;
     }
   }

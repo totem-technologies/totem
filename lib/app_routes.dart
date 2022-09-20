@@ -172,8 +172,8 @@ class AppRoutes {
         }
 
         // if this is a snap circle link, redirect to the circle page
-        if (state.subloc == home && state.queryParams.containsKey('snap')) {
-          return '${home}circle/${state.queryParams['snap']}';
+        if (state.subloc == '/' && state.queryParams.containsKey('snap')) {
+          return '/circle/${state.queryParams['snap']}';
         }
 
         // the ended path can only be accessed if the extra data is

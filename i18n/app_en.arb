@@ -175,7 +175,7 @@
     "privacyPolicy": "Privacy Policy",
     "profilePicture": "Profile Picture",
     "receive": "Receive",
-    "rejoinCircle": "Rejoin circle in progress",
+    "rejoinCircle": "Rejoin circle",
     "removeFromCircle": "Remove from circle",
     "removeFromCirclePrompt": "This will remove {name} from the circle and they won't be able to rejoin.\n\nDo you want to remove {name} from this circle?",
     "@removeFromCirclePrompt": {

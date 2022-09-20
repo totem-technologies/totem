@@ -5,6 +5,7 @@ import 'package:totem/app_routes.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
+import 'package:totem/services/error_report.dart';
 import 'package:totem/theme/index.dart';
 
 class CircleCreateSnapPage extends ConsumerStatefulWidget {
@@ -158,8 +159,9 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
         Navigator.pop(context);
         return;
       } */
-    } on ServiceException catch (ex) {
+    } on ServiceException catch (ex, stack) {
       debugPrint('Error creating circle: $ex');
+      await reportError(ex, stack);
       await _showCreateError(ex);
     }
     setState(() => _busy = false);
