@@ -159,13 +159,19 @@ class CircleSessionPageState extends ConsumerState<CircleSessionPage>
               [SessionState.waiting, SessionState.starting, SessionState.live]);
           if (pending == null) {
             // this is a create new circle moment
-            circle = await repo.createSnapCircle(
-              name: circle.name,
-              description: circle.description,
-              keeper: circle.keeper,
-              previousCircle: circle.id,
-              bannedParticipants: circle.bannedParticipants,
-            );
+            try {
+              circle = await repo.createSnapCircle(
+                name: circle.name,
+                description: circle.description,
+                keeper: circle.keeper,
+                previousCircle: circle.id,
+                bannedParticipants: circle.bannedParticipants,
+              );
+            } on ServiceException catch (ex) {
+              debugPrint('Error re-creating circle: $ex');
+              setState(() => _sessionState = SessionPageState.error);
+              return;
+            }
           } else {
             // join the pending one
             circle = pending;
