@@ -107,7 +107,6 @@ class OnboardingCircleEvent extends AccountStateEvent {
       decoration: PageDecoration(
         titleTextStyle:
             const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-        bodyTextStyle: const TextStyle(fontSize: 16, height: 1.7),
         imageFlex: (isPhone ? 1 : 2),
         bodyFlex: 3,
       ),
