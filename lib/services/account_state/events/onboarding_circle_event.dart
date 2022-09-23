@@ -6,6 +6,7 @@ import 'package:totem/services/account_state/account_state_event.dart';
 import 'package:totem/services/providers.dart';
 import 'package:totem/services/utils/device_type.dart';
 import 'package:totem/theme/index.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 
 class OnboardingCircleEvent extends AccountStateEvent {
   OnboardingCircleEvent({bool testOnly = false})
@@ -61,16 +62,6 @@ class OnboardingCircleEvent extends AccountStateEvent {
         _pageWith(
             title: t.introScreenTitle4,
             body: t.introScreenMessage4,
-            image: "onboarding_pass_baton",
-            isPhone: isPhone),
-        _pageWith(
-            title: t.introScreenTitle5,
-            body: t.introScreenMessage5,
-            image: "onboarding_help_book",
-            isPhone: isPhone),
-        _pageWith(
-            title: t.introScreenTitle6,
-            body: t.introScreenMessage6,
             image: "onboarding_finish_flag",
             isPhone: isPhone),
       ],
@@ -93,9 +84,19 @@ class OnboardingCircleEvent extends AccountStateEvent {
       required String body,
       required String image,
       required bool isPhone}) {
+    var style = MarkdownStyleSheet(
+        textAlign: WrapAlignment.center,
+        h1Align: WrapAlignment.center,
+        p: const TextStyle(
+          fontSize: 16,
+          height: 1.7,
+        ));
     return PageViewModel(
       title: title,
-      body: body,
+      bodyWidget: MarkdownBody(
+        data: body,
+        styleSheet: style,
+      ),
       image: Image(
         image: ResizeImage(
             AssetImage(
