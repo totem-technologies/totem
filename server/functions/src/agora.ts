@@ -3,6 +3,7 @@ import axios, {AxiosError} from "axios";
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 import {isAuthenticated} from "./auth";
+import {SnapCircleData} from "./common-types";
 
 const agoraHost = "https://api.agora.io";
 const appid = functions.config().agora.appid;
@@ -38,10 +39,14 @@ const assertUserCanJoinCircle = async (uid: string, circleId: string) => {
     console.log(`User ${uid} tried to join circle ${circleId} but it doesn't exist`);
     throw new functions.https.HttpsError("not-found", "The circle with the specified id does not exist.");
   }
-  const {bannedParticipants} = circleSnapshot.data() ?? {};
+  const {bannedParticipants, maxParticipants, participantCount = 0} = (circleSnapshot.data() as SnapCircleData) ?? {};
   if (bannedParticipants && bannedParticipants[uid]) {
     console.log(`User ${uid} tried to join circle ${circleId} but they are banned`);
     throw new functions.https.HttpsError("permission-denied", "User has been removed from this circle.");
+  }
+  if (maxParticipants && participantCount >= maxParticipants) {
+    console.log(`User ${uid} tried to join circle ${circleId} but it is full`);
+    throw new functions.https.HttpsError("resource-exhausted", "This circle is full.");
   }
 };
 

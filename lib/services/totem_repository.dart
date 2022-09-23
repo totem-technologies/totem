@@ -99,6 +99,10 @@ class TotemRepository {
   Stream<List<SnapCircle>> snapCircles() => _circlesProvider.snapCircles();
   Stream<List<SnapCircle>> rejoinableSnapCircles() =>
       _circlesProvider.rejoinableSnapCircles(user!.uid);
+  Stream<List<SnapCircle>> mySnapCircles(
+          {bool privateOnly = true, bool activeOnly = true}) =>
+      _circlesProvider.mySnapCircles(user!.uid,
+          privateOnly: privateOnly, activeOnly: activeOnly);
   Stream<ScheduledCircle> scheduledCircle({required String circleId}) =>
       _circlesProvider.scheduledCircle(circleId, user!.uid);
   Future<SnapCircle?> circleFromId(String id) =>
