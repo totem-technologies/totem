@@ -6,6 +6,7 @@ export 'circle.dart';
 export 'communication_device.dart';
 export 'data_urls.dart';
 export 'date_name_ext.dart';
+export 'network_state.dart';
 export 'participant.dart';
 export 'roles.dart';
 export 'scheduled_circle.dart';
