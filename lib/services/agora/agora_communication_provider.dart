@@ -373,6 +373,13 @@ class AgoraCommunicationProvider extends CommunicationProvider {
           await _engine!.setChannelProfile(ChannelProfile.Communication);
           await _engine!.enableDualStreamMode(true);
 
+          // This is a workaround provided by Agora to fix low bit rate setup
+          // the web equivalent requires the forked version of the Agora SDK
+          // that calls a web version directly from setParameters
+          String paramString =
+              "\{\"che.video.lowBitRateStreamParameter\":{\"width\":360,\"height\":360,\"frameRate\":24,\"bitRate\":300}}";
+          await _engine!.setParameters(paramString);
+
           await _engine!.setVideoEncoderConfiguration(
             // Agora recommends setting the video resolution
             VideoEncoderConfiguration(
