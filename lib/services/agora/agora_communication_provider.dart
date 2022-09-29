@@ -24,9 +24,6 @@ class AgoraCommunicationProvider extends CommunicationProvider {
 
   // These are used as default values for the video preview, modify
   // as needed to define a different default as these get set on the engine
-  static const int videoHeight = 360;
-  static const int videoWidth = 360;
-
   static const int fullScreenHeight = 600;
   static const int fullScreenWidth = 600;
 
@@ -380,10 +377,10 @@ class AgoraCommunicationProvider extends CommunicationProvider {
           // call the appropriate web sdk method.
           Map<String, dynamic> lowParams = {
             "che.video.lowBitRateStreamParameter": {
-              "width": 360,
-              "height": 360,
-              "frameRate": 24,
-              "bitRate": 300
+              "width": systemVideo.lowResSize,
+              "height": systemVideo.lowResSize,
+              "frameRate": systemVideo.lowResFrameRate,
+              "bitRate": systemVideo.lowResBitRate,
             }
           };
           String paramString = jsonEncode(lowParams);
