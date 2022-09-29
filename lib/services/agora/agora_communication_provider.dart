@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
@@ -373,11 +374,19 @@ class AgoraCommunicationProvider extends CommunicationProvider {
           await _engine!.setChannelProfile(ChannelProfile.Communication);
           await _engine!.enableDualStreamMode(true);
 
-          // This is a workaround provided by Agora to fix low bit rate setup
-          // the web equivalent requires the forked version of the Agora SDK
-          // that calls a web version directly from setParameters
-          String paramString =
-              "\{\"che.video.lowBitRateStreamParameter\":{\"width\":360,\"height\":360,\"frameRate\":24,\"bitRate\":300}}";
+          // This is a workaround for providing the low bit rate stream parameters
+          // to the Agora SDK. For this to work we are using a forked version of
+          // the SDK that has a modified web implementation of setParameters to
+          // call the appropriate web sdk method.
+          Map<String, dynamic> lowParams = {
+            "che.video.lowBitRateStreamParameter": {
+              "width": 360,
+              "height": 360,
+              "frameRate": 24,
+              "bitRate": 300
+            }
+          };
+          String paramString = jsonEncode(lowParams);
           await _engine!.setParameters(paramString);
 
           await _engine!.setVideoEncoderConfiguration(

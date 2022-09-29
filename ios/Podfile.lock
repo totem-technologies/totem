@@ -1,5 +1,5 @@
 PODS:
-  - agora_rtc_engine (5.3.0):
+  - agora_rtc_engine (5.3.1):
     - AgoraIrisRTC_iOS (= 3.7.0.3)
     - AgoraRtcEngine_iOS (= 3.7.0.3)
     - Flutter
@@ -231,8 +231,6 @@ PODS:
   - GoogleUtilities/UserDefaults (7.8.0):
     - GoogleUtilities/Logger
   - GTMSessionFetcher/Core (2.0.0)
-  - hexcolor (0.0.1):
-    - Flutter
   - libphonenumber (0.0.1):
     - Flutter
     - libPhoneNumber-iOS
@@ -290,7 +288,6 @@ DEPENDENCIES:
   - Flutter (from `Flutter`)
   - flutter_foreground_task (from `.symlinks/plugins/flutter_foreground_task/ios`)
   - flutter_sim_country_code (from `.symlinks/plugins/flutter_sim_country_code/ios`)
-  - hexcolor (from `.symlinks/plugins/hexcolor/ios`)
   - libphonenumber (from `.symlinks/plugins/libphonenumber/ios`)
   - libphonenumber_plugin (from `.symlinks/plugins/libphonenumber_plugin/ios`)
   - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
@@ -369,8 +366,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_foreground_task/ios"
   flutter_sim_country_code:
     :path: ".symlinks/plugins/flutter_sim_country_code/ios"
-  hexcolor:
-    :path: ".symlinks/plugins/hexcolor/ios"
   libphonenumber:
     :path: ".symlinks/plugins/libphonenumber/ios"
   libphonenumber_plugin:
@@ -400,7 +395,7 @@ CHECKOUT OPTIONS:
     :tag: 9.5.0
 
 SPEC CHECKSUMS:
-  agora_rtc_engine: eb26dd1d3993b69345235352d558e79bfdd84f40
+  agora_rtc_engine: 47e0ddc177bae1b85eb00d01a0ea546d87ce0b8b
   AgoraIrisRTC_iOS: d802443ae16f043e7b2805c978880eb62ee8154c
   AgoraRtcEngine_iOS: 549bb3853d5afb18fabca4197786f39f31141da8
   audio_streamer: af49e73eb66f71c4eeabb4bbcb05f122d03a6709
@@ -441,7 +436,6 @@ SPEC CHECKSUMS:
   GoogleDataTransport: 1c8145da7117bd68bbbed00cf304edb6a24de00f
   GoogleUtilities: 1d20a6ad97ef46f67bbdec158ce00563a671ebb7
   GTMSessionFetcher: 681175626052e03fdde7952f7e9c7a9785719506
-  hexcolor: fdfb9c4258ad96e949c2dbcdf790a62194b8aa89
   libphonenumber: bd14d5abfc5939ab0b0767234e2d8e2593af258e
   libPhoneNumber-iOS: 0a32a9525cf8744fe02c5206eb30d571e38f7d75
   libphonenumber_plugin: 7cf755ad1656145935d6c208173a476bd3f12898
