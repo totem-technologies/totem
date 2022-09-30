@@ -117,7 +117,7 @@ class WaitingRoomListLayout extends StatelessWidget {
     required this.count,
     this.minChildSize = 100,
   }) : super(key: key);
-  final double maxChildSize = 600;
+  final double maxChildSize = 360;
   final double minChildSize;
   static const double spacing = 0;
   final int count;

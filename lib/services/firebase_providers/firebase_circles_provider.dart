@@ -54,6 +54,7 @@ class FirebaseCirclesProvider extends CirclesProvider {
     final collection = FirebaseFirestore.instance.collection(Paths.snapCircles);
     return collection
         .where('state', isEqualTo: SessionState.waiting.name)
+        .where('isPrivate', isEqualTo: false)
         .snapshots()
         .transform(
       StreamTransformer<QuerySnapshot<Map<String, dynamic>>,
@@ -76,6 +77,32 @@ class FirebaseCirclesProvider extends CirclesProvider {
         .limit(1)
         .snapshots()
         .transform(
+      StreamTransformer<QuerySnapshot<Map<String, dynamic>>,
+          List<SnapCircle>>.fromHandlers(
+        handleData: (QuerySnapshot<Map<String, dynamic>> querySnapshot,
+            EventSink<List<SnapCircle>> sink) {
+          _mapSnapCircleUserReference(querySnapshot, sink);
+        },
+      ),
+    );
+  }
+
+  @override
+  Stream<List<SnapCircle>> mySnapCircles(String uid,
+      {bool privateOnly = true, bool activeOnly = true}) {
+    final collection = FirebaseFirestore.instance.collection(Paths.snapCircles);
+    Query query = collection.where('keeper', isEqualTo: uid);
+    if (privateOnly) {
+      query = query.where('isPrivate', isEqualTo: true);
+    }
+    if (activeOnly) {
+      query = query.where('state', whereIn: [
+        SessionState.waiting.name,
+        SessionState.starting.name,
+        SessionState.live.name,
+      ]);
+    }
+    return query.snapshots().transform(
       StreamTransformer<QuerySnapshot<Map<String, dynamic>>,
           List<SnapCircle>>.fromHandlers(
         handleData: (QuerySnapshot<Map<String, dynamic>> querySnapshot,

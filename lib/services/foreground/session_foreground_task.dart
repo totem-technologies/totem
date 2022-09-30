@@ -88,7 +88,7 @@ class SessionForeground {
   }
 
   Future<void> _initForegroundTask() async {
-    await FlutterForegroundTask.init(
+    FlutterForegroundTask.init(
       androidNotificationOptions: AndroidNotificationOptions(
         channelId: 'notification_channel_id',
         channelName: 'totem_session',
@@ -111,7 +111,6 @@ class SessionForeground {
         autoRunOnBoot: false,
         allowWifiLock: true,
       ),
-      printDevLog: true,
     );
   }
 }

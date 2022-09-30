@@ -3,12 +3,18 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:totem/app/home/components/index.dart';
+import 'package:totem/app/home/components/named_circle_list.dart';
 import 'package:totem/app_routes.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/theme/index.dart';
 
 import '../../services/providers.dart';
+
+final myPrivateCircles = StreamProvider.autoDispose<List<SnapCircle>>((ref) {
+  final repo = ref.read(repositoryProvider);
+  return repo.mySnapCircles();
+});
 
 class HomePage extends ConsumerWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -29,13 +35,13 @@ class HomePage extends ConsumerWidget {
               top: true,
               bottom: false,
               child: isMobile
-                  ? _homeContent(context, isMobile: isMobile, user: user)
+                  ? _homeContent(context, ref, isMobile: isMobile, user: user)
                   : Center(
                       child: ConstrainedBox(
                         constraints: BoxConstraints(
                             maxWidth: maxContainerWidth +
                                 (Theme.of(context).pageHorizontalPadding * 2)),
-                        child: _homeContent(context,
+                        child: _homeContent(context, ref,
                             isMobile: isMobile, user: user),
                       ),
                     ),
@@ -64,37 +70,57 @@ class HomePage extends ConsumerWidget {
     );
   }
 
-  Widget _homeContent(BuildContext context,
+  Widget _homeContent(BuildContext context, WidgetRef ref,
       {required bool isMobile, required AuthUser user}) {
     final t = AppLocalizations.of(context)!;
     bool isKeeper = user.hasRole(Role.keeper);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        const SizedBox(
-          height: 120,
-        ),
-        TotemHeader(
-          text: t.circles,
-          trailing: !isMobile && isKeeper ? const CreateCircleButton() : null,
-        ),
-        SizedBox(height: isMobile ? 30 : 20),
-        if (isMobile && isKeeper)
-          Padding(
-            padding: EdgeInsets.only(
-                bottom: 20,
-                left: Theme.of(context).pageHorizontalPadding,
-                right: Theme.of(context).pageHorizontalPadding),
-            child: Row(children: const [CreateCircleButton()]),
-          ),
-        const SnapCirclesRejoinable(),
-        const Expanded(
-          child: SnapCirclesList(
-            topPadding: 15,
-          ),
-        ),
-      ],
-    );
+    bool hasPrivateCircles = false;
+    List<SnapCircle> privateWaitingCircles = [];
+    return ref.watch(myPrivateCircles).when(
+          data: (List<SnapCircle> data) {
+            if (data.isNotEmpty) {
+              hasPrivateCircles = true;
+              privateWaitingCircles = data
+                  .where((element) => element.state == SessionState.waiting)
+                  .toList();
+            }
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const SizedBox(
+                  height: 120,
+                ),
+                TotemHeader(
+                  text: t.circles,
+                  trailing: !isMobile && (isKeeper || !hasPrivateCircles)
+                      ? const CreateCircleButton()
+                      : null,
+                ),
+                SizedBox(height: isMobile ? 30 : 20),
+                if (isMobile)
+                  Padding(
+                    padding: EdgeInsets.only(
+                        bottom: 20,
+                        left: Theme.of(context).pageHorizontalPadding,
+                        right: Theme.of(context).pageHorizontalPadding),
+                    child: Row(children: const [CreateCircleButton()]),
+                  ),
+                if (privateWaitingCircles.isNotEmpty)
+                  NamedCircleList(
+                      name: t.yourPrivateCircles,
+                      circles: privateWaitingCircles),
+                const SnapCirclesRejoinable(),
+                const Expanded(
+                  child: SnapCirclesList(
+                    topPadding: 15,
+                  ),
+                ),
+              ],
+            );
+          },
+          loading: () => Container(),
+          error: (Object error, StackTrace? stackTrace) => Container(),
+        );
   }
 
   Widget _homeHeader(BuildContext context, {required bool isMobile}) {
