@@ -7,7 +7,11 @@
     {
       "name": "totem",
       "request": "launch",
-      "type": "dart"
+      "type": "dart",
+      "args": [
+        "--flavor",
+        "dev" //dev or prod
+    ]
     },
     {
       "name": "totem (profile mode)",
