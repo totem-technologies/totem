@@ -31,11 +31,11 @@ PODS:
     - Flutter
   - camera_avfoundation (0.0.1):
     - Flutter
-  - cloud_firestore (3.4.8):
+  - cloud_firestore (3.4.9):
     - Firebase/Firestore (= 9.5.0)
     - firebase_core
     - Flutter
-  - cloud_functions (3.3.7):
+  - cloud_functions (3.3.8):
     - Firebase/Functions (= 9.5.0)
     - firebase_core
     - Flutter
@@ -67,7 +67,7 @@ PODS:
   - Firebase/Storage (9.5.0):
     - Firebase/CoreOnly
     - FirebaseStorage (~> 9.5.0)
-  - firebase_analytics (9.3.5):
+  - firebase_analytics (9.3.6):
     - Firebase/Analytics (= 9.5.0)
     - firebase_core
     - Flutter
@@ -400,10 +400,10 @@ SPEC CHECKSUMS:
   AgoraRtcEngine_iOS: 549bb3853d5afb18fabca4197786f39f31141da8
   audio_streamer: af49e73eb66f71c4eeabb4bbcb05f122d03a6709
   camera_avfoundation: 07c77549ea54ad95d8581be86617c094a46280d9
-  cloud_firestore: 7e123d5034b068e9a1fb32b2ad98a814c7f3e45d
-  cloud_functions: ee233b6df77f0e8d6fa46cba87b14addd02f631f
+  cloud_firestore: bed9432d72bb357aa33e864fd4d5b7c2f0e098d0
+  cloud_functions: 044ea9eaf122fea23123b19609d6c14312926157
   Firebase: 800f16f07af493d98d017446a315c27af0552f41
-  firebase_analytics: bffe8ae976f4d9ce17639d5c503e63d72946055c
+  firebase_analytics: 2ba886ecb9ded97cfe24f1765e1aa22075894709
   firebase_app_check: c0121369d680208ac837b643b0957777cbc615b2
   firebase_auth: c070c7e5b66037cddb73a68ca4bf4728b063680b
   firebase_core: 31872a49ffe0bf6f834e7044c7334e433536735a
