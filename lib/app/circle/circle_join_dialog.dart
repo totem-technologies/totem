@@ -482,7 +482,8 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
 
   void initializeProvider() async {
     final commProvider = ref.read(communicationsProvider);
-    String? result = await commProvider.initialDevicePreview();
+    SystemVideo video = await ref.read(repositoryProvider).getSystemVideo();
+    String? result = await commProvider.initialDevicePreview(video: video);
     if (result == null) {
       setState(() => _initialized = true);
     } else {

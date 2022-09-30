@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
@@ -9,9 +10,9 @@ import 'package:flutter/foundation.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:totem/config.dart';
 import 'package:totem/models/index.dart';
+import 'package:totem/services/error_report.dart';
 import 'package:totem/services/index.dart';
 import 'package:wakelock/wakelock.dart';
-import 'package:totem/services/error_report.dart';
 
 enum PermissionType {
   video,
@@ -23,9 +24,6 @@ class AgoraCommunicationProvider extends CommunicationProvider {
 
   // These are used as default values for the video preview, modify
   // as needed to define a different default as these get set on the engine
-  static const int videoHeight = 360;
-  static const int videoWidth = 360;
-
   static const int fullScreenHeight = 600;
   static const int fullScreenWidth = 600;
 
@@ -35,8 +33,10 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   static const int networkTimeoutDuration = 20; // seconds
   static const bool useAgoraStream = false;
 
-  AgoraCommunicationProvider(
-      {required this.sessionProvider, required this.userId}) {
+  AgoraCommunicationProvider({
+    required this.sessionProvider,
+    required this.userId,
+  }) {
     sessionProvider.addListener(_updateCommunicationFromSession);
   }
   bool _hasTotem = false;
@@ -66,6 +66,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   CommunicationDevice? _camera;
   CommunicationDevice? _audioInput;
   CommunicationDevice? _audioOutput;
+  SystemVideo systemVideo = SystemVideo();
 
   @override
   String? get lastError {
@@ -91,8 +92,12 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   }
 
   @override
-  Future<String?> initialDevicePreview({bool enableVideo = true}) async {
+  Future<String?> initialDevicePreview(
+      {bool enableVideo = true, SystemVideo? video}) async {
     String? errorMessage;
+    if (video != null) {
+      systemVideo = video;
+    }
     try {
       await _assertEngine(enableVideo);
 
@@ -364,10 +369,30 @@ class AgoraCommunicationProvider extends CommunicationProvider {
           await _engine!.enableDeepLearningDenoise(true);
           await _engine!.enableAudioVolumeIndication(200, 3, true);
           await _engine!.setChannelProfile(ChannelProfile.Communication);
+          await _engine!.enableDualStreamMode(true);
+
+          // This is a workaround for providing the low bit rate stream parameters
+          // to the Agora SDK. For this to work we are using a forked version of
+          // the SDK that has a modified web implementation of setParameters to
+          // call the appropriate web sdk method.
+          Map<String, dynamic> lowParams = {
+            "che.video.lowBitRateStreamParameter": {
+              "width": systemVideo.lowResSize,
+              "height": systemVideo.lowResSize,
+              "frameRate": systemVideo.lowResFrameRate,
+              "bitRate": systemVideo.lowResBitRate,
+            }
+          };
+          String paramString = jsonEncode(lowParams);
+          await _engine!.setParameters(paramString);
+
           await _engine!.setVideoEncoderConfiguration(
+            // Agora recommends setting the video resolution
             VideoEncoderConfiguration(
-              dimensions:
-                  const VideoDimensions(width: videoWidth, height: videoHeight),
+              frameRate: frameRateFromInt(systemVideo.frameRate),
+              bitrate: systemVideo.bitRate,
+              dimensions: VideoDimensions(
+                  width: systemVideo.videoSize, height: systemVideo.videoSize),
             ),
           );
           bool hasVideoPermission =
@@ -682,7 +707,15 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   }
 
   void _handleUserJoined(int user, int elapsed) {
+    if (user == commUid) {
+      return;
+    }
     sessionProvider.activeSession?.userJoined(sessionUserId: user.toString());
+    if (sessionProvider.activeSession?.state == SessionState.live) {
+      _updateVideoStreamState();
+    } else {
+      _engine!.setRemoteVideoStreamType(user, VideoStreamType.Low);
+    }
     debugPrint('User joined event: $user elapsed $elapsed');
   }
 
@@ -751,6 +784,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     // check the session state
     ActiveSession? session = sessionProvider.activeSession;
     if (session != null && _session != null) {
+      bool updateStreamState = false;
       if (session.state == SessionState.live && !session.userStatus) {
         // have to manage mute state based on changes to the state
         bool started = (_lastState == SessionState.starting &&
@@ -758,6 +792,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
         if (started ||
             session.lastChange == ActiveSessionChange.totemChange ||
             session.lastChange == ActiveSessionChange.totemReceive) {
+          updateStreamState = true;
           SessionParticipant? participant = session.totemParticipant;
           if (participant != null) {
             setHasTotem(participant.me);
@@ -771,7 +806,30 @@ class AgoraCommunicationProvider extends CommunicationProvider {
           _engine?.leaveChannel();
         }
       }
+      if (updateStreamState) {
+        debugPrint('updating video stream state for users');
+        _updateVideoStreamState();
+      }
       _lastState = session.state;
+    }
+  }
+
+  void _updateVideoStreamState() {
+    ActiveSession? session = sessionProvider.activeSession;
+    if (session != null) {
+      SessionParticipant? totemParticipant = session.totemParticipant;
+      String? totemSessionId = totemParticipant?.sessionUserId;
+      for (final participant in session.activeParticipants) {
+        if (participant.sessionUserId != null && !participant.me) {
+          _engine?.setRemoteVideoStreamType(
+              int.parse(participant.sessionUserId!),
+              participant.sessionUserId == totemSessionId
+                  ? VideoStreamType.High
+                  : VideoStreamType.Low);
+          debugPrint(
+              'Setting video stream for ${participant.name} to ${participant.sessionUserId == totemSessionId ? 'high' : 'low'}');
+        }
+      }
     }
   }
 
@@ -1007,6 +1065,22 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     } catch (ex, stack) {
       await reportError(ex, stack);
       return false;
+    }
+  }
+
+  VideoFrameRate frameRateFromInt(int frameRate) {
+    switch (frameRate) {
+      case 15:
+        return VideoFrameRate.Fps15;
+      case 30:
+        return VideoFrameRate.Fps30;
+      case 60:
+        return VideoFrameRate.Fps60;
+      case 10:
+        return VideoFrameRate.Fps10;
+      case 24:
+      default:
+        return VideoFrameRate.Fps24;
     }
   }
 }

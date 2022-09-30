@@ -7,4 +7,6 @@ class Paths {
   static const String users = "users";
   static const String activeCircles = "activeCircles";
   static const String userAccountState = "userAccountState";
+  static const String system = "system";
+  static const String systemVideo = "video";
 }

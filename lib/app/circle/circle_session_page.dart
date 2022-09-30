@@ -245,7 +245,6 @@ class CircleSessionLivePageState extends ConsumerState<CircleSessionLivePage> {
 
   @override
   void dispose() {
-    ref.read(activeSessionProvider).removeListener(_handleActiveSessionChange);
     super.dispose();
   }
 
