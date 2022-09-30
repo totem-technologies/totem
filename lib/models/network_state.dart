@@ -49,7 +49,7 @@ class NetworkState {
       final List<int> dataList, int total, int qualityValue) {
     if (qualityValue != kNetworkStateUnknown) {
       // Skip unknown values
-      if (dataList.length == maxSamples) {
+      while (dataList.length >= maxSamples) {
         total -= dataList.removeAt(0);
       }
       total += qualityValue;
