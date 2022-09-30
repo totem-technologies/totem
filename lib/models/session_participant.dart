@@ -13,6 +13,7 @@ class SessionParticipant extends ChangeNotifier {
   DateTime? joined;
   late bool me;
   bool _networkUnstable = false;
+  final NetworkState _networkState = NetworkState();
 
   SessionParticipant.from(SessionParticipant participant) {
     me = participant.me;
@@ -57,12 +58,16 @@ class SessionParticipant extends ChangeNotifier {
     return _networkUnstable;
   }
 
-  set networkUnstable(bool value) {
-    if (_networkUnstable != value) {
-      debugPrint('toggling unstable network:  $value');
-      _networkUnstable = value;
+  bool addNetworkSample(NetworkSample sample) {
+    _networkState.addQualitySample(sample);
+    bool unstable = _networkState.transmitUnstable;
+    if (_networkUnstable != unstable) {
+      debugPrint('toggling unstable network:  $unstable');
+      _networkUnstable = unstable;
       notifyListeners();
+      return true;
     }
+    return false;
   }
 
   set muted(bool isMuted) {

@@ -736,13 +736,12 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   void _handleNetworkQuality(
       int uid, NetworkQuality qualityTx, NetworkQuality qualityRx) {
     // user for display
-    bool networkUnstable =
-        isBadConnection(qualityTx) || isBadConnection(qualityRx);
     uid = uid == 0 ? commUid : uid;
-    debugPrint(
-        'Network quality: ${qualityTx.name}, tx: ${qualityRx.name} unstable: $networkUnstable  for user: $uid');
     sessionProvider.activeSession?.updateUnstableNetworkForUser(
-        sessionUserId: uid.toString(), unstable: networkUnstable);
+        sessionUserId: uid.toString(),
+        sample: NetworkSample(
+            receive: _networkToValue(qualityRx),
+            transmit: _networkToValue(qualityTx)));
   }
 
   bool isBadConnection(NetworkQuality quality) {
@@ -1081,6 +1080,27 @@ class AgoraCommunicationProvider extends CommunicationProvider {
       case 24:
       default:
         return VideoFrameRate.Fps24;
+    }
+  }
+
+  int _networkToValue(NetworkQuality quality) {
+    switch (quality) {
+      case NetworkQuality.Excellent:
+        return NetworkState.kNetworkQualityExcellent;
+      case NetworkQuality.Good:
+        return NetworkState.kNetworkQualityGood;
+      case NetworkQuality.Poor:
+        return NetworkState.kNetworkQualityPoor;
+      case NetworkQuality.Bad:
+        return NetworkState.kNetworkQualityBad;
+      case NetworkQuality.VBad:
+        return NetworkState.kNetworkQualityVeryBad;
+      case NetworkQuality.Down:
+        return NetworkState.kNetworkQualityDown;
+      case NetworkQuality.Unknown:
+      case NetworkQuality.Detecting:
+      default:
+        return NetworkState.kNetworkStateUnknown;
     }
   }
 }
