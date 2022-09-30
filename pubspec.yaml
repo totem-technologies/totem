@@ -45,7 +45,7 @@ dependencies:
   diffutil_dart: ^3.0.0
   email_validator: ^2.0.1
   firebase_analytics: ^9.3.6
-  firebase_app_check: ^0.0.7-2
+  firebase_app_check: ^0.0.7
   firebase_auth: ^3.0.0
   firebase_core: ^1.2.0
   firebase_crashlytics: ^2.4.4
