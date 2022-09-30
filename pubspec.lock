@@ -12,9 +12,9 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: "5_3_1"
-      resolved-ref: "48784a4161cffd1542bbb24828f46196c61b485b"
-      url: "https://github.com/schalky/Agora-Flutter-SDK.git"
+      ref: "5_3_1_rev1"
+      resolved-ref: "5c5c7d66907d89b2afd11001c9445f4ab636c581"
+      url: "https://github.com/totem-technologies/Agora-Flutter-SDK.git"
     source: git
     version: "5.3.1"
   archive:
