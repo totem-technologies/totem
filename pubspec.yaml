@@ -76,7 +76,7 @@ dependencies:
   pin_code_fields: ^7.3.0
   provider: ^6.0.2
   rxdart: ^0.27.2
-  sentry_flutter: ^6.6.3
+  sentry_flutter: ^6.11.1
   share_plus: ^4.0.8
   shared_preferences: ^2.0.12
   slide_to_act: ^2.0.1
