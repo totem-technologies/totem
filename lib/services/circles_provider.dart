@@ -26,6 +26,7 @@ abstract class CirclesProvider {
     String? keeper,
     String? previousCircle,
     Map<String, dynamic>? bannedParticipants,
+    bool? isPrivate,
   });
 
   Future<bool> removeSnapCircle(

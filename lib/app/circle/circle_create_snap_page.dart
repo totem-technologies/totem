@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:totem/app_routes.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
+import 'package:totem/models/snap_circle_option.dart';
 import 'package:totem/services/index.dart';
 import 'package:totem/services/error_report.dart';
 import 'package:totem/theme/index.dart';
@@ -21,8 +22,14 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final formKey = GlobalKey<FormState>();
-  bool _busy = false;
   final _focusNodeDescription = FocusNode();
+  final List<CircleOption> visibilityOptions = [
+    CircleOption(name: 'public', value: false),
+    CircleOption(name: 'private', value: true),
+  ];
+
+  bool _busy = false;
+  late CircleOption _selectedVisibility;
 
   @override
   void initState() {
@@ -30,6 +37,7 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
       _nameController.text = widget.fromCircle!.name;
       _descriptionController.text = widget.fromCircle!.description ?? "";
     }
+    _selectedVisibility = visibilityOptions[0];
     ref.read(analyticsProvider).showScreen('createSnapCircleScreen');
     super.initState();
   }
@@ -99,6 +107,8 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
                                   textInputAction: TextInputAction.newline,
                                   maxLength: 1500,
                                 ),
+                                const SizedBox(height: 32),
+                                _circleOptions(),
                                 const SizedBox(height: 30),
                                 Center(
                                   child: ThemedRaisedButton(
@@ -145,6 +155,7 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
         description: _descriptionController.text,
         keeper: widget.fromCircle?.keeper,
         previousCircle: widget.fromCircle?.id,
+        isPrivate: _selectedVisibility.value,
       );
       if (circle != null) {
         await repo.createActiveSession(
@@ -188,6 +199,59 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
       builder: (BuildContext context) {
         return alert;
       },
+    );
+  }
+
+  Widget _circleOptions() {
+    final themeData = Theme.of(context);
+    final textStyles = themeData.textStyles;
+    final t = AppLocalizations.of(context)!;
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 300),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(t.visibility, style: textStyles.headline3),
+              _optionsDropDown(
+                visibilityOptions,
+                selected: _selectedVisibility,
+                onChanged: (item) {
+                  setState(() => _selectedVisibility = item);
+                },
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _optionsDropDown(List<CircleOption> options,
+      {required Function(dynamic item) onChanged,
+      required CircleOption? selected}) {
+    if (options.isEmpty) return Container();
+    final dropDownMenus = <DropdownMenuItem<CircleOption>>[];
+    for (var v in options) {
+      dropDownMenus.add(
+        DropdownMenuItem(
+          value: v,
+          child: Text(v.getName(context), overflow: TextOverflow.ellipsis),
+        ),
+      );
+    }
+    return SizedBox(
+      height: 40,
+      child: DropdownButton<CircleOption>(
+        isExpanded: true,
+        items: dropDownMenus,
+        value: selected,
+        onChanged: (v) {
+          onChanged(v);
+        },
+      ),
     );
   }
 }
