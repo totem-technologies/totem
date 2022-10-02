@@ -6,7 +6,6 @@ import 'package:totem/app_routes.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/models/snap_circle_option.dart';
-import 'package:totem/services/index.dart';
 import 'package:totem/services/error_report.dart';
 import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
@@ -25,28 +24,33 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
   final TextEditingController _descriptionController = TextEditingController();
   final formKey = GlobalKey<FormState>();
   final _focusNodeDescription = FocusNode();
-  final List<CircleOption> visibilityOptions = [
-    CircleOption(name: 'public', value: false),
-    CircleOption(name: 'private', value: true),
-  ];
+  late final List<CircleOption> visibilityOptions;
 
   bool _busy = false;
   late CircleOption _selectedVisibility;
   late final double maxParticipants;
+  late final bool isKeeper;
   double numParticipants = 20;
 
   @override
   void initState() {
     final authUser = ref.read(authServiceProvider).currentUser()!;
-    maxParticipants = (authUser.hasRole(Role.keeper)
+    isKeeper = authUser.hasRole(Role.keeper);
+    maxParticipants = (isKeeper
             ? Circle.maxKeeperParticipants
             : Circle.maxNonKeeperParticipants)
         .toDouble();
-    numParticipants = authUser.hasRole(Role.keeper) ? 20 : 5;
+    numParticipants = maxParticipants;
     if (widget.fromCircle != null) {
       _nameController.text = widget.fromCircle!.name;
       _descriptionController.text = widget.fromCircle!.description ?? "";
     }
+    visibilityOptions = isKeeper
+        ? [
+            CircleOption(name: 'public', value: false),
+            CircleOption(name: 'private', value: true),
+          ]
+        : [CircleOption(name: 'private', value: true)];
     _selectedVisibility = visibilityOptions[0];
     ref.read(analyticsProvider).showScreen('createSnapCircleScreen');
     super.initState();
@@ -125,54 +129,15 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
                                     ),
                                     const SizedBox(height: 32),
                                     Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
-                                        Expanded(child: _circleOptions(),),
-                                        const SizedBox(width: 16),
                                         Expanded(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.stretch,
-                                            children: [
-                                              Text(t.participantLimit,
-                                                  style: textStyles.headline3),
-                                              const SizedBox(height: 6),
-                                              SpinBox(
-                                                decoration: InputDecoration(
-                                                  border: OutlineInputBorder(
-                                                    borderSide: BorderSide(
-                                                        color: themeData
-                                                            .themeColors
-                                                            .divider,
-                                                        width: 1),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            8.0),
-                                                  ),
-                                                ),
-                                                keyboardType:
-                                                    const TextInputType
-                                                            .numberWithOptions(
-                                                        decimal: false),
-                                                min: Circle.minParticipants
-                                                    .toDouble(),
-                                                max: maxParticipants,
-                                                value: numParticipants,
-                                                onChanged: (value) {
-                                                  setState(() {
-                                                    numParticipants = value;
-                                                  });
-                                                },
-                                              ),
-                                              const SizedBox(height: 4),
-                                              Text(
-                                                t.maximumParticipants(
-                                                    maxParticipants
-                                                        .toInt()
-                                                        .toString()),
-                                                style: textStyles.headline4,
-                                              ),
-                                            ],
-                                          ),
+                                          child: _participantLimit(),
+                                        ),
+                                        const SizedBox(width: 32),
+                                        Expanded(
+                                          child: _circleOptions(),
                                         ),
                                       ],
                                     ),
@@ -272,28 +237,57 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
     );
   }
 
+  Widget _participantLimit() {
+    final themeData = Theme.of(context);
+    final textStyles = themeData.textStyles;
+    final themeColors = themeData.themeColors;
+    final t = AppLocalizations.of(context)!;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(t.participantLimit, style: textStyles.headline3),
+        const SizedBox(height: 6),
+        SpinBox(
+          decoration: InputDecoration(
+            border: OutlineInputBorder(
+              borderSide: BorderSide(color: themeColors.divider, width: 1),
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+          ),
+          keyboardType: const TextInputType.numberWithOptions(decimal: false),
+          min: Circle.minParticipants.toDouble(),
+          max: maxParticipants,
+          value: numParticipants,
+          onChanged: (value) {
+            setState(() {
+              numParticipants = value;
+            });
+          },
+        ),
+        const SizedBox(height: 4),
+        Text(
+          t.maximumParticipants(maxParticipants.toInt().toString()),
+          style: textStyles.headline4,
+        ),
+      ],
+    );
+  }
+
   Widget _circleOptions() {
     final themeData = Theme.of(context);
     final textStyles = themeData.textStyles;
     final t = AppLocalizations.of(context)!;
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 300),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(t.visibility, style: textStyles.headline3),
-              _optionsDropDown(
-                visibilityOptions,
-                selected: _selectedVisibility,
-                onChanged: (item) {
-                  setState(() => _selectedVisibility = item);
-                },
-              ),
-            ],
-          ),
+        Text(t.visibility, style: textStyles.headline3),
+        const SizedBox(height: 10),
+        _optionsDropDown(
+          visibilityOptions,
+          selected: _selectedVisibility,
+          onChanged: (item) {
+            setState(() => _selectedVisibility = item);
+          },
         ),
       ],
     );
