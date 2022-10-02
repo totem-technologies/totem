@@ -170,6 +170,7 @@ class FirebaseCirclesProvider extends CirclesProvider {
     String? keeper,
     String? previousCircle,
     Map<String, dynamic>? bannedParticipants,
+    bool? isPrivate,
     int? maxParticipants,
   }) async {
     final DocumentReference userRef =
@@ -180,6 +181,7 @@ class FirebaseCirclesProvider extends CirclesProvider {
       final data = <String, dynamic>{
         "name": name,
       };
+      final Map<String, dynamic> options = <String, dynamic>{};
       if (description != null) {
         data["description"] = description;
       }
@@ -192,7 +194,9 @@ class FirebaseCirclesProvider extends CirclesProvider {
       if (bannedParticipants != null) {
         data['bannedParticipants'] = bannedParticipants;
       }
-      final Map<String, dynamic> options = <String, dynamic>{};
+      if (isPrivate != null) {
+        options['isPrivate'] = isPrivate;
+      }
       if (maxParticipants != null) {
         options["maxParticipants"] = maxParticipants;
       }
