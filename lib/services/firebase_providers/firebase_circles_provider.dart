@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/circles_provider.dart';
@@ -166,6 +167,7 @@ class FirebaseCirclesProvider extends CirclesProvider {
     String? keeper,
     String? previousCircle,
     Map<String, dynamic>? bannedParticipants,
+    bool? isPrivate,
   }) async {
     final DocumentReference userRef =
         FirebaseFirestore.instance.collection(Paths.users).doc(keeper ?? uid);
@@ -175,6 +177,7 @@ class FirebaseCirclesProvider extends CirclesProvider {
       final data = <String, dynamic>{
         "name": name,
       };
+      Map<String, dynamic> options = {};
       if (description != null) {
         data["description"] = description;
       }
@@ -187,6 +190,10 @@ class FirebaseCirclesProvider extends CirclesProvider {
       if (bannedParticipants != null) {
         data['bannedParticipants'] = bannedParticipants;
       }
+      if (isPrivate != null) {
+        options['isPrivate'] = isPrivate;
+      }
+      data['options'] = options;
       final result = await callable(data);
       final String id = result.data['id'];
       debugPrint('completed startSnapSession with result $id');
