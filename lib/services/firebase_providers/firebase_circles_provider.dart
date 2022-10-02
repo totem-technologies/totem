@@ -123,6 +123,7 @@ class FirebaseCirclesProvider extends CirclesProvider {
     required String uid,
     String? description,
     required bool addAsMember,
+    int? maxParticipants,
   }) async {
     final DocumentReference userRef =
         FirebaseFirestore.instance.collection(Paths.users).doc(uid);
@@ -136,6 +137,9 @@ class FirebaseCirclesProvider extends CirclesProvider {
     };
     if (description != null) {
       data["description"] = description;
+    }
+    if (maxParticipants != null) {
+      data["maxParticipants"] = maxParticipants;
     }
     try {
       DocumentReference ref =
@@ -166,6 +170,7 @@ class FirebaseCirclesProvider extends CirclesProvider {
     String? keeper,
     String? previousCircle,
     Map<String, dynamic>? bannedParticipants,
+    int? maxParticipants,
   }) async {
     final DocumentReference userRef =
         FirebaseFirestore.instance.collection(Paths.users).doc(keeper ?? uid);
@@ -186,6 +191,13 @@ class FirebaseCirclesProvider extends CirclesProvider {
       }
       if (bannedParticipants != null) {
         data['bannedParticipants'] = bannedParticipants;
+      }
+      final Map<String, dynamic> options = <String, dynamic>{};
+      if (maxParticipants != null) {
+        options["maxParticipants"] = maxParticipants;
+      }
+      if (options.isNotEmpty) {
+        data["options"] = options;
       }
       final result = await callable(data);
       final String id = result.data['id'];

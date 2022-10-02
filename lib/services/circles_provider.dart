@@ -5,8 +5,8 @@ abstract class CirclesProvider {
 
   Stream<List<SnapCircle>> snapCircles();
   Stream<List<SnapCircle>> rejoinableSnapCircles(String uid);
-  Stream<List<SnapCircle>> mySnapCircles(
-      String uid, {bool privateOnly, bool activeOnly});
+  Stream<List<SnapCircle>> mySnapCircles(String uid,
+      {bool privateOnly, bool activeOnly});
 
   Future<ScheduledCircle?> createScheduledCircle({
     required String name,
@@ -26,6 +26,7 @@ abstract class CirclesProvider {
     String? keeper,
     String? previousCircle,
     Map<String, dynamic>? bannedParticipants,
+    int? maxParticipants,
   });
 
   Future<bool> removeSnapCircle(
