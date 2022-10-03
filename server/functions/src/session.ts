@@ -28,7 +28,7 @@ const SessionState = {
 };
 
 const NonKeeperMaxMinutes = 500;
-const NonKeeperMaxParticipants = 10;
+const NonKeeperMaxParticipants = 5;
 
 export const endSnapSession = functions.https.onCall(async ({circleId}, {auth}): Promise<boolean> => {
   auth = isAuthenticated(auth);
