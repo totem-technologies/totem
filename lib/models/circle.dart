@@ -1,6 +1,10 @@
 import 'package:totem/models/index.dart';
 
 abstract class Circle {
+  static const int maxNonKeeperParticipants = 5;
+  static const int maxKeeperParticipants = 20;
+  static const int minParticipants = 2;
+
   late final String id;
   late String name;
   late final String ref;
@@ -11,6 +15,7 @@ abstract class Circle {
   DateTime? updatedOn;
   String? activeSession;
   int participantCount = 0;
+  int maxParticipants = -1;
   String? link;
   late String keeper;
   String? previousCircle;
@@ -29,6 +34,7 @@ abstract class Circle {
     createdOn = DateTimeEx.fromMapValue(json['createdOn']) ?? DateTime.now();
     updatedOn = DateTimeEx.fromMapValue(json['updatedOn']);
     participantCount = json['participantCount'] ?? 0;
+    maxParticipants = json['maxParticipants'] ?? -1;
     link = json['link'];
     keeper = json['keeper'];
     previousCircle = json['previousCircle'];
@@ -51,8 +57,11 @@ abstract class Circle {
     Map<String, dynamic> data = {
       "name": name,
       "createdOn": createdOn,
-      "participantCount": participantCount
+      "participantCount": participantCount,
     };
+    if (maxParticipants != -1) {
+      data["maxParticipants"] = maxParticipants;
+    }
     if (description != null) {
       data["description"] = description!;
     }

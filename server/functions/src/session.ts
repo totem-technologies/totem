@@ -28,7 +28,7 @@ const SessionState = {
 };
 
 const NonKeeperMaxMinutes = 500;
-const NonKeeperMaxParticipants = 10;
+const NonKeeperMaxParticipants = 5;
 
 export const endSnapSession = functions.https.onCall(async ({circleId}, {auth}): Promise<boolean> => {
   auth = isAuthenticated(auth);
@@ -155,10 +155,14 @@ export const createSnapCircle = functions.https.onCall(
       // Non-keepers can only have one active circle
       await assertHasFewerCirclesThan(auth.uid, 1);
       // Non-keeper circles can only have a max of 10 participants and must be private
+      let maxParticipants = options?.maxParticipants ?? NonKeeperMaxParticipants;
+      if (maxParticipants > NonKeeperMaxParticipants) {
+        maxParticipants = NonKeeperMaxParticipants;
+      }
       options = {
         isPrivate: true,
         maxMinutes: NonKeeperMaxMinutes,
-        maxParticipants: NonKeeperMaxParticipants,
+        maxParticipants: maxParticipants,
       };
     } else if (previousCircle) {
       // Only the keeper can re-start a circle

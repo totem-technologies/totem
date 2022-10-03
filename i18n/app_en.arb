@@ -140,6 +140,12 @@
     "less": "Less",
     "loadingCircle": "Loading Circle",
     "login": "Login or Signup",
+    "maximumParticipants": "Maximum {max}",
+    "@maximumParticipants": {
+        "placeholders": {
+            "max": {}
+        }
+    },
     "me": "Me",
     "member": "Member",
     "memberSince": "Member Since",
@@ -165,6 +171,7 @@
             "count": {}
         }
     },
+    "participantLimit": "Participant Limit",
     "pass": "Pass",
     "phoneNumber": "Phone Number",
     "preview": "Preview",
