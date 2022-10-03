@@ -17,7 +17,10 @@ class FirebaseSystemProvider extends SystemProvider {
           },
           toFirestore: (systemVideo, _) => systemVideo.toJson(),
         );
-    SystemVideo video = (await systemDoc.get()).data()!;
+    DocumentSnapshot snapshot = await systemDoc.get();
+    SystemVideo video = snapshot.data() != null
+        ? snapshot.data()! as SystemVideo
+        : SystemVideo();
     return video;
   }
 }
