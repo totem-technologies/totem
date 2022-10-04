@@ -7,8 +7,8 @@ import 'package:flutter/foundation.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/analytics_provider.dart';
 import 'package:totem/services/auth/auth_exception.dart';
-import 'package:totem/services/error_report.dart';
 import 'package:totem/services/communication_provider.dart';
+import 'package:totem/services/error_report.dart';
 import 'package:totem/services/firebase_providers/paths.dart';
 import 'package:totem/services/service_exception.dart';
 import 'package:totem/services/session_provider.dart';
@@ -430,7 +430,7 @@ class FirebaseSessionProvider extends SessionProvider {
       if (sessionData["lastMessage"] != null) {
         SessionDataMessage message =
             SessionDataMessage.fromJson(sessionData["lastMessage"]);
-        if (DateTime.now().difference(message.sent).inMilliseconds < 1000) {
+        if (!message.expired) {
           Future.delayed(const Duration(milliseconds: 10), () {
             _messageStreamController.add(message);
           });

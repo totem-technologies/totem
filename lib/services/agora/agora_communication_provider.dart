@@ -1099,8 +1099,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     }
   }
 
-
-  void _handleMessage(SessionDataMessage? message) {
+  Future<void> _handleMessage(SessionDataMessage? message) async {
     if (message == null) return;
     debugPrint('Received Message: ${message.type.name}');
     try {
