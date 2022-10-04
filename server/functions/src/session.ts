@@ -5,6 +5,7 @@ import {Timestamp} from "firebase-admin/firestore";
 import * as dynamicLinks from "./dynamic-links";
 import {hasAnyRole, isAuthenticated, Role} from "./auth";
 import {kickUserFromSession} from "./agora";
+import {SnapCircleBannedParticipants, SnapCircleData} from "./common-types";
 
 // The Firebase Admin SDK to access the Firebase Realtime Database.
 // make sure that this initializeApp call hasn't already
@@ -26,13 +27,16 @@ const SessionState = {
   ending: "ending",
 };
 
+const NonKeeperMaxMinutes = 500;
+const NonKeeperMaxParticipants = 5;
+
 export const endSnapSession = functions.https.onCall(async ({circleId}, {auth}): Promise<boolean> => {
   auth = isAuthenticated(auth);
   if (circleId) {
     const circleRef = admin.firestore().collection("snapCircles").doc(circleId);
     const circleSnapshot = await circleRef.get();
     if (circleSnapshot.exists) {
-      const {circleParticipants, state, keeper} = circleSnapshot.data() ?? {};
+      const {circleParticipants, state, keeper} = (circleSnapshot.data() as SnapCircleData) ?? {};
       if (auth.uid !== keeper && !hasAnyRole(auth, [Role.ADMIN])) {
         throw new functions.https.HttpsError(
           "permission-denied",
@@ -74,7 +78,7 @@ export const startSnapSession = functions.https.onCall(async ({circleId}, {auth}
     const ref = admin.firestore().collection("snapCircles").doc(circleId);
     const circleSnapshot = await ref.get();
     if (circleSnapshot.exists) {
-      const {state, keeper} = circleSnapshot.data() ?? {};
+      const {state, keeper} = (circleSnapshot.data() as SnapCircleData) ?? {};
       if (auth.uid !== keeper) {
         throw new functions.https.HttpsError(
           "permission-denied",
@@ -117,40 +121,74 @@ export const startSnapSession = functions.https.onCall(async ({circleId}, {auth}
   return false;
 });
 
-interface SnapCircleResponse {
+interface CreateSnapCircleArgs {
+  name: string;
+  description: string;
+  previousCircle?: string;
+  bannedParticipants?: SnapCircleBannedParticipants;
+  options?: {
+    isPrivate: boolean;
+    maxMinutes?: number;
+    maxParticipants?: number;
+  };
+}
+
+interface CreateSnapCircleResponse {
   id: string;
 }
 
 export const createSnapCircle = functions.https.onCall(
-  async ({name, description, previousCircle, bannedParticipants}, {auth}): Promise<SnapCircleResponse> => {
-    auth = isAuthenticated(auth, [Role.KEEPER]);
+  async (
+    {name, description, previousCircle, bannedParticipants, options}: CreateSnapCircleArgs,
+    {auth}
+  ): Promise<CreateSnapCircleResponse> => {
+    auth = isAuthenticated(auth);
     if (!name) {
       throw new functions.https.HttpsError("invalid-argument", "Missing name for snap circle");
     }
+
+    if (!hasAnyRole(auth, [Role.KEEPER])) {
+      // Non-keeper circles can't be re-started
+      if (previousCircle) {
+        throw new functions.https.HttpsError("permission-denied", "This circle has ended and cannot be re-started.");
+      }
+      // Non-keepers can only have one active circle
+      await assertHasFewerCirclesThan(auth.uid, 1);
+      // Non-keeper circles can only have a max of 10 participants and must be private
+      let maxParticipants = options?.maxParticipants ?? NonKeeperMaxParticipants;
+      if (maxParticipants > NonKeeperMaxParticipants) {
+        maxParticipants = NonKeeperMaxParticipants;
+      }
+      options = {
+        isPrivate: true,
+        maxMinutes: NonKeeperMaxMinutes,
+        maxParticipants: maxParticipants,
+      };
+    } else if (previousCircle) {
+      // Only the keeper can re-start a circle
+      await assertIsCircleKeeper(auth.uid, previousCircle);
+    }
+
     // Get the user ref
     const keeper = auth.uid;
     const userRef = admin.firestore().collection("users").doc(keeper);
 
     const created = Timestamp.now();
-    const data: {
-      name: string;
-      createdOn: Timestamp;
-      updatedOn: Timestamp;
-      createdBy: admin.firestore.DocumentReference;
-      keeper: string;
-      state: string;
-      description?: string;
-      link?: string;
-      previousCircle?: string;
-      bannedParticipants?: Map<string, {bannedOn: Timestamp}>;
-    } = {
+    const data: SnapCircleData = {
       name,
       createdOn: created,
       updatedOn: created,
       createdBy: userRef,
+      isPrivate: options?.isPrivate ?? false,
       keeper,
       state: SessionState.waiting,
     };
+    if (options?.maxMinutes) {
+      data.maxMinutes = options.maxMinutes;
+    }
+    if (options?.maxParticipants) {
+      data.maxParticipants = options.maxParticipants;
+    }
     if (description) {
       data.description = description;
     }
@@ -185,12 +223,35 @@ export const createSnapCircle = functions.https.onCall(
       // update with the link
       await admin.firestore().collection("snapCircles").doc(ref.id).update({link: shortLink, previewLink});
     } catch (ex) {
-      console.log(ex);
+      console.log("Failed to create dynamic link for circle ${ref.id}: ", ex);
     }
     // return information
     return {id: ref.id};
   }
 );
+
+const assertHasFewerCirclesThan = async (uid: string, maxCircles: number): Promise<void> => {
+  const ref = admin
+    .firestore()
+    .collection("snapCircles")
+    .where("keeper", "==", uid)
+    .where("state", "not-in", [SessionState.cancelled, SessionState.complete]);
+  const snapshot = await ref.get();
+  if (snapshot.size >= maxCircles) {
+    throw new functions.https.HttpsError("permission-denied", "You have reached the maximum number of circles");
+  }
+};
+
+const assertIsCircleKeeper = async (uid: string, circleId: string): Promise<void> => {
+  const ref = admin.firestore().collection("snapCircles").doc(circleId);
+  const snapshot = await ref.get();
+  if (!snapshot.exists) {
+    throw new functions.https.HttpsError("not-found", "Circle not found");
+  }
+  if (snapshot.data()?.keeper !== uid) {
+    throw new functions.https.HttpsError("permission-denied", "You are not the keeper of this circle");
+  }
+};
 
 /**
  * Kicks the current session user id out of the agora session and bans the user from joining the circle again

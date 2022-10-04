@@ -1,0 +1,45 @@
+name: Release Staging
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build_and_deploy_web:
+    environment: dev
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: 'npm'
+          cache-dependency-path: server/functions/package-lock.json
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.3.x'
+          cache: true
+      - run: make build-web
+      - run: zip -r web build/web
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_TOTEM_DEV_184F1 }}'
+          channelId: live
+          projectId: totem-dev-184f1
+  build_and_deploy_server:
+    environment: dev
+    env:
+      FIREBASE_TOKEN: "${{ secrets.FIREBASE_TOKEN }}"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: 'npm'
+          cache-dependency-path: server/functions/package-lock.json
+      - run: npm -g install firebase-tools
+      - run: cd server && make deploy

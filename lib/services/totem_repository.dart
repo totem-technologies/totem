@@ -8,6 +8,7 @@ import 'package:totem/services/circles_provider.dart';
 import 'package:totem/services/firebase_providers/firebase_analytics_provider.dart';
 import 'package:totem/services/firebase_providers/firebase_circles_provider.dart';
 import 'package:totem/services/firebase_providers/firebase_session_provider.dart';
+import 'package:totem/services/firebase_providers/firebase_system_provider.dart';
 import 'package:totem/services/firebase_providers/firebase_user_provider.dart';
 import 'package:totem/services/index.dart';
 
@@ -32,6 +33,7 @@ class TotemRepository {
   late final UserProvider _userProvider;
   late final SessionProvider _sessionProvider;
   late final AnalyticsProvider _analyticsProvider;
+  late final SystemProvider _systemProvider;
   AuthUser? user;
   String? pendingSessionId;
 
@@ -40,6 +42,7 @@ class TotemRepository {
     _topicsProvider = FirebaseTopicsProvider();
     _circlesProvider = FirebaseCirclesProvider();
     _userProvider = FirebaseUserProvider();
+    _systemProvider = FirebaseSystemProvider();
     _sessionProvider =
         FirebaseSessionProvider(analyticsProvider: _analyticsProvider);
     final serv = ref.read(authServiceProvider);
@@ -80,6 +83,8 @@ class TotemRepository {
     String? previousCircle,
     Map<String, dynamic>? bannedParticipants,
     bool addAsMember = true,
+    bool isPrivate = false,
+    int? maxParticipants,
   }) =>
       _circlesProvider.createSnapCircle(
         name: name,
@@ -88,6 +93,8 @@ class TotemRepository {
         keeper: keeper,
         previousCircle: previousCircle,
         bannedParticipants: bannedParticipants,
+        isPrivate: isPrivate,
+        maxParticipants: maxParticipants,
       );
   Future<bool> removeSnapCircle({required SnapCircle circle}) =>
       _circlesProvider.removeSnapCircle(circle: circle, uid: user!.uid);
@@ -96,6 +103,10 @@ class TotemRepository {
   Stream<List<SnapCircle>> snapCircles() => _circlesProvider.snapCircles();
   Stream<List<SnapCircle>> rejoinableSnapCircles() =>
       _circlesProvider.rejoinableSnapCircles(user!.uid);
+  Stream<List<SnapCircle>> mySnapCircles(
+          {bool privateOnly = true, bool activeOnly = true}) =>
+      _circlesProvider.mySnapCircles(user!.uid,
+          privateOnly: privateOnly, activeOnly: activeOnly);
   Stream<ScheduledCircle> scheduledCircle({required String circleId}) =>
       _circlesProvider.scheduledCircle(circleId, user!.uid);
   Future<SnapCircle?> circleFromId(String id) =>
@@ -164,4 +175,7 @@ class TotemRepository {
   Future<void> updateAccountStateValue(String key, dynamic value) =>
       _userProvider.updateAccountStateValue(
           key: key, value: value, uid: user!.uid);
+
+  // System
+  Future<SystemVideo> getSystemVideo() => _systemProvider.getSystemVideo();
 }

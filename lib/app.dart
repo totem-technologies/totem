@@ -5,9 +5,28 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:totem/app_routes.dart';
-import 'package:totem/services/applinks/index.dart';
+import 'package:totem/config.dart';
 import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
+
+Widget _wrapWithBanner(Widget child) {
+  if (!AppConfig.isDev) {
+    return child;
+  }
+  return Directionality(
+      textDirection: TextDirection.ltr,
+      child: Banner(
+        location: BannerLocation.bottomStart,
+        message: 'DEV',
+        color: Colors.green.withOpacity(0.5),
+        textStyle: const TextStyle(
+            fontWeight: FontWeight.w700,
+            fontSize: 12.0,
+            letterSpacing: 1.0,
+            color: Colors.white),
+        child: child,
+      ));
+}
 
 class App extends ConsumerStatefulWidget {
   const App({Key? key}) : super(key: key);
@@ -17,12 +36,6 @@ class App extends ConsumerStatefulWidget {
 }
 
 class _AppState extends ConsumerState<App> {
-  @override
-  void initState() {
-    super.initState();
-    AppLinks.instance.initialize();
-  }
-
   late final _router = AppRoutes.instance.getRouter(ref);
 
   @override
@@ -36,7 +49,7 @@ class _AppState extends ConsumerState<App> {
       statusBarBrightness: Brightness.light,
     ));
     ref.watch(authStateChangesProvider);
-    return MaterialApp.router(
+    return _wrapWithBanner(MaterialApp.router(
       routeInformationProvider: _router.routeInformationProvider,
       routeInformationParser: _router.routeInformationParser,
       routerDelegate: _router.routerDelegate,
@@ -52,7 +65,7 @@ class _AppState extends ConsumerState<App> {
       debugShowCheckedModeBanner: false,
       title: 'totem',
       theme: _appTheme(context),
-    );
+    ));
   }
 
   ThemeData _appTheme(BuildContext context) {

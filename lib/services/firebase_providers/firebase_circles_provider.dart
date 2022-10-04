@@ -5,6 +5,7 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/foundation.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/circles_provider.dart';
+import 'package:totem/services/error_report.dart';
 import 'package:totem/services/firebase_providers/paths.dart';
 import 'package:totem/services/index.dart';
 
@@ -53,6 +54,7 @@ class FirebaseCirclesProvider extends CirclesProvider {
     final collection = FirebaseFirestore.instance.collection(Paths.snapCircles);
     return collection
         .where('state', isEqualTo: SessionState.waiting.name)
+        .where('isPrivate', isEqualTo: false)
         .snapshots()
         .transform(
       StreamTransformer<QuerySnapshot<Map<String, dynamic>>,
@@ -86,6 +88,32 @@ class FirebaseCirclesProvider extends CirclesProvider {
   }
 
   @override
+  Stream<List<SnapCircle>> mySnapCircles(String uid,
+      {bool privateOnly = true, bool activeOnly = true}) {
+    final collection = FirebaseFirestore.instance.collection(Paths.snapCircles);
+    Query query = collection.where('keeper', isEqualTo: uid);
+    if (privateOnly) {
+      query = query.where('isPrivate', isEqualTo: true);
+    }
+    if (activeOnly) {
+      query = query.where('state', whereIn: [
+        SessionState.waiting.name,
+        SessionState.starting.name,
+        SessionState.live.name,
+      ]);
+    }
+    return query.snapshots().transform(
+      StreamTransformer<QuerySnapshot<Map<String, dynamic>>,
+          List<SnapCircle>>.fromHandlers(
+        handleData: (QuerySnapshot<Map<String, dynamic>> querySnapshot,
+            EventSink<List<SnapCircle>> sink) {
+          _mapSnapCircleUserReference(querySnapshot, sink);
+        },
+      ),
+    );
+  }
+
+  @override
   Future<ScheduledCircle?> createScheduledCircle({
     required String name,
     required int numSessions,
@@ -95,6 +123,7 @@ class FirebaseCirclesProvider extends CirclesProvider {
     required String uid,
     String? description,
     required bool addAsMember,
+    int? maxParticipants,
   }) async {
     final DocumentReference userRef =
         FirebaseFirestore.instance.collection(Paths.users).doc(uid);
@@ -108,6 +137,9 @@ class FirebaseCirclesProvider extends CirclesProvider {
     };
     if (description != null) {
       data["description"] = description;
+    }
+    if (maxParticipants != null) {
+      data["maxParticipants"] = maxParticipants;
     }
     try {
       DocumentReference ref =
@@ -138,6 +170,8 @@ class FirebaseCirclesProvider extends CirclesProvider {
     String? keeper,
     String? previousCircle,
     Map<String, dynamic>? bannedParticipants,
+    bool? isPrivate,
+    int? maxParticipants,
   }) async {
     final DocumentReference userRef =
         FirebaseFirestore.instance.collection(Paths.users).doc(keeper ?? uid);
@@ -147,6 +181,7 @@ class FirebaseCirclesProvider extends CirclesProvider {
       final data = <String, dynamic>{
         "name": name,
       };
+      final Map<String, dynamic> options = <String, dynamic>{};
       if (description != null) {
         data["description"] = description;
       }
@@ -158,6 +193,15 @@ class FirebaseCirclesProvider extends CirclesProvider {
       }
       if (bannedParticipants != null) {
         data['bannedParticipants'] = bannedParticipants;
+      }
+      if (isPrivate != null) {
+        options['isPrivate'] = isPrivate;
+      }
+      if (maxParticipants != null) {
+        options["maxParticipants"] = maxParticipants;
+      }
+      if (options.isNotEmpty) {
+        data["options"] = options;
       }
       final result = await callable(data);
       final String id = result.data['id'];
@@ -174,12 +218,14 @@ class FirebaseCirclesProvider extends CirclesProvider {
         circle.createdBy = await _userFromRef(userRef);
         return circle;
       }
-    } on FirebaseException catch (e) {
+    } on FirebaseException catch (ex, stack) {
       // TODO: throw specific exception here
-      throw (ServiceException(code: e.code, message: e.message));
-    } catch (e) {
+      await reportError(ex, stack);
+      throw (ServiceException(code: ex.code, message: ex.message));
+    } catch (ex, stack) {
+      await reportError(ex, stack);
       throw (ServiceException(
-          code: ServiceException.errorCodeUnknown, message: e.toString()));
+          code: ServiceException.errorCodeUnknown, message: ex.toString()));
     }
     return null;
   }
@@ -243,8 +289,9 @@ class FirebaseCirclesProvider extends CirclesProvider {
             .add(userCircleData);
         return true;
       }
-    } catch (ex) {
+    } catch (ex, stack) {
       debugPrint('Unable to add user to collection: $ex');
+      await reportError(ex, stack);
     }
     return false;
   }
@@ -336,8 +383,9 @@ class FirebaseCirclesProvider extends CirclesProvider {
         DocumentReference ref = data["createdBy"] as DocumentReference;
         circle.createdBy = await _userFromRef(ref);
         circles.add(circle);
-      } catch (ex) {
+      } catch (ex, stack) {
         debugPrint(ex.toString());
+        await reportError(ex, stack);
       }
     }
     sink.add(circles);
@@ -357,8 +405,9 @@ class FirebaseCirclesProvider extends CirclesProvider {
           SnapSession.fromJson(data['activeSession'], circle: circle);
         }
         circles.add(circle);
-      } catch (ex) {
+      } catch (ex, stack) {
         debugPrint(ex.toString());
+        await reportError(ex, stack);
       }
     }
     sink.add(circles);
@@ -414,8 +463,9 @@ class FirebaseCirclesProvider extends CirclesProvider {
             circleRef.collection(Paths.scheduledSessions).doc();
         batch.set(ref, session);
         sessions.add(ref);
-      } catch (ex) {
+      } catch (ex, stack) {
         debugPrint("unable to create session: $ex");
+        await reportError(ex, stack);
       }
     }
     await batch.commit();
@@ -435,8 +485,9 @@ class FirebaseCirclesProvider extends CirclesProvider {
           .doc(circle.id);
       await activeCircleRef.delete();
       return true;
-    } catch (ex) {
+    } catch (ex, stack) {
       debugPrint(ex.toString());
+      await reportError(ex, stack);
     }
     return false;
   }
@@ -456,8 +507,9 @@ class FirebaseCirclesProvider extends CirclesProvider {
         SnapSession.fromJson(data['activeSession'], circle: circle);
       }
       return circle;
-    } catch (ex) {
+    } catch (ex, stack) {
       debugPrint(ex.toString());
+      await reportError(ex, stack);
     }
     return null;
   }
@@ -481,8 +533,9 @@ class FirebaseCirclesProvider extends CirclesProvider {
             id: snapshot.id, ref: snapshot.reference.path);
         return snapCircle;
       }
-    } catch (ex) {
+    } catch (ex, stack) {
       debugPrint(ex.toString());
+      await reportError(ex, stack);
     }
     return null;
   }
@@ -506,8 +559,9 @@ class FirebaseCirclesProvider extends CirclesProvider {
             id: snapshot.id, ref: snapshot.reference.path);
         return snapCircle;
       }
-    } catch (ex) {
+    } catch (ex, stack) {
       debugPrint(ex.toString());
+      await reportError(ex, stack);
     }
     return null;
   }
@@ -530,8 +584,9 @@ class FirebaseCirclesProvider extends CirclesProvider {
           return false;
         }
       }
-    } catch (ex) {
+    } catch (ex, stack) {
       debugPrint(ex.toString());
+      await reportError(ex, stack);
     }
     return true;
   }

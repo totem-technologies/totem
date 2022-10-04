@@ -49,6 +49,8 @@ class CircleSessionPageState extends ConsumerState<CircleSessionPage>
     with AfterLayoutMixin {
   SessionPageState _sessionState = SessionPageState.loading;
   Session? _session;
+  UserProfile? _userProfile;
+
   @override
   void initState() {
     super.initState();
@@ -63,6 +65,7 @@ class CircleSessionPageState extends ConsumerState<CircleSessionPage>
       case SessionPageState.ready:
         return CircleSessionLivePage(
           session: _session!,
+          userProfile: _userProfile!,
         );
       case SessionPageState.error:
         return _failedToLoadSession(context);
@@ -156,13 +159,19 @@ class CircleSessionPageState extends ConsumerState<CircleSessionPage>
               [SessionState.waiting, SessionState.starting, SessionState.live]);
           if (pending == null) {
             // this is a create new circle moment
-            circle = await repo.createSnapCircle(
-              name: circle.name,
-              description: circle.description,
-              keeper: circle.keeper,
-              previousCircle: circle.id,
-              bannedParticipants: circle.bannedParticipants,
-            );
+            try {
+              circle = await repo.createSnapCircle(
+                name: circle.name,
+                description: circle.description,
+                keeper: circle.keeper,
+                previousCircle: circle.id,
+                bannedParticipants: circle.bannedParticipants,
+              );
+            } on ServiceException catch (ex) {
+              debugPrint('Error re-creating circle: $ex');
+              setState(() => _sessionState = SessionPageState.error);
+              return;
+            }
           } else {
             // join the pending one
             circle = pending;
@@ -191,9 +200,10 @@ class CircleSessionPageState extends ConsumerState<CircleSessionPage>
             .read(accountStateEventManager)
             .handleEvents(context, type: AccountStateEventType.preCircle);
         if (!mounted) return;
-        bool? state =
+        UserProfile? user =
             await CircleJoinDialog.showJoinDialog(context, circle: circle);
-        if (state != null && state) {
+        if (user != null) {
+          _userProfile = user;
           _session = circle.snapSession;
           setState(() => _sessionState = SessionPageState.ready);
         } else {
@@ -215,9 +225,11 @@ class CircleSessionPageState extends ConsumerState<CircleSessionPage>
 }
 
 class CircleSessionLivePage extends ConsumerStatefulWidget {
-  const CircleSessionLivePage({Key? key, required this.session})
+  const CircleSessionLivePage(
+      {Key? key, required this.session, required this.userProfile})
       : super(key: key);
   final Session session;
+  final UserProfile userProfile;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
@@ -232,14 +244,23 @@ class CircleSessionLivePageState extends ConsumerState<CircleSessionLivePage> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     // listen to changes in the session
     ref.watch(activeSessionProvider);
     if (widget.session is SnapSession) {
       return CircleSnapSessionContent(
-          circle: widget.session.circle as SnapCircle);
+          circle: widget.session.circle as SnapCircle,
+          userProfile: widget.userProfile);
     } else {
-      return CircleScheduledSessionContent(session: widget.session);
+      return CircleScheduledSessionContent(
+        session: widget.session,
+        userProfile: widget.userProfile,
+      );
     }
   }
 

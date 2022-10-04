@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
@@ -9,6 +10,7 @@ import 'package:flutter/foundation.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:totem/config.dart';
 import 'package:totem/models/index.dart';
+import 'package:totem/services/error_report.dart';
 import 'package:totem/services/index.dart';
 import 'package:wakelock/wakelock.dart';
 
@@ -22,9 +24,6 @@ class AgoraCommunicationProvider extends CommunicationProvider {
 
   // These are used as default values for the video preview, modify
   // as needed to define a different default as these get set on the engine
-  static const int videoHeight = 360;
-  static const int videoWidth = 360;
-
   static const int fullScreenHeight = 600;
   static const int fullScreenWidth = 600;
 
@@ -34,8 +33,10 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   static const int networkTimeoutDuration = 20; // seconds
   static const bool useAgoraStream = false;
 
-  AgoraCommunicationProvider(
-      {required this.sessionProvider, required this.userId}) {
+  AgoraCommunicationProvider({
+    required this.sessionProvider,
+    required this.userId,
+  }) {
     sessionProvider.addListener(_updateCommunicationFromSession);
     _messageSubscription = sessionProvider.messageStream.listen(_handleMessage);
   }
@@ -66,6 +67,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   CommunicationDevice? _camera;
   CommunicationDevice? _audioInput;
   CommunicationDevice? _audioOutput;
+  SystemVideo systemVideo = SystemVideo();
 
   late StreamSubscription<SessionDataMessage?> _messageSubscription;
 
@@ -87,14 +89,19 @@ class AgoraCommunicationProvider extends CommunicationProvider {
       _engine = null;
       _audioIndicatorStreamController?.close();
       super.dispose();
-    } catch (ex) {
+    } catch (ex, stack) {
+      reportError(ex, stack);
       debugPrint("unable to break down engine: $ex");
     }
   }
 
   @override
-  Future<String?> initialDevicePreview({bool enableVideo = true}) async {
+  Future<String?> initialDevicePreview(
+      {bool enableVideo = true, SystemVideo? video}) async {
     String? errorMessage;
+    if (video != null) {
+      systemVideo = video;
+    }
     try {
       await _assertEngine(enableVideo);
 
@@ -117,8 +124,9 @@ class AgoraCommunicationProvider extends CommunicationProvider {
                   : speaker.id == "default");
         }
         _audioOutput ??= _audioOutputs.first;
-      } catch (ex) {
+      } catch (ex, stack) {
         debugPrint('unable to get devices: $ex');
+        await reportError(ex, stack);
       }
 
       // Microphones
@@ -143,8 +151,9 @@ class AgoraCommunicationProvider extends CommunicationProvider {
         if (_audioInput == null) {
           return "errorNoMicrophone";
         }
-      } catch (ex) {
+      } catch (ex, stack) {
         debugPrint('unable to get audioInput devices, not supported $ex');
+        await reportError(ex, stack);
       }
 
       // Cameras
@@ -167,12 +176,14 @@ class AgoraCommunicationProvider extends CommunicationProvider {
         if (_camera == null) {
           return "errorCamera";
         }
-      } catch (ex) {
+      } catch (ex, stack) {
         debugPrint('unable to get camera devices, not supported $ex');
+        await reportError(ex, stack);
       }
       return null;
-    } catch (ex) {
+    } catch (ex, stack) {
       debugPrint('unable to activate agora session: $ex');
+      await reportError(ex, stack);
       _updateState(CommunicationState.failed);
       errorMessage = ex.toString();
     }
@@ -183,10 +194,12 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   Future<bool> joinSession({
     required Session session,
     required CommunicationHandler handler,
+    String? sessionImage,
     bool enableVideo = false,
   }) async {
     _handler = handler;
     _session = session;
+    _sessionImage = sessionImage;
     _lastError = null;
     _audioIndicatorStreamController =
         StreamController<CommunicationAudioVolumeIndication>.broadcast(
@@ -210,11 +223,13 @@ class AgoraCommunicationProvider extends CommunicationProvider {
         return false;
       }
       await _engine!.joinChannel(_sessionToken.token, session.id, null, uid);
-    } on ServiceException catch (ex) {
+    } on ServiceException catch (ex, stack) {
+      await reportError(ex, stack);
       _lastError = ex.message;
       _updateState(CommunicationState.failed);
-    } catch (ex) {
+    } catch (ex, stack) {
       debugPrint('unable to activate agora session: $ex');
+      await reportError(ex, stack);
       _updateState(CommunicationState.failed);
     }
     return false;
@@ -358,10 +373,30 @@ class AgoraCommunicationProvider extends CommunicationProvider {
           await _engine!.enableDeepLearningDenoise(true);
           await _engine!.enableAudioVolumeIndication(200, 3, true);
           await _engine!.setChannelProfile(ChannelProfile.Communication);
+          await _engine!.enableDualStreamMode(true);
+
+          // This is a workaround for providing the low bit rate stream parameters
+          // to the Agora SDK. For this to work we are using a forked version of
+          // the SDK that has a modified web implementation of setParameters to
+          // call the appropriate web sdk method.
+          Map<String, dynamic> lowParams = {
+            "che.video.lowBitRateStreamParameter": {
+              "width": systemVideo.lowResSize,
+              "height": systemVideo.lowResSize,
+              "frameRate": systemVideo.lowResFrameRate,
+              "bitRate": systemVideo.lowResBitRate,
+            }
+          };
+          String paramString = jsonEncode(lowParams);
+          await _engine!.setParameters(paramString);
+
           await _engine!.setVideoEncoderConfiguration(
+            // Agora recommends setting the video resolution
             VideoEncoderConfiguration(
-              dimensions:
-                  const VideoDimensions(width: videoWidth, height: videoHeight),
+              frameRate: frameRateFromInt(systemVideo.frameRate),
+              bitrate: systemVideo.bitRate,
+              dimensions: VideoDimensions(
+                  width: systemVideo.videoSize, height: systemVideo.videoSize),
             ),
           );
           bool hasVideoPermission =
@@ -399,8 +434,9 @@ class AgoraCommunicationProvider extends CommunicationProvider {
           _lastError = CommunicationErrors.noMicrophonePermission;
           _updateState(CommunicationState.failed);
         }
-      } catch (ex) {
+      } catch (ex, stack) {
         // error initializing engine
+        await reportError(ex, stack);
         _lastError = CommunicationErrors.communicationError;
         _updateState(CommunicationState.failed);
       }
@@ -528,8 +564,9 @@ class AgoraCommunicationProvider extends CommunicationProvider {
         try {
           await _engine!.enableLocalAudio(false);
           await _engine!.enableLocalAudio(true);
-        } catch (ex) {
+        } catch (ex, stack) {
           debugPrint('Failed resetting local audio $ex');
+          await reportError(ex, stack);
         } finally {
           if (muted) {
             await _engine!.muteLocalAudioStream(true);
@@ -642,9 +679,10 @@ class AgoraCommunicationProvider extends CommunicationProvider {
         await sessionProvider.leaveSession(
             session: _session!, sessionUid: commUid.toString());
       }
-    } on ServiceException catch (ex) {
+    } on ServiceException catch (ex, stack) {
       // just log this for now
       debugPrint('Got exception trying to leave session: ${ex.toString()}');
+      await reportError(ex, stack);
     }
     _pendingComplete = false;
     // update state
@@ -659,7 +697,15 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   }
 
   void _handleUserJoined(int user, int elapsed) {
+    if (user == commUid) {
+      return;
+    }
     sessionProvider.activeSession?.userJoined(sessionUserId: user.toString());
+    if (sessionProvider.activeSession?.state == SessionState.live) {
+      _updateVideoStreamState();
+    } else {
+      _engine!.setRemoteVideoStreamType(user, VideoStreamType.Low);
+    }
     debugPrint('User joined event: $user elapsed $elapsed');
   }
 
@@ -680,13 +726,12 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   void _handleNetworkQuality(
       int uid, NetworkQuality qualityTx, NetworkQuality qualityRx) {
     // user for display
-    bool networkUnstable =
-        isBadConnection(qualityTx) || isBadConnection(qualityRx);
     uid = uid == 0 ? commUid : uid;
-    debugPrint(
-        'Network quality: ${qualityTx.name}, tx: ${qualityRx.name} unstable: $networkUnstable  for user: $uid');
     sessionProvider.activeSession?.updateUnstableNetworkForUser(
-        sessionUserId: uid.toString(), unstable: networkUnstable);
+        sessionUserId: uid.toString(),
+        sample: NetworkSample(
+            receive: _networkToValue(qualityRx),
+            transmit: _networkToValue(qualityTx)));
   }
 
   bool isBadConnection(NetworkQuality quality) {
@@ -728,6 +773,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     // check the session state
     ActiveSession? session = sessionProvider.activeSession;
     if (session != null && _session != null) {
+      bool updateStreamState = false;
       if (session.state == SessionState.live && !session.userStatus) {
         // have to manage mute state based on changes to the state
         bool started = (_lastState == SessionState.starting &&
@@ -735,6 +781,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
         if (started ||
             session.lastChange == ActiveSessionChange.totemChange ||
             session.lastChange == ActiveSessionChange.totemReceive) {
+          updateStreamState = true;
           SessionParticipant? participant = session.totemParticipant;
           if (participant != null) {
             setHasTotem(participant.me);
@@ -748,7 +795,30 @@ class AgoraCommunicationProvider extends CommunicationProvider {
           _engine?.leaveChannel();
         }
       }
+      if (updateStreamState) {
+        debugPrint('updating video stream state for users');
+        _updateVideoStreamState();
+      }
       _lastState = session.state;
+    }
+  }
+
+  void _updateVideoStreamState() {
+    ActiveSession? session = sessionProvider.activeSession;
+    if (session != null) {
+      SessionParticipant? totemParticipant = session.totemParticipant;
+      String? totemSessionId = totemParticipant?.sessionUserId;
+      for (final participant in session.activeParticipants) {
+        if (participant.sessionUserId != null && !participant.me) {
+          _engine?.setRemoteVideoStreamType(
+              int.parse(participant.sessionUserId!),
+              participant.sessionUserId == totemSessionId
+                  ? VideoStreamType.High
+                  : VideoStreamType.Low);
+          debugPrint(
+              'Setting video stream for ${participant.name} to ${participant.sessionUserId == totemSessionId ? 'high' : 'low'}');
+        }
+      }
     }
   }
 
@@ -872,8 +942,9 @@ class AgoraCommunicationProvider extends CommunicationProvider {
         notifyListeners();
       }
       return true;
-    } catch (ex) {
+    } catch (ex, stack) {
       debugPrint('unable to setAudioInput: $ex');
+      await reportError(ex, stack);
     }
     return false;
   }
@@ -892,8 +963,9 @@ class AgoraCommunicationProvider extends CommunicationProvider {
         notifyListeners();
       }
       return true;
-    } catch (ex) {
+    } catch (ex, stack) {
       debugPrint('unable to setAudioOutput: $ex');
+      await reportError(ex, stack);
     }
     return false;
   }
@@ -914,8 +986,9 @@ class AgoraCommunicationProvider extends CommunicationProvider {
         notifyListeners();
       }
       return true;
-    } catch (ex) {
+    } catch (ex, stack) {
       debugPrint('unable to setCamera: $ex');
+      await reportError(ex, stack);
     }
     return false;
   }
@@ -983,10 +1056,49 @@ class AgoraCommunicationProvider extends CommunicationProvider {
             return Permission.microphone.request().isGranted;
           }
       }
-    } catch (e) {
+    } catch (ex, stack) {
+      await reportError(ex, stack);
       return false;
     }
   }
+
+  VideoFrameRate frameRateFromInt(int frameRate) {
+    switch (frameRate) {
+      case 15:
+        return VideoFrameRate.Fps15;
+      case 30:
+        return VideoFrameRate.Fps30;
+      case 60:
+        return VideoFrameRate.Fps60;
+      case 10:
+        return VideoFrameRate.Fps10;
+      case 24:
+      default:
+        return VideoFrameRate.Fps24;
+    }
+  }
+
+  int _networkToValue(NetworkQuality quality) {
+    switch (quality) {
+      case NetworkQuality.Excellent:
+        return NetworkState.kNetworkQualityExcellent;
+      case NetworkQuality.Good:
+        return NetworkState.kNetworkQualityGood;
+      case NetworkQuality.Poor:
+        return NetworkState.kNetworkQualityPoor;
+      case NetworkQuality.Bad:
+        return NetworkState.kNetworkQualityBad;
+      case NetworkQuality.VBad:
+        return NetworkState.kNetworkQualityVeryBad;
+      case NetworkQuality.Down:
+        return NetworkState.kNetworkQualityDown;
+      case NetworkQuality.Unknown:
+      case NetworkQuality.Detecting:
+      default:
+        return NetworkState.kNetworkStateUnknown;
+    }
+  }
+
 
   void _handleMessage(SessionDataMessage? message) {
     if (message == null) return;
@@ -1000,8 +1112,9 @@ class AgoraCommunicationProvider extends CommunicationProvider {
           debugPrint('Unknown message type: ${message.type}');
           break;
       }
-    } catch (ex) {
+    } catch (ex, stack) {
       debugPrint('Error decoding stream message: $ex');
+      await reportError(ex, stack);
     }
   }
 }

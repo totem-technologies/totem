@@ -299,16 +299,13 @@ class ActiveSession extends ChangeNotifier {
   }
 
   void updateUnstableNetworkForUser(
-      {required String sessionUserId, required bool unstable}) {
+      {required String sessionUserId, required NetworkSample sample}) {
     SessionParticipant? participant = _activeParticipants.values
         .firstWhereOrNull((element) => element.sessionUserId == sessionUserId);
-    if (participant != null) {
-      if (participant.networkUnstable != unstable) {
-        participant.networkUnstable = unstable;
-        if (participant.me) {
-          notifyListeners();
-        }
-      }
+    if (participant != null &&
+        participant.addNetworkSample(sample) &&
+        participant.me) {
+      notifyListeners();
     }
   }
 

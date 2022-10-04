@@ -23,6 +23,34 @@
       "queryScope": "COLLECTION",
       "fields": [
         {
+          "fieldPath": "keeper",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "state",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "snapCircles",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "previousCircle",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "createdOn",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "snapCircles",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
           "fieldPath": "previousCircle",
           "order": "ASCENDING"
         },

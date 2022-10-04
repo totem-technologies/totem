@@ -5,37 +5,41 @@ import 'package:totem/models/index.dart';
 import 'package:totem/theme/index.dart';
 
 class CircleNetworkUnstable extends StatelessWidget {
-  const CircleNetworkUnstable({Key? key, this.participant}) : super(key: key);
+  const CircleNetworkUnstable(
+      {Key? key,
+      this.participant,
+      this.size = 32,
+      this.color,
+      this.shadow = true})
+      : super(key: key);
   final SessionParticipant? participant;
+  final double size;
+  final Color? color;
+  final bool shadow;
 
   @override
   Widget build(BuildContext context) {
     final themeColors = Theme.of(context).themeColors;
     if (participant == null) {
-      return DecoratedIcon(
-        Icons.signal_wifi_statusbar_connected_no_internet_4,
-        size: 32,
-        color: themeColors.reversedText,
-        shadows: const [
-          BoxShadow(
-            color: Colors.black87,
-            blurRadius: 6,
-            spreadRadius: 0,
-            offset: Offset.zero,
-          ),
-        ],
-      ); /*Container(
-        padding: const EdgeInsets.all(3),
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: themeColors.alertBackground,
-        ),
-        child: Icon(
-          Icons.signal_wifi_statusbar_connected_no_internet_4,
-          size: 24,
-          color: themeColors.reversedText,
-        ),
-      );*/
+      return shadow
+          ? DecoratedIcon(
+              Icons.signal_wifi_statusbar_connected_no_internet_4,
+              size: size,
+              color: color ?? themeColors.reversedText,
+              shadows: const [
+                BoxShadow(
+                  color: Colors.black87,
+                  blurRadius: 6,
+                  spreadRadius: 0,
+                  offset: Offset.zero,
+                ),
+              ],
+            )
+          : Icon(
+              Icons.signal_wifi_statusbar_connected_no_internet_4,
+              size: size,
+              color: color ?? themeColors.reversedText,
+            );
     }
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 11),
@@ -48,7 +52,7 @@ class CircleNetworkUnstable extends StatelessWidget {
         children: [
           Icon(
             Icons.signal_wifi_statusbar_connected_no_internet_4,
-            size: 24,
+            size: size,
             color: themeColors.reversedText,
           ),
           const SizedBox(width: 4),

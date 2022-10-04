@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/analytics_provider.dart';
 import 'package:totem/services/auth/auth_exception.dart';
+import 'package:totem/services/error_report.dart';
 import 'package:totem/services/communication_provider.dart';
 import 'package:totem/services/firebase_providers/paths.dart';
 import 'package:totem/services/service_exception.dart';
@@ -110,7 +111,8 @@ class FirebaseSessionProvider extends SessionProvider {
       if (session is SnapSession) {
         analyticsProvider.joinedSnapSession(session);
       }
-    } on FirebaseException catch (ex) {
+    } on FirebaseException catch (ex, stack) {
+      await reportError(ex, stack);
       throw ServiceException(
         code: ex.code,
         message: ex.message,
@@ -142,7 +144,8 @@ class FirebaseSessionProvider extends SessionProvider {
           );
         }
       }
-    } on FirebaseException catch (ex) {
+    } on FirebaseException catch (ex, stack) {
+      await reportError(ex, stack);
       throw ServiceException(
         code: ex.code,
         message: ex.message,
@@ -169,7 +172,8 @@ class FirebaseSessionProvider extends SessionProvider {
           Map<String, dynamic> data = {"state": SessionState.live.name};
           await ref.update(data);
         }
-      } on FirebaseException catch (ex) {
+      } on FirebaseException catch (ex, stack) {
+        await reportError(ex, stack);
         throw ServiceException(
           code: ex.code,
           reference: _activeSession!.circle.ref,
@@ -199,13 +203,15 @@ class FirebaseSessionProvider extends SessionProvider {
           FirebaseFunctions.instance.httpsCallable('getTokenWithUserId');
       final result = await callable({"channelName": session.id, "userId": uid});
       return SessionToken.fromJson(result.data);
-    } on FirebaseFunctionsException catch (ex) {
+    } on FirebaseException catch (ex, stack) {
+      await reportError(ex, stack);
       throw ServiceException(
         code: ex.code,
         message: ex.message,
         reference: session.ref,
       );
-    } catch (ex) {
+    } catch (ex, stack) {
+      await reportError(ex, stack);
       throw ServiceException(code: "token_error", reference: session.ref);
     }
   }
@@ -260,7 +266,8 @@ class FirebaseSessionProvider extends SessionProvider {
           await batch.commit();
         }
 //        clear();
-      } on FirebaseException catch (ex) {
+      } on FirebaseException catch (ex, stack) {
+        await reportError(ex, stack);
         throw ServiceException(
           code: ex.code,
           reference: _activeSession!.circle.ref,
@@ -318,7 +325,8 @@ class FirebaseSessionProvider extends SessionProvider {
           // todo for scheduled session
         }
         return true;
-      } on FirebaseException catch (ex) {
+      } on FirebaseException catch (ex, stack) {
+        await reportError(ex, stack);
         throw ServiceException(
           code: ex.code,
           reference: activeSession!.circle.ref,
@@ -348,7 +356,8 @@ class FirebaseSessionProvider extends SessionProvider {
         } else {
           // todo for scheduled session
         }
-      } on FirebaseException catch (ex) {
+      } on FirebaseException catch (ex, stack) {
+        await reportError(ex, stack);
         throw ServiceException(code: ex.code);
       }
     }
@@ -627,7 +636,8 @@ class FirebaseSessionProvider extends SessionProvider {
                 ref, {"participants": participants, "userStatus": userChange});
           });
           return true;
-        } on FirebaseException catch (ex) {
+        } on FirebaseException catch (ex, stack) {
+          await reportError(ex, stack);
           debugPrint('error updating user status: $ex');
         }
       }
@@ -678,11 +688,13 @@ class FirebaseSessionProvider extends SessionProvider {
               }
             }
           });
-        } on FirebaseException catch (ex) {
+        } on FirebaseException catch (ex, stack) {
           debugPrint('error removing user from session: $ex');
+          await reportError(ex, stack);
           result = false;
-        } catch (e) {
-          debugPrint('error removing user from session: $e');
+        } catch (ex, stack) {
+          debugPrint('error removing user from session: $ex');
+          await reportError(ex, stack);
           result = false;
         }
       }

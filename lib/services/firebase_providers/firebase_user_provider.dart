@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/foundation.dart';
 import 'package:totem/models/index.dart';
+import 'package:totem/services/error_report.dart';
 import 'package:totem/services/firebase_providers/paths.dart';
 import 'package:totem/services/index.dart';
 
@@ -64,11 +65,13 @@ class FirebaseUserProvider extends UserProvider {
           FirebaseFunctions.instance.httpsCallable('updateAccountState');
       final data = {"key": key, "value": value};
       await callable(data);
-    } on FirebaseException catch (e) {
-      throw (ServiceException(code: e.code, message: e.message));
-    } catch (e) {
+    } on FirebaseException catch (ex, stack) {
+      await reportError(ex, stack);
+      throw (ServiceException(code: ex.code, message: ex.message));
+    } catch (ex, stack) {
+      await reportError(ex, stack);
       throw (ServiceException(
-          code: ServiceException.errorCodeUnknown, message: e.toString()));
+          code: ServiceException.errorCodeUnknown, message: ex.toString()));
     }
   }
 
@@ -104,8 +107,9 @@ class FirebaseUserProvider extends UserProvider {
       final userProfileDoc =
           FirebaseFirestore.instance.collection(Paths.users).doc(uid);
       await userProfileDoc.update(userProfile.toJson(updated: true));
-    } catch (ex) {
+    } catch (ex, stack) {
       debugPrint('error updating user profile: $ex');
+      await reportError(ex, stack);
     }
   }
 
@@ -116,8 +120,9 @@ class FirebaseUserProvider extends UserProvider {
       final userProfileDoc =
           FirebaseFirestore.instance.collection(Paths.users).doc(uid);
       await userProfileDoc.update({"image": imageUrl});
-    } catch (ex) {
+    } catch (ex, stack) {
       debugPrint('error updating user profile image: $ex');
+      await reportError(ex, stack);
     }
   }
 }

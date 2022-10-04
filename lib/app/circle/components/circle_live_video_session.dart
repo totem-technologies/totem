@@ -12,6 +12,8 @@ import 'package:totem/models/index.dart';
 import 'package:totem/services/utils/device_type.dart';
 import 'package:totem/theme/index.dart';
 
+import 'layouts.dart';
+
 class CircleLiveVideoSession extends ConsumerStatefulWidget {
   const CircleLiveVideoSession({Key? key}) : super(key: key);
 
@@ -102,7 +104,6 @@ class _CircleLiveVideoSessionState
                                                 (totemParticipant.me)
                                             ? _speakerUserView(context,
                                                 activeSession: activeSession,
-                                                participants: participants,
                                                 isPhoneLayout: isPhoneLayout)
                                             : ListenerUserLayout(
                                                 constrainSpeaker:
@@ -174,62 +175,21 @@ class _CircleLiveVideoSessionState
     return Container();
   }
 
-/*  Widget _speakerVideoView(BuildContext context, ActiveSession activeSession) {
-    if (activeSession.totemParticipant != null &&
-        (!activeSession.totemReceived ||
-            !(activeSession.totemParticipant!.me))) {
-      return prov.ChangeNotifierProvider<SessionParticipant>.value(
-        value: activeSession.totemParticipant!,
-        child: LayoutBuilder(
-          builder: (BuildContext context, BoxConstraints constraints) {
-            final sizeOfVideo =
-                min(constraints.maxWidth, constraints.maxHeight);
-            return SizedBox(
-              width: sizeOfVideo,
-              height: sizeOfVideo,
-              child: prov.Consumer<SessionParticipant>(
-                builder: (_, participant, __) {
-                  return ClipRRect(
-                    borderRadius: const BorderRadius.all(Radius.circular(8)),
-                    child: Stack(
-                      children: [
-                        CircleLiveSessionVideo(participant: participant),
-                        if (participant.videoMuted)
-                          const Positioned.fill(
-                            child: CameraMuted(),
-                          ),
-                        if (!participant.me && participant.networkUnstable)
-                          const Positioned(
-                            top: 10,
-                            left: 10,
-                            child: CircleNetworkUnstable(),
-                          ),
-                        if (participant.muted)
-                          const PositionedDirectional(
-                            top: 10,
-                            end: 10,
-                            child: MuteIndicator(),
-                          ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            );
-          },
-        ),
-      );
-    }
-    return Container();
-  } */
-
   Widget _speakerUserView(BuildContext context,
-      {required List<SessionParticipant> participants,
-      required ActiveSession activeSession,
-      required bool isPhoneLayout}) {
-    return CircleLiveSessionUsers(
-      speakerView: true,
-      isPhoneLayout: isPhoneLayout,
+      {required ActiveSession activeSession, required bool isPhoneLayout}) {
+    final totemId = activeSession.totemParticipant?.uid;
+    final participants = activeSession.speakOrderParticipants
+        .where((element) => element.uid != totemId)
+        .toList();
+
+    return WaitingRoomListLayout(
+      generate: (i, dimension) => CircleSessionParticipant(
+        dimension: dimension,
+        participant: participants[i],
+        hasTotem: activeSession.totemUser == participants[i].sessionUserId,
+        next: i == 0,
+      ),
+      count: participants.length,
     );
   }
 
@@ -241,14 +201,11 @@ class _CircleLiveVideoSessionState
     return Column(
       children: [
         Expanded(child: Container()),
-        SizedBox(
-          height: 60,
-          child: AnimatedSwitcher(
-            duration: const Duration(milliseconds: 250),
-            child: _sessionControl(context, activeSession),
-          ),
+        AnimatedSwitcher(
+          duration: const Duration(milliseconds: 250),
+          child: _sessionControl(context, activeSession),
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 15),
       ],
     );
   }
@@ -264,24 +221,18 @@ class _CircleLiveVideoSessionState
         return Center(
           child: !isMobile
               ? ((activeSession.totemReceived)
-                  ? ThemedRaisedButton(
-                      width: 200,
-                      height: 50,
-                      backgroundColor: themeColors.alternateButtonBackground,
+                  ? TotemActionButton(
+                      image: FaIcon(FontAwesomeIcons.hand,
+                          size: 30, color: themeColors.primaryText),
+                      label: t.pass,
+                      message: t.circleTotemPass,
+                      showToolTips: false,
+                      vertical: false,
                       onPressed: !_processingRequest
                           ? () {
                               _endTurn(context, participant);
                             }
                           : null,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          FaIcon(FontAwesomeIcons.hand,
-                              size: 20, color: themeColors.primaryText),
-                          const SizedBox(width: 10),
-                          Text(t.pass)
-                        ],
-                      ),
                     )
                   : ThemedRaisedButton(
                       width: 200,

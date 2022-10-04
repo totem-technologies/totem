@@ -37,10 +37,12 @@ abstract class CommunicationProvider extends ChangeNotifier {
   Future<bool> setAudioInput(CommunicationDevice device);
   Future<bool> setAudioOutput(CommunicationDevice device);
 
-  Future<String?> initialDevicePreview({bool enableVideo = true});
+  Future<String?> initialDevicePreview(
+      {bool enableVideo = true, SystemVideo? video});
   Future<bool> joinSession({
     required Session session,
     required CommunicationHandler handler,
+    String? sessionImage,
     bool enableVideo,
   });
   Future<void> leaveSession({bool requested = true});

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,6 +14,23 @@ import 'models/index.dart';
 import 'services/index.dart';
 
 export 'package:go_router/src/misc/extensions.dart';
+
+class GoRouterRefreshStream extends ChangeNotifier {
+  GoRouterRefreshStream(Stream<dynamic> stream) {
+    notifyListeners();
+    _subscription = stream.asBroadcastStream().listen(
+          (dynamic _) => notifyListeners(),
+        );
+  }
+
+  late final StreamSubscription<dynamic> _subscription;
+
+  @override
+  void dispose() {
+    _subscription.cancel();
+    super.dispose();
+  }
+}
 
 class AppRoutes {
   static const String home = 'home';
@@ -120,7 +139,7 @@ class AppRoutes {
           ],
         ),
       ],
-      redirect: (state) {
+      redirect: (context, state) {
         // Is there a logged in user?
         UserAuthAccountState? user =
             ref.read(userAccountStateProvider).asData?.value;
@@ -172,8 +191,8 @@ class AppRoutes {
         }
 
         // if this is a snap circle link, redirect to the circle page
-        if (state.subloc == home && state.queryParams.containsKey('snap')) {
-          return '${home}circle/${state.queryParams['snap']}';
+        if (state.subloc == '/' && state.queryParams.containsKey('snap')) {
+          return '/circle/${state.queryParams['snap']}';
         }
 
         // the ended path can only be accessed if the extra data is
