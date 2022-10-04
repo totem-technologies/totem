@@ -23,6 +23,7 @@
         }
     },
     "circle": "Circle",
+    "circleBanner": "Banner Image",
     "circleCreateNewMessage": "The circle named {name} is not available.\n\nDo you want to start a new circle with the same name and keeper?",
     "@circleCreateNewMessage": {
         "placeholders": {
@@ -36,6 +37,7 @@
     "circleEnding": "Circle is ending",
     "circles": "Circles",
     "circleInProgress": "Circle in progress",
+    "circleLogo": "Logo Image",
     "circleName": "Circle Name",
     "circleRejoinWaiting": "Waiting for keeper to let you into the session in progress",
     "circleRejoinRequest": "{name} is requesting to rejoin the circle",
@@ -195,6 +197,7 @@
     "role": "Role",
     "save": "Save",
     "saveProfileImage": "Save Profile Image",
+    "selectImage": "Select Image",
     "selectProfilePicture": "Select Profile Picture",
     "selectPhotoExisting": "Existing photo",
     "selectPhotoCamera": "Take a new photo",

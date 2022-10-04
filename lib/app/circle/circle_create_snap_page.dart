@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -31,6 +32,10 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
   late final double maxParticipants;
   late final bool isKeeper;
   double numParticipants = 20;
+  String? _bannerImageUrl;
+  String? _logoImageUrl;
+
+  final GlobalKey<FileUploaderState> _uploader = GlobalKey();
 
   @override
   void initState() {
@@ -141,7 +146,15 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
                                         ),
                                       ],
                                     ),
-                                    const SizedBox(height: 30),
+                                    const SizedBox(height: 32),
+                                    _imageEntry(
+                                        aspectRatio: 1.0, label: t.circleLogo),
+                                    const SizedBox(height: 32),
+                                    _imageEntry(
+                                        aspectRatio: 1000 / 300,
+                                        height: 80,
+                                        label: t.circleBanner),
+                                    const SizedBox(height: 40),
                                     Center(
                                       child: ThemedRaisedButton(
                                         label: t.createCircle,
@@ -172,6 +185,52 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _imageEntry(
+      {String? imageUrl,
+      required final String label,
+      final double aspectRatio = 1,
+      final height = 60}) {
+    final t = AppLocalizations.of(context)!;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(label, style: Theme.of(context).textStyles.headline3),
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                color: Theme.of(context).themeColors.altBackground,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: Theme.of(context).themeColors.divider,
+                  width: 1,
+                ),
+              ),
+              height: height,
+              child: AspectRatio(
+                aspectRatio: aspectRatio,
+                child: imageUrl != null
+                    ? CachedNetworkImage(imageUrl: imageUrl, fit: BoxFit.cover)
+                    : const Center(
+                        child: Icon(
+                          Icons.image,
+                          size: 30,
+                        ),
+                      ),
+              ),
+            ),
+            const SizedBox(width: 16),
+            ThemedRaisedButton(
+              label: t.selectImage,
+              onPressed: () {},
+            ),
+          ],
+        )
+      ],
     );
   }
 
@@ -317,5 +376,25 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
         },
       ),
     );
+  }
+
+  Future<void> _handleUploadComplete(String? uploadedUrl, String? error,
+      {bool isBannerImage = false}) async {
+    if (uploadedUrl != null) {
+      isBannerImage
+          ? _bannerImageUrl = uploadedUrl
+          : _logoImageUrl = uploadedUrl;
+      await ref.read(repositoryProvider).updateUserProfile(_userProfile!);
+      setState(() => _busy = false);
+      if (!mounted) return;
+      if (widget.onProfileUpdated == null) {
+        Navigator.of(context).pop();
+      } else {
+        widget.onProfileUpdated!(_userProfile!);
+      }
+    } else {
+      setState(() => _busy = false);
+      await _showUploadError(context, error);
+    }
   }
 }
