@@ -9,12 +9,12 @@ import {PubSub} from "@google-cloud/pubsub";
 const expiringMinutes = 5;
 
 export const scheduler = functions.pubsub.schedule("every 5 minutes").onRun(async () => {
-  await performScheduledTasks();
+  await performExpirationTasks();
   return null;
 });
 
 export const runScheduler = functions.https.onRequest(async (_, response) => {
-  await performScheduledTasks();
+  await performExpirationTasks();
   response.status(200).send("Schedule has run");
 });
 
@@ -23,7 +23,7 @@ export const runScheduler = functions.https.onRequest(async (_, response) => {
  * if we end up needing to run tasks at different intervals or want to run specific tasks on demand
  * @return {Promise}
  */
-async function performScheduledTasks(): Promise<void> {
+async function performExpirationTasks(): Promise<void> {
   // Do them in this order so we don't end sessions that were just set to expiring in the same run
   // This gives the frontend a chance to handle the expiring state
   await endExpiredSessions();
