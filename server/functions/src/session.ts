@@ -180,10 +180,14 @@ export const createSnapCircle = functions.https.onCall(
       if (maxParticipants > NonKeeperMaxParticipants) {
         maxParticipants = NonKeeperMaxParticipants;
       }
+      let maxMinutes = options?.maxMinutes ?? NonKeeperMaxMinutes;
+      if (maxMinutes > NonKeeperMaxMinutes) {
+        maxMinutes = NonKeeperMaxMinutes;
+      }
       options = {
         isPrivate: true,
-        maxMinutes: NonKeeperMaxMinutes,
-        maxParticipants: maxParticipants,
+        maxMinutes,
+        maxParticipants,
       };
     } else if (previousCircle) {
       // Only the keeper can re-start a circle
