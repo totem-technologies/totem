@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:totem/app/circle/components/circle_network_indicator.dart';
 import 'package:totem/app/circle/index.dart';
 import 'package:totem/components/widgets/index.dart';
@@ -278,6 +279,16 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
                   child: Container(),
                 ),
                 ThemedControlButton(
+                  label: t.muteAll,
+                  labelColor: themeColors.reversedText,
+                  child: FaIcon(FontAwesomeIcons.users,
+                      size: 20, color: themeColors.primaryText),
+                  onPressed: () {
+                    _muteAllExceptTotem(context, ref);
+                  },
+                ),
+                const SizedBox(width: _btnSpacing),
+                ThemedControlButton(
                   label: t.next,
                   labelColor: themeColors.reversedText,
                   icon: Icons.fast_forward,
@@ -338,6 +349,20 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
                   flex: 1,
                   child: Container(),
                 ),
+                if (role == Role.keeper) ...[
+                  ThemedControlButton(
+                    label: t.muteAll,
+                    labelColor: themeColors.reversedText,
+                    child: FaIcon(FontAwesomeIcons.users,
+                        size: 20, color: themeColors.primaryText),
+                    onPressed: () {
+                      _muteAllExceptTotem(context, ref);
+                    },
+                  ),
+                  const SizedBox(
+                    width: _btnSpacing,
+                  ),
+                ],
                 ThemedControlButton(
                   label: communications.muted ? t.unmute : t.mute,
                   labelColor: themeColors.reversedText,
@@ -559,5 +584,10 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
               .map((element) => element.sessionUserId!)
               .toList(growable: false)));
     }
+  }
+
+  Future<void> _muteAllExceptTotem(BuildContext context, WidgetRef ref) async {
+    final commProvider = ref.read(communicationsProvider);
+    await commProvider.muteAllExceptTotem();
   }
 }

@@ -38,6 +38,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     required this.userId,
   }) {
     sessionProvider.addListener(_updateCommunicationFromSession);
+    _messageSubscription = sessionProvider.messageStream.listen(_handleMessage);
   }
   bool _hasTotem = false;
   RtcEngine? _engine;
@@ -58,7 +59,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   dynamic _channel;
   Timer? _updateTimer;
   Timer? _networkErrorTimeout;
-  int? _statsStreamId;
+
   // Devices and selected device
   List<CommunicationDevice> _cameras = [];
   List<CommunicationDevice> _audioOutputs = [];
@@ -68,6 +69,8 @@ class AgoraCommunicationProvider extends CommunicationProvider {
   CommunicationDevice? _audioOutput;
   SystemVideo systemVideo = SystemVideo();
 
+  late StreamSubscription<SessionDataMessage?> _messageSubscription;
+
   @override
   String? get lastError {
     return _lastError;
@@ -75,6 +78,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
 
   @override
   void dispose() {
+    _messageSubscription.cancel();
     _networkErrorTimeout?.cancel();
     _cancelStateUpdates();
     _channel = null;
@@ -491,27 +495,13 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     }
   }
 
-/*  void _handleStreamMessage(int uid, int streamId, Uint8List data) {
-    if (uid != commUid) {
-      final List<int> state = data.toList(growable: false);
-      debugPrint('Got stream for user: $uid for stream: $streamId');
-      // update state for user
-      bool? muted;
-      bool? videoMuted;
-      int dataStreamId = -1;
-      if (state.length == 3) {
-        dataStreamId = state[0];
-        muted = state[1] == 1;
-        videoMuted = state[2] == 1;
-      }
-      if (dataStreamId == statsStream) {
-        sessionProvider.activeSession?.updateStateForUser(
-            sessionUserId: uid.toString(),
-            muted: muted,
-            videoMuted: videoMuted);
-      }
+  void _handleMuteAllExceptTotem(dynamic messageData) {
+    if (sessionProvider.activeSession?.totemParticipant?.sessionUserId !=
+            commUid.toString() &&
+        !muted) {
+      muteAudio(true);
     }
-  } */
+  }
 
   void _handleRejoinChannelSuccess(String channel, int uid, int elapsedMS) {
     debugPrint(
@@ -655,10 +645,10 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     if (onSpeaker != true) {
       await _engine!.setEnableSpeakerphone(true);
     }
-    _statsStreamId = await _engine
+/*    _statsStreamId = await _engine
         ?.createDataStreamWithConfig(DataStreamConfig(false, false));
     debugPrint(
-        'Created Stats Stream: ${_statsStreamId?.toString() ?? 'failed'}');
+        'Created Stats Stream: ${_statsStreamId?.toString() ?? 'failed'}');*/
     // notify any callbacks that the user has joined the session
     if (_handler != null && _handler!.joinedCircle != null) {
       _handler!.joinedCircle!(_session!.id, uid.toString());
@@ -893,6 +883,11 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     }
   }
 
+  @override
+  Future<void> muteAllExceptTotem() async {
+    await sessionProvider.muteAllExceptTotem();
+  }
+
   void notifyState({bool directChange = false}) async {
 /*    if (useAgoraStream) {
       if (_statsStreamId == null) {
@@ -1101,6 +1096,24 @@ class AgoraCommunicationProvider extends CommunicationProvider {
       case NetworkQuality.Detecting:
       default:
         return NetworkState.kNetworkStateUnknown;
+    }
+  }
+
+  Future<void> _handleMessage(SessionDataMessage? message) async {
+    if (message == null) return;
+    debugPrint('Received Message: ${message.type.name}');
+    try {
+      switch (message.type) {
+        case CommunicationMessageType.muteAllExceptTotem:
+          _handleMuteAllExceptTotem(message.data);
+          break;
+        default:
+          debugPrint('Unknown message type: ${message.type}');
+          break;
+      }
+    } catch (ex, stack) {
+      debugPrint('Error decoding stream message: $ex');
+      await reportError(ex, stack);
     }
   }
 }
