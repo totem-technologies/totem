@@ -13,6 +13,9 @@ export interface SnapCircleData {
   name: string;
   createdOn: Timestamp;
   updatedOn: Timestamp;
+  startedDate?: Timestamp;
+  completedDate?: Timestamp;
+  exipresOn?: Timestamp;
   createdBy: admin.firestore.DocumentReference;
   isPrivate: boolean;
   maxMinutes?: number;
@@ -21,8 +24,19 @@ export interface SnapCircleData {
   state: string;
   description?: string;
   link?: string;
+  previewLink?: string;
   previousCircle?: string;
   participantCount?: number;
   circleParticipants?: string[];
   bannedParticipants?: SnapCircleBannedParticipants;
 }
+
+export const SessionState = {
+  cancelled: "cancelled",
+  complete: "complete",
+  live: "live",
+  waiting: "waiting",
+  starting: "starting",
+  expiring: "expiring",
+  ending: "ending",
+};
