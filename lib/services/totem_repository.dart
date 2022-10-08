@@ -178,4 +178,6 @@ class TotemRepository {
 
   // System
   Future<SystemVideo> getSystemVideo() => _systemProvider.getSystemVideo();
+  Future<List<CircleTheme>> getSystemCircleThemes() =>
+      _systemProvider.getSystemCircleThemes();
 }

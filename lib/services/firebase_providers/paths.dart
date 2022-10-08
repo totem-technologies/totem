@@ -9,4 +9,6 @@ class Paths {
   static const String userAccountState = "userAccountState";
   static const String system = "system";
   static const String systemVideo = "video";
+  static const String systemCircle = "circle";
+  static const String systemCircleThemes = "themes";
 }

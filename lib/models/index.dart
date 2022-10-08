@@ -3,6 +3,7 @@ export 'active_session.dart';
 export 'audio_indicator.dart';
 export 'auth_user.dart';
 export 'circle.dart';
+export 'circle_theme.dart';
 export 'communication_device.dart';
 export 'data_urls.dart';
 export 'date_name_ext.dart';
