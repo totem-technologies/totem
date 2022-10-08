@@ -8,6 +8,7 @@ import 'package:totem/app_routes.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/theme/index.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../services/providers.dart';
 
@@ -27,7 +28,20 @@ class HomePage extends ConsumerWidget {
     AuthUser user = ref.read(authServiceProvider).currentUser()!;
     bool isMobile = Theme.of(context).isMobile(context);
     return Scaffold(
+      appBar: AppBar(
+        toolbarHeight: 75,
+        centerTitle: false,
+        backgroundColor: themeColors.containerBackground,
+        title: SvgPicture.asset('assets/home_logo.svg'),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            bottom: Radius.circular(20),
+          ),
+        ),
+        elevation: 0,
+      ),
       backgroundColor: themeColors.altBackground,
+      endDrawer: const TotemDrawer(),
       body: Stack(
         children: [
           Positioned.fill(
@@ -47,24 +61,6 @@ class HomePage extends ConsumerWidget {
                     ),
             ),
           ),
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: _homeHeader(context, isMobile: isMobile),
-          ),
-/*          const Align(
-            alignment: Alignment.bottomCenter,
-            child: BottomTrayContainer(
-              child: SafeArea(
-                top: false,
-                bottom: true,
-                child: Center(
-                  child: CreateCircleButton(),
-                ),
-              ),
-            ),
-          ),*/
         ],
       ),
     );
@@ -88,7 +84,7 @@ class HomePage extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const SizedBox(
-                  height: 120,
+                  height: 60,
                 ),
                 TotemHeader(
                   text: t.circles,
@@ -122,62 +118,81 @@ class HomePage extends ConsumerWidget {
           error: (Object error, StackTrace? stackTrace) => Container(),
         );
   }
+}
 
-  Widget _homeHeader(BuildContext context, {required bool isMobile}) {
-    final themeColors = Theme.of(context).themeColors;
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: const BorderRadius.only(
-          bottomLeft: Radius.circular(30),
-          bottomRight: Radius.circular(30),
+class TotemDrawer extends ConsumerWidget {
+  const TotemDrawer({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeData = Theme.of(context);
+    final themeColors = themeData.themeColors;
+    var userFuture = ref.read(repositoryProvider).userProfile();
+    return Drawer(
+      // Add a ListView to the drawer. This ensures the user can scroll
+      // through the options in the drawer if there isn't enough vertical
+      // space to fit everything.
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.horizontal(
+          left: Radius.circular(20),
         ),
-        color: themeColors.containerBackground,
-        /* boxShadow: [
-          BoxShadow(
-              color: themeColors.shadow,
-              offset: const Offset(0, 8),
-              blurRadius: 24),
-        ], */
       ),
-      child: SafeArea(
-        top: true,
-        bottom: false,
-        child: Wrap(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 20, bottom: 20),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    width:
-                        isMobile ? Theme.of(context).pageHorizontalPadding : 80,
-                  ),
-                  SvgPicture.asset('assets/home_logo.svg'),
-                  Expanded(child: Container()),
-                  InkWell(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: isMobile
-                              ? Theme.of(context).pageHorizontalPadding
-                              : 80,
-                          vertical: 10),
-                      child: const Icon(Icons.person_outline, size: 24),
-                    ),
-                    onTap: () {
-                      _showProfile(context);
-                    },
-                  ),
-                ],
-              ),
+      child: ListView(
+        // Important: Remove any padding from the ListView.
+        padding: EdgeInsets.zero,
+        children: [
+          DrawerHeader(
+            decoration: BoxDecoration(
+              color: themeColors.altBackground,
             ),
-          ],
-        ),
+            child: FutureBuilder<UserProfile?>(
+                future: userFuture,
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return Container();
+                  }
+                  var user = snapshot.data!;
+                  return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CircleAvatar(
+                          foregroundImage: NetworkImage(user.image!),
+                          child: Text(user.name[0]),
+                        ),
+                        const SizedBox(
+                          height: 25,
+                        ),
+                        Text(
+                          user.name,
+                          style: themeData.textStyles.displayMedium,
+                        )
+                      ]);
+                }),
+          ),
+          ListTile(
+            title: Row(children: const [
+              Icon(Icons.person_outline, size: 24),
+              SizedBox(width: 10),
+              Text('Profile')
+            ]),
+            onTap: () {
+              Navigator.pop(context);
+              context.goNamed(AppRoutes.userProfile);
+            },
+          ),
+          ListTile(
+            title: Row(children: const [
+              Icon(Icons.help_outline, size: 24),
+              SizedBox(width: 10),
+              Text('Help')
+            ]),
+            onTap: () {
+              Navigator.pop(context);
+              launchUrl(Uri.parse('https://docs.heytotem.com'));
+            },
+          ),
+        ],
       ),
     );
-  }
-
-  void _showProfile(BuildContext context) {
-    context.goNamed(AppRoutes.userProfile);
   }
 }
