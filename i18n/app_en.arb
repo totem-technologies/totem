@@ -66,6 +66,7 @@
     "description": "Description",
     "donate": "Donate",
     "done": "Done",
+    "duration": "Duration",
     "email": "Email",
     "edit": "Edit",
     "editProfile": "Edit Profile",
@@ -118,6 +119,32 @@
     "helpPublicInformation": "This is public information. This is shown to other people in your circles.",
     "helpSessionProfileImage": "You can take an updated profile picture before the circle",
     "home": "Home",
+    "hourOne": "1 hour",
+    "hourOneAndMinsValue": "1 hour and {mins} mins",
+    "@hourOneAndMinsValue": {
+        "placeholders": {
+            "mins": {}
+        }
+    },
+    "hoursAndMinsValue": "{hrs} hours and {mins} mins",
+    "@hoursAndMinsValue": {
+        "placeholders": {
+            "hrs": {},
+            "mins": {}
+        }
+    },
+    "hoursValue": "{hrs} hours",
+    "@hoursValue": {
+        "placeholders": {
+            "hrs": {}
+        }
+    },
+    "hoursAndHalfValue": "{hrs} and a half hours",
+    "@hoursAndHalfValue": {
+        "placeholders": {
+            "hrs": {}
+        }
+    },
     "info": "Info",
     "initializingCamera": "Initializing Camera...",
     "introScreenTitle1": "Welcome to Totem",
@@ -149,6 +176,12 @@
     "me": "Me",
     "member": "Member",
     "memberSince": "Member Since",
+    "minsValue": "{mins} mins",
+    "@minsValue": {
+        "placeholders": {
+            "mins": {}
+        }
+    },
     "more": "More",
     "moreInfo": "More Info",
     "mute": "Mute",

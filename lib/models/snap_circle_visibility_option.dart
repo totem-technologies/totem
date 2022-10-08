@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class CircleOption {
+class CircleVisibilityOption {
   final String name;
   final dynamic value;
-  CircleOption({required this.name, required this.value});
+  CircleVisibilityOption({required this.name, required this.value});
 
   String getName(BuildContext context) {
     final t = AppLocalizations.of(context)!;
