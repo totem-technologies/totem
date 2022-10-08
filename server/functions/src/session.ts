@@ -1,11 +1,11 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 // eslint-disable-next-line import/no-unresolved -- https://github.com/firebase/firebase-admin-node/issues/1827#issuecomment-1226224988
-import {Timestamp} from "firebase-admin/firestore";
+import {DocumentReference, Timestamp} from "firebase-admin/firestore";
 import * as dynamicLinks from "./dynamic-links";
 import {hasAnyRole, isAuthenticated, Role} from "./auth";
 import {kickUserFromSession} from "./agora";
-import {SnapCircleBannedParticipants, SnapCircleData} from "./common-types";
+import {SnapCircleBannedParticipants, SnapCircleData, SessionState} from "./common-types";
 
 // The Firebase Admin SDK to access the Firebase Realtime Database.
 // make sure that this initializeApp call hasn't already
@@ -18,17 +18,48 @@ try {
 
 const firebaseDynamicLinks = new dynamicLinks.FirebaseDynamicLinks(functions.config().applinks.key);
 
-const SessionState = {
-  cancelled: "cancelled",
-  complete: "complete",
-  live: "live",
-  waiting: "waiting",
-  starting: "starting",
-  ending: "ending",
-};
+const NonKeeperMaxMinutes = 60;
+const NonKeeperMaxParticipants = 5;
 
-const NonKeeperMaxMinutes = 500;
-const NonKeeperMaxParticipants = 10;
+/**
+ * Ends the session for the given circle
+ * @param {string} circleId - the id of the circle
+ * @param {SnapCircleData} snapCircle - the circle data
+ * @param {DocumentReference | undefined} circleRef - optional reference to the circle document
+ * @return {boolean}
+ */
+export async function endSessionFor(
+  circleId: string,
+  snapCircle: SnapCircleData,
+  circleRef?: DocumentReference
+): Promise<boolean> {
+  circleRef = circleRef || admin.firestore().collection("snapCircles").doc(circleId);
+  const {circleParticipants, state, keeper} = snapCircle;
+  const completedDate = Timestamp.now();
+  const batch = admin.firestore().batch();
+  let endState = SessionState.cancelled;
+  if (state === SessionState.ending) {
+    endState = SessionState.complete;
+    const entry = {circleRef, completedDate};
+    // moving from current state of 'active' to complete means the session is done
+    // only cache the circle in users list if it was active
+    if (circleParticipants) {
+      circleParticipants.forEach((uid: string) => {
+        const entryRef = admin.firestore().collection("users").doc(uid).collection("snapCircles").doc();
+        const role = keeper === uid ? "keeper" : "member";
+        batch.set(entryRef, {...entry, role, completedDate});
+      });
+    }
+  }
+  // delete active circle reference
+  const activeRef = admin.firestore().collection("activeCircles").doc(circleId);
+  batch.delete(activeRef);
+
+  // update the circle reference to completed state
+  batch.update(circleRef, {state: endState, completedDate});
+  await batch.commit();
+  return true;
+}
 
 export const endSnapSession = functions.https.onCall(async ({circleId}, {auth}): Promise<boolean> => {
   auth = isAuthenticated(auth);
@@ -36,37 +67,15 @@ export const endSnapSession = functions.https.onCall(async ({circleId}, {auth}):
     const circleRef = admin.firestore().collection("snapCircles").doc(circleId);
     const circleSnapshot = await circleRef.get();
     if (circleSnapshot.exists) {
-      const {circleParticipants, state, keeper} = (circleSnapshot.data() as SnapCircleData) ?? {};
+      const circleData = (circleSnapshot.data() as SnapCircleData) ?? {};
+      const {keeper} = circleData;
       if (auth.uid !== keeper && !hasAnyRole(auth, [Role.ADMIN])) {
         throw new functions.https.HttpsError(
           "permission-denied",
           "The function can only be called by the keeper of the circle or an admin."
         );
       }
-      const completedDate = Timestamp.now();
-      const batch = admin.firestore().batch();
-      let endState = SessionState.cancelled;
-      if (state === SessionState.ending) {
-        endState = SessionState.complete;
-        const entry = {circleRef, completedDate};
-        // moving from current state of 'active' to complete means the session is done
-        // only cache the circle in users list if it was active
-        if (circleParticipants) {
-          circleParticipants.forEach((uid: string) => {
-            const entryRef = admin.firestore().collection("users").doc(uid).collection("snapCircles").doc();
-            const role = keeper === uid ? "keeper" : "member";
-            batch.set(entryRef, {...entry, role, completedDate});
-          });
-        }
-      }
-      // delete active circle reference
-      const activeRef = admin.firestore().collection("activeCircles").doc(circleId);
-      batch.delete(activeRef);
-
-      // update the circle reference to completed state
-      batch.update(circleRef, {state: endState, completedDate});
-      await batch.commit();
-      return true;
+      return endSessionFor(circleId, circleData, circleRef);
     }
   }
   return false;
@@ -78,7 +87,7 @@ export const startSnapSession = functions.https.onCall(async ({circleId}, {auth}
     const ref = admin.firestore().collection("snapCircles").doc(circleId);
     const circleSnapshot = await ref.get();
     if (circleSnapshot.exists) {
-      const {state, keeper} = (circleSnapshot.data() as SnapCircleData) ?? {};
+      const {state, keeper, maxMinutes} = (circleSnapshot.data() as SnapCircleData) ?? {};
       if (auth.uid !== keeper) {
         throw new functions.https.HttpsError(
           "permission-denied",
@@ -113,7 +122,19 @@ export const startSnapSession = functions.https.onCall(async ({circleId}, {auth}
         // cache the participants at the circle level as an archive of the users that
         // are part of the started session
         const startedDate = Timestamp.now();
-        ref.update({state: SessionState.live, startedDate, circleParticipants});
+        const circleUpdate: {
+          state: string;
+          startedDate: Timestamp;
+          circleParticipants: string[];
+          expiresOn?: Timestamp;
+        } = {state: SessionState.live, startedDate, circleParticipants};
+        if (maxMinutes != null) {
+          circleUpdate["expiresOn"] = new Timestamp(startedDate.seconds + maxMinutes * 60, 0);
+        }
+        console.log(
+          `Updating circle with startedDate ${circleUpdate.startedDate} and expiresOn ${circleUpdate.expiresOn}`
+        );
+        ref.update(circleUpdate);
         return true;
       }
     }

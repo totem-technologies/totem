@@ -17,6 +17,8 @@ class CommunicationErrors {
       "errorCommunicationNoMicrophonePermission";
 }
 
+enum CommunicationMessageType { unknown, muteAllExceptTotem }
+
 abstract class CommunicationProvider extends ChangeNotifier {
   CommunicationState state = CommunicationState.disconnected;
   bool muted = false;
@@ -58,6 +60,7 @@ abstract class CommunicationProvider extends ChangeNotifier {
   Future<bool> forceNextActiveSessionTotem();
   Future<void> setHasTotem(bool hasTotem);
   Future<bool> removeUserFromSession({required String sessionUserId});
+  Future<void> muteAllExceptTotem();
 
   Stream<CommunicationAudioVolumeIndication> get audioIndicatorStream;
 
