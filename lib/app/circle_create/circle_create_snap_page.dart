@@ -7,7 +7,8 @@ import 'package:totem/app/circle_create/components/index.dart';
 import 'package:totem/app_routes.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
-import 'package:totem/models/snap_circle_option.dart';
+import 'package:totem/models/snap_circle_duration_option.dart';
+import 'package:totem/models/snap_circle_visibility_option.dart';
 import 'package:totem/services/error_report.dart';
 import 'package:totem/services/index.dart';
 import 'package:totem/services/utils/device_type.dart';
@@ -27,10 +28,12 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
   final TextEditingController _descriptionController = TextEditingController();
   final formKey = GlobalKey<FormState>();
   final _focusNodeDescription = FocusNode();
-  late final List<CircleOption> visibilityOptions;
+  late final List<CircleVisibilityOption> visibilityOptions;
+  late final List<CircleDurationOption> durationOptions;
 
   bool _busy = false;
-  late CircleOption _selectedVisibility;
+  late CircleVisibilityOption _selectedVisibility;
+  late CircleDurationOption _selectedDuration;
   late final double maxParticipants;
   late final bool isKeeper;
   double numParticipants = 20;
@@ -51,11 +54,32 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
     }
     visibilityOptions = isKeeper
         ? [
-            CircleOption(name: 'public', value: false),
-            CircleOption(name: 'private', value: true),
+            CircleVisibilityOption(name: 'public', value: false),
+            CircleVisibilityOption(name: 'private', value: true),
           ]
-        : [CircleOption(name: 'private', value: true)];
+        : [CircleVisibilityOption(name: 'private', value: true)];
+    durationOptions = [
+      CircleDurationOption(value: 15),
+      CircleDurationOption(value: 20),
+      CircleDurationOption(value: 30),
+      CircleDurationOption(value: 45),
+      CircleDurationOption(value: 55),
+      CircleDurationOption(value: 60),
+    ];
+    if (isKeeper) {
+      durationOptions.addAll([
+        CircleDurationOption(value: 90),
+        CircleDurationOption(value: 120),
+        CircleDurationOption(value: 150),
+        CircleDurationOption(value: 180),
+        CircleDurationOption(value: 210),
+        CircleDurationOption(value: 240),
+        CircleDurationOption(value: 270),
+        CircleDurationOption(value: 300),
+      ]);
+    }
     _selectedVisibility = visibilityOptions[0];
+    _selectedDuration = durationOptions[5];
     ref.read(analyticsProvider).showScreen('createSnapCircleScreen');
     super.initState();
   }
@@ -141,7 +165,20 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
                                         ),
                                         const SizedBox(width: 32),
                                         Expanded(
-                                          child: _circleOptions(),
+                                          child: _visibilityOptions(),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 20),
+                                    Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Expanded(
+                                          child: _durationOptions(),
+                                        ),
+                                        Expanded(
+                                          child: Container(),
                                         ),
                                       ],
                                     ),
@@ -350,6 +387,7 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
         keeper: widget.fromCircle?.keeper,
         previousCircle: widget.fromCircle?.id,
         isPrivate: _selectedVisibility.value,
+        duration: _selectedDuration.value,
         maxParticipants: numParticipants.toInt(),
         themeRef: _selectedTheme?.ref,
         imageUrl: _selectedTheme?.image,
@@ -436,7 +474,7 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
     );
   }
 
-  Widget _circleOptions() {
+  Widget _visibilityOptions() {
     final themeData = Theme.of(context);
     final textStyles = themeData.textStyles;
     final t = AppLocalizations.of(context)!;
@@ -445,7 +483,7 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
       children: [
         Text(t.visibility, style: textStyles.headline3),
         const SizedBox(height: 10),
-        _optionsDropDown(
+        _visibilityDropDown(
           visibilityOptions,
           selected: _selectedVisibility,
           onChanged: (item) {
@@ -456,11 +494,11 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
     );
   }
 
-  Widget _optionsDropDown(List<CircleOption> options,
+  Widget _visibilityDropDown(List<CircleVisibilityOption> options,
       {required Function(dynamic item) onChanged,
-      required CircleOption? selected}) {
+      required CircleVisibilityOption? selected}) {
     if (options.isEmpty) return Container();
-    final dropDownMenus = <DropdownMenuItem<CircleOption>>[];
+    final dropDownMenus = <DropdownMenuItem<CircleVisibilityOption>>[];
     for (var v in options) {
       dropDownMenus.add(
         DropdownMenuItem(
@@ -471,7 +509,53 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
     }
     return SizedBox(
       height: 40,
-      child: DropdownButton<CircleOption>(
+      child: DropdownButton<CircleVisibilityOption>(
+        isExpanded: true,
+        items: dropDownMenus,
+        value: selected,
+        onChanged: (v) {
+          onChanged(v);
+        },
+      ),
+    );
+  }
+
+  Widget _durationOptions() {
+    final themeData = Theme.of(context);
+    final textStyles = themeData.textStyles;
+    final t = AppLocalizations.of(context)!;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(t.duration, style: textStyles.headline3),
+        const SizedBox(height: 10),
+        _durationDropDown(
+          durationOptions,
+          selected: _selectedDuration,
+          onChanged: (item) {
+            setState(() => _selectedDuration = item);
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _durationDropDown(List<CircleDurationOption> options,
+      {required Function(dynamic item) onChanged,
+      required CircleDurationOption? selected}) {
+    if (options.isEmpty) return Container();
+    final dropDownMenus = <DropdownMenuItem<CircleDurationOption>>[];
+    for (var v in options) {
+      dropDownMenus.add(
+        DropdownMenuItem(
+          value: v,
+          child: Text(v.getName(context), overflow: TextOverflow.ellipsis),
+        ),
+      );
+    }
+    return SizedBox(
+      height: 40,
+      child: DropdownButton<CircleDurationOption>(
         isExpanded: true,
         items: dropDownMenus,
         value: selected,

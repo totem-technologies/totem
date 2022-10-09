@@ -171,6 +171,7 @@ class FirebaseCirclesProvider extends CirclesProvider {
     String? previousCircle,
     Map<String, dynamic>? bannedParticipants,
     bool? isPrivate,
+    int? duration,
     int? maxParticipants,
     String? themeRef,
     String? imageUrl,
@@ -208,6 +209,9 @@ class FirebaseCirclesProvider extends CirclesProvider {
       }
       if (isPrivate != null) {
         options['isPrivate'] = isPrivate;
+      }
+      if (duration != null) {
+        options['maxMinutes'] = duration;
       }
       if (maxParticipants != null) {
         options["maxParticipants"] = maxParticipants;

@@ -17,7 +17,7 @@ try {
 }
 
 const firebaseDynamicLinks = new dynamicLinks.FirebaseDynamicLinks(functions.config().applinks.key);
-
+const isDev = (process.env.GCLOUD_PROJECT || "").startsWith("totem-dev");
 const NonKeeperMaxMinutes = 60;
 const NonKeeperMaxParticipants = 5;
 
@@ -183,10 +183,14 @@ export const createSnapCircle = functions.https.onCall(
       if (maxParticipants > NonKeeperMaxParticipants) {
         maxParticipants = NonKeeperMaxParticipants;
       }
+      let maxMinutes = options?.maxMinutes ?? NonKeeperMaxMinutes;
+      if (maxMinutes > NonKeeperMaxMinutes) {
+        maxMinutes = NonKeeperMaxMinutes;
+      }
       options = {
         isPrivate: true,
-        maxMinutes: NonKeeperMaxMinutes,
-        maxParticipants: maxParticipants,
+        maxMinutes,
+        maxParticipants,
       };
     } else if (previousCircle) {
       // Only the keeper can re-start a circle
@@ -235,11 +239,12 @@ export const createSnapCircle = functions.https.onCall(
     await admin.firestore().collection("activeCircles").doc(ref.id).set({participants: {}});
     // Generate a dynamic link for this circle
     try {
+      const host = isDev ? "stage" : "app";
       const {shortLink, previewLink} = await firebaseDynamicLinks.createLink(
         {
           dynamicLinkInfo: {
             domainUriPrefix: functions.config().applinks.link,
-            link: "https://app.heytotem.com/?snap=" + ref.id,
+            link: `https://${host}.heytotem.com/?snap=${ref.id}`,
             androidInfo: {
               androidPackageName: "io.kbl.totem",
             },

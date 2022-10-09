@@ -27,6 +27,7 @@ abstract class CirclesProvider {
     String? previousCircle,
     Map<String, dynamic>? bannedParticipants,
     bool? isPrivate,
+    int? duration,
     int? maxParticipants,
     String? themeRef,
     String? imageUrl,
