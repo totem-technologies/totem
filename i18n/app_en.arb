@@ -162,6 +162,7 @@
     "noCirclesMessage": "You are not a part of any circles",
     "noParticipantsActiveSession": "There are no participants in this session.",
     "noTheme": "No theme selected",
+    "noThemes": "No themes available",
     "noSnapCirclesMessage": "seems like there are no active circles",
     "noUpcomingSessions": "No upcoming sessions",
     "numberOfSessions": "Number of Sessions",

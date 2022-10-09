@@ -121,6 +121,14 @@ class ThemeSelectorState extends ConsumerState<ThemeSelector> {
                             Expanded(
                               child: themes.when(
                                 data: (data) {
+                                  if (data.isEmpty) {
+                                    return Center(
+                                      child: Text(
+                                        t.noThemes,
+                                        style: textStyles.headline3,
+                                      ),
+                                    );
+                                  }
                                   return ListView.separated(
                                     padding: const EdgeInsets.only(top: 20),
                                     itemCount: data.length,
