@@ -6,6 +6,7 @@ import 'package:totem/app/home/components/index.dart';
 import 'package:totem/app/home/components/named_circle_list.dart';
 import 'package:totem/app_routes.dart';
 import 'package:totem/components/widgets/index.dart';
+import 'package:totem/config.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/theme/index.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -129,9 +130,6 @@ class TotemDrawer extends ConsumerWidget {
     final themeColors = themeData.themeColors;
     var userFuture = ref.read(repositoryProvider).userProfile();
     return Drawer(
-      // Add a ListView to the drawer. This ensures the user can scroll
-      // through the options in the drawer if there isn't enough vertical
-      // space to fit everything.
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.horizontal(
           left: Radius.circular(20),
@@ -169,30 +167,53 @@ class TotemDrawer extends ConsumerWidget {
                       ]);
                 }),
           ),
-          ListTile(
-            title: Row(children: const [
-              Icon(Icons.person_outline, size: 24),
-              SizedBox(width: 10),
-              Text('Profile')
-            ]),
-            onTap: () {
-              Navigator.pop(context);
-              context.goNamed(AppRoutes.userProfile);
-            },
-          ),
-          ListTile(
-            title: Row(children: const [
-              Icon(Icons.help_outline, size: 24),
-              SizedBox(width: 10),
-              Text('Help')
-            ]),
-            onTap: () {
-              Navigator.pop(context);
-              launchUrl(Uri.parse('https://docs.heytotem.com'));
-            },
-          ),
+          DrawerItem(
+              text: 'Profile',
+              icon: Icons.person_outline,
+              onTap: () {
+                Navigator.pop(context);
+                context.goNamed(AppRoutes.userProfile);
+              }),
+          DrawerItem(
+              text: 'Help',
+              icon: Icons.help_outline,
+              onTap: () {
+                Navigator.pop(context);
+                launchUrl(
+                  Uri.parse('https://docs.heytotem.com'),
+                  mode: LaunchMode.externalApplication,
+                );
+              }),
+          if (AppConfig.isDev)
+            DrawerItem(
+                text: 'Dev Tools',
+                icon: Icons.smart_toy_outlined,
+                onTap: () {
+                  Navigator.pop(context);
+                  context.pushNamed(AppRoutes.dev);
+                })
         ],
       ),
+    );
+  }
+}
+
+class DrawerItem extends StatelessWidget {
+  const DrawerItem(
+      {super.key, required this.text, required this.icon, required this.onTap});
+  final Function() onTap;
+  final String text;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: Row(children: [
+        Icon(icon, size: 24),
+        const SizedBox(width: 10),
+        Text(text)
+      ]),
+      onTap: onTap,
     );
   }
 }
