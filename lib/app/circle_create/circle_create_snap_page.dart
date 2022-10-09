@@ -165,7 +165,7 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
                                         ),
                                         const SizedBox(width: 32),
                                         Expanded(
-                                          child: _visibilityOptions(),
+                                          child: Container(),
                                         ),
                                       ],
                                     ),
@@ -177,8 +177,9 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
                                         Expanded(
                                           child: _durationOptions(),
                                         ),
+                                        const SizedBox(width: 32),
                                         Expanded(
-                                          child: Container(),
+                                          child: _visibilityOptions(),
                                         ),
                                       ],
                                     ),
