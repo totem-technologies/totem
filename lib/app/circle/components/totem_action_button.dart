@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:totem/theme/app_theme_styles.dart';
 import 'package:totem/components/widgets/index.dart';
+import 'package:totem/theme/app_theme_styles.dart';
 
-class TotemActionButton extends StatelessWidget {
+class TotemActionButton extends StatefulWidget {
   const TotemActionButton(
       {Key? key,
       required this.image,
@@ -16,15 +16,27 @@ class TotemActionButton extends StatelessWidget {
   final Widget image;
   final String label;
   final String message;
-  final List<Widget> toolTips;
+  final List<String> toolTips;
   final bool showToolTips;
   final bool vertical;
   final Function()? onPressed;
 
+  @override
+  State<StatefulWidget> createState() => TotemActionButtonState();
+}
+
+class TotemActionButtonState extends State<TotemActionButton> {
   static const double containerSize = 165;
   static const double containerSizeVertical = 110;
   static const double labelFontSize = 20;
   static const double standardFontSize = 15;
+  bool _showToolTips = false;
+
+  @override
+  void initState() {
+    _showToolTips = widget.showToolTips;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,57 +47,97 @@ class TotemActionButton extends StatelessWidget {
       constraints: const BoxConstraints(maxWidth: 350),
       child: Column(
         children: [
-          if (showToolTips)
+          if (_showToolTips && widget.toolTips.isNotEmpty)
             Container(
-              height: !vertical ? containerSize : containerSizeVertical,
-              width: !vertical ? 250 : null,
-              padding: const EdgeInsets.only(left: 16, right: 16),
+              height: !widget.vertical ? containerSize : containerSizeVertical,
+              width: !widget.vertical ? 250 : null,
               decoration: BoxDecoration(
                   color: themeColors.controlButtonBackground,
                   borderRadius: const BorderRadius.all(Radius.circular(16))),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  SizedBox(
-                    height: !vertical ? 30 : 5,
+              child: Stack(children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 16, right: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      SizedBox(
+                        height: !widget.vertical ? 30 : 5,
+                      ),
+                      Text(
+                        widget.message,
+                        style: style.merge(const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: labelFontSize)),
+                      ),
+                      SizedBox(
+                        height: !widget.vertical ? 14 : 5,
+                      ),
+                      ...widget.toolTips
+                          .map((tip) => _lineItem(context, tip))
+                          .toList(),
+                      if (!widget.vertical) Expanded(child: Container()),
+                    ],
                   ),
-                  Text(
-                    message,
-                    style: style.merge(const TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: labelFontSize)),
-                  ),
-                  SizedBox(
-                    height: !vertical ? 14 : 5,
-                  ),
-                  ...toolTips,
-                  if (!vertical) Expanded(child: Container()),
-                ],
-              ),
+                ),
+                Positioned(
+                    right: 5,
+                    top: 5,
+                    child: IconButton(
+                        icon: const Icon(
+                          Icons.close,
+                          size: 20,
+                        ),
+                        onPressed: () => setState(() => _showToolTips = false)))
+              ]),
             ),
           SizedBox(
-            height: !vertical ? 14 : 5,
+            height: !widget.vertical ? 14 : 5,
           ),
           ThemedRaisedButton(
             horzPadding: 0,
-            width: !vertical ? 250 : 350,
+            width: !widget.vertical ? 250 : 350,
             onPressed: () {
-              if (onPressed != null) {
-                onPressed!();
+              if (widget.onPressed != null) {
+                widget.onPressed!();
               }
             },
             child: Wrap(
               crossAxisAlignment: WrapCrossAlignment.center,
               children: [
-                image,
+                widget.image,
                 const SizedBox(
                   width: 8,
                 ),
                 Text(
-                  label,
+                  widget.label,
                   style: style,
                   textAlign: TextAlign.center,
                 ),
               ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _lineItem(BuildContext context, String text) {
+    final themeColors = Theme.of(context).themeColors;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 5, left: 8),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 4),
+            child: Icon(Icons.circle, color: themeColors.primaryText, size: 12),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              text,
+              style: TextStyle(
+                  color: themeColors.primaryText, fontSize: standardFontSize),
             ),
           ),
         ],

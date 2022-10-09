@@ -191,6 +191,7 @@ class CircleSessionPageState extends ConsumerState<CircleSessionPage>
       }
       if (circle != null) {
         // Create the active session if needed
+
         if (repo.activeSession == null) {
           await repo.createActiveSession(circle: circle);
         }
@@ -204,6 +205,7 @@ class CircleSessionPageState extends ConsumerState<CircleSessionPage>
             await CircleJoinDialog.showJoinDialog(context, circle: circle);
         if (user != null) {
           _userProfile = user;
+          repo.activeSession!.userProfile = user;
           _session = circle.snapSession;
           setState(() => _sessionState = SessionPageState.ready);
         } else {
