@@ -161,11 +161,11 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Expanded(
-                                          child: _participantLimit(),
+                                          child: _durationOptions(),
                                         ),
                                         const SizedBox(width: 32),
                                         Expanded(
-                                          child: Container(),
+                                          child: _visibilityOptions(),
                                         ),
                                       ],
                                     ),
@@ -175,11 +175,11 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Expanded(
-                                          child: _durationOptions(),
+                                          child: _participantLimit(),
                                         ),
                                         const SizedBox(width: 32),
                                         Expanded(
-                                          child: _visibilityOptions(),
+                                          child: Container(),
                                         ),
                                       ],
                                     ),
