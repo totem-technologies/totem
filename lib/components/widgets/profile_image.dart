@@ -77,7 +77,7 @@ class ProfileImage extends ConsumerWidget {
             : BoxDecoration(
                 color: fillColor ?? themeColors.profileBackground,
                 borderRadius:
-                    BorderRadius.all(Radius.circular(borderRadius ?? size / 4)),
+                    BorderRadius.only(bottomRight: Radius.circular(size / 4)),
               ),
         child: child,
       );
