@@ -77,21 +77,6 @@ class FileUploaderState extends ConsumerState<FileUploader> {
         completeUpload: completeProfileUpload);
   }
 
-  Future<void> circleImageUpload(XFile upload) async {
-    Future<void> completeImageUpload(
-        {XFile? upload, String? url, String? storagePath}) async {
-      if (widget.onComplete != null) {
-        widget.onComplete!(url: url, path: storagePath);
-      }
-    }
-
-    const uuid = Uuid();
-    firebase_storage.Reference ref =
-        _storage.ref().child('circle').child(uuid.v1());
-
-    await _uploadToStorage(ref, upload, completeUpload: completeImageUpload);
-  }
-
   Future<bool> removeStorageFile(String path) async {
     try {
       firebase_storage.Reference ref = _storage.ref().child(path);

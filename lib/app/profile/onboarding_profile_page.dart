@@ -357,8 +357,9 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage>
                               key: _uploader,
                               assignProfile: false,
                               showBusy: false,
-                              onComplete: (uploadedFileUrl, error) {
-                                _handleUploadComplete(uploadedFileUrl, error);
+                              onComplete: (
+                                  {String? error, String? url, String? path}) {
+                                _handleUploadComplete(url, error);
                               },
                             ),
                           ),

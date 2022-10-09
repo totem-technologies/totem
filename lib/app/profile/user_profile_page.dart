@@ -165,12 +165,12 @@ class UserProfilePageState extends ConsumerState<UserProfilePage> {
                                                           key: _uploader,
                                                           assignProfile: false,
                                                           showBusy: false,
-                                                          onComplete:
-                                                              (uploadedFileUrl,
-                                                                  error) {
+                                                          onComplete: (
+                                                              {String? error,
+                                                              String? url,
+                                                              String? path}) {
                                                             _handleUploadComplete(
-                                                                uploadedFileUrl,
-                                                                error);
+                                                                url, error);
                                                           },
                                                         ),
                                                       ),

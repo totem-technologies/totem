@@ -29,15 +29,16 @@ class SnapCircleItem extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              Padding(
+                padding: const EdgeInsets.only(right: 10.0),
+                child: CircleImage(
+                  circle: circle,
+                ),
+              ),
               Expanded(
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(
-                      width: 12,
-                      /*child: SvgPicture.asset(
-                            'assets/alert.svg')*/ // FIXME - this is some indicator icon
-                    ),
                     const SizedBox(
                       width: 4,
                     ),

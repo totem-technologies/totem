@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_spinbox/flutter_spinbox.dart';
+import 'package:totem/app/circle_create/components/index.dart';
 import 'package:totem/app_routes.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/models/snap_circle_option.dart';
 import 'package:totem/services/error_report.dart';
 import 'package:totem/services/index.dart';
+import 'package:totem/services/utils/device_type.dart';
 import 'package:totem/theme/index.dart';
 
 class CircleCreateSnapPage extends ConsumerStatefulWidget {
@@ -32,10 +34,7 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
   late final double maxParticipants;
   late final bool isKeeper;
   double numParticipants = 20;
-  String? _bannerImageUrl;
-  String? _logoImageUrl;
-
-  final GlobalKey<FileUploaderState> _uploader = GlobalKey();
+  CircleTheme? _selectedTheme;
 
   @override
   void initState() {
@@ -147,13 +146,7 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
                                       ],
                                     ),
                                     const SizedBox(height: 32),
-                                    _imageEntry(
-                                        aspectRatio: 1.0, label: t.circleLogo),
-                                    const SizedBox(height: 32),
-                                    _imageEntry(
-                                        aspectRatio: 1000 / 300,
-                                        height: 80,
-                                        label: t.circleBanner),
+                                    _circleTheme(),
                                     const SizedBox(height: 40),
                                     Center(
                                       child: ThemedRaisedButton(
@@ -188,48 +181,156 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
     );
   }
 
-  Widget _imageEntry(
-      {String? imageUrl,
-      required final String label,
-      final double aspectRatio = 1,
-      final height = 60}) {
+  Widget _circleTheme() {
     final t = AppLocalizations.of(context)!;
+    final themeColors = Theme.of(context).themeColors;
+    final textStyles = Theme.of(context).textStyles;
+    final isPhone = DeviceType.isPhone();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(label, style: Theme.of(context).textStyles.headline3),
-        const SizedBox(height: 8),
-        Row(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                color: Theme.of(context).themeColors.altBackground,
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(
-                  color: Theme.of(context).themeColors.divider,
-                  width: 1,
+        Text(t.theme, style: textStyles.headline3),
+        const SizedBox(height: 10),
+        Container(
+          padding: const EdgeInsets.all(15),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: themeColors.divider, width: 1),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              if (_selectedTheme == null)
+                Text(
+                  t.noTheme,
+                  style: textStyles.headline4,
+                  textAlign: TextAlign.center,
                 ),
-              ),
-              height: height,
-              child: AspectRatio(
-                aspectRatio: aspectRatio,
-                child: imageUrl != null
-                    ? CachedNetworkImage(imageUrl: imageUrl, fit: BoxFit.cover)
-                    : const Center(
-                        child: Icon(
-                          Icons.image,
-                          size: 30,
-                        ),
+              if (_selectedTheme != null) ...[
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        _selectedTheme?.name ?? '',
+                        style: textStyles.headline4,
                       ),
-              ),
+                    ),
+                    const SizedBox(width: 10),
+                    IconButton(
+                      onPressed: () {
+                        setState(() {
+                          _selectedTheme = null;
+                        });
+                      },
+                      icon: const Icon(
+                        Icons.delete,
+                        size: 18,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                if (!isPhone)
+                  Row(
+                    children: [
+                      _imageDisplay(
+                        imageUrl: _selectedTheme?.image,
+                        aspectRatio: 1.0,
+                        label: t.themeIcon,
+                      ),
+                      const SizedBox(width: 32),
+                      _imageDisplay(
+                        aspectRatio: 1000 / 300,
+                        imageUrl: _selectedTheme?.bannerImage,
+                        label: t.themeBanner,
+                      ),
+                    ],
+                  ),
+                if (isPhone) ...[
+                  _imageDisplay(
+                    imageUrl: _selectedTheme?.image,
+                    aspectRatio: 1.0,
+                    label: t.themeIcon,
+                  ),
+                  const SizedBox(height: 10),
+                  _imageDisplay(
+                    aspectRatio: 1000 / 300,
+                    imageUrl: _selectedTheme?.bannerImage,
+                    label: t.themeBanner,
+                  ),
+                ]
+              ],
+            ],
+          ),
+        ),
+        const SizedBox(height: 16),
+        Center(
+          child: ThemedRaisedButton(
+            label: t.selectTheme,
+            backgroundColor: themeColors.secondaryButtonBackground,
+            onPressed: () {
+              _selectTheme();
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _imageDisplay(
+      {String? imageUrl,
+      final double aspectRatio = 1,
+      final double height = 80,
+      final String? label}) {
+    return Column(
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).themeColors.altBackground,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: Theme.of(context).themeColors.divider,
+              width: 1,
             ),
-            const SizedBox(width: 16),
-            ThemedRaisedButton(
-              label: t.selectImage,
-              onPressed: () {},
+          ),
+          height: height,
+          child: AspectRatio(
+            aspectRatio: aspectRatio,
+            child: imageUrl != null
+                ? CachedNetworkImage(
+                    imageUrl: imageUrl,
+                    fit: BoxFit.cover,
+                    imageBuilder: (context, imageProvider) => Container(
+                        decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      image: DecorationImage(
+                        image: imageProvider,
+                        fit: BoxFit.contain,
+                      ),
+                    )),
+                    progressIndicatorBuilder: (context, _, __) => const Center(
+                      child: BusyIndicator(
+                        size: 30,
+                      ),
+                    ),
+                  )
+                : const Center(
+                    child: Icon(
+                      Icons.image,
+                      size: 30,
+                    ),
+                  ),
+          ),
+        ),
+        if (label != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: Text(
+              label,
+              style: Theme.of(context).textStyles.headline5!.merge(TextStyle(
+                  color: Theme.of(context).themeColors.secondaryText)),
             ),
-          ],
-        )
+          ),
       ],
     );
   }
@@ -250,6 +351,9 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
         previousCircle: widget.fromCircle?.id,
         isPrivate: _selectedVisibility.value,
         maxParticipants: numParticipants.toInt(),
+        themeRef: _selectedTheme?.ref,
+        imageUrl: _selectedTheme?.image,
+        bannerUrl: _selectedTheme?.bannerImage,
       );
       if (circle != null) {
         await repo.createActiveSession(
@@ -378,23 +482,13 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
     );
   }
 
-  Future<void> _handleUploadComplete(String? uploadedUrl, String? error,
-      {bool isBannerImage = false}) async {
-    if (uploadedUrl != null) {
-      isBannerImage
-          ? _bannerImageUrl = uploadedUrl
-          : _logoImageUrl = uploadedUrl;
-      await ref.read(repositoryProvider).updateUserProfile(_userProfile!);
-      setState(() => _busy = false);
-      if (!mounted) return;
-      if (widget.onProfileUpdated == null) {
-        Navigator.of(context).pop();
-      } else {
-        widget.onProfileUpdated!(_userProfile!);
-      }
-    } else {
-      setState(() => _busy = false);
-      await _showUploadError(context, error);
+  Future<void> _selectTheme() async {
+    final CircleTheme? result =
+        await ThemeSelector.showDialog(context, selected: _selectedTheme);
+    if (result != null) {
+      setState(() {
+        _selectedTheme = result;
+      });
     }
   }
 }

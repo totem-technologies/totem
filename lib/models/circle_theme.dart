@@ -1,10 +1,11 @@
 class CircleTheme {
+  late final String ref;
   late final String name;
   late final String description;
   late final String image;
   late final String bannerImage;
 
-  CircleTheme.fromJson(final Map<String, dynamic> data) {
+  CircleTheme.fromJson(final Map<String, dynamic> data, {required this.ref}) {
     assert(data['name'] != null);
     name = data['name'];
     description = data['description'] ?? "";

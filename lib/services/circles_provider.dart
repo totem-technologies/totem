@@ -28,6 +28,9 @@ abstract class CirclesProvider {
     Map<String, dynamic>? bannedParticipants,
     bool? isPrivate,
     int? maxParticipants,
+    String? themeRef,
+    String? imageUrl,
+    String? bannerUrl,
   });
 
   Future<bool> removeSnapCircle(

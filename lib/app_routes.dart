@@ -75,9 +75,11 @@ class AppRoutes {
               pageBuilder: (context, state) {
                 final id = state.params['id'] ?? '';
                 state.params['id'];
+                final int? colorIndex = state.extra as int?;
                 return _fadeTransitionPage(
                     state: state,
-                    child: CircleSessionPage(sessionID: id),
+                    child: CircleSessionPage(
+                        sessionID: id, colorIndex: colorIndex),
                     opaque: false,
                     fullscreenDialog: true);
               },

@@ -29,9 +29,10 @@ final communicationsProvider =
 });
 
 class CircleSessionPage extends ConsumerStatefulWidget {
-  const CircleSessionPage({Key? key, required this.sessionID})
+  const CircleSessionPage({Key? key, required this.sessionID, this.colorIndex})
       : super(key: key);
   final String sessionID;
+  final int? colorIndex;
 
   @override
   CircleSessionPageState createState() => CircleSessionPageState();
@@ -190,6 +191,7 @@ class CircleSessionPageState extends ConsumerState<CircleSessionPage>
         return;
       }
       if (circle != null) {
+        circle.colorIndex = widget.colorIndex;
         // Create the active session if needed
         if (repo.activeSession == null) {
           await repo.createActiveSession(circle: circle);

@@ -147,6 +147,9 @@ interface CreateSnapCircleArgs {
   description: string;
   previousCircle?: string;
   bannedParticipants?: SnapCircleBannedParticipants;
+  themeRef?: string;
+  imageUrl?: string;
+  bannerImageUrl?: string;
   options?: {
     isPrivate: boolean;
     maxMinutes?: number;
@@ -160,7 +163,7 @@ interface CreateSnapCircleResponse {
 
 export const createSnapCircle = functions.https.onCall(
   async (
-    {name, description, previousCircle, bannedParticipants, options}: CreateSnapCircleArgs,
+    {name, description, previousCircle, bannedParticipants, themeRef, imageUrl, bannerImageUrl, options}: CreateSnapCircleArgs,
     {auth}
   ): Promise<CreateSnapCircleResponse> => {
     auth = isAuthenticated(auth);
@@ -218,6 +221,15 @@ export const createSnapCircle = functions.https.onCall(
     }
     if (bannedParticipants) {
       data.bannedParticipants = bannedParticipants;
+    }
+    if (themeRef) {
+      data.themeRef = themeRef;
+    }
+    if (imageUrl) {
+      data.imageUrl = imageUrl;
+    }
+    if (bannerImageUrl) {
+      data.bannerImageUrl = bannerImageUrl;
     }
     const ref = await admin.firestore().collection("snapCircles").add(data);
     await admin.firestore().collection("activeCircles").doc(ref.id).set({participants: {}});

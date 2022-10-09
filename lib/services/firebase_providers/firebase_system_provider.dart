@@ -28,11 +28,12 @@ class FirebaseSystemProvider extends SystemProvider {
   Future<List<CircleTheme>> getSystemCircleThemes() async {
     final systemThemeCollection = FirebaseFirestore.instance
         .collection(Paths.system)
-        .doc(Paths.systemCircle)
+        .doc(Paths.systemCircles)
         .collection(Paths.systemCircleThemes)
         .withConverter<CircleTheme>(
           fromFirestore: (snapshots, _) {
-            return CircleTheme.fromJson(snapshots.data()!);
+            return CircleTheme.fromJson(snapshots.data()!,
+                ref: snapshots.reference.path);
           },
           toFirestore: (circleTheme, _) => circleTheme.toJson(),
         );

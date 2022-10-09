@@ -1,6 +1,7 @@
 export 'bottom_tray_container.dart';
 export 'bottom_tray_help_dialog.dart';
 export 'busy_indicator.dart';
+export 'circle_image.dart';
 export 'circular_layout_delegate.dart';
 export 'content_divider.dart';
 export 'day_of_week_form_field.dart';

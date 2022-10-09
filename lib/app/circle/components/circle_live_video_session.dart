@@ -84,15 +84,25 @@ class _CircleLiveVideoSessionState
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
                               const SizedBox(height: 10),
-                              Text(
-                                activeSession.circle.name,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: textStyles.headline2!.merge(
-                                  TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      color: themeColors.reversedText),
-                                ),
+                              Row(
+                                children: [
+                                  CircleImage(
+                                    circle: activeSession.circle,
+                                  ),
+                                  const SizedBox(width: 16),
+                                  Expanded(
+                                    child: Text(
+                                      activeSession.circle.name,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: textStyles.headline2!.merge(
+                                        TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            color: themeColors.reversedText),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                               const SizedBox(height: 10),
                               Expanded(

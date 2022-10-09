@@ -172,41 +172,38 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Stack(
+                          Row(
                             children: [
-                              Align(
-                                alignment: Alignment.topCenter,
+                              CircleImage(circle: widget.circle),
+                              const SizedBox(width: 16),
+                              Expanded(
                                 child: Text(
                                   widget.circle.name,
                                   style: textStyles.headline1!.merge(
                                       const TextStyle(
                                           fontWeight: FontWeight.w400)),
-                                  textAlign: TextAlign.center,
+                                  //textAlign: TextAlign.center,
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
-                              Align(
-                                alignment: Alignment.topRight,
-                                child: InkWell(
-                                  onTap: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 5, right: 5, top: 5, bottom: 5),
-                                    child: Icon(
-                                      Icons.close,
-                                      size: 24,
-                                      color: themeColors.primaryText,
-                                    ),
+                              const SizedBox(width: 16),
+                              InkWell(
+                                onTap: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 5, right: 5, top: 5, bottom: 5),
+                                  child: Icon(
+                                    Icons.close,
+                                    size: 24,
+                                    color: themeColors.primaryText,
                                   ),
                                 ),
                               ),
                             ],
                           ),
-                          const SizedBox(height: 10),
-                          const ContentDivider(),
                           const SizedBox(height: 24),
                           Center(
                             child: _desktopUserInfo(context, commProvider),

@@ -85,6 +85,9 @@ class TotemRepository {
     bool addAsMember = true,
     bool isPrivate = false,
     int? maxParticipants,
+    String? themeRef,
+    String? imageUrl,
+    String? bannerUrl,
   }) =>
       _circlesProvider.createSnapCircle(
         name: name,
@@ -95,6 +98,9 @@ class TotemRepository {
         bannedParticipants: bannedParticipants,
         isPrivate: isPrivate,
         maxParticipants: maxParticipants,
+        themeRef: themeRef,
+        imageUrl: imageUrl,
+        bannerUrl: bannerUrl,
       );
   Future<bool> removeSnapCircle({required SnapCircle circle}) =>
       _circlesProvider.removeSnapCircle(circle: circle, uid: user!.uid);

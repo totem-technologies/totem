@@ -161,6 +161,7 @@
     "no": "No",
     "noCirclesMessage": "You are not a part of any circles",
     "noParticipantsActiveSession": "There are no participants in this session.",
+    "noTheme": "No theme selected",
     "noSnapCirclesMessage": "seems like there are no active circles",
     "noUpcomingSessions": "No upcoming sessions",
     "numberOfSessions": "Number of Sessions",
@@ -202,6 +203,7 @@
     "selectProfilePicture": "Select Profile Picture",
     "selectPhotoExisting": "Existing photo",
     "selectPhotoCamera": "Take a new photo",
+    "selectTheme": "Select Theme",
     "sendCode": "Send Code",
     "sessionFeedbackRequest": "Tell us about your Totem experience",
     "sessionInProgress": "Session in progress",
@@ -240,6 +242,9 @@
             "number": {}
         }
     },
+    "theme": "Theme",
+    "themeIcon": "Icon",
+    "themeBanner": "Banner",
     "unableToReadProfile": "Unable to read profile",
     "unableToRemoveUser": "Unable to remove",
     "unableToRemoveUserMessage": "Unable to remove {name} from the circle. Please try again.",

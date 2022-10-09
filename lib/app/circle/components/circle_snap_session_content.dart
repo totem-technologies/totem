@@ -76,36 +76,7 @@ class _CircleSnapSessionContentState
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
-                                  if (sessionProvider.state !=
-                                          SessionState.live &&
-                                      sessionProvider.state !=
-                                          SessionState.complete &&
-                                      sessionProvider.state !=
-                                          SessionState.ending)
-                                    SubPageHeader(
-                                      title: widget.circle.name,
-                                      onClose: (commProvider.state !=
-                                                  CommunicationState
-                                                      .disconnecting &&
-                                              sessionProvider.state !=
-                                                  SessionState.ending)
-                                          ? () async {
-                                              if (commProvider.state !=
-                                                  CommunicationState.active) {
-                                                Navigator.of(context).pop();
-                                              } else {
-                                                await _exitPrompt(context);
-                                              }
-                                            }
-                                          : null,
-                                    ),
-                                  if (sessionProvider.state ==
-                                          SessionState.live ||
-                                      sessionProvider.state ==
-                                          SessionState.complete ||
-                                      sessionProvider.state ==
-                                          SessionState.ending)
-                                    _altHeader(context, commProvider),
+                                  _header(commProvider, sessionProvider.state),
                                   if (sessionProvider.state ==
                                           SessionState.waiting &&
                                       widget.circle.description != null &&
@@ -179,7 +150,7 @@ class _CircleSnapSessionContentState
     );
   }
 
-  Widget _altHeader(BuildContext context, CommunicationProvider commProvider) {
+  Widget _header(CommunicationProvider commProvider, SessionState state) {
     final themeData = Theme.of(context);
     final themeColors = themeData.themeColors;
     final textStyles = themeData.textStyles;
@@ -188,31 +159,48 @@ class _CircleSnapSessionContentState
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(width: themeData.pageHorizontalPadding),
           Expanded(
-            child: Text(
-              widget.circle.name,
-              style: textStyles.headline2,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(width: themeData.pageHorizontalPadding),
+                CircleImage(
+                  circle: widget.circle,
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Text(
+                    widget.circle.name,
+                    style: textStyles.headline2,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
             ),
           ),
-          IconButton(
-            onPressed: (commProvider.state != CommunicationState.disconnecting)
-                ? () async {
-                    if (commProvider.state != CommunicationState.active) {
-                      Navigator.of(context).pop();
-                    } else {
-                      await _exitPrompt(context);
-                    }
-                  }
-                : null,
-            icon: Icon(
-              Icons.close,
-              color: themeColors.primaryText,
+          if (state == SessionState.waiting) ...[
+            const SizedBox(width: 16),
+            IconButton(
+              onPressed:
+                  (commProvider.state != CommunicationState.disconnecting)
+                      ? () async {
+                          if (commProvider.state != CommunicationState.active) {
+                            Navigator.of(context).pop();
+                          } else {
+                            await _exitPrompt(context);
+                          }
+                        }
+                      : null,
+              icon: Icon(
+                Icons.close,
+                color: themeColors.primaryText,
+              ),
             ),
-          ),
-          const SizedBox(width: 8),
+            const SizedBox(
+              width: 8,
+            ),
+          ],
         ],
       ),
     );

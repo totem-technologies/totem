@@ -45,9 +45,15 @@ class CircleSessionEndedPage extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.only(top: themeData.titleTopPadding),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SizedBox(width: themeData.pageHorizontalPadding),
+          if (circle != null) ...[
+            CircleImage(
+              circle: circle!,
+            ),
+            const SizedBox(width: 16),
+          ],
           Expanded(
             child: Text(
               circle?.name ?? t.circle,

@@ -33,6 +33,12 @@ class StdThemePalette {
     baseBlack.withAlpha(50),
     Colors.transparent,
   ];
+  static final List<Color> circleColors = [
+    mediumGrey,
+    brown,
+    grey,
+    red2,
+  ];
 }
 
 class StdAppThemeColors extends AppThemeColors {
@@ -74,5 +80,6 @@ class StdAppThemeColors extends AppThemeColors {
           reversedVideoOverlayBackground: StdThemePalette.transparentYellow,
           secondaryButtonBackground: StdThemePalette.lightYellow,
           iconNext: StdThemePalette.mediumGrey,
+          circleColors: StdThemePalette.circleColors,
         );
 }
