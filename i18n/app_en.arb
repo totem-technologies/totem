@@ -59,6 +59,12 @@
     "circleWaitForUser": "Please wait while the next person gets ready to share.",
     "circleWeeksSession": "This Weeks Session",
     "copiedToClipboard": "The link to the circle has been copied to your clipboard.",
+    "createdBy":"Created by {name}",
+    "@createdBy": {
+        "placeholders": {
+            "name": {}
+        }
+    },
     "createCircle": "Create Circle",
     "createNewCircle": "Create New Circle",
     "createdOn": "Created on",

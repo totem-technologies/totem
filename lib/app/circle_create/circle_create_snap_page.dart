@@ -306,9 +306,11 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
           child: ThemedRaisedButton(
             label: t.selectTheme,
             backgroundColor: themeColors.secondaryButtonBackground,
-            onPressed: () {
-              _selectTheme();
-            },
+            onPressed: !_busy
+                ? () {
+                    _selectTheme();
+                  }
+                : null,
           ),
         ),
       ],

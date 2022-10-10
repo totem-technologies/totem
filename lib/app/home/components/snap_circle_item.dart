@@ -101,6 +101,15 @@ class SnapCircleItem extends StatelessWidget {
             height: 8,
           ),
         ],
+        if (circle.createdBy != null) ...[
+          Text(
+            t.createdBy(circle.createdBy!.name),
+            style: TextStyle(color: themeColor.primaryText, fontSize: 13),
+          ),
+          const SizedBox(
+            height: 8,
+          ),
+        ],
         Divider(
           height: 5,
           thickness: 1,
