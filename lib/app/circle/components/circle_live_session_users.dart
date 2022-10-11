@@ -15,9 +15,13 @@ class CircleLiveSessionUsers extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final activeSession = ref.watch(activeSessionProvider);
     final totemId = activeSession.totemParticipant?.uid;
-    final participants = activeSession.speakOrderParticipants
-        .where((element) => element.uid != totemId)
-        .toList();
+    final totemReceived = activeSession.totemReceived;
+    final participants =
+        (totemReceived || activeSession.totemParticipant?.me == true)
+            ? activeSession.speakOrderParticipants
+                .where((element) => element.uid != totemId)
+                .toList()
+            : activeSession.speakOrderParticipants;
     return CircleNetworkConnectivityLayer(
       child: (participants.isNotEmpty)
           ? (!speakerView
@@ -30,7 +34,8 @@ class CircleLiveSessionUsers extends ConsumerWidget {
                     dimension: dimension,
                     participant: participants[i],
                     hasTotem: activeSession.totemUser ==
-                        participants[i].sessionUserId,
+                            participants[i].sessionUserId &&
+                        totemReceived,
                     next: i == 0,
                   ),
                 )
@@ -39,7 +44,8 @@ class CircleLiveSessionUsers extends ConsumerWidget {
                     dimension: dimension,
                     participant: participants[i],
                     hasTotem: activeSession.totemUser ==
-                        participants[i].sessionUserId,
+                            participants[i].sessionUserId &&
+                        totemReceived,
                     next: i == 0,
                   ),
                   count: participants.length,

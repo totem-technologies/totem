@@ -774,7 +774,12 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     ActiveSession? session = sessionProvider.activeSession;
     if (session != null && _session != null) {
       bool updateStreamState = false;
-      if (session.state == SessionState.live && !session.userStatus) {
+      if (session.state == SessionState.starting ||
+          session.state == SessionState.ending ||
+          session.state == SessionState.cancelling) {
+        // mute users for the transitional states
+        muteAudio(true);
+      } else if (session.state == SessionState.live && !session.userStatus) {
         // have to manage mute state based on changes to the state
         bool started = (_lastState == SessionState.starting &&
             session.state == SessionState.live);
