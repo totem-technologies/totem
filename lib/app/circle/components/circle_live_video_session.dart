@@ -116,13 +116,6 @@ class _CircleLiveVideoSessionState
                                                     _receiveTurn(
                                                         context, participant!);
                                                   },
-                                                  onPass: () {
-                                                    final participant =
-                                                        activeSession
-                                                            .totemParticipant;
-                                                    _endTurn(
-                                                        context, participant!);
-                                                  },
                                                   onSettings: () {
                                                     _showDeviceSettings();
                                                   },
@@ -226,7 +219,11 @@ class _CircleLiveVideoSessionState
                           size: 30, color: themeColors.primaryText),
                       label: t.pass,
                       message: t.circleTotemPass,
-                      showToolTips: false,
+                      toolTips: [
+                        t.circleTotemPassLine1,
+                        t.circleTotemPassLine3
+                      ],
+                      showToolTips: activeSession.showTooltips,
                       vertical: false,
                       onPressed: !_processingRequest
                           ? () {

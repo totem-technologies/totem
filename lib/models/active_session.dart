@@ -25,6 +25,8 @@ enum ActiveSessionChange {
 }
 
 class ActiveSession extends ChangeNotifier {
+  static const int tooltipCount = 3000;
+
   ActiveSession(
       {required this.circle, required this.userId, this.isSnap = true});
   String topic = "";
@@ -42,6 +44,7 @@ class ActiveSession extends ChangeNotifier {
   SessionState _state = SessionState.waiting;
   bool _userStatus = false;
   Map<String, dynamic> _removedUsers = {};
+  UserProfile? userProfile;
 
   @override
   void dispose() {
@@ -58,6 +61,10 @@ class ActiveSession extends ChangeNotifier {
 
   bool get userStatus {
     return _userStatus;
+  }
+
+  bool get showTooltips {
+    return (userProfile?.completedCircles ?? 0) < tooltipCount;
   }
 
   List<SessionParticipant> get activeParticipants {
