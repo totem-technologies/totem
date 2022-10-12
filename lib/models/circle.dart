@@ -20,6 +20,11 @@ abstract class Circle {
   late String keeper;
   String? previousCircle;
   Map<String, dynamic>? bannedParticipants;
+  String? themeRef;
+  String? imageUrl;
+  String? bannerImageUrl;
+  late int colorIndex;
+
   bool _canJoin = true;
 
   Circle.fromJson(Map<String, dynamic> json,
@@ -38,6 +43,9 @@ abstract class Circle {
     link = json['link'];
     keeper = json['keeper'];
     previousCircle = json['previousCircle'];
+    themeRef = json['themeRef'];
+    imageUrl = json['imageUrl'];
+    bannerImageUrl = json['bannerImageUrl'];
     if (json['bannedParticipants'] != null) {
       bannedParticipants =
           Map<String, dynamic>.from(json['bannedParticipants']);
@@ -45,6 +53,7 @@ abstract class Circle {
     if (uid != null && bannedParticipants != null) {
       _canJoin = bannedParticipants![uid] == null;
     }
+    colorIndex = name.hashCode;
   }
 
   bool get canJoin => _canJoin;
@@ -70,6 +79,15 @@ abstract class Circle {
     }
     if (bannedParticipants != null) {
       data["bannedParticipants"] = bannedParticipants!;
+    }
+    if (themeRef != null) {
+      data["themeRef"] = themeRef!;
+    }
+    if (imageUrl != null) {
+      data["imageUrl"] = imageUrl!;
+    }
+    if (bannerImageUrl != null) {
+      data["bannerImageUrl"] = bannerImageUrl!;
     }
     return data;
   }

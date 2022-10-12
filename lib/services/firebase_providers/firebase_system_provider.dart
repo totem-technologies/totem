@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:totem/models/system_video.dart';
+import 'package:totem/models/index.dart';
 import 'package:totem/services/firebase_providers/paths.dart';
 import 'package:totem/services/index.dart';
 
@@ -22,5 +22,25 @@ class FirebaseSystemProvider extends SystemProvider {
         ? snapshot.data()! as SystemVideo
         : SystemVideo();
     return video;
+  }
+
+  @override
+  Future<List<CircleTheme>> getSystemCircleThemes() async {
+    final systemThemeCollection = FirebaseFirestore.instance
+        .collection(Paths.system)
+        .doc(Paths.systemCircles)
+        .collection(Paths.systemCircleThemes)
+        .withConverter<CircleTheme>(
+          fromFirestore: (snapshots, _) {
+            return CircleTheme.fromJson(snapshots.data()!,
+                ref: snapshots.reference.path);
+          },
+          toFirestore: (circleTheme, _) => circleTheme.toJson(),
+        );
+    final snapshot = await systemThemeCollection.get();
+    List<CircleTheme> themes = snapshot.docs
+        .map((DocumentSnapshot<CircleTheme> doc) => doc.data()!)
+        .toList();
+    return themes;
   }
 }

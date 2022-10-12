@@ -86,6 +86,9 @@ class TotemRepository {
     bool isPrivate = false,
     int? duration,
     int? maxParticipants,
+    String? themeRef,
+    String? imageUrl,
+    String? bannerUrl,
   }) =>
       _circlesProvider.createSnapCircle(
         name: name,
@@ -97,6 +100,9 @@ class TotemRepository {
         isPrivate: isPrivate,
         duration: duration,
         maxParticipants: maxParticipants,
+        themeRef: themeRef,
+        imageUrl: imageUrl,
+        bannerUrl: bannerUrl,
       );
   Future<bool> removeSnapCircle({required SnapCircle circle}) =>
       _circlesProvider.removeSnapCircle(circle: circle, uid: user!.uid);
@@ -180,4 +186,6 @@ class TotemRepository {
 
   // System
   Future<SystemVideo> getSystemVideo() => _systemProvider.getSystemVideo();
+  Future<List<CircleTheme>> getSystemCircleThemes() =>
+      _systemProvider.getSystemCircleThemes();
 }

@@ -20,7 +20,7 @@ class FileUploader extends ConsumerStatefulWidget {
     this.assignProfile = true,
     this.showBusy = true,
   }) : super(key: key);
-  final Function(String?, String?)? onComplete;
+  final Function({String? url, String? path, String? error})? onComplete;
   final bool clearFile;
   final bool assignProfile;
   final bool showBusy;
@@ -59,10 +59,40 @@ class FileUploaderState extends ConsumerState<FileUploader> {
   }
 
   Future<void> profileImageUpload(XFile upload, AuthUser user) async {
+    Future<void> completeProfileUpload(
+        {XFile? upload, String? url, String? storagePath}) async {
+      if (url != null && url.isNotEmpty && widget.assignProfile) {
+        final repo = ref.read(repositoryProvider);
+        await repo.updateUserProfileImage(url);
+      }
+      if (widget.onComplete != null) {
+        widget.onComplete!(url: url, path: storagePath);
+      }
+    }
+
     const uuid = Uuid();
+    firebase_storage.Reference storageRef =
+        _storage.ref().child('user').child(user.uid).child(uuid.v1());
+    await _uploadToStorage(storageRef, upload,
+        completeUpload: completeProfileUpload);
+  }
+
+  Future<bool> removeStorageFile(String path) async {
     try {
-      firebase_storage.Reference ref =
-          _storage.ref().child('user').child(user.uid).child(uuid.v1());
+      firebase_storage.Reference ref = _storage.ref().child(path);
+      await ref.delete();
+      return true;
+    } on firebase_core.FirebaseException catch (e) {
+      debugPrint('error removing file: $e');
+    }
+    return false;
+  }
+
+  Future<void> _uploadToStorage(firebase_storage.Reference ref, XFile upload,
+      {required Future<void> Function(
+              {XFile? upload, String? url, String? storagePath})
+          completeUpload}) async {
+    try {
       Uint8List bytes = await upload.readAsBytes();
 
       setState(() {
@@ -72,7 +102,8 @@ class FileUploaderState extends ConsumerState<FileUploader> {
       firebase_storage.TaskSnapshot? snapshot = await _uploadTask;
       if (snapshot != null) {
         String url = await snapshot.ref.getDownloadURL();
-        await _completeUpload(upload, url: url);
+        await completeUpload(
+            storagePath: ref.fullPath, upload: upload, url: url);
       }
     } on firebase_core.FirebaseException catch (e) {
       debugPrint(e.message);
@@ -81,19 +112,8 @@ class FileUploaderState extends ConsumerState<FileUploader> {
             'User does not have permission to upload to this reference.');
       }
       if (widget.onComplete != null) {
-        widget.onComplete!(null, e.message);
+        widget.onComplete!(error: e.message);
       }
-    }
-  }
-
-  Future<void> _completeUpload(XFile? upload, {String url = ''}) async {
-    if (url.isNotEmpty && widget.assignProfile) {
-      var repo = ref.read(repositoryProvider);
-      await repo.updateUserProfileImage(url);
-    }
-    // await clearTemporaryFiles(upload);
-    if (widget.onComplete != null) {
-      widget.onComplete!(url, null);
     }
   }
 

@@ -5,6 +5,7 @@ import 'package:totem/models/index.dart';
 import 'package:totem/theme/index.dart';
 
 class SnapCircleItem extends StatelessWidget {
+  static const double maxFullInfoWidth = 250;
   const SnapCircleItem({
     Key? key,
     required this.circle,
@@ -29,15 +30,16 @@ class SnapCircleItem extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              Padding(
+                padding: const EdgeInsets.only(right: 10.0),
+                child: CircleImage(
+                  circle: circle,
+                ),
+              ),
               Expanded(
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(
-                      width: 12,
-                      /*child: SvgPicture.asset(
-                            'assets/alert.svg')*/ // FIXME - this is some indicator icon
-                    ),
                     const SizedBox(
                       width: 4,
                     ),
@@ -87,41 +89,54 @@ class SnapCircleItem extends StatelessWidget {
         break;
     }
     final themeColor = Theme.of(context).themeColors;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        if (circle.description != null && circle.description!.isNotEmpty) ...[
-          Text(
-            circle.description!,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
+    return LayoutBuilder(builder: (context, constraints) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (circle.description != null && circle.description!.isNotEmpty) ...[
+            Text(
+              circle.description!,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(
+              height: 8,
+            ),
+          ],
+          if (circle.createdBy != null) ...[
+            Text(
+              t.createdBy(circle.createdBy!.name),
+              style: TextStyle(color: themeColor.primaryText, fontSize: 13),
+            ),
+            const SizedBox(
+              height: 8,
+            ),
+          ],
+          Divider(
+            height: 5,
+            thickness: 1,
+            color: themeColor.divider,
           ),
           const SizedBox(
             height: 8,
           ),
-        ],
-        Divider(
-          height: 5,
-          thickness: 1,
-          color: themeColor.divider,
-        ),
-        const SizedBox(
-          height: 8,
-        ),
-        Row(
-          children: [
-            Expanded(
-              child: Text(
-                status,
-                style: const TextStyle(fontStyle: FontStyle.italic),
+          Row(
+            children: [
+              Expanded(
+                child: constraints.maxWidth > maxFullInfoWidth
+                    ? Text(
+                        status,
+                        style: const TextStyle(fontStyle: FontStyle.italic),
+                      )
+                    : Container(),
               ),
-            ),
-            Text(
-              t.participantCount(circle.participantCount),
-            ),
-          ],
-        ),
-      ],
-    );
+              Text(
+                t.participantCount(circle.participantCount),
+              ),
+            ],
+          ),
+        ],
+      );
+    });
   }
 }

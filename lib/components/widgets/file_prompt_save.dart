@@ -138,9 +138,9 @@ class FilePromptSaveState extends ConsumerState<FilePromptSave> {
           child: Center(
             child: FileUploader(
               key: _uploader,
-              onComplete: (uploadedFileUrl, error) {
-                if (uploadedFileUrl != null) {
-                  Navigator.pop(context, uploadedFileUrl);
+              onComplete: ({String? error, String? url, String? path}) {
+                if (url != null) {
+                  Navigator.pop(context, url);
                 } else {
                   _showUploadError(context, error);
                 }

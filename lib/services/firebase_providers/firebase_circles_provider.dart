@@ -173,6 +173,9 @@ class FirebaseCirclesProvider extends CirclesProvider {
     bool? isPrivate,
     int? duration,
     int? maxParticipants,
+    String? themeRef,
+    String? imageUrl,
+    String? bannerUrl,
   }) async {
     final DocumentReference userRef =
         FirebaseFirestore.instance.collection(Paths.users).doc(keeper ?? uid);
@@ -194,6 +197,15 @@ class FirebaseCirclesProvider extends CirclesProvider {
       }
       if (bannedParticipants != null) {
         data['bannedParticipants'] = bannedParticipants;
+      }
+      if (themeRef != null) {
+        data["themeRef"] = themeRef;
+      }
+      if (imageUrl != null) {
+        data["imageUrl"] = imageUrl;
+      }
+      if (bannerUrl != null) {
+        data["bannerImageUrl"] = bannerUrl;
       }
       if (isPrivate != null) {
         options['isPrivate'] = isPrivate;

@@ -29,6 +29,9 @@ abstract class CirclesProvider {
     bool? isPrivate,
     int? duration,
     int? maxParticipants,
+    String? themeRef,
+    String? imageUrl,
+    String? bannerUrl,
   });
 
   Future<bool> removeSnapCircle(

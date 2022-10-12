@@ -29,6 +29,9 @@ export interface SnapCircleData {
   participantCount?: number;
   circleParticipants?: string[];
   bannedParticipants?: SnapCircleBannedParticipants;
+  themeRef?: string;
+  imageUrl?: string;
+  bannerImageUrl?: string;
 }
 
 export const SessionState = {

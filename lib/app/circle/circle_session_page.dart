@@ -190,8 +190,6 @@ class CircleSessionPageState extends ConsumerState<CircleSessionPage>
         return;
       }
       if (circle != null) {
-        // Create the active session if needed
-
         if (repo.activeSession == null) {
           await repo.createActiveSession(circle: circle);
         }

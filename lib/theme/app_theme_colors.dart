@@ -38,6 +38,7 @@ class AppThemeColors {
     required this.reversedVideoOverlayBackground,
     required this.secondaryButtonBackground,
     required this.iconNext,
+    required this.circleColors,
   });
 
   final Color alternateButtonBackground;
@@ -76,4 +77,5 @@ class AppThemeColors {
   final List<Color> welcomeGradient;
   final List<Color> profileGradient;
   final List<Color> titleBarGradient;
+  final List<Color> circleColors;
 }

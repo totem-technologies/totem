@@ -23,6 +23,7 @@
         }
     },
     "circle": "Circle",
+    "circleBanner": "Banner Image",
     "circleCreateNewMessage": "The circle named {name} is not available.\n\nDo you want to start a new circle with the same name and keeper?",
     "@circleCreateNewMessage": {
         "placeholders": {
@@ -36,6 +37,7 @@
     "circleEnding": "Circle is ending",
     "circles": "Circles",
     "circleInProgress": "Circle in progress",
+    "circleLogo": "Logo Image",
     "circleName": "Circle Name",
     "circleRejoinWaiting": "Waiting for keeper to let you into the session in progress",
     "circleRejoinRequest": "{name} is requesting to rejoin the circle",
@@ -57,6 +59,12 @@
     "circleWaitForUser": "Please wait while the next person gets ready to share.",
     "circleWeeksSession": "This Weeks Session",
     "copiedToClipboard": "The link to the circle has been copied to your clipboard.",
+    "createdBy":"Created by {name}",
+    "@createdBy": {
+        "placeholders": {
+            "name": {}
+        }
+    },
     "createCircle": "Create Circle",
     "createNewCircle": "Create New Circle",
     "createdOn": "Created on",
@@ -192,6 +200,8 @@
     "no": "No",
     "noCirclesMessage": "You are not a part of any circles",
     "noParticipantsActiveSession": "There are no participants in this session.",
+    "noTheme": "No theme selected",
+    "noThemes": "No themes available",
     "noSnapCirclesMessage": "seems like there are no active circles",
     "noUpcomingSessions": "No upcoming sessions",
     "numberOfSessions": "Number of Sessions",
@@ -229,9 +239,11 @@
     "role": "Role",
     "save": "Save",
     "saveProfileImage": "Save Profile Image",
+    "selectImage": "Select Image",
     "selectProfilePicture": "Select Profile Picture",
     "selectPhotoExisting": "Existing photo",
     "selectPhotoCamera": "Take a new photo",
+    "selectTheme": "Select Theme",
     "sendCode": "Send Code",
     "sessionFeedbackRequest": "Tell us about your Totem experience",
     "sessionInProgress": "Session in progress",
@@ -270,6 +282,9 @@
             "number": {}
         }
     },
+    "theme": "Theme",
+    "themeIcon": "Icon",
+    "themeBanner": "Banner",
     "unableToReadProfile": "Unable to read profile",
     "unableToRemoveUser": "Unable to remove",
     "unableToRemoveUserMessage": "Unable to remove {name} from the circle. Please try again.",

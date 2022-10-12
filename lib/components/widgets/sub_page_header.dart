@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:totem/theme/index.dart';
 
 class SubPageHeader extends StatelessWidget {
-  const SubPageHeader({Key? key, required this.title, this.onClose})
+  const SubPageHeader(
+      {Key? key, required this.title, this.onClose, this.leading})
       : super(key: key);
   final String title;
   final VoidCallback? onClose;
+  final Widget? leading;
 
   @override
   Widget build(BuildContext context) {
@@ -15,9 +17,13 @@ class SubPageHeader extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.only(top: themeData.titleTopPadding),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SizedBox(width: themeData.pageHorizontalPadding),
+          if (leading != null) ...[
+            leading!,
+            const SizedBox(width: 16),
+          ],
           Expanded(
             child: Text(
               title,
