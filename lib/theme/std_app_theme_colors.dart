@@ -38,6 +38,8 @@ class StdThemePalette {
     brown,
     grey,
     red2,
+    lightGrey,
+    Colors.deepPurple,
   ];
 }
 

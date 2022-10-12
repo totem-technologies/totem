@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:totem/components/index.dart';
@@ -39,12 +37,12 @@ class CircleImage extends StatelessWidget {
         ),
       );
     }
-    circle.colorIndex ??= Random().nextInt(themeColors.circleColors.length);
     return Container(
       width: size,
       height: size,
       decoration: BoxDecoration(
-        color: themeColors.circleColors[circle.colorIndex!],
+        color: themeColors
+            .circleColors[circle.colorIndex % themeColors.circleColors.length],
         shape: BoxShape.circle,
       ),
       child: Center(

@@ -23,7 +23,7 @@ abstract class Circle {
   String? themeRef;
   String? imageUrl;
   String? bannerImageUrl;
-  int? colorIndex;
+  late int colorIndex;
 
   bool _canJoin = true;
 
@@ -53,6 +53,7 @@ abstract class Circle {
     if (uid != null && bannedParticipants != null) {
       _canJoin = bannedParticipants![uid] == null;
     }
+    colorIndex = name.hashCode;
   }
 
   bool get canJoin => _canJoin;

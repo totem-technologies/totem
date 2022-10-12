@@ -96,6 +96,6 @@ class SnapCirclesListState extends ConsumerState<SnapCirclesList> {
       BuildContext context, SnapCircle circle) async {
     if (!mounted) return;
     Map<String, String> params = {'id': circle.snapSession.id};
-    context.goNamed(AppRoutes.circle, params: params, extra: circle.colorIndex);
+    context.goNamed(AppRoutes.circle, params: params);
   }
 }

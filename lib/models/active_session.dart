@@ -25,7 +25,7 @@ enum ActiveSessionChange {
 }
 
 class ActiveSession extends ChangeNotifier {
-  static const int tooltipCount = 3000;
+  static const int tooltipCount = 3;
 
   ActiveSession(
       {required this.circle, required this.userId, this.isSnap = true});
