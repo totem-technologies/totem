@@ -40,7 +40,8 @@ class FirebaseSystemProvider extends SystemProvider {
     final snapshot = await systemThemeCollection.get();
     List<CircleTheme> themes = snapshot.docs
         .map((DocumentSnapshot<CircleTheme> doc) => doc.data()!)
-        .toList();
+        .toList()
+      ..sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
     return themes;
   }
 }
