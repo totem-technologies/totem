@@ -1,11 +1,20 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 // eslint-disable-next-line import/no-unresolved -- https://github.com/firebase/firebase-admin-node/issues/1827#issuecomment-1226224988
-import {DocumentReference, Timestamp} from "firebase-admin/firestore";
+import {DocumentReference, Timestamp, FieldValue} from "firebase-admin/firestore";
 import * as dynamicLinks from "./dynamic-links";
 import {hasAnyRole, isAuthenticated, Role} from "./auth";
 import {kickUserFromSession} from "./agora";
-import {SnapCircleBannedParticipants, SnapCircleData, SessionState} from "./common-types";
+import {
+  SnapCircleBannedParticipants,
+  SnapCircleData,
+  SessionState,
+  CircleSessionSummary,
+  RepeatOptions,
+  RecurringType,
+  RepeatUnit,
+} from "./common-types";
+import {add} from "date-fns";
 
 // The Firebase Admin SDK to access the Firebase Realtime Database.
 // make sure that this initializeApp call hasn't already
@@ -34,15 +43,19 @@ export async function endSessionFor(
   circleRef?: DocumentReference
 ): Promise<boolean> {
   circleRef = circleRef || admin.firestore().collection("snapCircles").doc(circleId);
-  const {circleParticipants, state, keeper} = snapCircle;
+  const {circleParticipants, state, keeper, startedDate, scheduledSessions} = snapCircle;
   const completedDate = Timestamp.now();
   const batch = admin.firestore().batch();
   let endState = SessionState.cancelled;
   if (state === SessionState.ending) {
     endState = SessionState.complete;
+  } else if (state === SessionState.expiring) {
+    endState = SessionState.expired;
+  }
+  if (state != SessionState.waiting) {
+    // If the session was not in the waiting state then it was an active session
+    // Record it in the participants' records and then make a session record for the circle
     const entry = {circleRef, completedDate};
-    // moving from current state of 'active' to complete means the session is done
-    // only cache the circle in users list if it was active
     if (circleParticipants) {
       circleParticipants.forEach((uid: string) => {
         const entryRef = admin.firestore().collection("users").doc(uid).collection("snapCircles").doc();
@@ -50,13 +63,36 @@ export async function endSessionFor(
         batch.set(entryRef, {...entry, role, completedDate});
       });
     }
+    const sessionSummary: CircleSessionSummary = {startedDate, completedDate, state: endState, circleParticipants};
+    const sessionRef: DocumentReference = admin
+      .firestore()
+      .collection("snapCircles")
+      .doc(circleId)
+      .collection("sessions")
+      .doc(completedDate.seconds.toString());
+    batch.set(sessionRef, sessionSummary);
   }
-  // delete active circle reference
+  // delete active circle session
   const activeRef = admin.firestore().collection("activeCircles").doc(circleId);
   batch.delete(activeRef);
 
-  // update the circle reference to completed state
-  batch.update(circleRef, {state: endState, completedDate});
+  let newState: SessionState = endState;
+  let nextSession;
+  if (scheduledSessions && scheduledSessions.length > 0) {
+    nextSession = scheduledSessions.shift();
+    newState = SessionState.scheduled;
+  }
+
+  // update the circle to completed state
+  batch.update(circleRef, {
+    state: newState,
+    completedDate,
+    expiresOn: FieldValue.delete(),
+    circleParticipants: [],
+    participantCount: 0,
+    scheduledSessions,
+    nextSession: nextSession || FieldValue.delete(),
+  });
   await batch.commit();
   return true;
 }
@@ -107,7 +143,6 @@ export const startSnapSession = functions.https.onCall(async ({circleId}, {auth}
           if (Object.keys(participants).length > 0 && speakingOrder.length > 0) {
             activeSession["totemUser"] = participants[speakingOrder[0]].sessionUserId;
           }
-          activeSession["userStatus"] = false;
           // update the active session
           transaction.update(activeRef, activeSession);
           sessionParticipants = participants;
@@ -131,9 +166,6 @@ export const startSnapSession = functions.https.onCall(async ({circleId}, {auth}
         if (maxMinutes != null) {
           circleUpdate["expiresOn"] = new Timestamp(startedDate.seconds + maxMinutes * 60, 0);
         }
-        console.log(
-          `Updating circle with startedDate ${circleUpdate.startedDate} and expiresOn ${circleUpdate.expiresOn}`
-        );
         ref.update(circleUpdate);
         return true;
       }
@@ -154,6 +186,9 @@ interface CreateSnapCircleArgs {
     isPrivate: boolean;
     maxMinutes?: number;
     maxParticipants?: number;
+    recurringType?: RecurringType;
+    instances?: Timestamp[];
+    repeating?: RepeatOptions;
   };
 }
 
@@ -178,7 +213,7 @@ export const createSnapCircle = functions.https.onCall(
       }
       // Non-keepers can only have one active circle
       await assertHasFewerCirclesThan(auth.uid, 1);
-      // Non-keeper circles can only have a max of 10 participants and must be private
+      // Non-keeper circles can only have a max of 5 participants, last at most one hour and must be private
       let maxParticipants = options?.maxParticipants ?? NonKeeperMaxParticipants;
       if (maxParticipants > NonKeeperMaxParticipants) {
         maxParticipants = NonKeeperMaxParticipants;
@@ -191,6 +226,7 @@ export const createSnapCircle = functions.https.onCall(
         isPrivate: true,
         maxMinutes,
         maxParticipants,
+        recurringType: RecurringType.none,
       };
     } else if (previousCircle) {
       // Only the keeper can re-start a circle
@@ -202,6 +238,7 @@ export const createSnapCircle = functions.https.onCall(
     const userRef = admin.firestore().collection("users").doc(keeper);
 
     const created = Timestamp.now();
+    const recurringType = options?.recurringType ?? RecurringType.none;
     const data: SnapCircleData = {
       name,
       createdOn: created,
@@ -209,8 +246,20 @@ export const createSnapCircle = functions.https.onCall(
       createdBy: userRef,
       isPrivate: options?.isPrivate ?? false,
       keeper,
-      state: SessionState.waiting,
+      state: recurringType === RecurringType.none ? SessionState.waiting : SessionState.scheduled,
     };
+    if (recurringType != RecurringType.none) {
+      if (recurringType === RecurringType.instances) {
+        // Validate the instances and set the scheduled sessions list
+        data.scheduledSessions = assertValidInstances(options?.instances);
+      } else {
+        // Validate the repeating options and generate the session list
+        data.repeating = assertValidRepeatingOptions(options?.repeating);
+        data.scheduledSessions = generateScheduledSessions(data.repeating);
+      }
+      // Set the next session to the first in the list
+      data.nextSession = data.scheduledSessions?.shift();
+    }
     if (options?.maxMinutes) {
       data.maxMinutes = options.maxMinutes;
     }
@@ -267,6 +316,80 @@ export const createSnapCircle = functions.https.onCall(
     return {id: ref.id};
   }
 );
+
+/**
+ * Generate a list of session dates for a recurring session
+ * @param {RepeatOptions} recurring  - The recurring options
+ * @return {Timestamp[]}
+ */
+const generateScheduledSessions = ({
+  start = Timestamp.now(),
+  every = 1,
+  unit = RepeatUnit.days,
+  until,
+  count,
+}: RepeatOptions): Timestamp[] => {
+  const sessions: Timestamp[] = [];
+  let next = start;
+  let i = 0;
+  let done = false;
+  if (count == null && !until) {
+    count = 0; // Make sure it doesn't run forever
+  }
+  do {
+    sessions.push(next);
+    i++;
+    next = Timestamp.fromDate(add(next.toDate(), {[unit]: every}));
+    if (count != null && i > count) {
+      done = true;
+    } else if (until && next > until) {
+      done = true;
+    }
+  } while (!done);
+  return sessions;
+};
+
+const assertValidInstances = (instances?: Timestamp[]): Timestamp[] => {
+  // Recurring instances are just a list of scheduled sessions for the circle
+  if (!instances) {
+    throw new functions.https.HttpsError("invalid-argument", "Missing instances for recurring circle");
+  }
+  if (instances.length === 0) {
+    throw new functions.https.HttpsError("invalid-argument", "Must have at least one instance for recurring circle");
+  }
+  if (instances[0] < Timestamp.now()) {
+    throw new functions.https.HttpsError("invalid-argument", "First instance must be in the future");
+  }
+  return instances;
+};
+
+const assertValidRepeatingOptions = (repeating?: RepeatOptions): RepeatOptions => {
+  if (!repeating) {
+    throw new functions.https.HttpsError("invalid-argument", "Missing recurring options");
+  }
+  // Repeating circles happen on a repeated schedule (i.e. every 5 days) based on a starting date/time
+  if (!repeating.start) {
+    throw new functions.https.HttpsError("invalid-argument", "Must have a start date for a repeating circle");
+  }
+  if (!repeating.every) {
+    throw new functions.https.HttpsError("invalid-argument", "Must have a repeat interval for a repeating circle");
+  }
+  if (!repeating.unit) {
+    throw new functions.https.HttpsError("invalid-argument", "Must have a time unit for a repeating circle");
+  }
+  // Repeating circles also must end either after a given date or after a specified number of sessions
+  if (!repeating.until && repeating.count == null) {
+    throw new functions.https.HttpsError(
+      "invalid-argument",
+      "Must have either an end date or a session count for a repeating circle"
+    );
+  }
+  if (repeating.until && repeating.until < Timestamp.now()) {
+    throw new functions.https.HttpsError("invalid-argument", "End date for repeating circle must be in the future");
+  }
+
+  return repeating;
+};
 
 const assertHasFewerCirclesThan = async (uid: string, maxCircles: number): Promise<void> => {
   const ref = admin
