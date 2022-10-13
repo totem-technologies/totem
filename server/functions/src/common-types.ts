@@ -1,6 +1,38 @@
 // eslint-disable-next-line import/no-unresolved -- https://github.com/firebase/firebase-admin-node/issues/1827#issuecomment-1226224988
-import {Timestamp} from "firebase-admin/firestore";
-import * as admin from "firebase-admin";
+import {DocumentReference, Timestamp} from "firebase-admin/firestore";
+
+export enum SessionState {
+  cancelled = "cancelled",
+  complete = "complete",
+  live = "live",
+  waiting = "waiting",
+  starting = "starting",
+  expiring = "expiring",
+  expired = "expired",
+  ending = "ending",
+  scheduled = "scheduled",
+}
+
+export enum RecurringType {
+  none = "none",
+  instances = "instances",
+  repeating = "repeating",
+}
+
+export enum RepeatUnit {
+  hours = "hours",
+  days = "days",
+  weeks = "weeks",
+  months = "months",
+}
+
+export interface RepeatOptions {
+  start?: Timestamp;
+  every?: number;
+  unit?: RepeatUnit;
+  until?: Timestamp;
+  count?: number;
+}
 
 export interface SnapCircleBannedParticipants {
   [uid: string]: {
@@ -13,33 +45,34 @@ export interface SnapCircleData {
   name: string;
   createdOn: Timestamp;
   updatedOn: Timestamp;
-  startedDate?: Timestamp;
-  completedDate?: Timestamp;
-  exipresOn?: Timestamp;
-  createdBy: admin.firestore.DocumentReference;
+  createdBy: DocumentReference;
   isPrivate: boolean;
   maxMinutes?: number;
   maxParticipants?: number;
   keeper: string;
-  state: string;
+  state: SessionState;
   description?: string;
   link?: string;
   previewLink?: string;
   previousCircle?: string;
-  participantCount?: number;
-  circleParticipants?: string[];
   bannedParticipants?: SnapCircleBannedParticipants;
+  repeating?: RepeatOptions;
+  scheduledSessions?: Timestamp[];
+  nextSession?: Timestamp;
+
+  participantCount?: number;
+  startedDate?: Timestamp;
+  completedDate?: Timestamp;
+  exipresOn?: Timestamp;
+  circleParticipants?: string[];
   themeRef?: string;
   imageUrl?: string;
   bannerImageUrl?: string;
 }
 
-export const SessionState = {
-  cancelled: "cancelled",
-  complete: "complete",
-  live: "live",
-  waiting: "waiting",
-  starting: "starting",
-  expiring: "expiring",
-  ending: "ending",
-};
+export interface CircleSessionSummary {
+  startedDate?: Timestamp;
+  completedDate?: Timestamp;
+  state: string;
+  circleParticipants?: string[];
+}
