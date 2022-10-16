@@ -4,14 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:totem/app/home/components/index.dart';
 import 'package:totem/app/home/components/named_circle_list.dart';
-import 'package:totem/app_routes.dart';
 import 'package:totem/components/widgets/index.dart';
-import 'package:totem/config.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/theme/index.dart';
-import 'package:url_launcher/url_launcher.dart';
-
 import '../../services/providers.dart';
+import 'menu.dart';
 
 final myPrivateCircles = StreamProvider.autoDispose<List<SnapCircle>>((ref) {
   final repo = ref.read(repositoryProvider);
@@ -118,102 +115,5 @@ class HomePage extends ConsumerWidget {
           loading: () => Container(),
           error: (Object error, StackTrace? stackTrace) => Container(),
         );
-  }
-}
-
-class TotemDrawer extends ConsumerWidget {
-  const TotemDrawer({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final themeData = Theme.of(context);
-    final themeColors = themeData.themeColors;
-    var userFuture = ref.read(repositoryProvider).userProfile();
-    return Drawer(
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.horizontal(
-          left: Radius.circular(20),
-        ),
-      ),
-      child: ListView(
-        // Important: Remove any padding from the ListView.
-        padding: EdgeInsets.zero,
-        children: [
-          DrawerHeader(
-            decoration: BoxDecoration(
-              color: themeColors.altBackground,
-            ),
-            child: FutureBuilder<UserProfile?>(
-                future: userFuture,
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData) {
-                    return Container();
-                  }
-                  var user = snapshot.data!;
-                  return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        CircleAvatar(
-                          foregroundImage: NetworkImage(user.image!),
-                          child: Text(user.name[0]),
-                        ),
-                        const SizedBox(
-                          height: 25,
-                        ),
-                        Text(
-                          user.name,
-                          style: themeData.textStyles.displayMedium,
-                        )
-                      ]);
-                }),
-          ),
-          DrawerItem(
-              text: 'Profile',
-              icon: Icons.person_outline,
-              onTap: () {
-                Navigator.pop(context);
-                context.goNamed(AppRoutes.userProfile);
-              }),
-          DrawerItem(
-              text: 'Help',
-              icon: Icons.help_outline,
-              onTap: () {
-                Navigator.pop(context);
-                launchUrl(
-                  Uri.parse('https://docs.heytotem.com'),
-                  mode: LaunchMode.externalApplication,
-                );
-              }),
-          if (AppConfig.isDev)
-            DrawerItem(
-                text: 'Dev Tools',
-                icon: Icons.smart_toy_outlined,
-                onTap: () {
-                  Navigator.pop(context);
-                  context.pushNamed(AppRoutes.dev);
-                })
-        ],
-      ),
-    );
-  }
-}
-
-class DrawerItem extends StatelessWidget {
-  const DrawerItem(
-      {super.key, required this.text, required this.icon, required this.onTap});
-  final Function() onTap;
-  final String text;
-  final IconData icon;
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      title: Row(children: [
-        Icon(icon, size: 24),
-        const SizedBox(width: 10),
-        Text(text)
-      ]),
-      onTap: onTap,
-    );
   }
 }
