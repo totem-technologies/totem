@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:totem/app/circle/index.dart';
 import 'package:totem/dev/layouts.dart';
 import 'package:totem/dev/test_session_controls.dart';
@@ -6,6 +7,7 @@ import 'package:totem/models/index.dart';
 import 'package:totem/theme/app_theme_styles.dart';
 
 import '../app/circle/components/layouts.dart';
+import '../components/animation/reveal_animation_container.dart';
 import '../services/utils/device_type.dart';
 
 class ActiveSessionLayoutTest extends StatefulWidget {
@@ -18,7 +20,7 @@ class ActiveSessionLayoutTest extends StatefulWidget {
 class ActiveSessionLayoutTestState extends State<ActiveSessionLayoutTest> {
   int participantCount = 7;
   bool waiting = true;
-  bool waitingForTotem = false;
+  bool waitingForTotem = true;
   bool totemUser = false;
   final String circleName = "This is a test circle with a pretty long name";
   @override
@@ -176,8 +178,7 @@ class ActiveSessionLayoutTestState extends State<ActiveSessionLayoutTest> {
                                 child: ListenerUserLayout(
                                   constrainSpeaker: !totemUser,
                                   userList: ParticipantListLayout(
-                                      maxAllowedDimension:
-                                          isPhoneLayout ? 1 : 2,
+                                      maxAllowedDimension: 1,
                                       maxChildSize: isPhoneLayout ? 100 : 180,
                                       direction: isPhoneLayout
                                           ? Axis.horizontal
@@ -185,9 +186,39 @@ class ActiveSessionLayoutTestState extends State<ActiveSessionLayoutTest> {
                                       generate: getParticipant,
                                       count: participantCount),
                                   speaker: !waitingForTotem
-                                      ? Container(
-                                          color: Colors.yellow,
-                                        )
+                                      ? (!totemUser
+                                          ? RevealAnimationContainer(
+                                              animationAsset:
+                                                  'assets/animations/totem_reveal.json',
+                                              fadeAnimationStart: 0.5,
+                                              revealAnimationStart: 0.8,
+                                              revealInset: 0.2,
+                                              overlay: Center(
+                                                child: Container(
+                                                  padding:
+                                                      const EdgeInsets.all(10),
+                                                  decoration:
+                                                      const BoxDecoration(
+                                                          color: Colors.black,
+                                                          shape:
+                                                              BoxShape.circle),
+                                                  child: SvgPicture.asset(
+                                                    'view_circle.svg',
+                                                    color: Colors.white,
+                                                    width: 50,
+                                                    height: 50,
+                                                  ),
+                                                ),
+                                              ),
+                                              child: Image.network(
+                                                'https://www.w3schools.com/howto/img_avatar.png',
+                                                fit: BoxFit.cover,
+                                              ),
+                                            )
+                                          : Image.network(
+                                              'https://www.w3schools.com/howto/img_avatar.png',
+                                              fit: BoxFit.cover,
+                                            ))
                                       : (totemUser
                                           ? const PendingTotemUser()
                                           : const WaitingForTotemUser()),
