@@ -4,12 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:totem/app/home/components/index.dart';
 import 'package:totem/app/home/components/named_circle_list.dart';
-import 'package:totem/app_routes.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/theme/index.dart';
-
 import '../../services/providers.dart';
+import 'menu.dart';
 
 final myPrivateCircles = StreamProvider.autoDispose<List<SnapCircle>>((ref) {
   final repo = ref.read(repositoryProvider);
@@ -27,7 +26,20 @@ class HomePage extends ConsumerWidget {
     AuthUser user = ref.read(authServiceProvider).currentUser()!;
     bool isMobile = Theme.of(context).isMobile(context);
     return Scaffold(
+      appBar: AppBar(
+        toolbarHeight: 75,
+        centerTitle: false,
+        backgroundColor: themeColors.containerBackground,
+        title: SvgPicture.asset('assets/home_logo.svg'),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            bottom: Radius.circular(20),
+          ),
+        ),
+        elevation: 0,
+      ),
       backgroundColor: themeColors.altBackground,
+      endDrawer: const TotemDrawer(),
       body: Stack(
         children: [
           Positioned.fill(
@@ -47,24 +59,6 @@ class HomePage extends ConsumerWidget {
                     ),
             ),
           ),
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: _homeHeader(context, isMobile: isMobile),
-          ),
-/*          const Align(
-            alignment: Alignment.bottomCenter,
-            child: BottomTrayContainer(
-              child: SafeArea(
-                top: false,
-                bottom: true,
-                child: Center(
-                  child: CreateCircleButton(),
-                ),
-              ),
-            ),
-          ),*/
         ],
       ),
     );
@@ -88,7 +82,7 @@ class HomePage extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const SizedBox(
-                  height: 120,
+                  height: 60,
                 ),
                 TotemHeader(
                   text: t.circles,
@@ -121,63 +115,5 @@ class HomePage extends ConsumerWidget {
           loading: () => Container(),
           error: (Object error, StackTrace? stackTrace) => Container(),
         );
-  }
-
-  Widget _homeHeader(BuildContext context, {required bool isMobile}) {
-    final themeColors = Theme.of(context).themeColors;
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: const BorderRadius.only(
-          bottomLeft: Radius.circular(30),
-          bottomRight: Radius.circular(30),
-        ),
-        color: themeColors.containerBackground,
-        /* boxShadow: [
-          BoxShadow(
-              color: themeColors.shadow,
-              offset: const Offset(0, 8),
-              blurRadius: 24),
-        ], */
-      ),
-      child: SafeArea(
-        top: true,
-        bottom: false,
-        child: Wrap(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 20, bottom: 20),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    width:
-                        isMobile ? Theme.of(context).pageHorizontalPadding : 80,
-                  ),
-                  SvgPicture.asset('assets/home_logo.svg'),
-                  Expanded(child: Container()),
-                  InkWell(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: isMobile
-                              ? Theme.of(context).pageHorizontalPadding
-                              : 80,
-                          vertical: 10),
-                      child: const Icon(Icons.person_outline, size: 24),
-                    ),
-                    onTap: () {
-                      _showProfile(context);
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _showProfile(BuildContext context) {
-    context.goNamed(AppRoutes.userProfile);
   }
 }
