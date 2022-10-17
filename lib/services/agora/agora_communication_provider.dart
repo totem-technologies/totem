@@ -120,31 +120,16 @@ class AgoraCommunicationProvider extends CommunicationProvider {
                 id: device.deviceId,
                 type: CommunicationDeviceType.speakers))
             .toList(growable: false);
-        // get the previously used audio output device
-        String? defAudioOutput = prefs.getString(defaultAudioOutputKey);
-        // if there is a previously used audio output and its not the current output/playback device
-        // find it in the list (making sure it still is there) and set it
-        // as the current device. if its not there, just use the currently
-        // set device
         String? audioOutput =
             await _engine!.deviceManager.getAudioPlaybackDevice();
-        if (defAudioOutput != null && audioOutput != defAudioOutput) {
-          _audioOutput = _audioOutputs
-              .firstWhereOrNull((output) => output.id == defAudioOutput);
-          if (_audioOutput != null) {
-            await _setAudioOutput(defAudioOutput);
-          }
-        }
-        if (_audioOutput == null && audioOutput != null) {
-          _audioOutput = _audioOutputs.firstWhereOrNull((speaker) =>
-              audioOutput.isNotEmpty
-                  ? speaker.id == audioOutput
-                  : speaker.id == "default");
-        }
-        _audioOutput ??= _audioOutputs.first;
-        await _cacheAudioOutput();
+        _audioOutput = await _setupDefaultDevice(
+            devices: _audioOutputs,
+            cacheKey: defaultAudioOutputKey,
+            prefs: prefs,
+            setDevice: _setAudioOutput,
+            currentDevice: audioOutput);
       } catch (ex, stack) {
-        debugPrint('unable to get devices: $ex');
+        debugPrint('unable to get output devices: $ex');
         await reportError(ex, stack);
       }
 
@@ -158,29 +143,14 @@ class AgoraCommunicationProvider extends CommunicationProvider {
                 id: device.deviceId,
                 type: CommunicationDeviceType.microphone))
             .toList(growable: false);
-        // get the previously used audio input device
-        String? defAudioInput = prefs.getString(defaultAudioInputKey);
-        // if there is a previously used audio input and its not the current input device
-        // find it in the list (making sure it still is there) and set it
-        // as the current device. if its not there, just use the currently
-        // set device
         String? audioInput =
             await _engine!.deviceManager.getAudioRecordingDevice();
-        if (defAudioInput != null && audioInput != defAudioInput) {
-          _audioInput = _audioInputs
-              .firstWhereOrNull((input) => input.id == defAudioInput);
-          if (_audioInput != null) {
-            await _setAudioInput(defAudioInput);
-          }
-        }
-        if (_audioInput == null && audioInput != null) {
-          _audioInput = _audioInputs.firstWhereOrNull((device) =>
-              audioInput.isNotEmpty
-                  ? device.id == audioInput
-                  : device.name == "default");
-        }
-        _audioInput ??= _audioInputs.first;
-        await _cacheAudioInput();
+        _audioInput = await _setupDefaultDevice(
+            devices: _audioInputs,
+            cacheKey: defaultAudioInputKey,
+            prefs: prefs,
+            setDevice: _setAudioInput,
+            currentDevice: audioInput);
         if (_audioInput == null) {
           return "errorNoMicrophone";
         }
@@ -199,28 +169,13 @@ class AgoraCommunicationProvider extends CommunicationProvider {
                 id: device.deviceId,
                 type: CommunicationDeviceType.camera))
             .toList(growable: false);
-        // get the previously used camera device
-        String? defCamera = prefs.getString(defaultCameraKey);
-        // if there is a previously used camera and its not the current video device
-        // find it in the list (making sure it still is there) and set it
-        // as the current device. if its not there, just use the currently
-        // set device
         String? camera = await _engine!.deviceManager.getVideoDevice();
-        if (defCamera != null && camera != defCamera) {
-          _camera =
-              _cameras.firstWhereOrNull((camera) => camera.id == defCamera);
-          if (_camera != null) {
-            await _setCamera(defCamera);
-          }
-        }
-        if (_camera == null && camera != null) {
-          _camera = _cameras.firstWhereOrNull((device) => camera.isNotEmpty
-              ? device.id == camera
-              : device.name == "default");
-        }
-        _camera ??= _cameras.first;
-        // update current camera
-        await _cacheCamera();
+        _camera = await _setupDefaultDevice(
+            devices: _cameras,
+            cacheKey: defaultCameraKey,
+            prefs: prefs,
+            setDevice: _setCamera,
+            currentDevice: camera);
         if (_camera == null) {
           return "errorCamera";
         }
@@ -990,7 +945,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
       if (device != _audioInput) {
         await _setAudioInput(device.id);
         _audioInput = device;
-        await _cacheAudioInput();
+        await _cacheDevice(key: defaultAudioInputKey, value: _audioInput?.id);
         notifyListeners();
       }
       return true;
@@ -1010,7 +965,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
         String? setDev = await _engine!.deviceManager.getAudioPlaybackDevice();
         debugPrint('Set Device: $setDev');
         _audioOutput = device;
-        await _cacheAudioOutput();
+        await _cacheDevice(key: defaultAudioOutputKey, value: _audioOutput?.id);
         notifyListeners();
       }
       return true;
@@ -1028,7 +983,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
       if (device != _camera) {
         await _setCamera(device.id);
         _camera = device;
-        await _cacheCamera();
+        await _cacheDevice(key: defaultCameraKey, value: _camera?.id);
         notifyListeners();
       }
       return true;
@@ -1183,36 +1138,51 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     await _engine!.enableLocalAudio(true);
   }
 
-  Future<void> _cacheCamera() async {
-    if (_engine == null || _camera == null) return;
+  Future<void> _cacheDevice({required String key, String? value}) async {
+    if (_engine == null || value == null) return;
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString(defaultCameraKey, _camera!.id);
+      await prefs.setString(key, value);
     } catch (ex, stack) {
-      debugPrint('Error caching camera: $ex');
+      debugPrint('Error caching device with key: $key error: $ex');
       await reportError(ex, stack);
     }
   }
 
-  Future<void> _cacheAudioInput() async {
-    if (_engine == null || _audioInput == null) return;
+  Future<CommunicationDevice?> _setupDefaultDevice({
+    required List<CommunicationDevice> devices,
+    required String cacheKey,
+    required SharedPreferences prefs,
+    required Function(String) setDevice,
+    String? currentDevice,
+  }) async {
+    CommunicationDevice? selectedDevice;
     try {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString(defaultAudioInputKey, _audioInput!.id);
+      // get the previously used device
+      String? defDevice = prefs.getString(cacheKey);
+      // if there is a previously used device and its not the current device
+      // find it in the list (making sure it still is there) and set it
+      // as the current device. if its not there, just use the currently
+      // set device
+      if (defDevice != null && currentDevice != defDevice) {
+        selectedDevice =
+            devices.firstWhereOrNull((output) => output.id == defDevice);
+        if (selectedDevice != null) {
+          await setDevice(defDevice);
+        }
+      }
+      if (selectedDevice == null && currentDevice != null) {
+        selectedDevice = devices.firstWhereOrNull((device) =>
+            currentDevice.isNotEmpty
+                ? device.id == currentDevice
+                : device.id == "default");
+      }
+      selectedDevice ??= devices.first;
+      await _cacheDevice(key: cacheKey, value: selectedDevice.id);
     } catch (ex, stack) {
-      debugPrint('Error caching audio input: $ex');
+      debugPrint('unable to get $cacheKey devices: $ex ');
       await reportError(ex, stack);
     }
-  }
-
-  Future<void> _cacheAudioOutput() async {
-    if (_engine == null || _audioOutput == null) return;
-    try {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString(defaultAudioOutputKey, _audioOutput!.id);
-    } catch (ex, stack) {
-      debugPrint('Error caching audio output: $ex');
-      await reportError(ex, stack);
-    }
+    return selectedDevice;
   }
 }
