@@ -128,7 +128,10 @@ class DrawerItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       title: Row(children: [
-        FaIcon(icon, size: 24),
+        SizedBox(
+          width: 30,
+          child: FaIcon(icon, size: 24),
+        ),
         const SizedBox(width: 15),
         Text(text)
       ]),
