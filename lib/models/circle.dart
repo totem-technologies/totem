@@ -25,6 +25,7 @@ abstract class Circle {
   String? bannerImageUrl;
   bool isPrivate = false;
   late int colorIndex;
+  DateTime? nextSession;
 
   bool _canJoin = true;
 
@@ -55,6 +56,7 @@ abstract class Circle {
     if (uid != null && bannedParticipants != null) {
       _canJoin = bannedParticipants![uid] == null;
     }
+    nextSession = DateTimeEx.fromMapValue(json['nextSession']);
     colorIndex = name.hashCode;
   }
 

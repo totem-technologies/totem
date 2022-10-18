@@ -427,6 +427,16 @@ class _CircleInfoDialogState extends ConsumerState<CircleInfoDialog> {
         label: t.joinCircle,
       );
     }
+    // if the user is the keeper of this circle, provide the option to restart
+    // the circle if it is not a scheduled circle
+    if (circle.createdBy?.uid == authUser?.uid && circle.nextSession == null) {
+      return ThemedRaisedButton(
+        onPressed: () {
+          //_restart(circle);
+        },
+        label: t.restartCircle,
+      );
+    }
     return Text(
       t.circleNotInSession,
       style: textStyles.headline3,

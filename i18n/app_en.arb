@@ -249,6 +249,7 @@
         }
     },
     "repeatingSession": "Repeating Session",
+    "restartCircle": "Restart Circle",
     "retake": "Retake",
     "retryPhone": "Didn’t receive a code?\nEnter a new number",
     "retrySignin": "Retry",

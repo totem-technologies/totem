@@ -10,8 +10,6 @@ export 'date_name_ext.dart';
 export 'network_state.dart';
 export 'participant.dart';
 export 'roles.dart';
-export 'scheduled_circle.dart';
-export 'scheduled_session.dart';
 export 'session.dart';
 export 'session_data_message.dart';
 export 'session_participant.dart';

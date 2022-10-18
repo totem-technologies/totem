@@ -138,16 +138,9 @@ class CircleSessionLivePageState extends ConsumerState<CircleSessionLivePage> {
   Widget build(BuildContext context) {
     // listen to changes in the session
     ref.watch(activeSessionProvider);
-    if (widget.session is SnapSession) {
-      return CircleSnapSessionContent(
-          circle: widget.session.circle as SnapCircle,
-          userProfile: widget.userProfile);
-    } else {
-      return CircleScheduledSessionContent(
-        session: widget.session,
-        userProfile: widget.userProfile,
-      );
-    }
+    return CircleSnapSessionContent(
+        circle: widget.session.circle as SnapCircle,
+        userProfile: widget.userProfile);
   }
 
   void _handleActiveSessionChange() {
