@@ -9,6 +9,8 @@ import 'package:totem/config.dart';
 import 'package:totem/app_routes.dart';
 import 'package:totem/models/index.dart';
 
+import '../../components/index.dart';
+
 class TotemDrawer extends ConsumerWidget {
   const TotemDrawer({super.key});
 
@@ -42,9 +44,8 @@ class TotemDrawer extends ConsumerWidget {
                   return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        CircleAvatar(
-                          foregroundImage: NetworkImage(user.image!),
-                          child: Text(user.name[0]),
+                        ProfileImage(
+                          profile: user,
                         ),
                         const SizedBox(
                           height: 25,
