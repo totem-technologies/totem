@@ -7,6 +7,12 @@
     "ageMissing": "Age verification",
     "ageVerification": "I am at least 18 years of age",
     "areYouSureSignOut": "Are you sure you want to sign out?",
+    "attendeeLimit": "{num} attendees limit",
+    "@attendeeLimit": {
+        "placeholders": {
+            "num": {}
+        }
+    },
     "audioInput": "Audio Input",
     "audioOutput": "Audio Output",
     "audioVideoSettings": "Audio and Video Settings",
@@ -41,6 +47,7 @@
     "circleEnding": "Circle is ending",
     "circles": "Circles",
     "circleInProgress": "Circle in progress",
+    "circleNotInSession": "Circle is not in session",
     "circleLogo": "Logo Image",
     "circleName": "Circle Name",
     "circleRejoinWaiting": "Waiting for keeper to let you into the session in progress",
@@ -76,6 +83,7 @@
     "deleteAccountMessage": "Are you sure you want to delete all your data? This cannot be undone?",
     "deleteEverythingButton": "Yes, delete everything",
     "description": "Description",
+    "doesNotRepeat": "Does not repeat",
     "donate": "Donate",
     "done": "Done",
     "duration": "Duration",
@@ -100,6 +108,8 @@
     "errorEnterNumSessions": "Enter a number of sessions between 1 and 100",
     "errorInvalidPhoneNumber": "Invalid Phone Number",
     "errorJoinSession": "Unable to join session",
+    "errorLoadingCircle": "This circle is not available",
+    "errorLoadingCircleBanned": "This circle is no longer available",
     "errorPinCode": "Please enter a 6 digit code",
     "errorNoMicrophone": "Unable to access microphone",
     "errorNoProfile": "There is no profile",
@@ -131,6 +141,7 @@
     "helpPublicInformation": "This is public information. This is shown to other people in your circles.",
     "helpSessionProfileImage": "You can take an updated profile picture before the circle",
     "home": "Home",
+    "hostedBy": "Hosted By:",
     "hourOne": "1 hour",
     "hourOneAndMinsValue": "1 hour and {mins} mins",
     "@hourOneAndMinsValue": {
@@ -167,6 +178,7 @@
     "introScreenMessage3": "Press **Receive** to accept the totem when it’s your turn to share.\\\nYou may respond to the prompt, share a story, or react to a share.\\\nIt’s always OK to not say anything at all.\\\nPress **Pass** to hand the totem to the next person.",
     "introScreenTitle4": "Let's Begin!",
     "introScreenMessage4": "Please find a quiet place where you are unlikely to be distracted.\\\nAlways speak from your own **experience**, try to not offer advice.\\\nIt helps to disable all notifications and put everything on silent.\\\n**Enjoy** this rare opportunity to be heard without interruption.",
+    "instantSession": "Instant Session",
     "joinCircle": "Join Circle",
     "joinCircleMessage": "Welcome! Before you enter the waiting room, please check that your audio and video are working as intended.",
     "joiningCircle": "Joining Circle",
@@ -236,6 +248,7 @@
             "name": {}
         }
     },
+    "repeatingSession": "Repeating Session",
     "retake": "Retake",
     "retryPhone": "Didn’t receive a code?\nEnter a new number",
     "retrySignin": "Retry",

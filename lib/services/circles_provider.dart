@@ -47,4 +47,5 @@ abstract class CirclesProvider {
       required List<SessionState> state,
       required String uid});
   Future<bool> canJoinCircle({required String circleId, required String uid});
+  Stream<SnapCircle?> snapCircleStream(String circleId);
 }

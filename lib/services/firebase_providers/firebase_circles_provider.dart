@@ -114,6 +114,21 @@ class FirebaseCirclesProvider extends CirclesProvider {
   }
 
   @override
+  Stream<SnapCircle?> snapCircleStream(String circleId) {
+    final circle =
+        FirebaseFirestore.instance.collection(Paths.snapCircles).doc(circleId);
+    return circle.snapshots().transform(
+      StreamTransformer<DocumentSnapshot<Map<String, dynamic>>,
+          SnapCircle?>.fromHandlers(
+        handleData: (DocumentSnapshot<Map<String, dynamic>> documentSnapshot,
+            EventSink<SnapCircle?> sink) {
+          _mapSingleSnapCircleUserReference(documentSnapshot, sink);
+        },
+      ),
+    );
+  }
+
+  @override
   Future<ScheduledCircle?> createScheduledCircle({
     required String name,
     required int numSessions,
@@ -427,6 +442,30 @@ class FirebaseCirclesProvider extends CirclesProvider {
       }
     }
     sink.add(circles);
+  }
+
+  void _mapSingleSnapCircleUserReference(
+      DocumentSnapshot<Map<String, dynamic>> documentSnapshot,
+      EventSink sink) async {
+    if (documentSnapshot.exists) {
+      try {
+        Map<String, dynamic> data =
+            documentSnapshot.data() as Map<String, dynamic>;
+        SnapCircle circle = SnapCircle.fromJson(data,
+            id: documentSnapshot.id, ref: documentSnapshot.reference.path);
+        DocumentReference ref = data["createdBy"] as DocumentReference;
+        circle.createdBy = await _userFromRef(ref);
+        if (data['activeSession'] != null) {
+          SnapSession.fromJson(data['activeSession'], circle: circle);
+        }
+        sink.add(circle);
+      } catch (ex, stack) {
+        debugPrint(ex.toString());
+        await reportError(ex, stack);
+      }
+    } else {
+      sink.add(null);
+    }
   }
 
   Future<UserProfile?> _userFromRef(DocumentReference ref) async {

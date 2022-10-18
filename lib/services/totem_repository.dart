@@ -129,6 +129,8 @@ class TotemRepository {
           previousId: previousId, state: state, uid: user!.uid);
   Future<bool> canJoinCircle(String circleId) =>
       _circlesProvider.canJoinCircle(circleId: circleId, uid: user!.uid);
+  Stream<SnapCircle?> snapCircleStream(String circleId) =>
+      _circlesProvider.snapCircleStream(circleId);
 
   // Sessions
   Future<ActiveSession> activateSession({required ScheduledSession session}) =>

@@ -23,6 +23,7 @@ abstract class Circle {
   String? themeRef;
   String? imageUrl;
   String? bannerImageUrl;
+  bool isPrivate = false;
   late int colorIndex;
 
   bool _canJoin = true;
@@ -46,6 +47,7 @@ abstract class Circle {
     themeRef = json['themeRef'];
     imageUrl = json['imageUrl'];
     bannerImageUrl = json['bannerImageUrl'];
+    isPrivate = json['isPrivate'] ?? false;
     if (json['bannedParticipants'] != null) {
       bannedParticipants =
           Map<String, dynamic>.from(json['bannedParticipants']);

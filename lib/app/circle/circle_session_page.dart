@@ -1,17 +1,13 @@
 import 'dart:async';
-import 'dart:ui';
 
 import 'package:after_layout/after_layout.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:totem/app/circle/index.dart';
 import 'package:totem/app_routes.dart';
-import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/account_state/account_state_event_manager.dart';
 import 'package:totem/services/index.dart';
-import 'package:totem/theme/index.dart';
 
 final activeSessionProvider =
     ChangeNotifierProvider.autoDispose<ActiveSession>((ref) {
@@ -38,16 +34,15 @@ class CircleSessionPage extends ConsumerStatefulWidget {
 }
 
 enum SessionPageState {
-  loading,
   prompt,
   ready,
   cancelled,
-  error,
+  info,
 }
 
 class CircleSessionPageState extends ConsumerState<CircleSessionPage>
     with AfterLayoutMixin {
-  SessionPageState _sessionState = SessionPageState.loading;
+  SessionPageState _sessionState = SessionPageState.info;
   Session? _session;
   UserProfile? _userProfile;
 
@@ -60,15 +55,11 @@ class CircleSessionPageState extends ConsumerState<CircleSessionPage>
   Widget build(BuildContext context) {
     ref.watch(communicationsProvider);
     switch (_sessionState) {
-      case SessionPageState.loading:
-        return _loadingSession(context);
       case SessionPageState.ready:
         return CircleSessionLivePage(
           session: _session!,
           userProfile: _userProfile!,
         );
-      case SessionPageState.error:
-        return _failedToLoadSession(context);
       case SessionPageState.cancelled:
       case SessionPageState.prompt:
       default:
@@ -76,145 +67,40 @@ class CircleSessionPageState extends ConsumerState<CircleSessionPage>
     }
   }
 
-  Widget _loadingSession(BuildContext context) {
-    return _interstitialBackground(
-      context,
-      ConstrainedBox(
-        constraints: const BoxConstraints(minWidth: 250),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              AppLocalizations.of(context)!.loadingCircle,
-              style: Theme.of(context).textTheme.headline4,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(
-              height: 30,
-            ),
-            const BusyIndicator(),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _failedToLoadSession(BuildContext context) {
-    return _interstitialBackground(
-      context,
-      Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text(
-            AppLocalizations.of(context)!.errorSessionInvalid,
-            style: Theme.of(context).textTheme.headline4,
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(
-            height: 30,
-          ),
-          ThemedRaisedButton(
-            label: AppLocalizations.of(context)!.ok,
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _interstitialBackground(BuildContext context, Widget child) {
-    return BackdropFilter(
-      filter: ImageFilter.blur(sigmaX: 2.5, sigmaY: 2.5),
-      child: Center(
-        child: ConstrainedBox(
-          constraints:
-              BoxConstraints(maxWidth: Theme.of(context).maxRenderWidth),
-          child: DialogContainer(
-              padding: const EdgeInsets.only(
-                  top: 50, bottom: 80, left: 40, right: 40),
-              child: child),
-        ),
-      ),
-    );
+  Future<void> _showJoinPrompt(SnapCircle circle) async {
+    var repo = ref.read(repositoryProvider);
+    setState(() => _sessionState = SessionPageState.prompt);
+    await ref
+        .read(accountStateEventManager)
+        .handleEvents(context, type: AccountStateEventType.preCircle);
+    if (!mounted) return;
+    UserProfile? user =
+        await CircleJoinDialog.showJoinDialog(context, circle: circle);
+    if (user != null) {
+      if (repo.activeSession == null) {
+        await repo.createActiveSession(circle: circle);
+      }
+      _userProfile = user;
+      repo.activeSession!.userProfile = user;
+      _session = circle.snapSession;
+      setState(() => _sessionState = SessionPageState.ready);
+    } else {
+      if (mounted) {
+        setState(() => _sessionState = SessionPageState.cancelled);
+        context.pop();
+      }
+    }
   }
 
   Future<void> _loadSessionData() async {
-    var repo = ref.read(repositoryProvider);
-    // find the circle / session first
-    SnapCircle? circle = await repo.circleFromId(widget.sessionID);
-    if (circle != null) {
-      bool canJoin = (circle.canJoin && await repo.canJoinCircle(circle.id));
-      if (canJoin) {
-        if (circle.state == SessionState.complete ||
-            circle.state == SessionState.cancelled) {
-          // circle is complete or cancelled, so will have to start a new one
-          // Make sure there isn't a new one already started as well,
-          // should only be 1 that is waiting with a previous circle referencing this one
-          SnapCircle? pending = await repo.circleFromPreviousIdAndState(
-              circle.id,
-              [SessionState.waiting, SessionState.starting, SessionState.live]);
-          if (pending == null) {
-            // this is a create new circle moment
-            try {
-              circle = await repo.createSnapCircle(
-                name: circle.name,
-                description: circle.description,
-                keeper: circle.keeper,
-                previousCircle: circle.id,
-                bannedParticipants: circle.bannedParticipants,
-              );
-            } on ServiceException catch (ex) {
-              debugPrint('Error re-creating circle: $ex');
-              setState(() => _sessionState = SessionPageState.error);
-              return;
-            }
-          } else {
-            // join the pending one
-            circle = pending;
-          }
-        }
-      } else {
-        // User cannot join this circle, so show a removed message & ended
-        if (mounted) {
-          context.replaceNamed(AppRoutes.circleEnded, extra: {
-            'removed': true,
-            'circle': circle,
-            'state': SessionState.removed
-          });
-        }
-        circle = null;
-        return;
-      }
-      if (circle != null) {
-        if (repo.activeSession == null) {
-          await repo.createActiveSession(circle: circle);
-        }
-        setState(() => _sessionState = SessionPageState.prompt);
-        if (!mounted) return;
-        await ref
-            .read(accountStateEventManager)
-            .handleEvents(context, type: AccountStateEventType.preCircle);
-        if (!mounted) return;
-        UserProfile? user =
-            await CircleJoinDialog.showJoinDialog(context, circle: circle);
-        if (user != null) {
-          _userProfile = user;
-          repo.activeSession!.userProfile = user;
-          _session = circle.snapSession;
-          setState(() => _sessionState = SessionPageState.ready);
-        } else {
-          if (mounted) {
-            setState(() => _sessionState = SessionPageState.cancelled);
-            context.pop();
-          }
-        }
-      }
-    } else {
-      setState(() => _sessionState = SessionPageState.error);
+    SnapCircle? joinCircle = await CircleInfoDialog.showCircleInfo(context,
+        circleId: widget.sessionID);
+    if (!mounted) return;
+    if (joinCircle != null) {
+      await _showJoinPrompt(joinCircle);
+      return;
+    } else if (mounted) {
+      context.pop();
     }
   }
 
