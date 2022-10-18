@@ -24,7 +24,7 @@ export const runScheduler = functions.https.onRequest(async (_, response) => {
  * @return {Promise}
  */
 async function performAllTasks(): Promise<void> {
-  await Promise.all([activateScheduledSessions(), await performExpirationTasks()]);
+  await Promise.all([activateScheduledSessions(), performExpirationTasks()]);
 }
 
 /**
