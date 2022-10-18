@@ -25,6 +25,7 @@ module.exports = {
   rules: {
     indent: "off",
     quotes: ["error", "double"],
+    "space-before-function-paren": "off",
     "quote-props": ["error", "as-needed"],
     "max-len": [
       "off",

@@ -6,21 +6,29 @@ import {SessionState, SnapCircleData} from "./common-types";
 import {endSessionFor} from "./session";
 import {PubSub} from "@google-cloud/pubsub";
 
-const expiringMinutes = 5;
+const SchedulerInterval = 5;
 
-export const scheduler = functions.pubsub.schedule("every 5 minutes").onRun(async () => {
-  await performExpirationTasks();
+export const scheduler = functions.pubsub.schedule(`every ${SchedulerInterval} minutes`).onRun(async () => {
+  await performAllTasks();
   return null;
 });
 
 export const runScheduler = functions.https.onRequest(async (_, response) => {
-  await performExpirationTasks();
+  await performAllTasks();
   response.status(200).send("Schedule has run");
 });
 
 /**
- * Run all of the currently scheduled tasks. We can later break this up into separate sections
- * if we end up needing to run tasks at different intervals or want to run specific tasks on demand
+ * Run all of the currently scheduled tasks.
+ * If we later decide we want these to run without waiting we can convert them to pubsub subjects and publish to them here
+ * @return {Promise}
+ */
+async function performAllTasks(): Promise<void> {
+  await Promise.all([activateScheduledSessions(), performExpirationTasks()]);
+}
+
+/**
+ * Run all of the tasks associated with expiring sessions
  * @return {Promise}
  */
 async function performExpirationTasks(): Promise<void> {
@@ -54,7 +62,7 @@ async function endExpiredSessions(): Promise<void> {
  * @return {Promise}
  */
 async function setExpiringSessions(): Promise<void> {
-  const in5Mins: Timestamp = new Timestamp(Timestamp.now().seconds + expiringMinutes * 60, 0);
+  const in5Mins: Timestamp = new Timestamp(Timestamp.now().seconds + SchedulerInterval * 60, 0);
   const ref = admin
     .firestore()
     .collection("snapCircles")
@@ -64,6 +72,22 @@ async function setExpiringSessions(): Promise<void> {
   for (const doc of snapshot.docs) {
     console.warn(`Setting session for circle ${doc.id} to expiring`);
     admin.firestore().collection("snapCircles").doc(doc.id).update({state: SessionState.expiring});
+  }
+}
+
+/**
+ * This function is used to move any upcoming scheduled sessions into the waiting state
+ */
+async function activateScheduledSessions(): Promise<void> {
+  const in5Mins: Timestamp = new Timestamp(Timestamp.now().seconds + SchedulerInterval * 60, 0);
+  const ref = admin
+    .firestore()
+    .collection("snapCircles")
+    .where("state", "==", SessionState.scheduled)
+    .where("scheduledSession", "<", in5Mins);
+  const snapshot = await ref.get();
+  for (const doc of snapshot.docs) {
+    admin.firestore().collection("snapCircles").doc(doc.id).update({state: SessionState.waiting});
   }
 }
 
