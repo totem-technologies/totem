@@ -1,13 +1,14 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:totem/app_routes.dart';
+import 'package:totem/components/index.dart';
+import 'package:totem/config.dart';
+import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
 import 'package:totem/theme/app_theme_styles.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:totem/config.dart';
-import 'package:totem/app_routes.dart';
-import 'package:totem/models/index.dart';
 
 class TotemDrawer extends ConsumerWidget {
   const TotemDrawer({super.key});
@@ -42,9 +43,8 @@ class TotemDrawer extends ConsumerWidget {
                   return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        CircleAvatar(
-                          foregroundImage: NetworkImage(user.image!),
-                          child: Text(user.name[0]),
+                        ProfileImage(
+                          profile: user,
                         ),
                         const SizedBox(
                           height: 25,
