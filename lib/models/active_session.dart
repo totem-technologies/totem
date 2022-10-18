@@ -13,6 +13,8 @@ enum SessionState {
   cancelled,
   idle,
   removed,
+  expiring,
+  expired
 }
 
 enum ActiveSessionChange {

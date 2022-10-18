@@ -44,6 +44,18 @@ export async function endSessionFor(
 ): Promise<boolean> {
   circleRef = circleRef || admin.firestore().collection("snapCircles").doc(circleId);
   const {circleParticipants, state, keeper, startedDate, scheduledSessions} = snapCircle;
+  const activeStates = [
+    SessionState.waiting,
+    SessionState.starting,
+    SessionState.expiring,
+    SessionState.cancelling,
+    SessionState.ending,
+    SessionState.live,
+  ];
+  if (!activeStates.includes(state)) {
+    console.warn(`Circle end session called for circle ${circleId} but it is not in an active state`);
+    return true;
+  }
   const completedDate = Timestamp.now();
   const batch = admin.firestore().batch();
   let endState = SessionState.cancelled;
@@ -52,11 +64,11 @@ export async function endSessionFor(
   } else if (state === SessionState.expiring) {
     endState = SessionState.expired;
   }
-  if (state != SessionState.waiting) {
-    // If the session was not in the waiting state then it was an active session
-    // Record it in the participants' records and then make a session record for the circle
+  if (state != SessionState.cancelling && state != SessionState.waiting) {
+    // If the session never went live then don't record it as a session
     const entry = {circleRef, completedDate};
     if (circleParticipants) {
+      // Record it in the participants' records and then make a session record for the circle
       circleParticipants.forEach((uid: string) => {
         const entryRef = admin.firestore().collection("users").doc(uid).collection("snapCircles").doc();
         const role = keeper === uid ? "keeper" : "member";
@@ -90,7 +102,7 @@ export async function endSessionFor(
     expiresOn: FieldValue.delete(),
     circleParticipants: [],
     participantCount: 0,
-    scheduledSessions,
+    scheduledSessions: scheduledSessions || FieldValue.delete(),
     nextSession: nextSession || FieldValue.delete(),
   });
   await batch.commit();
