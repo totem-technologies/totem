@@ -16,7 +16,7 @@ class StdThemePalette {
   static const homeGradient = [offWhite2, offWhite3];
   static const red = Color(0xffdf0000);
   static const red2 = Color(0xffCB0E14);
-    static const grey = Color(0xff696b76);
+  static const grey = Color(0xff696b76);
   static const mediumGrey = Color(0xffa5a6ac);
   static const lightGrey = Color(0xffc9c9cd);
   static const lighterGrey = Color(0xffd8d8d8);
@@ -43,10 +43,18 @@ class StdThemePalette {
   ];
   static final List<Color> circleColors = [
     mediumGrey,
-    brown,
+    newyellow,
     grey,
     red2,
     lightGrey,
+    newcreme,
+    newmauve,
+    newslate,
+    deepgrey,
+    blue,
+    bluetint,
+    pink,
+    pinktint,
     Colors.deepPurple,
   ];
 }
@@ -73,7 +81,7 @@ class StdAppThemeColors extends AppThemeColors {
           shadow: const Color.fromRGBO(115, 115, 115, 0.16),
           error: StdThemePalette.red,
           welcomeGradient: StdThemePalette.welcomeGradient,
-          linkText: StdThemePalette.brown,
+          linkText: StdThemePalette.newmauve,
           divider: StdThemePalette.lightGrey,
           profileGradient: StdThemePalette.profileGradient,
           controlButtonBackground: StdThemePalette.lightGrey,
