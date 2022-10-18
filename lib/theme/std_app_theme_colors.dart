@@ -35,7 +35,6 @@ class StdThemePalette {
   ];
   static final List<Color> circleColors = [
     mediumGrey,
-    brown,
     grey,
     red2,
     lightGrey,

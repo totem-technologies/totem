@@ -132,16 +132,17 @@ class SnapCircleItem extends StatelessWidget {
           ),
           Row(
             children: [
+              Text(
+                t.participantCount(circle.participantCount),
+              ),
               Expanded(
                 child: constraints.maxWidth > maxFullInfoWidth
                     ? Text(
                         status,
                         style: const TextStyle(fontStyle: FontStyle.italic),
+                        textAlign: TextAlign.end,
                       )
                     : Container(),
-              ),
-              Text(
-                t.participantCount(circle.participantCount),
               ),
             ],
           ),

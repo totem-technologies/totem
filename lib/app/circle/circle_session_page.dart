@@ -86,8 +86,8 @@ class CircleSessionPageState extends ConsumerState<CircleSessionPage>
       setState(() => _sessionState = SessionPageState.ready);
     } else {
       if (mounted) {
-        setState(() => _sessionState = SessionPageState.cancelled);
-        context.pop();
+        setState(() => _sessionState = SessionPageState.info);
+        Future.delayed(const Duration(milliseconds: 0), _loadSessionData);
       }
     }
   }

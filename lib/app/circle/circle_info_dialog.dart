@@ -109,12 +109,12 @@ class _CircleInfoDialogState extends ConsumerState<CircleInfoDialog> {
 
   Widget _circleHeader(Circle circle) {
     final themeColors = Theme.of(context).themeColors;
-    if (circle.bannerImageUrl != null) {
-      return Stack(
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
+    return Stack(
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            if (circle.bannerImageUrl != null)
               ConstrainedBox(
                 constraints: const BoxConstraints(maxHeight: 100),
                 child: CachedNetworkImage(
@@ -127,65 +127,42 @@ class _CircleInfoDialogState extends ConsumerState<CircleInfoDialog> {
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
-            ],
-          ),
-          Positioned(
-            right: 10,
-            top: 10,
-            child: InkWell(
-              onTap: () {
-                Navigator.of(context).pop();
-              },
-              child: Padding(
-                padding:
-                    const EdgeInsets.only(left: 5, right: 5, top: 5, bottom: 5),
-                child: DecoratedIcon(
-                  Icons.close,
-                  size: 24,
-                  color: themeColors.reversedText,
-                  shadows: const [
-                    BoxShadow(
-                      color: Colors.black,
-                      blurRadius: 10,
-                      spreadRadius: 5,
-                      offset: Offset.zero,
-                    ),
-                  ],
-                ),
+            if (circle.bannerImageUrl == null)
+              Container(
+                height: 100,
+                color: themeColors.circleColors[
+                    circle.colorIndex % themeColors.circleColors.length],
               ),
-            ),
-          ),
-        ],
-      );
-    }
-    return Padding(
-      padding: const EdgeInsets.only(
-        top: 10,
-        right: 20,
-        left: 20,
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Container(),
-          ),
-          InkWell(
+            const SizedBox(height: 20),
+          ],
+        ),
+        Positioned(
+          right: 10,
+          top: 10,
+          child: InkWell(
             onTap: () {
               Navigator.of(context).pop();
             },
             child: Padding(
               padding:
                   const EdgeInsets.only(left: 5, right: 5, top: 5, bottom: 5),
-              child: Icon(
+              child: DecoratedIcon(
                 Icons.close,
                 size: 24,
-                color: themeColors.primaryText,
+                color: themeColors.reversedText,
+                shadows: const [
+                  BoxShadow(
+                    color: Colors.black,
+                    blurRadius: 4,
+                    spreadRadius: 2,
+                    offset: Offset.zero,
+                  ),
+                ],
               ),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
