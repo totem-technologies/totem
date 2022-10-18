@@ -28,7 +28,6 @@ export class FirebaseDynamicLinks {
   async createLink(body: ShortLinkRequestBody, refererSrc: string): Promise<ShortLinkResponse> {
     const data: string = JSON.stringify(body);
     const referer: string = "https://" + process.env.GCLOUD_PROJECT + ".cloudfunctions.net/" + refererSrc;
-    console.log("Referer: " + referer);
     const options: RequestOptions = {
       hostname: "firebasedynamiclinks.googleapis.com",
       path: `/v1/shortLinks?key=${this.webApiKey}`,
@@ -43,18 +42,18 @@ export class FirebaseDynamicLinks {
       const req = request(options, (res) => {
         const buffers: Buffer[] = [];
         res
-            .on("data", (chunk) => {
-              buffers.push(chunk);
-            })
-            .on("end", () => {
-              const d = Buffer.concat(buffers).toString();
-              const resBody = JSON.parse(d);
-              if (res.statusCode === 200) {
-                resolve(resBody);
-              } else {
-                reject(resBody);
-              }
-            });
+          .on("data", (chunk) => {
+            buffers.push(chunk);
+          })
+          .on("end", () => {
+            const d = Buffer.concat(buffers).toString();
+            const resBody = JSON.parse(d);
+            if (res.statusCode === 200) {
+              resolve(resBody);
+            } else {
+              reject(resBody);
+            }
+          });
       });
 
       req.on("error", reject);
@@ -84,18 +83,18 @@ export class FirebaseDynamicLinks {
       const req = request(options, (res) => {
         const buffers: Buffer[] = [];
         res
-            .on("data", (chunk) => {
-              buffers.push(chunk);
-            })
-            .on("end", () => {
-              const d = Buffer.concat(buffers).toString();
-              const resBody = JSON.parse(d);
-              if (res.statusCode === 200) {
-                resolve(resBody);
-              } else {
-                reject(resBody);
-              }
-            });
+          .on("data", (chunk) => {
+            buffers.push(chunk);
+          })
+          .on("end", () => {
+            const d = Buffer.concat(buffers).toString();
+            const resBody = JSON.parse(d);
+            if (res.statusCode === 200) {
+              resolve(resBody);
+            } else {
+              reject(resBody);
+            }
+          });
       });
 
       req.on("error", reject);
