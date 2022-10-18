@@ -2,6 +2,7 @@
 import {DocumentReference, Timestamp} from "firebase-admin/firestore";
 
 export enum SessionState {
+  cancelling = "cancelling",
   cancelled = "cancelled",
   complete = "complete",
   live = "live",
