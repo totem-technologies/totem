@@ -76,3 +76,21 @@ export interface CircleSessionSummary {
   state: string;
   circleParticipants?: string[];
 }
+
+export interface CreateSnapCircleArgs {
+  name: string;
+  description: string;
+  previousCircle?: string;
+  bannedParticipants?: SnapCircleBannedParticipants;
+  themeRef?: string;
+  imageUrl?: string;
+  bannerImageUrl?: string;
+  options?: {
+    isPrivate: boolean;
+    maxMinutes?: number;
+    maxParticipants?: number;
+    recurringType?: RecurringType;
+    instances?: Timestamp[];
+    repeating?: RepeatOptions;
+  };
+}

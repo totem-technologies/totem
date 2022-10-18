@@ -7,6 +7,7 @@
     "shell": "npm run build && firebase functions:shell",
     "start": "npm run shell",
     "test": "mocha -r ts-node/register --reporter spec test/**/*.ts",
+    "test:emulator": "firebase emulators:exec --only functions,firestore --project totem-dev-184f1  'npm test'",
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log"
   },

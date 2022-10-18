@@ -6,13 +6,13 @@ import * as dynamicLinks from "./dynamic-links";
 import {hasAnyRole, isAuthenticated, Role} from "./auth";
 import {kickUserFromSession} from "./agora";
 import {
-  SnapCircleBannedParticipants,
   SnapCircleData,
   SessionState,
   CircleSessionSummary,
   RepeatOptions,
   RecurringType,
   RepeatUnit,
+  CreateSnapCircleArgs,
 } from "./common-types";
 import {add} from "date-fns";
 
@@ -174,31 +174,22 @@ export const startSnapSession = functions.https.onCall(async ({circleId}, {auth}
   return false;
 });
 
-interface CreateSnapCircleArgs {
-  name: string;
-  description: string;
-  previousCircle?: string;
-  bannedParticipants?: SnapCircleBannedParticipants;
-  themeRef?: string;
-  imageUrl?: string;
-  bannerImageUrl?: string;
-  options?: {
-    isPrivate: boolean;
-    maxMinutes?: number;
-    maxParticipants?: number;
-    recurringType?: RecurringType;
-    instances?: Timestamp[];
-    repeating?: RepeatOptions;
-  };
-}
-
 interface CreateSnapCircleResponse {
   id: string;
 }
 
 export const createSnapCircle = functions.https.onCall(
   async (
-    {name, description, previousCircle, bannedParticipants, themeRef, imageUrl, bannerImageUrl, options}: CreateSnapCircleArgs,
+    {
+      name,
+      description,
+      previousCircle,
+      bannedParticipants,
+      themeRef,
+      imageUrl,
+      bannerImageUrl,
+      options,
+    }: CreateSnapCircleArgs,
     {auth}
   ): Promise<CreateSnapCircleResponse> => {
     auth = isAuthenticated(auth);
@@ -310,7 +301,9 @@ export const createSnapCircle = functions.https.onCall(
       // update with the link
       await admin.firestore().collection("snapCircles").doc(ref.id).update({link: shortLink, previewLink});
     } catch (ex) {
-      console.log("Failed to create dynamic link for circle ${ref.id}: ", ex);
+      if (!process.env.FIREBASE_EMULATOR_HUB) {
+        console.log("Failed to create dynamic link for circle ${ref.id}: ", ex);
+      }
     }
     // return information
     return {id: ref.id};
@@ -357,19 +350,30 @@ const assertValidInstances = (instances?: Timestamp[]): Timestamp[] => {
   if (instances.length === 0) {
     throw new functions.https.HttpsError("invalid-argument", "Must have at least one instance for recurring circle");
   }
-  if (instances[0] < Timestamp.now()) {
+  if (instances[0] <= Timestamp.now()) {
     throw new functions.https.HttpsError("invalid-argument", "First instance must be in the future");
+  }
+  if (instances.length > 1) {
+    // Make sure the instances are in order
+    for (let i = 1; i < instances.length; i++) {
+      if (instances[i] <= instances[i - 1]) {
+        throw new functions.https.HttpsError("invalid-argument", "Instances must be in ascending time order");
+      }
+    }
   }
   return instances;
 };
 
 const assertValidRepeatingOptions = (repeating?: RepeatOptions): RepeatOptions => {
   if (!repeating) {
-    throw new functions.https.HttpsError("invalid-argument", "Missing recurring options");
+    throw new functions.https.HttpsError("invalid-argument", "Missing repeat options for repeating circle");
   }
   // Repeating circles happen on a repeated schedule (i.e. every 5 days) based on a starting date/time
   if (!repeating.start) {
     throw new functions.https.HttpsError("invalid-argument", "Must have a start date for a repeating circle");
+  }
+  if (repeating.start <= Timestamp.now()) {
+    throw new functions.https.HttpsError("invalid-argument", "Start date must be in the future for repeating circle");
   }
   if (!repeating.every) {
     throw new functions.https.HttpsError("invalid-argument", "Must have a repeat interval for a repeating circle");
@@ -384,8 +388,8 @@ const assertValidRepeatingOptions = (repeating?: RepeatOptions): RepeatOptions =
       "Must have either an end date or a session count for a repeating circle"
     );
   }
-  if (repeating.until && repeating.until < Timestamp.now()) {
-    throw new functions.https.HttpsError("invalid-argument", "End date for repeating circle must be in the future");
+  if (repeating.until && repeating.until <= repeating.start) {
+    throw new functions.https.HttpsError("invalid-argument", "End date for repeating circle must after the start");
   }
 
   return repeating;
