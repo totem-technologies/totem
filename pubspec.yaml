@@ -119,6 +119,7 @@ flutter:
     - assets/onboarding_totem_icon.png
     - assets/view_circle.svg
     - assets/animations/totem_reveal.json
+    - assets/totem_icon.svg
 
   fonts:
     - family: Raleway

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:totem/components/index.dart';
 import 'package:totem/theme/app_theme_styles.dart';
 
 class WaitingForTotemUser extends StatelessWidget {
@@ -16,7 +17,10 @@ class WaitingForTotemUser extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.hourglass_top, size: 100, color: Colors.white),
+            WaitAnimation(
+                color: themeColors.primary,
+                imageColor: themeColors.reversedText,
+                size: 200),
             const SizedBox(
               height: 20,
             ),

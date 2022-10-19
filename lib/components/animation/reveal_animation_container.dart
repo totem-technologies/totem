@@ -61,6 +61,12 @@ class RevealAnimationContainerState extends State<RevealAnimationContainer>
   }
 
   @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
       double radius = constraints.maxWidth / 2;
