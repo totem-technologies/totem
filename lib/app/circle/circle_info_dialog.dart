@@ -6,17 +6,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:totem/app/circle/components/circle_error_loading.dart';
+import 'package:totem/app/circle/components/circle_loading.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
 import 'package:totem/services/utils/device_type.dart';
 import 'package:totem/theme/index.dart';
 
-final circleProvider =
-    StreamProvider.autoDispose.family<SnapCircle?, String>((ref, circleId) {
-  final repo = ref.read(repositoryProvider);
-  return repo.snapCircleStream(circleId);
-});
+import 'circle_session_page.dart';
 
 class CircleInfoDialog extends ConsumerStatefulWidget {
   const CircleInfoDialog(
@@ -249,33 +247,13 @@ class _CircleInfoDialogState extends ConsumerState<CircleInfoDialog> {
               ],
             );
           }
-          return _errorCircle();
+          return const CircleErrorLoading();
         },
         error: (Object error, StackTrace? stackTrace) {
-          return _errorCircle();
+          return const CircleErrorLoading();
         },
         loading: () {
-          return ConstrainedBox(
-            constraints: const BoxConstraints(minWidth: 250),
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const SizedBox(height: 40),
-                Text(
-                  AppLocalizations.of(context)!.loadingCircle,
-                  style: Theme.of(context).textTheme.headline3,
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(
-                  height: 30,
-                ),
-                const BusyIndicator(),
-                const SizedBox(height: 40),
-              ],
-            ),
-          );
+          return const CircleLoading();
         },
       ),
     );
@@ -422,37 +400,5 @@ class _CircleInfoDialogState extends ConsumerState<CircleInfoDialog> {
 
   void _join(SnapCircle circle) {
     Navigator.of(context).pop(circle);
-  }
-
-  Widget _errorCircle() {
-    return ConstrainedBox(
-      constraints: const BoxConstraints(minWidth: 250),
-      child: Padding(
-        padding: const EdgeInsets.all(40),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Icon(Icons.error,
-                size: 40, color: Theme.of(context).themeColors.error),
-            const SizedBox(
-              height: 20,
-            ),
-            Text(
-              AppLocalizations.of(context)!.errorLoadingCircle,
-              style: Theme.of(context).textTheme.headline3,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 30),
-            ThemedRaisedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              label: AppLocalizations.of(context)!.ok,
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }

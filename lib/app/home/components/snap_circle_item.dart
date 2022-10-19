@@ -36,7 +36,10 @@ class SnapCircleItem extends StatelessWidget {
                 child: Column(
                   children: [
                     Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: circle.description != null &&
+                              circle.description!.isNotEmpty
+                          ? CrossAxisAlignment.start
+                          : CrossAxisAlignment.center,
                       children: [
                         Padding(
                           padding: const EdgeInsets.only(right: 10.0),
@@ -78,15 +81,13 @@ class SnapCircleItem extends StatelessWidget {
                                       fontSize: 13,
                                       fontWeight: FontWeight.w500),
                                 ),
-                                const SizedBox(
-                                  height: 8,
-                                ),
                               ],
                             ],
                           ),
                         ),
                       ],
                     ),
+                    const SizedBox(height: 8),
                     _sessionInfo(context),
                   ],
                 ),

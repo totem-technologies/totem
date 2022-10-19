@@ -1,10 +1,11 @@
 import 'dart:async';
+import 'dart:ui';
 
-import 'package:after_layout/after_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:totem/app/circle/index.dart';
 import 'package:totem/app_routes.dart';
+import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/account_state/account_state_event_manager.dart';
 import 'package:totem/services/index.dart';
@@ -24,6 +25,12 @@ final communicationsProvider =
   return repo.createCommunicationProvider();
 });
 
+final circleProvider =
+    StreamProvider.autoDispose.family<SnapCircle?, String>((ref, circleId) {
+  final repo = ref.read(repositoryProvider);
+  return repo.snapCircleStream(circleId);
+});
+
 class CircleSessionPage extends ConsumerStatefulWidget {
   const CircleSessionPage({Key? key, required this.sessionID})
       : super(key: key);
@@ -34,15 +41,16 @@ class CircleSessionPage extends ConsumerStatefulWidget {
 }
 
 enum SessionPageState {
+  loading,
   prompt,
   ready,
   cancelled,
   info,
+  error,
 }
 
-class CircleSessionPageState extends ConsumerState<CircleSessionPage>
-    with AfterLayoutMixin {
-  SessionPageState _sessionState = SessionPageState.info;
+class CircleSessionPageState extends ConsumerState<CircleSessionPage> {
+  SessionPageState _sessionState = SessionPageState.loading;
   Session? _session;
   UserProfile? _userProfile;
 
@@ -54,17 +62,40 @@ class CircleSessionPageState extends ConsumerState<CircleSessionPage>
   @override
   Widget build(BuildContext context) {
     ref.watch(communicationsProvider);
+    ref.listen<AsyncValue?>(circleProvider(widget.sessionID),
+        (previous, circle) {
+      if (circle?.value != null && _sessionState == SessionPageState.loading) {
+        setState(() => _sessionState = SessionPageState.info);
+        _loadSessionData();
+      } else if (circle?.value == null) {
+        setState(() => _sessionState = SessionPageState.error);
+      }
+    });
     switch (_sessionState) {
       case SessionPageState.ready:
         return CircleSessionLivePage(
           session: _session!,
           userProfile: _userProfile!,
         );
-      case SessionPageState.cancelled:
-      case SessionPageState.prompt:
+      case SessionPageState.loading:
+        return _dialogContainer(const CircleLoading());
+      case SessionPageState.error:
+        return _dialogContainer(const CircleErrorLoading());
       default:
         return Container();
     }
+  }
+
+  Widget _dialogContainer(Widget child) {
+    return BackdropFilter(
+      filter: ImageFilter.blur(sigmaX: 2.5, sigmaY: 2.5),
+      child: Center(
+        child: DialogContainer(
+          padding: const EdgeInsets.all(20),
+          child: child,
+        ),
+      ),
+    );
   }
 
   Future<void> _showJoinPrompt(SnapCircle circle) async {
@@ -100,13 +131,12 @@ class CircleSessionPageState extends ConsumerState<CircleSessionPage>
       await _showJoinPrompt(joinCircle);
       return;
     } else if (mounted) {
-      context.pop();
+      if (context.canPop()) {
+        context.pop();
+      } else {
+        context.goNamed(AppRoutes.home);
+      }
     }
-  }
-
-  @override
-  FutureOr<void> afterFirstLayout(BuildContext context) {
-    _loadSessionData();
   }
 }
 
