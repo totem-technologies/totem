@@ -12,7 +12,6 @@ export 'circle_next_label.dart';
 export 'circle_participant.dart';
 export 'circle_participant_video.dart';
 export 'circle_pending_session_users.dart';
-export 'circle_scheduled_session_content.dart';
 export 'circle_session_content.dart';
 export 'circle_session_controls.dart';
 export 'circle_session_participant.dart';
