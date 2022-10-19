@@ -31,7 +31,7 @@ PODS:
     - Flutter
   - camera_avfoundation (0.0.1):
     - Flutter
-  - cloud_firestore (3.5.0):
+  - cloud_firestore (3.5.1):
     - Firebase/Firestore (= 9.6.0)
     - firebase_core
     - Flutter
@@ -67,31 +67,31 @@ PODS:
   - Firebase/Storage (9.6.0):
     - Firebase/CoreOnly
     - FirebaseStorage (~> 9.6.0)
-  - firebase_analytics (9.3.7):
+  - firebase_analytics (9.3.8):
     - Firebase/Analytics (= 9.6.0)
     - firebase_core
     - Flutter
-  - firebase_app_check (0.0.9):
+  - firebase_app_check (0.0.9-1):
     - Firebase/CoreOnly (~> 9.6.0)
     - firebase_core
     - FirebaseAppCheck (~> 9.6.0-beta)
     - Flutter
-  - firebase_auth (3.11.1):
+  - firebase_auth (3.11.2):
     - Firebase/Auth (= 9.6.0)
     - firebase_core
     - Flutter
   - firebase_core (1.24.0):
     - Firebase/CoreOnly (= 9.6.0)
     - Flutter
-  - firebase_crashlytics (2.8.12):
+  - firebase_crashlytics (2.9.0):
     - Firebase/Crashlytics (= 9.6.0)
     - firebase_core
     - Flutter
-  - firebase_dynamic_links (4.3.9):
+  - firebase_dynamic_links (4.3.11):
     - Firebase/DynamicLinks (= 9.6.0)
     - firebase_core
     - Flutter
-  - firebase_storage (10.3.10):
+  - firebase_storage (10.3.11):
     - Firebase/Storage (= 9.6.0)
     - firebase_core
     - Flutter
@@ -253,13 +253,13 @@ PODS:
   - permission_handler_apple (9.0.4):
     - Flutter
   - PromisesObjC (2.1.1)
-  - Sentry (7.27.0):
-    - Sentry/Core (= 7.27.0)
-  - Sentry/Core (7.27.0)
+  - Sentry (7.28.0):
+    - Sentry/Core (= 7.28.0)
+  - Sentry/Core (7.28.0)
   - sentry_flutter (0.0.1):
     - Flutter
     - FlutterMacOS
-    - Sentry (~> 7.27.0)
+    - Sentry (~> 7.28.0)
   - share_plus (0.0.1):
     - Flutter
   - shared_preferences_ios (0.0.1):
@@ -405,16 +405,16 @@ SPEC CHECKSUMS:
   AgoraRtcEngine_iOS: 549bb3853d5afb18fabca4197786f39f31141da8
   audio_streamer: af49e73eb66f71c4eeabb4bbcb05f122d03a6709
   camera_avfoundation: 07c77549ea54ad95d8581be86617c094a46280d9
-  cloud_firestore: 09a9630b3fd8bb78f6e01094d8f52d85f1eba0c8
+  cloud_firestore: 49d69be2b924677f2974d8b38acc705c9908c09b
   cloud_functions: 3cd07c4445edc98e17d5786922c3ebe71146c399
   Firebase: 5ae8b7cf8efce559a653aef0ad95bab3f427c351
-  firebase_analytics: 80b63bd6ff50095e908feba5070aa8dd75ccdfbc
-  firebase_app_check: e9a263bb5c39cac1165091bbe9ae14e7a28f595a
-  firebase_auth: bb406baf3e15b89102e5963eb2147452d1072fd5
+  firebase_analytics: 9937a91df25cce5b0ee19eaf65277ff8bf0f88e5
+  firebase_app_check: 7816f0eb0e4393502a2e5d1096ddd8982c4211ae
+  firebase_auth: 07a4db69cfa447ac42cb7faa560fc100708b707c
   firebase_core: 7c28ecc1e5dd74e03829ac3e9ff5ba3314e737a9
-  firebase_crashlytics: 87cd7e0d55dede8d8ad7a81f999b0e4873c49eed
-  firebase_dynamic_links: be59a79b16ed7630811d9c9a9d4ca3d430f21ac7
-  firebase_storage: 015e4eeb3b9ac2f25ad84c4032c6897d0dc2026e
+  firebase_crashlytics: 520a59314eaaadb34f9be4c2a285d99cfa88ebdb
+  firebase_dynamic_links: 8fc870871acfbbd39172cb430e4a04c0fe2be4c7
+  firebase_storage: d1d5bb4959e97b203e5076d4d0edbb7028b711fd
   FirebaseAnalytics: 89ad762c6c3852a685794174757e2c60a36b6a82
   FirebaseAppCheck: c7e07ba851608c192518302f8b35a984cfec1824
   FirebaseAppCheckInterop: d5ecda0c09f8069406643d6e0fa12c09d1b736e3
@@ -426,7 +426,7 @@ SPEC CHECKSUMS:
   FirebaseCoreInternal: bca76517fe1ed381e989f5e7d8abb0da8d85bed3
   FirebaseCrashlytics: 3210572ddb77801e5a0bd9d7bc890769f2066a0c
   FirebaseDynamicLinks: 894ee3b4e56a77abee067d371c9a23e7b5a3c686
-  FirebaseFirestore: 9bfe2e814686fb3ba2495b97618b38987e4c8526
+  FirebaseFirestore: 56251017e7fb2530d39d42724a6772fd78fd734e
   FirebaseFunctions: f9d4e4161f1c3bc331e3fc71a32fc06debf54e7b
   FirebaseInstallations: 0a115432c4e223c5ab20b0dbbe4cbefa793a0e8e
   FirebaseMessagingInterop: 348785028509e1a5a9af277123e7fc08b2d17306
@@ -450,8 +450,8 @@ SPEC CHECKSUMS:
   path_provider_ios: 14f3d2fd28c4fdb42f44e0f751d12861c43cee02
   permission_handler_apple: 44366e37eaf29454a1e7b1b7d736c2cceaeb17ce
   PromisesObjC: ab77feca74fa2823e7af4249b8326368e61014cb
-  Sentry: 026b36fdc09531604db9279e55f047fe652e3f4a
-  sentry_flutter: a8616c994ac18c371aabee21a953cc727c166421
+  Sentry: 2c6053e4cfe6dea6608135dea1928ffbb4ecfba5
+  sentry_flutter: fad3ef0917dc1afa7d242af0743696ed9a9a8864
   share_plus: 056a1e8ac890df3e33cb503afffaf1e9b4fbae68
   shared_preferences_ios: 548a61f8053b9b8a49ac19c1ffbc8b92c50d68ad
   sqflite: 6d358c025f5b867b29ed92fc697fd34924e11904

@@ -219,7 +219,18 @@ class FirebaseSessionProvider extends SessionProvider {
   @override
   Future<void> endActiveSession() async {
     if (_activeSession != null) {
-      bool complete = _activeSession!.state == SessionState.live;
+      List<SessionState> validStates = [
+        SessionState.waiting,
+        SessionState.starting,
+        SessionState.live,
+        SessionState.expiring,
+      ];
+
+      if (!validStates.contains(_activeSession!.state)) {
+        return;
+      }
+      bool complete = _activeSession!.state == SessionState.live ||
+          _activeSession!.state == SessionState.expiring;
       try {
         await updateActiveSessionState(
             complete ? SessionState.ending : SessionState.cancelling);

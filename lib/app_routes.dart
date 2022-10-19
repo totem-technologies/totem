@@ -43,7 +43,7 @@ class AppRoutes {
   static const String circleCreate = 'create';
   static const String circleEnded = 'circleEnded';
   static const String userProfile = 'profile';
-  static const String dev = '/dev';
+  static const String dev = 'dev';
 
   static AppRoutes? _instance;
   static AppRoutes get instance {
@@ -118,7 +118,8 @@ class AppRoutes {
           ),
         ),
         GoRoute(
-          path: dev,
+          name: dev,
+          path: '/dev',
           pageBuilder: (context, state) =>
               const NoTransitionPage(child: DevPage()),
         ),

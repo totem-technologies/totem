@@ -74,7 +74,21 @@
         },
         {
           "fieldPath": "expiresOn",
-          "order": "DESCENDING"
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "snapCircles",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "state",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "scheduledSession",
+          "order": "ASCENDING"
         }
       ]
     }
