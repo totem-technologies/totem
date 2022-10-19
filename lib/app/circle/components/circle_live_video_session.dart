@@ -116,8 +116,6 @@ class _CircleLiveVideoSessionState
                                                 activeSession: activeSession,
                                                 isPhoneLayout: isPhoneLayout)
                                             : ListenerUserLayout(
-                                                constrainSpeaker:
-                                                    activeSession.totemReceived,
                                                 speaker: SpeakerVideoView(
                                                   onReceive: () {
                                                     final participant =
@@ -140,7 +138,10 @@ class _CircleLiveVideoSessionState
                                     : Center(
                                         child: Text(
                                           t.noParticipantsActiveSession,
-                                          style: textStyles.headline3,
+                                          style: textStyles.headline3!.merge(
+                                              TextStyle(
+                                                  color: themeColors
+                                                      .reversedText)),
                                           textAlign: TextAlign.center,
                                         ),
                                       ),
@@ -193,6 +194,7 @@ class _CircleLiveVideoSessionState
         next: i == 0,
       ),
       count: participants.length,
+      live: true,
     );
   }
 

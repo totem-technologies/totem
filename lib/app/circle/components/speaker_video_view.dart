@@ -26,7 +26,7 @@ class SpeakerVideoViewState extends ConsumerState<SpeakerVideoView> {
     final totemParticipant = activeSession.totemParticipant;
     final bool totemReceived = activeSession.totemReceived;
     if (totemParticipant != null) {
-      if (totemReceived) {
+      if (totemReceived && !totemParticipant.me) {
         return prov.ChangeNotifierProvider<SessionParticipant>.value(
           value: activeSession.totemParticipant!,
           child: LayoutBuilder(
@@ -36,19 +36,19 @@ class SpeakerVideoViewState extends ConsumerState<SpeakerVideoView> {
               return SizedBox(
                 width: sizeOfVideo,
                 height: sizeOfVideo,
-                child: RevealAnimationContainer(
-                  animationAsset: 'assets/animations/totem_reveal.json',
-                  fadeAnimationStart: 0.5,
-                  revealAnimationStart: 0.8,
-                  revealInset: 0.2,
-                  child: prov.Consumer<SessionParticipant>(
-                    builder: (_, participant, __) {
-                      return CircleParticipantVideo(
+                child: prov.Consumer<SessionParticipant>(
+                  builder: (_, participant, __) {
+                    return RevealAnimationContainer(
+                      animationAsset: 'assets/animations/totem_reveal.json',
+                      fadeAnimationStart: 0.5,
+                      revealAnimationStart: 0.8,
+                      revealInset: 0.2,
+                      child: CircleParticipantVideo(
                         participant: participant,
                         channelId: commProvider.channelId ?? "",
-                      );
-                    },
-                  ),
+                      ),
+                    );
+                  },
                 ),
               );
             },
