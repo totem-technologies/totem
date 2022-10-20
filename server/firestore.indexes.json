@@ -87,7 +87,7 @@
           "order": "ASCENDING"
         },
         {
-          "fieldPath": "scheduledSession",
+          "fieldPath": "nextSession",
           "order": "ASCENDING"
         }
       ]

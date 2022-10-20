@@ -1,14 +1,19 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:date_field/date_field.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_spinbox/flutter_spinbox.dart';
 import 'package:totem/app/circle_create/components/index.dart';
 import 'package:totem/app_routes.dart';
 import 'package:totem/components/widgets/index.dart';
+import 'package:totem/models/circle_recurring_option.dart';
+import 'package:totem/models/circle_repeat_unit_option.dart';
+import 'package:totem/models/circle_repeat_end_option.dart';
 import 'package:totem/models/index.dart';
-import 'package:totem/models/snap_circle_duration_option.dart';
-import 'package:totem/models/snap_circle_visibility_option.dart';
+import 'package:totem/models/circle_duration_option.dart';
+import 'package:totem/models/circle_visibility_option.dart';
 import 'package:totem/services/error_report.dart';
 import 'package:totem/services/index.dart';
 import 'package:totem/services/utils/device_type.dart';
@@ -26,14 +31,26 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _repeatIntervalController =
+      TextEditingController();
+  final TextEditingController _repeatCountController = TextEditingController();
   final formKey = GlobalKey<FormState>();
   final _focusNodeDescription = FocusNode();
   late final List<CircleVisibilityOption> visibilityOptions;
   late final List<CircleDurationOption> durationOptions;
+  late final List<CircleRecurringOption> recurringOptions;
+  late final List<CircleRepeatUnitOption> repeatUnitOptions;
+  late final List<CircleRepeatEndOption> repeatEndOptions;
 
   bool _busy = false;
   late CircleVisibilityOption _selectedVisibility;
   late CircleDurationOption _selectedDuration;
+  late CircleRecurringOption _selectedRecurring;
+  late CircleRepeatUnitOption _selectedRepeatUnit;
+  late CircleRepeatEndOption _selectedRepeatEnd;
+  DateTime? _selectedStartDate;
+  DateTime? _selectedStartTime;
+  DateTime? _selectedEndDate;
   late final double maxParticipants;
   late final bool isKeeper;
   double numParticipants = 20;
@@ -48,10 +65,6 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
             : Circle.maxNonKeeperParticipants)
         .toDouble();
     numParticipants = maxParticipants;
-    if (widget.fromCircle != null) {
-      _nameController.text = widget.fromCircle!.name;
-      _descriptionController.text = widget.fromCircle!.description ?? "";
-    }
     visibilityOptions = isKeeper
         ? [
             CircleVisibilityOption(name: 'public', value: false),
@@ -78,8 +91,62 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
         CircleDurationOption(value: 300),
       ]);
     }
-    _selectedVisibility = visibilityOptions[0];
-    _selectedDuration = durationOptions[5];
+    recurringOptions = isKeeper
+        ? [
+            CircleRecurringOption(type: RecurringType.none),
+            CircleRecurringOption(type: RecurringType.repeating),
+          ]
+        : [CircleRecurringOption(type: RecurringType.none)];
+    repeatUnitOptions = [
+      CircleRepeatUnitOption(value: null),
+      CircleRepeatUnitOption(value: RepeatUnit.hours),
+      CircleRepeatUnitOption(value: RepeatUnit.days),
+      CircleRepeatUnitOption(value: RepeatUnit.weeks),
+      CircleRepeatUnitOption(value: RepeatUnit.months),
+    ];
+    repeatEndOptions = [
+      CircleRepeatEndOption(value: 'numberOfSessions'),
+      CircleRepeatEndOption(value: 'endDate'),
+    ];
+    if (widget.fromCircle != null) {
+      _nameController.text = widget.fromCircle!.name;
+      _descriptionController.text = widget.fromCircle!.description ?? "";
+      _selectedVisibility = visibilityOptions
+          .firstWhere((e) => e.value == widget.fromCircle!.isPrivate);
+      _selectedDuration = durationOptions
+          .firstWhere((e) => e.value == widget.fromCircle!.maxMinutes);
+      if (widget.fromCircle!.repeating == null) {
+        _selectedRecurring = recurringOptions[0];
+        _repeatIntervalController.text = "1";
+        _repeatCountController.text = "1";
+      } else {
+        _selectedRecurring = recurringOptions[1];
+        _repeatIntervalController.text =
+            widget.fromCircle!.repeating?.every.toString() ?? "1";
+        _repeatCountController.text =
+            widget.fromCircle!.repeating?.count.toString() ?? "1";
+        _selectedRepeatUnit = repeatUnitOptions
+            .firstWhere((e) => e.value == widget.fromCircle!.repeating!.unit);
+        _selectedStartDate = widget.fromCircle!.repeating!.start;
+        _selectedStartTime = widget.fromCircle!.repeating!.start;
+        if (widget.fromCircle!.repeating!.until != null) {
+          _selectedRepeatEnd = repeatEndOptions[1];
+          _selectedEndDate = widget.fromCircle!.repeating!.until;
+        } else {
+          _selectedRepeatEnd = repeatEndOptions[0];
+        }
+      }
+      _selectedStartDate = widget.fromCircle!.repeating?.start;
+      _selectedEndDate = widget.fromCircle!.repeating?.until;
+    } else {
+      _selectedVisibility = visibilityOptions[0];
+      _selectedDuration = durationOptions[5];
+      _selectedRecurring = recurringOptions[0];
+      _selectedRepeatUnit = repeatUnitOptions[0];
+      _selectedRepeatEnd = repeatEndOptions[0];
+      _repeatIntervalController.text = "1";
+      _repeatCountController.text = "1";
+    }
     ref.read(analyticsProvider).showScreen('createSnapCircleScreen');
     super.initState();
   }
@@ -179,10 +246,13 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
                                         ),
                                         const SizedBox(width: 32),
                                         Expanded(
-                                          child: Container(),
+                                          child: _recurringOptions(),
                                         ),
                                       ],
                                     ),
+                                    if (_selectedRecurring.type ==
+                                        RecurringType.repeating)
+                                      ..._repeatSettings(),
                                     const SizedBox(height: 32),
                                     _circleTheme(),
                                     const SizedBox(height: 40),
@@ -384,6 +454,28 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
     _formKey.currentState!.save();
     var repo = ref.read(repositoryProvider);
     try {
+      RecurringType recurringType = _selectedRecurring.type;
+      RepeatOptions? repeatOptions;
+      List<DateTime>? instances;
+      if (recurringType == RecurringType.repeating) {
+        if (_selectedRepeatUnit.value == null) {
+          recurringType = RecurringType.instances;
+          instances = [_selectedStartDate!];
+        } else {
+          int every = int.parse(_repeatIntervalController.text);
+          int count = int.parse(_repeatCountController.text);
+          repeatOptions = RepeatOptions(
+            start: _selectedStartDate!,
+            every: every,
+            unit: _selectedRepeatUnit.value!,
+            count:
+                _selectedRepeatEnd.value == 'numberOfSessions' ? count : null,
+            until: _selectedRepeatEnd.value == 'endDate'
+                ? _selectedEndDate!
+                : null,
+          );
+        }
+      }
       final circle = await repo.createSnapCircle(
         name: _nameController.text,
         description: _descriptionController.text,
@@ -395,20 +487,15 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
         themeRef: _selectedTheme?.ref,
         imageUrl: _selectedTheme?.image,
         bannerUrl: _selectedTheme?.bannerImage,
+        recurringType: recurringType,
+        instances: instances,
+        repeatOptions: repeatOptions,
       );
       if (circle != null) {
-        await repo.createActiveSession(
-          circle: circle,
-        );
         if (!mounted) return;
         context.replaceNamed(AppRoutes.circle,
             params: {'id': circle.snapSession.id});
-      } /*else {
-        // leave session in place or cancel?
-        if (!mounted) return;
-        Navigator.pop(context);
-        return;
-      } */
+      }
     } on ServiceException catch (ex, stack) {
       debugPrint('Error creating circle: $ex');
       await reportError(ex, stack);
@@ -566,6 +653,374 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
           onChanged(v);
         },
       ),
+    );
+  }
+
+  Widget _recurringOptions() {
+    final themeData = Theme.of(context);
+    final textStyles = themeData.textStyles;
+    final t = AppLocalizations.of(context)!;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(t.sessionType, style: textStyles.headline3),
+        const SizedBox(height: 10),
+        _recurringDropDown(
+          recurringOptions,
+          selected: _selectedRecurring,
+          onChanged: (item) {
+            setState(() => _selectedRecurring = item);
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _recurringDropDown(List<CircleRecurringOption> options,
+      {required Function(dynamic item) onChanged,
+      required CircleRecurringOption? selected}) {
+    if (options.isEmpty) return Container();
+    final dropDownMenus = <DropdownMenuItem<CircleRecurringOption>>[];
+    for (var v in options) {
+      dropDownMenus.add(
+        DropdownMenuItem(
+          value: v,
+          child: Text(v.getName(context), overflow: TextOverflow.ellipsis),
+        ),
+      );
+    }
+    return SizedBox(
+      height: 40,
+      child: DropdownButton<CircleRecurringOption>(
+        isExpanded: true,
+        items: dropDownMenus,
+        value: selected,
+        onChanged: (v) {
+          onChanged(v);
+        },
+      ),
+    );
+  }
+
+  List<Widget> _repeatSettings() {
+    return [
+      const SizedBox(height: 20),
+      Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: _startDateSelector(),
+          ),
+          const SizedBox(width: 32),
+          Expanded(
+            child: _startTimeSelector(),
+          )
+        ],
+      ),
+      const SizedBox(height: 20),
+      Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: _repeatUnitOptions(),
+          ),
+          const SizedBox(width: 32),
+          Expanded(
+            child: _selectedRepeatUnit.value == null
+                ? Container()
+                : _repeatIntervalField(),
+          ),
+        ],
+      ),
+      if (_selectedRepeatUnit.value != null) ...[
+        const SizedBox(height: 20),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: _repeatEndOptions(),
+            ),
+            const SizedBox(width: 32),
+            Expanded(
+                child: _selectedRepeatEnd.value == 'endDate'
+                    ? _endDateSelector()
+                    : _endCountSelector())
+          ],
+        ),
+      ],
+    ];
+  }
+
+  Widget _repeatUnitOptions() {
+    final themeData = Theme.of(context);
+    final textStyles = themeData.textStyles;
+    final t = AppLocalizations.of(context)!;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(t.repeats, style: textStyles.headline3),
+        const SizedBox(height: 10),
+        _repeatUnitDropDown(
+          repeatUnitOptions,
+          selected: _selectedRepeatUnit,
+          onChanged: (item) {
+            setState(() => _selectedRepeatUnit = item);
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _repeatUnitDropDown(List<CircleRepeatUnitOption> options,
+      {required Function(dynamic item) onChanged,
+      required CircleRepeatUnitOption? selected}) {
+    if (options.isEmpty) return Container();
+    final dropDownMenus = <DropdownMenuItem<CircleRepeatUnitOption>>[];
+    for (var v in options) {
+      dropDownMenus.add(
+        DropdownMenuItem(
+          value: v,
+          child: Text(v.getName(context), overflow: TextOverflow.ellipsis),
+        ),
+      );
+    }
+    return SizedBox(
+      height: 40,
+      child: DropdownButton<CircleRepeatUnitOption>(
+        isExpanded: true,
+        items: dropDownMenus,
+        value: selected,
+        onChanged: (v) {
+          onChanged(v);
+        },
+      ),
+    );
+  }
+
+  Widget _repeatIntervalField() {
+    final themeData = Theme.of(context);
+    final textStyles = themeData.textStyles;
+    final t = AppLocalizations.of(context)!;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(t.repeatsEvery, style: textStyles.headline3),
+        const SizedBox(height: 15),
+        ThemedTextFormField(
+          controller: _repeatIntervalController,
+          keyboardType: TextInputType.number,
+          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+          maxLines: 1,
+          maxLength: 2,
+          showCounter: false,
+          suffix: Text(_selectedRepeatUnit.getUnitName(context)),
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          validator: (value) {
+            if (_selectedRecurring.type == RecurringType.none ||
+                _selectedRepeatUnit.value == null) return null;
+            if (value == null || value.isEmpty || int.parse(value) < 1) {
+              return t.repeateIntervalAtLeastOne;
+            }
+            return null;
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _startDateSelector() {
+    final themeData = Theme.of(context);
+    final textStyles = themeData.textStyles;
+    final t = AppLocalizations.of(context)!;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(t.startDate, style: textStyles.headline3),
+        const SizedBox(height: 10),
+        DateTimeFormField(
+            mode: DateTimeFieldPickerMode.date,
+            decoration: const InputDecoration(
+              suffixIcon: Icon(Icons.event_note),
+              isDense: true,
+            ),
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            firstDate: DateTime.now(),
+            initialValue: _selectedStartDate,
+            onDateSelected: ((value) =>
+                setState(() => _selectedStartDate = setDateAndTime(value))),
+            validator: (value) {
+              if (_selectedRecurring.type == RecurringType.none) return null;
+              if (value == null) {
+                return t.startDateRequired;
+              }
+              if (_selectedRepeatEnd.value == 'endDate' &&
+                  _selectedEndDate != null) {
+                if (_selectedEndDate!.isBefore(value)) {
+                  return t.endDateMustBeAfterStartDate;
+                }
+              }
+              return null;
+            }),
+      ],
+    );
+  }
+
+  Widget _startTimeSelector() {
+    final themeData = Theme.of(context);
+    final textStyles = themeData.textStyles;
+    final t = AppLocalizations.of(context)!;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(t.startTime, style: textStyles.headline3),
+        const SizedBox(height: 10),
+        DateTimeFormField(
+          decoration: const InputDecoration(
+            suffixIcon: Icon(Icons.access_time),
+            isDense: true,
+          ),
+          mode: DateTimeFieldPickerMode.time,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          initialValue: _selectedStartDate,
+          onDateSelected: ((value) => setState(() {
+                _selectedStartTime = value;
+                _selectedStartDate =
+                    setDateAndTime(_selectedStartDate ?? DateTime.now());
+                _selectedEndDate =
+                    setDateAndTime(_selectedEndDate ?? DateTime.now());
+              })),
+          validator: (value) {
+            if (_selectedRecurring.type == RecurringType.none) return null;
+            if (value == null) {
+              return t.startDateRequired;
+            }
+            if (_selectedStartDate != null &&
+                _selectedStartDate!.isBefore(DateTime.now())) {
+              return t.startTimeMustBeInTheFuture;
+            }
+            return null;
+          },
+        ),
+      ],
+    );
+  }
+
+  DateTime setDateAndTime(DateTime date) {
+    DateTime time = _selectedStartTime ?? DateTime.now();
+    return DateTime(date.year, date.month, date.day, time.hour, time.minute);
+  }
+
+  Widget _repeatEndOptions() {
+    final themeData = Theme.of(context);
+    final textStyles = themeData.textStyles;
+    final t = AppLocalizations.of(context)!;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(t.repeatsUntil, style: textStyles.headline3),
+        const SizedBox(height: 10),
+        _repeatEndDropDown(
+          repeatEndOptions,
+          selected: _selectedRepeatEnd,
+          onChanged: (item) {
+            setState(() => _selectedRepeatEnd = item);
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _repeatEndDropDown(List<CircleRepeatEndOption> options,
+      {required Function(dynamic item) onChanged,
+      required CircleRepeatEndOption? selected}) {
+    if (options.isEmpty) return Container();
+    final dropDownMenus = <DropdownMenuItem<CircleRepeatEndOption>>[];
+    for (var v in options) {
+      dropDownMenus.add(
+        DropdownMenuItem(
+          value: v,
+          child: Text(v.getName(context), overflow: TextOverflow.ellipsis),
+        ),
+      );
+    }
+    return SizedBox(
+      height: 40,
+      child: DropdownButton<CircleRepeatEndOption>(
+        isExpanded: true,
+        items: dropDownMenus,
+        value: selected,
+        onChanged: (v) {
+          onChanged(v);
+        },
+      ),
+    );
+  }
+
+  Widget _endDateSelector() {
+    final themeData = Theme.of(context);
+    final textStyles = themeData.textStyles;
+    final t = AppLocalizations.of(context)!;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(t.endDate, style: textStyles.headline3),
+        const SizedBox(height: 10),
+        DateTimeFormField(
+            mode: DateTimeFieldPickerMode.date,
+            decoration: const InputDecoration(
+              suffixIcon: Icon(Icons.event_note),
+              isDense: true,
+            ),
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            firstDate: DateTime.now(),
+            initialValue: _selectedEndDate,
+            onDateSelected: ((value) =>
+                setState(() => _selectedEndDate = setDateAndTime(value))),
+            validator: (value) {
+              if (_selectedRecurring.type == RecurringType.none ||
+                  _selectedRepeatEnd.value != 'endDate') return null;
+              if (_selectedEndDate == null) {
+                return t.endDateRequired;
+              }
+              if (_selectedStartDate != null) {
+                if (_selectedStartDate!.isAfter(_selectedEndDate!)) {
+                  return t.endDateMustBeAfterStartDate;
+                }
+              }
+              return null;
+            }),
+      ],
+    );
+  }
+
+  Widget _endCountSelector() {
+    final themeData = Theme.of(context);
+    final textStyles = themeData.textStyles;
+    final t = AppLocalizations.of(context)!;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(t.numberOfSessions, style: textStyles.headline3),
+        const SizedBox(height: 15),
+        ThemedTextFormField(
+          controller: _repeatCountController,
+          keyboardType: TextInputType.number,
+          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+          maxLines: 1,
+          maxLength: 2,
+          showCounter: false,
+          suffix: Text(t.sessions),
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          validator: (value) {
+            if (_selectedRecurring.type == RecurringType.none ||
+                _selectedRepeatEnd.value != 'endDate') return null;
+            if (value == null || value.isEmpty || int.parse(value) < 1) {
+              return t.numberOfSessionsAtLeastOne;
+            }
+            return null;
+          },
+        ),
+      ],
     );
   }
 

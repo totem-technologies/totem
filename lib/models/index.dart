@@ -9,6 +9,7 @@ export 'data_urls.dart';
 export 'date_name_ext.dart';
 export 'network_state.dart';
 export 'participant.dart';
+export 'repeat_options.dart';
 export 'roles.dart';
 export 'session.dart';
 export 'session_data_message.dart';

@@ -13,6 +13,7 @@ class ThemedInputDecoration extends InputDecoration {
     Color? errorBorderColor,
     Color? focusedBorderColor,
     Widget? suffixIcon,
+    Widget? suffix,
     EdgeInsetsGeometry? contentPadding,
     bool isDense = false,
   }) : super(
@@ -20,6 +21,7 @@ class ThemedInputDecoration extends InputDecoration {
           contentPadding: contentPadding,
           hintText: hintText,
           hintStyle: hintStyle ?? textStyles.hintInputLabel,
+          counterText: '',
           labelText: labelText,
           labelStyle: labelStyle ?? textStyles.inputLabel,
           enabledBorder: UnderlineInputBorder(
@@ -35,5 +37,6 @@ class ThemedInputDecoration extends InputDecoration {
                 BorderSide(color: focusedBorderColor ?? themeColors.divider),
           ),
           suffixIcon: suffixIcon,
+          suffix: suffix,
         );
 }

@@ -103,6 +103,9 @@ class FirebaseCirclesProvider extends CirclesProvider {
     String? themeRef,
     String? imageUrl,
     String? bannerUrl,
+    RecurringType? recurringType,
+    List<DateTime>? instances,
+    RepeatOptions? repeatOptions,
   }) async {
     final DocumentReference userRef =
         FirebaseFirestore.instance.collection(Paths.users).doc(keeper ?? uid);
@@ -142,6 +145,26 @@ class FirebaseCirclesProvider extends CirclesProvider {
       }
       if (maxParticipants != null) {
         options["maxParticipants"] = maxParticipants;
+      }
+      if (recurringType != null) {
+        options["recurringType"] = recurringType.name;
+      }
+      if (instances != null) {
+        options["instances"] =
+            instances.map((e) => e.toUtc().toIso8601String()).toList();
+      }
+      if (repeatOptions != null) {
+        final repeating = <String, dynamic>{};
+        repeating['start'] = repeatOptions.start.toUtc().toIso8601String();
+        repeating['every'] = repeatOptions.every;
+        repeating['unit'] = repeatOptions.unit.name;
+        if (repeatOptions.until != null) {
+          repeating['until'] = repeatOptions.until!.toUtc().toIso8601String();
+        }
+        if (repeatOptions.count != null) {
+          repeating['count'] = repeatOptions.count;
+        }
+        options['repeating'] = repeating;
       }
       if (options.isNotEmpty) {
         data["options"] = options;

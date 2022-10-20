@@ -18,6 +18,9 @@ abstract class CirclesProvider {
     String? themeRef,
     String? imageUrl,
     String? bannerUrl,
+    RecurringType? recurringType,
+    List<DateTime>? instances,
+    RepeatOptions? repeatOptions,
   });
 
   Future<bool> removeSnapCircle(
