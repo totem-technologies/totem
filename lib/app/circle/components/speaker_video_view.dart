@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:provider/provider.dart' as prov;
 import 'package:totem/app/index.dart';
+import 'package:totem/components/animation/index.dart';
 import 'package:totem/models/index.dart';
 
 class SpeakerVideoView extends ConsumerStatefulWidget {
@@ -25,7 +26,7 @@ class SpeakerVideoViewState extends ConsumerState<SpeakerVideoView> {
     final totemParticipant = activeSession.totemParticipant;
     final bool totemReceived = activeSession.totemReceived;
     if (totemParticipant != null) {
-      if (totemReceived) {
+      if (totemReceived && !totemParticipant.me) {
         return prov.ChangeNotifierProvider<SessionParticipant>.value(
           value: activeSession.totemParticipant!,
           child: LayoutBuilder(
@@ -37,35 +38,13 @@ class SpeakerVideoViewState extends ConsumerState<SpeakerVideoView> {
                 height: sizeOfVideo,
                 child: prov.Consumer<SessionParticipant>(
                   builder: (_, participant, __) {
-                    return ClipRRect(
-                      borderRadius: const BorderRadius.all(Radius.circular(8)),
+                    return RevealAnimationContainer(
+                      revealAnimationStart: 0,
+                      revealInset: 0.9,
                       child: CircleParticipantVideo(
                         participant: participant,
                         channelId: commProvider.channelId ?? "",
                       ),
-                      /*Stack(
-                        children: [
-                          CircleLiveSessionVideo(participant: participant),
-                          if (participant.videoMuted)
-                            Positioned.fill(
-                              child: CameraMuted(
-                                userImage: participant.sessionImage,
-                              ),
-                            ),
-                          if (!participant.me && participant.networkUnstable)
-                            const Positioned(
-                              top: 10,
-                              left: 10,
-                              child: CircleNetworkUnstable(),
-                            ),
-                          if (participant.muted)
-                            const PositionedDirectional(
-                              top: 5,
-                              end: 5,
-                              child: MuteIndicator(),
-                            ),
-                        ],
-                      ), */
                     );
                   },
                 ),

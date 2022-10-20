@@ -57,7 +57,8 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
 
   @override
   void initState() {
-    _userProfileFetch = ref.read(repositoryProvider).userProfile();
+    _userProfileFetch =
+        ref.read(repositoryProvider).userProfile(circlesCompleted: true);
     Future.delayed(const Duration(milliseconds: 0), () {
       initializeProvider();
     });
