@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
 import 'package:totem/components/animation/rounded_rect_reveal_clipper.dart';
 
 class RevealAnimationContainer extends StatefulWidget {
   const RevealAnimationContainer({
     super.key,
     required this.child,
-    required this.animationAsset,
     this.cornerRadius = 8,
     this.revealAnimationStart = 0.0,
     this.revealInset = 0.0,
@@ -14,10 +12,11 @@ class RevealAnimationContainer extends StatefulWidget {
     this.forward = true,
     this.onComplete,
     this.overlay,
+    this.duration = 1000,
   });
   final Widget child;
-  final String animationAsset;
   final double cornerRadius;
+  final int duration;
   final double revealAnimationStart;
   final double fadeAnimationStart;
   final bool forward;
@@ -38,7 +37,9 @@ class RevealAnimationContainerState extends State<RevealAnimationContainer>
 
   @override
   void initState() {
-    _controller = AnimationController(vsync: this);
+    _controller = AnimationController(
+        vsync: this, duration: Duration(milliseconds: widget.duration))
+      ..forward(from: 0);
     _fadeAnimation = Tween<double>(
       begin: 1,
       end: 0,
@@ -85,35 +86,7 @@ class RevealAnimationContainerState extends State<RevealAnimationContainer>
                 fit: StackFit.expand,
                 children: [
                   widget.child,
-                  // fade layer on between the child and the
-                  // lottie animation provides some option for not
-                  // seeing any of the child through the lottie animation
-                  // until the right moment
-                  Opacity(
-                    opacity: _fadeAnimation.value,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.black,
-                        borderRadius:
-                            BorderRadius.circular(widget.cornerRadius),
-                      ),
-                    ),
-                  ),
                   // Animation Asset layer on top of the child
-                  Lottie.asset(
-                    widget.animationAsset,
-                    fit: BoxFit.cover,
-                    repeat: true,
-                    controller: _controller,
-                    onLoaded: (composition) {
-                      // setup the animation duration based on the
-                      // lottie animation duration
-                      _controller.duration = composition.duration;
-                      (widget.forward)
-                          ? _controller.forward()
-                          : _controller.reverse(from: 1.0);
-                    },
-                  ),
                   if (widget.overlay != null)
                     Opacity(
                       opacity: _fadeAnimation.value,

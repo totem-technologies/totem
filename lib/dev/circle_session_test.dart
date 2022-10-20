@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:totem/app/circle/index.dart';
 import 'package:totem/dev/layouts.dart';
 import 'package:totem/dev/test_session_controls.dart';
@@ -191,29 +190,8 @@ class ActiveSessionLayoutTestState extends State<ActiveSessionLayoutTest> {
                                     speaker: !waitingForTotem
                                         ? (!totemUser
                                             ? RevealAnimationContainer(
-                                                animationAsset:
-                                                    'assets/animations/totem_reveal.json',
-                                                fadeAnimationStart: 0.5,
-                                                revealAnimationStart: 0.8,
-                                                revealInset: 0.2,
-                                                overlay: Center(
-                                                  child: Container(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            10),
-                                                    decoration:
-                                                        const BoxDecoration(
-                                                            color: Colors.black,
-                                                            shape: BoxShape
-                                                                .circle),
-                                                    child: SvgPicture.asset(
-                                                      'view_circle.svg',
-                                                      color: Colors.white,
-                                                      width: 50,
-                                                      height: 50,
-                                                    ),
-                                                  ),
-                                                ),
+                                                revealAnimationStart: 0,
+                                                revealInset: 0.9,
                                                 child: Image.network(
                                                   'https://www.w3schools.com/howto/img_avatar.png',
                                                   fit: BoxFit.cover,

@@ -39,10 +39,8 @@ class SpeakerVideoViewState extends ConsumerState<SpeakerVideoView> {
                 child: prov.Consumer<SessionParticipant>(
                   builder: (_, participant, __) {
                     return RevealAnimationContainer(
-                      animationAsset: 'assets/animations/totem_reveal.json',
-                      fadeAnimationStart: 0.5,
-                      revealAnimationStart: 0.8,
-                      revealInset: 0.2,
+                      revealAnimationStart: 0,
+                      revealInset: 0.9,
                       child: CircleParticipantVideo(
                         participant: participant,
                         channelId: commProvider.channelId ?? "",

@@ -71,7 +71,6 @@ dependencies:
   keyboard_actions: ^4.0.0
   libphonenumber_plugin: ^0.2.3
   logger: ^1.0.0-nullsafety.0
-  lottie: ^1.4.3
   noise_meter: ^3.1.0
   package_info_plus: ^2.0.0
   path_provider: ^2.0.10
@@ -118,7 +117,6 @@ flutter:
     - assets/onboarding_talking_person.png
     - assets/onboarding_totem_icon.png
     - assets/view_circle.svg
-    - assets/animations/totem_reveal.json
     - assets/totem_icon.svg
 
   fonts:
