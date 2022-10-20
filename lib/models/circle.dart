@@ -13,9 +13,11 @@ abstract class Circle {
   UserProfile? createdBy;
   late DateTime createdOn;
   DateTime? updatedOn;
+  DateTime? expiresOn;
   String? activeSession;
   int participantCount = 0;
   int maxParticipants = -1;
+  int maxMinutes = -1;
   String? link;
   late String keeper;
   String? previousCircle;
@@ -26,6 +28,8 @@ abstract class Circle {
   bool isPrivate = false;
   late int colorIndex;
   DateTime? nextSession;
+  List<DateTime>? scheduledSessions;
+  RepeatOptions? repeating;
 
   bool _canJoin = true;
 
@@ -40,8 +44,10 @@ abstract class Circle {
     createdBy = createdUser;
     createdOn = DateTimeEx.fromMapValue(json['createdOn']) ?? DateTime.now();
     updatedOn = DateTimeEx.fromMapValue(json['updatedOn']);
+    expiresOn = DateTimeEx.fromMapValue(json['expiresOn']);
     participantCount = json['participantCount'] ?? 0;
     maxParticipants = json['maxParticipants'] ?? -1;
+    maxMinutes = json['maxMinutes'] ?? -1;
     link = json['link'];
     keeper = json['keeper'];
     previousCircle = json['previousCircle'];
@@ -57,6 +63,15 @@ abstract class Circle {
       _canJoin = bannedParticipants![uid] == null;
     }
     nextSession = DateTimeEx.fromMapValue(json['nextSession']);
+    if (json['scheduledSessions'] != null) {
+      scheduledSessions = [];
+      for (var date in json['scheduledSessions']) {
+        scheduledSessions!.add(DateTimeEx.fromMapValue(date)!);
+      }
+    }
+    if (json['repeating'] != null) {
+      repeating = RepeatOptions.fromJson(json['repeating']);
+    }
     colorIndex = name.hashCode;
   }
 

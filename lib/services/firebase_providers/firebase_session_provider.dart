@@ -410,7 +410,6 @@ class FirebaseSessionProvider extends SessionProvider {
   Future<bool> _removeSnapSessionParticipant(
       SnapSession session, String sessionUid) async {
     List<String> validStates = [
-      SessionState.pending.name,
       SessionState.waiting.name,
       SessionState.starting.name,
       SessionState.live.name,

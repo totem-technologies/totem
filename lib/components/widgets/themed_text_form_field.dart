@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/theme/index.dart';
 
@@ -25,12 +26,15 @@ class ThemedTextFormField extends StatelessWidget {
     this.autofocus = false,
     this.onEditingComplete,
     this.suffixIcon,
+    this.suffix,
     this.contentPadding,
     this.isDense = true,
     this.autofillHints,
     this.onChanged,
     this.maxLength,
     this.onFieldSubmitted,
+    this.inputFormatters,
+    this.showCounter = true,
   }) : super(key: key);
   final String? labelText;
   final TextEditingController? controller;
@@ -50,6 +54,7 @@ class ThemedTextFormField extends StatelessWidget {
   final bool autofocus;
   final void Function()? onEditingComplete;
   final Widget? suffixIcon;
+  final Widget? suffix;
   final String? hintText;
   final TextStyle? hintStyle;
   final EdgeInsetsGeometry? contentPadding;
@@ -58,6 +63,8 @@ class ThemedTextFormField extends StatelessWidget {
   final int? maxLength;
   final void Function(String)? onChanged;
   final Function(String)? onFieldSubmitted;
+  final List<TextInputFormatter>? inputFormatters;
+  final bool showCounter;
 
   @override
   Widget build(BuildContext context) {
@@ -74,6 +81,7 @@ class ThemedTextFormField extends StatelessWidget {
         themeColors: themeColors,
         textStyles: textStyles,
         suffixIcon: suffixIcon,
+        suffix: suffix,
         contentPadding: contentPadding,
         isDense: isDense,
       ),
@@ -86,6 +94,7 @@ class ThemedTextFormField extends StatelessWidget {
       textCapitalization: textCapitalization,
       focusNode: focusNode,
       textInputAction: textInputAction,
+      inputFormatters: inputFormatters,
       validator: validator,
       maxLines: maxLines > 0 ? maxLines : null,
       autovalidateMode: autovalidateMode,
@@ -93,7 +102,9 @@ class ThemedTextFormField extends StatelessWidget {
       onEditingComplete: onEditingComplete,
       onChanged: onChanged,
       maxLength: maxLength,
-      buildCounter: (maxLength ?? 0) > 0 ? InputCounter.counterWidget : null,
+      buildCounter: (maxLength ?? 0) > 0 && showCounter
+          ? InputCounter.counterWidget
+          : null,
       onFieldSubmitted: onFieldSubmitted,
     );
   }

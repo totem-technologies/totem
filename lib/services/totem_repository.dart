@@ -69,6 +69,9 @@ class TotemRepository {
     String? themeRef,
     String? imageUrl,
     String? bannerUrl,
+    RecurringType? recurringType,
+    List<DateTime>? instances,
+    RepeatOptions? repeatOptions,
   }) =>
       _circlesProvider.createSnapCircle(
         name: name,
@@ -83,6 +86,9 @@ class TotemRepository {
         themeRef: themeRef,
         imageUrl: imageUrl,
         bannerUrl: bannerUrl,
+        recurringType: recurringType,
+        instances: instances,
+        repeatOptions: repeatOptions,
       );
   Future<bool> removeSnapCircle({required SnapCircle circle}) =>
       _circlesProvider.removeSnapCircle(circle: circle, uid: user!.uid);
