@@ -109,8 +109,14 @@ class ListenLiveLayoutTest extends StatefulWidget {
   State<StatefulWidget> createState() => ListenLiveLayoutState();
 }
 
-class ListenLiveLayoutState extends State<ListenLiveLayoutTest> {
+class ListenLiveLayoutState extends State<ListenLiveLayoutTest>
+    with SingleTickerProviderStateMixin {
   int participantCount = 7;
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -170,14 +176,14 @@ class ListenLiveLayoutState extends State<ListenLiveLayoutTest> {
                 color: Colors.black,
                 child: ListenerUserLayout(
                   userList: ParticipantListLayout(
-                      maxAllowedDimension: 2,
+                      maxAllowedDimension: 1,
                       maxChildSize: 150,
                       generate: getParticipant,
                       count: participantCount),
+                  isPhoneLayout: isPhoneLayout,
                   speaker: Container(
                     color: Colors.yellow,
                   ),
-                  isPhoneLayout: isPhoneLayout,
                 ),
               ),
             ),

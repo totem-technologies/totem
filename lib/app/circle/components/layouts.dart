@@ -116,9 +116,11 @@ class WaitingRoomListLayout extends StatelessWidget {
     required this.generate,
     required this.count,
     this.minChildSize = 100,
+    this.live = false,
   }) : super(key: key);
   final double maxChildSize = 360;
   final double minChildSize;
+  final bool live;
   static const double spacing = 0;
   final int count;
   final Widget Function(int, double) generate;
@@ -185,7 +187,10 @@ class WaitingRoomListLayout extends StatelessWidget {
             EdgeInsets.symmetric(horizontal: themeData.pageHorizontalPadding),
         child: Text(
           t.noParticipantsActiveSession,
-          style: textStyles.headline3,
+          style: !live
+              ? textStyles.headline3
+              : textStyles.headline3!
+                  .merge(TextStyle(color: themeData.themeColors.reversedText)),
           textAlign: TextAlign.center,
         ),
       ),
