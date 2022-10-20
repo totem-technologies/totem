@@ -1,5 +1,4 @@
 import 'package:totem/models/index.dart';
-import 'package:totem/models/repeat_options.dart';
 
 abstract class CirclesProvider {
   Stream<List<SnapCircle>> snapCircles();
