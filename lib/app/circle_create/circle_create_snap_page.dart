@@ -821,6 +821,7 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
             if (value == null || value.isEmpty || int.parse(value) < 1) {
               return t.repeateIntervalAtLeastOne;
             }
+            return null;
           },
         ),
       ],
@@ -858,6 +859,7 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
                   return t.endDateMustBeAfterStartDate;
                 }
               }
+              return null;
             }),
       ],
     );
@@ -896,6 +898,7 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
                 _selectedStartDate!.isBefore(DateTime.now())) {
               return t.startTimeMustBeInTheFuture;
             }
+            return null;
           },
         ),
       ],
@@ -984,6 +987,7 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
                   return t.endDateMustBeAfterStartDate;
                 }
               }
+              return null;
             }),
       ],
     );
@@ -1013,6 +1017,7 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
             if (value == null || value.isEmpty || int.parse(value) < 1) {
               return t.numberOfSessionsAtLeastOne;
             }
+            return null;
           },
         ),
       ],

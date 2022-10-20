@@ -19,7 +19,6 @@ class CircleRepeatUnitOption {
         return t.monthly;
       default:
         return t.never;
-        ;
     }
   }
 
