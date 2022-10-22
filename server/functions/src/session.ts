@@ -1,12 +1,12 @@
 import * as admin from "firebase-admin";
 import * as functions from "firebase-functions";
+import {add} from "date-fns";
 // eslint-disable-next-line import/no-unresolved -- https://github.com/firebase/firebase-admin-node/issues/1827#issuecomment-1226224988
-import { add } from "date-fns";
-import { DocumentReference, FieldValue, Timestamp } from "firebase-admin/firestore";
-import { kickUserFromSession } from "./agora";
-import { hasAnyRole, isAuthenticated, Role } from "./auth";
+import {DocumentReference, FieldValue, Timestamp} from "firebase-admin/firestore";
+import {kickUserFromSession} from "./agora";
+import {hasAnyRole, isAuthenticated, Role} from "./auth";
 import {
-  CircleSessionSummary, CreateSnapCircleArgs, RecurringType, RepeatOptions, RepeatUnit, SessionState, SnapCircleData
+  CircleSessionSummary, CreateSnapCircleArgs, RecurringType, RepeatOptions, RepeatUnit, SessionState, SnapCircleData,
 } from "./common-types";
 import * as dynamicLinks from "./dynamic-links";
 
