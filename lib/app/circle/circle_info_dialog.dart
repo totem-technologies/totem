@@ -276,6 +276,29 @@ class _CircleInfoDialogState extends ConsumerState<CircleInfoDialog> {
 
   Widget _scheduleInfo(SnapCircle circle) {
     final t = AppLocalizations.of(context)!;
+    final DateFormat timeFormat = DateFormat('hh:mm a');
+    DateTime start = circle.createdOn;
+    String? time;
+    String sessionType = t.instantSession;
+    String startTime = timeFormat.format(start);
+    if (circle.nextSession != null) {
+      start = circle.nextSession!;
+      sessionType = t.scheduledSession;
+      DateTime ends = start.add(Duration(minutes: circle.maxMinutes));
+      String endTime = timeFormat.format(ends);
+      time = t.circleTimeRange(startTime, endTime);
+    } else {
+      time = startTime;
+    }
+    if (circle.isComplete) {
+      time = t.sessionsCompleted;
+      startTime = "";
+    }
+    String repeatType = t.doesNotRepeat;
+    if (circle.repeating != null) {
+      sessionType = t.repeatingSession;
+      repeatType = _repeatType(circle);
+    }
     return Center(
       child: Row(
         children: [
@@ -289,10 +312,18 @@ class _CircleInfoDialogState extends ConsumerState<CircleInfoDialog> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Text(
-                        DateFormat.yMMMMEEEEd().format(circle.createdOn),
-                        overflow: TextOverflow.ellipsis,
-                      ),
+                      if (startTime.isNotEmpty)
+                        Text(
+                          DateFormat.yMMMMEEEEd().format(start),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      if (time.isNotEmpty) ...[
+                        SizedBox(height: startTime.isNotEmpty ? 3 : 0),
+                        Text(
+                          time,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
                     ],
                   ),
                 ),
@@ -313,14 +344,14 @@ class _CircleInfoDialogState extends ConsumerState<CircleInfoDialog> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Text(
-                        t.instantSession,
+                        sessionType,
                         overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(
                         height: 5,
                       ),
                       Text(
-                        t.doesNotRepeat,
+                        repeatType,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ],
@@ -400,5 +431,31 @@ class _CircleInfoDialogState extends ConsumerState<CircleInfoDialog> {
 
   void _join(SnapCircle circle) {
     Navigator.of(context).pop(circle);
+  }
+
+  String _repeatType(SnapCircle circle) {
+    final t = AppLocalizations.of(context)!;
+    String repeatSingleUnit = "";
+    String repeatPluralUnit = "";
+    switch (circle.repeating!.unit) {
+      case RepeatUnit.hours:
+        repeatSingleUnit = t.hour;
+        repeatPluralUnit = t.hours;
+        break;
+      case RepeatUnit.weeks:
+        repeatSingleUnit = t.week;
+        repeatPluralUnit = t.weeks;
+        break;
+      case RepeatUnit.months:
+        repeatSingleUnit = t.month;
+        repeatPluralUnit = t.months;
+        break;
+      case RepeatUnit.days:
+        repeatSingleUnit = t.day;
+        repeatPluralUnit = t.days;
+        break;
+    }
+    return t.repeatsEveryFor(
+        circle.repeating!.count ?? 0, repeatSingleUnit, repeatPluralUnit);
   }
 }

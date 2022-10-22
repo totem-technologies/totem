@@ -91,6 +91,40 @@ class _AppState extends ConsumerState<App> {
             foregroundColor: themeColors.linkText,
             textStyle: textStyles.textLinkButton),
       ),
+      inputDecorationTheme: InputDecorationTheme(
+        labelStyle: textStyles.inputLabel,
+        hintStyle: textStyles.hintInputLabel,
+        errorStyle: textStyles.bodyText1!
+            .copyWith(color: themeColors.error, fontSize: 12),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8.0),
+          borderSide: BorderSide(
+            color: themeColors.divider,
+            width: 1.0,
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8.0),
+          borderSide: BorderSide(
+            color: themeColors.divider,
+            width: 1.0,
+          ),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8.0),
+          borderSide: BorderSide(
+            color: themeColors.error,
+            width: 1.0,
+          ),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8.0),
+          borderSide: BorderSide(
+            color: themeColors.divider,
+            width: 1.0,
+          ),
+        ),
+      ),
       pageTransitionsTheme: const PageTransitionsTheme(
         builders: {
           TargetPlatform.android: ZoomPageTransitionsBuilder(),

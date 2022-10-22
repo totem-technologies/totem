@@ -36,6 +36,10 @@ class ThemedInputDecoration extends InputDecoration {
             borderSide:
                 BorderSide(color: focusedBorderColor ?? themeColors.divider),
           ),
+          focusedErrorBorder: UnderlineInputBorder(
+            borderSide:
+                BorderSide(color: enabledBorderColor ?? themeColors.error),
+          ),
           suffixIcon: suffixIcon,
           suffix: suffix,
         );

@@ -8,12 +8,12 @@ import 'package:flutter_spinbox/flutter_spinbox.dart';
 import 'package:totem/app/circle_create/components/index.dart';
 import 'package:totem/app_routes.dart';
 import 'package:totem/components/widgets/index.dart';
-import 'package:totem/models/circle_recurring_option.dart';
-import 'package:totem/models/circle_repeat_unit_option.dart';
-import 'package:totem/models/circle_repeat_end_option.dart';
-import 'package:totem/models/index.dart';
 import 'package:totem/models/circle_duration_option.dart';
+import 'package:totem/models/circle_recurring_option.dart';
+import 'package:totem/models/circle_repeat_end_option.dart';
+import 'package:totem/models/circle_repeat_unit_option.dart';
 import 'package:totem/models/circle_visibility_option.dart';
+import 'package:totem/models/index.dart';
 import 'package:totem/services/error_report.dart';
 import 'package:totem/services/index.dart';
 import 'package:totem/services/utils/device_type.dart';
@@ -531,7 +531,6 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
   Widget _participantLimit() {
     final themeData = Theme.of(context);
     final textStyles = themeData.textStyles;
-    final themeColors = themeData.themeColors;
     final t = AppLocalizations.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -539,12 +538,6 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
         Text(t.participantLimit, style: textStyles.headline3),
         const SizedBox(height: 6),
         SpinBox(
-          decoration: InputDecoration(
-            border: OutlineInputBorder(
-              borderSide: BorderSide(color: themeColors.divider, width: 1),
-              borderRadius: BorderRadius.circular(8.0),
-            ),
-          ),
           keyboardType: const TextInputType.numberWithOptions(decimal: false),
           min: Circle.minParticipants.toDouble(),
           max: maxParticipants,

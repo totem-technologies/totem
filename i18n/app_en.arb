@@ -59,6 +59,13 @@
     },
     "circleReturnToApp": "Tap to return to Totem",
     "circleStarting": "Circle is starting",
+    "circleTimeRange": "{start} to {end}",
+    "@circleTimeRange": {
+        "placeholders": {
+            "start": {},
+            "end": {}
+        }
+    },
     "circleTotemPass": "Finishes sharing by:",
     "circleTotemPassLine1": "muting microphone",
     "circleTotemPassLine2": "hiding video or image",
@@ -83,6 +90,7 @@
     "deleteAccountMessage": "Are you sure you want to delete all your data? This cannot be undone?",
     "deleteEverythingButton": "Yes, delete everything",
     "daily": "Daily",
+    "day": "Day",
     "days": "Days",
     "description": "Description",
     "doesNotRepeat": "Does not repeat",
@@ -155,6 +163,7 @@
             "mins": {}
         }
     },
+    "hour": "Hour",
     "hours": "Hours",
     "hoursAndMinsValue": "{hrs} hours and {mins} mins",
     "@hoursAndMinsValue": {
@@ -213,6 +222,7 @@
             "mins": {}
         }
     },
+    "month": "Month",
     "monthly": "Monthly",
     "months": "Months",
     "more": "More",
@@ -263,8 +273,16 @@
     "repeateIntervalAtLeastOne": "Repeat interval must be at least 1",
     "repeats": "Repeats",
     "repeatsEvery": "Repeats Every",
+    "repeatsEveryFor": "Every {count} for {count, plural, =0{forever} =1{1 {unit}} other{{count} {units}}}",
+    "@repeatsEveryFor": {
+        "placeholders": {
+            "count": {},
+            "unit": {},
+            "units": {}
+        }
+    },
     "repeatsUntil": "Repeats Until",
-    "restartCircle": "Restart Circle",
+    "restartCircle": "Start Circle",
     "retake": "Retake",
     "retryPhone": "Didn’t receive a code?\nEnter a new number",
     "retrySignin": "Retry",
@@ -272,6 +290,7 @@
     "role": "Role",
     "save": "Save",
     "saveProfileImage": "Save Profile Image",
+    "scheduledSession": "Scheduled Session",
     "scheduledSessions": "Scheduled Sessions",
     "selectImage": "Select Image",
     "selectProfilePicture": "Select Profile Picture",
@@ -348,6 +367,7 @@
     "version": "Version",
     "videoSettings": "Video Settings",
     "visibility": "Visibility",
+    "week": "Week",
     "weekly": "Weekly",
     "weeks": "Weeks",
     "welcome": "Welcome to Totem",

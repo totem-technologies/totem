@@ -1,20 +1,14 @@
-import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
+import * as functions from "firebase-functions";
 // eslint-disable-next-line import/no-unresolved -- https://github.com/firebase/firebase-admin-node/issues/1827#issuecomment-1226224988
-import {DocumentReference, Timestamp, FieldValue} from "firebase-admin/firestore";
-import * as dynamicLinks from "./dynamic-links";
-import {hasAnyRole, isAuthenticated, Role} from "./auth";
-import {kickUserFromSession} from "./agora";
+import { add } from "date-fns";
+import { DocumentReference, FieldValue, Timestamp } from "firebase-admin/firestore";
+import { kickUserFromSession } from "./agora";
+import { hasAnyRole, isAuthenticated, Role } from "./auth";
 import {
-  SnapCircleData,
-  SessionState,
-  CircleSessionSummary,
-  RepeatOptions,
-  RecurringType,
-  RepeatUnit,
-  CreateSnapCircleArgs,
+  CircleSessionSummary, CreateSnapCircleArgs, RecurringType, RepeatOptions, RepeatUnit, SessionState, SnapCircleData
 } from "./common-types";
-import {add} from "date-fns";
+import * as dynamicLinks from "./dynamic-links";
 
 // The Firebase Admin SDK to access the Firebase Realtime Database.
 // make sure that this initializeApp call hasn't already
@@ -67,12 +61,14 @@ export async function endSessionFor(
   if (state != SessionState.cancelling && state != SessionState.waiting) {
     // If the session went live then record it as a session
     const entry = {circleRef, completedDate};
+    const sessionId = completedDate.seconds.toString();
     if (circleParticipants) {
+      const sessionRef = circleRef.collection("sessions").doc(sessionId);
       // Record it in the participants' records and then make a session record for the circle
       circleParticipants.forEach((uid: string) => {
         const entryRef = admin.firestore().collection("users").doc(uid).collection("snapCircles").doc();
         const role = keeper === uid ? "keeper" : "member";
-        batch.set(entryRef, {...entry, role, completedDate});
+        batch.set(entryRef, {...entry, role, completedDate, sessionRef});
       });
     }
     const sessionSummary: CircleSessionSummary = {startedDate, completedDate, state: endState, circleParticipants};
@@ -81,7 +77,7 @@ export async function endSessionFor(
       .collection("snapCircles")
       .doc(circleId)
       .collection("sessions")
-      .doc(completedDate.seconds.toString());
+      .doc(sessionId);
     batch.set(sessionRef, sessionSummary);
   }
 
