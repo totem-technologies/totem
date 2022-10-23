@@ -5,9 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:libphonenumber_plugin/libphonenumber_plugin.dart';
 import 'package:totem/app/login/components/pin_code_widget.dart';
-import 'package:totem/app_routes.dart';
 import 'package:totem/components/widgets/index.dart';
-import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
 
@@ -35,17 +33,14 @@ class PhoneRegisterCodeEntryState
     try {
       await ref.read(authServiceProvider).verifyCode(pinValue);
       setState(() => _busy = false);
+/*    RESTORE THIS WHEN LOGIN GUIDELINES HAVE TO BE ACCEPTED FIRST
       if (!mounted) return;
       final authSvc = ref.read(authServiceProvider);
       final AuthUser? authUser = authSvc.currentUser();
       if (authUser != null && authUser.isNewUser) {
-        context.replaceNamed(AppRoutes.loginOnboarding);
+        context.replaceNamed(AppRoutes.loginGuideline);
       }
-/*    RESTORE THIS WHEN LOGIN GUIDELINES HAVE TO BE ACCEPTED FIRST
-      await Navigator.pushReplacementNamed(
-        context,
-        AppRoutes.loginGuideline,
-      ); */
+       */
     } on AuthException catch (e) {
       setState(() {
         error = e.message!;

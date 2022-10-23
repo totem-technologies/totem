@@ -550,161 +550,164 @@ class UserProfilePageState extends ConsumerState<UserProfilePage> {
     final t = AppLocalizations.of(context)!;
     final themeData = Theme.of(context);
     final textStyles = themeData.textStyles;
-    AuthUser user = ref.read(authServiceProvider).currentUser()!;
-    return FutureBuilder<UserProfile?>(
-      future: _userProfileFetch,
-      builder: (context, asyncSnapshot) {
-        if (asyncSnapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: BusyIndicator(),
-          );
-        }
-        if (!asyncSnapshot.hasData) {
-          return Center(
-            child: Column(
-              children: [
-                Text(
-                  t.errorNoProfile,
-                  style: textStyles.headline3,
-                )
-              ],
-            ),
-          );
-        }
-        if (_userProfile == null) {
-          _userProfile = asyncSnapshot.data!;
-          _nameController.text = _userProfile!.name;
-          _emailController.text = _userProfile!.email ?? "";
-        }
-        return Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              _profileLabelItem(context,
-                  label: t.name, helpType: t.helpPublicInformation),
-              ThemedTextFormField(
-                hintText: t.helpExampleName,
-                autofillHints: const [AutofillHints.givenName],
-                controller: _nameController,
-                textCapitalization: TextCapitalization.sentences,
-                keyboardType: TextInputType.name,
-                textInputAction: TextInputAction.done,
-                autocorrect: false,
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return t.errorEnterName;
-                  }
-                  return null;
-                },
-                onChanged: _checkHasChanged,
-              ),
-              const SizedBox(height: 22),
-              _profileLabelItem(context,
-                  label: t.email, helpType: t.helpPrivateInformation),
-              ThemedTextFormField(
-                hintText: t.helpExampleEmail,
-                controller: _emailController,
-                autofillHints: const [AutofillHints.email],
-                textCapitalization: TextCapitalization.sentences,
-                textInputAction: TextInputAction.done,
-                keyboardType: TextInputType.emailAddress,
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-                autocorrect: false,
-                onChanged: _checkHasChanged,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return t.errorEnterEmail;
-                  } else if (!EmailValidator.validate(value)) {
-                    return t.errorEmailInvalid;
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 22),
-              _profileLabelItem(context,
-                  label: t.phoneNumber, helpType: t.helpPrivateInformation),
-              FutureBuilder<String>(
-                future: _formatPhoneNumber(user.phoneNumber),
-                builder: (context, asyncSnapshot) {
-                  return Text(asyncSnapshot.data ?? user.phoneNumber);
-                },
-              ),
-              const SizedBox(height: 10),
-              Divider(
-                color: themeData.themeColors.divider,
-                height: 1,
-                thickness: 1,
-              ),
-              const SizedBox(height: 20),
-              Row(
-                children: [
-                  Text(
-                    t.memberSince,
-                    style: textStyles.inputLabel,
+    AuthUser? user = ref.read(authServiceProvider).currentUser();
+    return user != null
+        ? FutureBuilder<UserProfile?>(
+            future: _userProfileFetch,
+            builder: (context, asyncSnapshot) {
+              if (asyncSnapshot.connectionState == ConnectionState.waiting) {
+                return const Center(
+                  child: BusyIndicator(),
+                );
+              }
+              if (!asyncSnapshot.hasData) {
+                return Center(
+                  child: Column(
+                    children: [
+                      Text(
+                        t.errorNoProfile,
+                        style: textStyles.headline3,
+                      )
+                    ],
                   ),
-                  Expanded(
-                    child: Text(
-                      DateFormat.yMMMM().format(_userProfile!.createdOn),
-                      textAlign: TextAlign.right,
+                );
+              }
+              if (_userProfile == null) {
+                _userProfile = asyncSnapshot.data!;
+                _nameController.text = _userProfile!.name;
+                _emailController.text = _userProfile!.email ?? "";
+              }
+              return Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    _profileLabelItem(context,
+                        label: t.name, helpType: t.helpPublicInformation),
+                    ThemedTextFormField(
+                      hintText: t.helpExampleName,
+                      autofillHints: const [AutofillHints.givenName],
+                      controller: _nameController,
+                      textCapitalization: TextCapitalization.sentences,
+                      keyboardType: TextInputType.name,
+                      textInputAction: TextInputAction.done,
+                      autocorrect: false,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return t.errorEnterName;
+                        }
+                        return null;
+                      },
+                      onChanged: _checkHasChanged,
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              Divider(
-                color: themeData.themeColors.divider,
-                height: 1,
-                thickness: 1,
-              ),
-              const SizedBox(height: 20),
-              Row(
-                children: [
-                  Text(
-                    t.circlesDone,
-                    style: textStyles.inputLabel,
-                  ),
-                  Expanded(
-                    child: Text(
-                      _userProfile!.completedCircles?.toString() ?? "0",
-                      textAlign: TextAlign.right,
+                    const SizedBox(height: 22),
+                    _profileLabelItem(context,
+                        label: t.email, helpType: t.helpPrivateInformation),
+                    ThemedTextFormField(
+                      hintText: t.helpExampleEmail,
+                      controller: _emailController,
+                      autofillHints: const [AutofillHints.email],
+                      textCapitalization: TextCapitalization.sentences,
+                      textInputAction: TextInputAction.done,
+                      keyboardType: TextInputType.emailAddress,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      autocorrect: false,
+                      onChanged: _checkHasChanged,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return t.errorEnterEmail;
+                        } else if (!EmailValidator.validate(value)) {
+                          return t.errorEmailInvalid;
+                        }
+                        return null;
+                      },
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              Divider(
-                color: themeData.themeColors.divider,
-                height: 1,
-                thickness: 1,
-              ),
-              const SizedBox(height: 20),
-              Row(
-                children: [
-                  Text(
-                    t.role,
-                    style: textStyles.inputLabel,
-                  ),
-                  Expanded(
-                    child: Text(
-                      user.roleName(t),
-                      textAlign: TextAlign.right,
+                    const SizedBox(height: 22),
+                    _profileLabelItem(context,
+                        label: t.phoneNumber,
+                        helpType: t.helpPrivateInformation),
+                    FutureBuilder<String>(
+                      future: _formatPhoneNumber(user.phoneNumber),
+                      builder: (context, asyncSnapshot) {
+                        return Text(asyncSnapshot.data ?? user.phoneNumber);
+                      },
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              Divider(
-                color: themeData.themeColors.divider,
-                height: 1,
-                thickness: 1,
-              ),
-            ],
-          ),
-        );
-      },
-    );
+                    const SizedBox(height: 10),
+                    Divider(
+                      color: themeData.themeColors.divider,
+                      height: 1,
+                      thickness: 1,
+                    ),
+                    const SizedBox(height: 20),
+                    Row(
+                      children: [
+                        Text(
+                          t.memberSince,
+                          style: textStyles.inputLabel,
+                        ),
+                        Expanded(
+                          child: Text(
+                            DateFormat.yMMMM().format(_userProfile!.createdOn),
+                            textAlign: TextAlign.right,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    Divider(
+                      color: themeData.themeColors.divider,
+                      height: 1,
+                      thickness: 1,
+                    ),
+                    const SizedBox(height: 20),
+                    Row(
+                      children: [
+                        Text(
+                          t.circlesDone,
+                          style: textStyles.inputLabel,
+                        ),
+                        Expanded(
+                          child: Text(
+                            _userProfile!.completedCircles?.toString() ?? "0",
+                            textAlign: TextAlign.right,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    Divider(
+                      color: themeData.themeColors.divider,
+                      height: 1,
+                      thickness: 1,
+                    ),
+                    const SizedBox(height: 20),
+                    Row(
+                      children: [
+                        Text(
+                          t.role,
+                          style: textStyles.inputLabel,
+                        ),
+                        Expanded(
+                          child: Text(
+                            user.roleName(t),
+                            textAlign: TextAlign.right,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    Divider(
+                      color: themeData.themeColors.divider,
+                      height: 1,
+                      thickness: 1,
+                    ),
+                  ],
+                ),
+              );
+            },
+          )
+        : Container();
   }
 
   void _checkHasChanged(String val) {

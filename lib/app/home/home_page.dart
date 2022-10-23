@@ -7,6 +7,7 @@ import 'package:totem/app/home/components/named_circle_list.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/theme/index.dart';
+
 import '../../services/providers.dart';
 import 'menu.dart';
 
@@ -23,7 +24,7 @@ class HomePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final themeData = Theme.of(context);
     final themeColors = themeData.themeColors;
-    AuthUser user = ref.read(authServiceProvider).currentUser()!;
+    AuthUser? user = ref.read(authServiceProvider).currentUser();
     bool isMobile = Theme.of(context).isMobile(context);
     return Scaffold(
       appBar: AppBar(
@@ -40,27 +41,31 @@ class HomePage extends ConsumerWidget {
       ),
       backgroundColor: themeColors.altBackground,
       endDrawer: const TotemDrawer(),
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: SafeArea(
-              top: true,
-              bottom: false,
-              child: isMobile
-                  ? _homeContent(context, ref, isMobile: isMobile, user: user)
-                  : Center(
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(
-                            maxWidth: maxContainerWidth +
-                                (Theme.of(context).pageHorizontalPadding * 2)),
-                        child: _homeContent(context, ref,
-                            isMobile: isMobile, user: user),
-                      ),
-                    ),
-            ),
-          ),
-        ],
-      ),
+      body: user != null
+          ? Stack(
+              children: [
+                Positioned.fill(
+                  child: SafeArea(
+                    top: true,
+                    bottom: false,
+                    child: isMobile
+                        ? _homeContent(context, ref,
+                            isMobile: isMobile, user: user)
+                        : Center(
+                            child: ConstrainedBox(
+                              constraints: BoxConstraints(
+                                  maxWidth: maxContainerWidth +
+                                      (Theme.of(context).pageHorizontalPadding *
+                                          2)),
+                              child: _homeContent(context, ref,
+                                  isMobile: isMobile, user: user),
+                            ),
+                          ),
+                  ),
+                ),
+              ],
+            )
+          : Container(),
     );
   }
 
