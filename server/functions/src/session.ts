@@ -13,6 +13,7 @@ import {
   RecurringType,
   RepeatUnit,
   CreateSnapCircleArgs,
+  Participant,
 } from "./common-types";
 import {add} from "date-fns";
 
@@ -158,12 +159,12 @@ export const startSnapSession = functions.https.onCall(async ({circleId}, {auth}
             const {uid} = participants[firstId];
             if (uid !== keeper) {
               // find the keepers sessionId
-              const {sessionUserId} = Object.values(participants).find((participant) => participant.uid === keeper);
-              if (sessionUserId) {
-                const index = speakingOrder.indexOf(sessionUserId);
+              const participant = (Object.values(participants) as Array<Participant>).find((participant: Participant) => participant.uid === keeper);
+              if (participant && participant.sessionUserId) {
+                const index = speakingOrder.indexOf(participant.sessionUserId);
                 if (index != -1) {
                   speakingOrder.splice(index, 1);
-                  speakingOrder.unshift(sessionUserId);
+                  speakingOrder.unshift(participant.sessionUserId);
                   activeSession["speakingOrder"] = speakingOrder;
                 }
               }
