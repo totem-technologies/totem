@@ -153,6 +153,22 @@ export const startSnapSession = functions.https.onCall(async ({circleId}, {auth}
           const {participants, speakingOrder} = activeSession;
           activeSession["totemReceived"] = false;
           if (Object.keys(participants).length > 0 && speakingOrder.length > 0) {
+            // Assert that the keeper is the first participant in the list
+            const firstId = speakingOrder[0];
+            const {uid} = participants[firstId];
+            if (uid !== keeper) {
+              // find the keepers sessionId
+              const {sessionUserId} = Object.values(participants).find((participant) => participant.uid === keeper);
+              if (sessionUserId) {
+                const index = speakingOrder.indexOf(sessionUserId);
+                if (index != -1) {
+                  speakingOrder.splice(index, 1);
+                  speakingOrder.unshift(sessionUserId);
+                  activeSession["speakingOrder"] = speakingOrder;
+                }
+              }
+            }
+            // set the initial totem to the first participant
             activeSession["totemUser"] = participants[speakingOrder[0]].sessionUserId;
           }
           // update the active session
