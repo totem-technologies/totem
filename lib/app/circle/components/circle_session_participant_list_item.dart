@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_reorderable_list/flutter_reorderable_list.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:totem/components/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/providers.dart';
@@ -67,14 +68,14 @@ class CircleSessionParticipantListItem extends ConsumerWidget {
                 onPressed: () {
                   onRemove!(participant);
                 },
-                icon: const Icon(Icons.delete, size: 24)),
+                icon: const Icon(LucideIcons.trash, size: 24)),
           if (reorder)
             ReorderableListener(
               child: Container(
                 padding: const EdgeInsets.only(right: 18.0, left: 18.0),
                 child: Center(
                   child: Icon(
-                    Icons.reorder,
+                    LucideIcons.gripHorizontal,
                     size: 24,
                     color: Theme.of(context).themeColors.secondaryText,
                   ),
@@ -106,7 +107,7 @@ class CircleSessionParticipantListItem extends ConsumerWidget {
               child: !me
                   ? Center(
                       child: Icon(
-                        Icons.star,
+                        LucideIcons.star,
                         color: themeColors.primary,
                         size: 12,
                       ),

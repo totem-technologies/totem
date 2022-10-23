@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/theme/index.dart';
@@ -95,7 +96,7 @@ class SnapCircleItem extends StatelessWidget {
               const SizedBox(
                 width: 8,
               ),
-              Icon(Icons.arrow_forward,
+              Icon(LucideIcons.arrowRight,
                   size: 24, color: themeData.themeColors.iconNext),
             ],
           ),

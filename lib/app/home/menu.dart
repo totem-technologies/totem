@@ -1,7 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:totem/app_routes.dart';
 import 'package:totem/components/index.dart';
 import 'package:totem/config.dart';
@@ -58,14 +58,14 @@ class TotemDrawer extends ConsumerWidget {
           ),
           DrawerItem(
               text: t.profile,
-              icon: FontAwesomeIcons.solidUser,
+              icon: LucideIcons.user,
               onTap: () {
                 Navigator.pop(context);
                 context.goNamed(AppRoutes.userProfile);
               }),
           DrawerItem(
               text: t.help,
-              icon: FontAwesomeIcons.solidCircleQuestion,
+              icon: LucideIcons.helpCircle,
               onTap: () {
                 Navigator.pop(context);
                 launchUrl(
@@ -75,7 +75,7 @@ class TotemDrawer extends ConsumerWidget {
               }),
           DrawerItem(
               text: t.donate,
-              icon: FontAwesomeIcons.circleDollarToSlot,
+              icon: LucideIcons.coins,
               onTap: () {
                 Navigator.pop(context);
                 launchUrl(
@@ -85,7 +85,7 @@ class TotemDrawer extends ConsumerWidget {
               }),
           DrawerItem(
               text: t.feedback,
-              icon: FontAwesomeIcons.solidComments,
+              icon: LucideIcons.messageSquare,
               onTap: () {
                 Navigator.pop(context);
                 launchUrl(
@@ -95,7 +95,7 @@ class TotemDrawer extends ConsumerWidget {
               }),
           DrawerItem(
               text: t.reportIssue,
-              icon: FontAwesomeIcons.bug,
+              icon: LucideIcons.bug,
               onTap: () {
                 Navigator.pop(context);
                 launchUrl(
@@ -106,7 +106,7 @@ class TotemDrawer extends ConsumerWidget {
           if (AppConfig.isDev)
             DrawerItem(
                 text: t.devTools,
-                icon: FontAwesomeIcons.code,
+                icon: LucideIcons.code,
                 onTap: () {
                   Navigator.pop(context);
                   context.pushNamed(AppRoutes.dev);
@@ -130,7 +130,7 @@ class DrawerItem extends StatelessWidget {
       title: Row(children: [
         SizedBox(
           width: 30,
-          child: FaIcon(icon, size: 24),
+          child: Icon(icon, size: 24),
         ),
         const SizedBox(width: 15),
         Text(text)

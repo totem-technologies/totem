@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:totem/app/index.dart';
 import 'package:totem/app_routes.dart';
 import 'package:totem/components/widgets/index.dart';
@@ -81,7 +82,7 @@ class CircleSessionEndedPage extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.exit_to_app),
+              const Icon(LucideIcons.logOut),
               const SizedBox(width: 10),
               Text(t.exit),
             ],

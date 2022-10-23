@@ -10,6 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:libphonenumber_plugin/libphonenumber_plugin.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:totem/app/profile/components/index.dart';
 import 'package:totem/components/camera/index.dart';
 import 'package:totem/components/widgets/index.dart';
@@ -213,8 +214,8 @@ class UserProfilePageState extends ConsumerState<UserProfilePage> {
                                                                       15,
                                                                   vertical: 5),
                                                               child: Icon(
-                                                                  Icons
-                                                                      .help_outline,
+                                                                  LucideIcons
+                                                                      .helpCircle,
                                                                   size: 24,
                                                                   color: themeColors
                                                                       .primaryText),
@@ -536,7 +537,7 @@ class UserProfilePageState extends ConsumerState<UserProfilePage> {
                 const SizedBox(
                   width: 8,
                 ),
-                Icon(Icons.help_outline,
+                Icon(LucideIcons.helpCircle,
                     size: 24, color: themeColors.primaryText)
               ],
             ),

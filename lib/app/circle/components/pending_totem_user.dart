@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:totem/app/circle/circle_session_page.dart';
 import 'package:totem/app/circle/components/index.dart';
 import 'package:totem/theme/app_theme_styles.dart';
@@ -114,7 +114,7 @@ class PendingTotemUserState extends ConsumerState<PendingTotemUser> {
   Widget _receiveTotem(BuildContext context, {bool vertical = false}) {
     final t = AppLocalizations.of(context)!;
     return TotemActionButton(
-      image: FaIcon(FontAwesomeIcons.wandMagicSparkles,
+      image: Icon(LucideIcons.wand2,
           size: iconSize, color: Theme.of(context).themeColors.primaryText),
       label: t.receive,
       message: t.circleTotemReceive,

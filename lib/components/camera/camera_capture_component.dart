@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:image/image.dart' as imglib;
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:totem/components/camera/camera_muted.dart';
@@ -183,7 +184,8 @@ class CameraCaptureScreenState extends State<CameraCapture>
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.error, color: themeColor.reversedText, size: 36),
+            Icon(LucideIcons.alertCircle,
+                color: themeColor.reversedText, size: 36),
             const SizedBox(
               height: 15,
             ),
@@ -289,7 +291,7 @@ class CameraCaptureScreenState extends State<CameraCapture>
           ),
           child: Center(
             child: Icon(
-              Icons.cameraswitch,
+              LucideIcons.switchCamera,
               color: themeColors.primaryText,
             ),
           ),
@@ -312,7 +314,7 @@ class CameraCaptureScreenState extends State<CameraCapture>
           ThemedControlButton(
             label: _muted ? t.unmute : t.mute,
             labelColor: themeColors.reversedText,
-            icon: _muted ? Icons.mic_off : Icons.mic,
+            icon: _muted ? LucideIcons.micOff : LucideIcons.mic,
             onPressed: () {
               setState(() => _muted = !_muted);
               debugPrint('mute pressed');
@@ -324,7 +326,7 @@ class CameraCaptureScreenState extends State<CameraCapture>
           ThemedControlButton(
             label: _videoMuted ? t.startVideo : t.stopVideo,
             labelColor: themeColors.reversedText,
-            icon: _videoMuted ? Icons.videocam : Icons.videocam_off,
+            icon: _videoMuted ? LucideIcons.video : LucideIcons.videoOff,
             onPressed: () {
               if (!_videoMuted) {
                 _controller!.pausePreview();

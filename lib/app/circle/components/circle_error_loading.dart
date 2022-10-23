@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:totem/components/index.dart';
 import 'package:totem/theme/index.dart';
 
@@ -16,7 +17,7 @@ class CircleErrorLoading extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Icon(Icons.error,
+            Icon(LucideIcons.alertCircle,
                 size: 40, color: Theme.of(context).themeColors.error),
             const SizedBox(
               height: 20,

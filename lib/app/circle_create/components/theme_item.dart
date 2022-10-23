@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:totem/components/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/theme/index.dart';
@@ -24,7 +25,8 @@ class ThemeItem extends StatelessWidget {
           SizedBox(
               width: 30,
               child: selected
-                  ? Icon(Icons.check_circle, color: themeColors.primaryText)
+                  ? Icon(LucideIcons.checkCircle2,
+                      color: themeColors.primaryText)
                   : null),
           const SizedBox(width: 10),
           Container(

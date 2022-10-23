@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/theme/index.dart';
 
@@ -41,7 +42,7 @@ class CircleNameLabel extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 5),
-                        Icon(Icons.star,
+                        Icon(LucideIcons.star,
                             color: themeColors.reversedText, size: 16),
                       ],
                     ),

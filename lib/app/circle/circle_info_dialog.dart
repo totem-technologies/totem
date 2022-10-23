@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:totem/app/circle/components/circle_error_loading.dart';
 import 'package:totem/app/circle/components/circle_loading.dart';
 import 'package:totem/components/widgets/index.dart';
@@ -145,7 +146,7 @@ class _CircleInfoDialogState extends ConsumerState<CircleInfoDialog> {
               padding:
                   const EdgeInsets.only(left: 5, right: 5, top: 5, bottom: 5),
               child: DecoratedIcon(
-                Icons.close,
+                LucideIcons.x,
                 size: 24,
                 color: themeColors.reversedText,
                 shadows: const [
@@ -215,10 +216,10 @@ class _CircleInfoDialogState extends ConsumerState<CircleInfoDialog> {
                               ],
                               _iconDataRow(
                                   circle.isPrivate
-                                      ? Icons.lock_rounded
-                                      : Icons.lock_open_rounded,
+                                      ? LucideIcons.lock
+                                      : LucideIcons.unlock,
                                   circle.isPrivate ? t.private : t.public),
-                              _iconDataRow(Icons.people_rounded,
+                              _iconDataRow(LucideIcons.users,
                                   t.attendeeLimit(circle.maxParticipants))
                             ],
                           ),
@@ -305,7 +306,7 @@ class _CircleInfoDialogState extends ConsumerState<CircleInfoDialog> {
           Expanded(
             child: Row(
               children: [
-                Icon(Icons.calendar_month_rounded,
+                Icon(LucideIcons.calendarDays,
                     size: 40, color: Theme.of(context).themeColors.primaryText),
                 const SizedBox(width: 10),
                 Expanded(
@@ -336,7 +337,7 @@ class _CircleInfoDialogState extends ConsumerState<CircleInfoDialog> {
           Expanded(
             child: Row(
               children: [
-                Icon(Icons.refresh_rounded,
+                Icon(LucideIcons.rotateCw,
                     size: 40, color: Theme.of(context).themeColors.primaryText),
                 const SizedBox(width: 10),
                 Expanded(

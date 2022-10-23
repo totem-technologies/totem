@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/theme/index.dart';
 
@@ -125,7 +126,7 @@ class CircleParticipant extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               child: Row(
                 children: [
-                  Icon(Icons.star, color: themeColors.primary, size: 24),
+                  Icon(LucideIcons.star, color: themeColors.primary, size: 24),
                   const SizedBox(
                     width: 4,
                   ),
@@ -156,7 +157,7 @@ class CircleParticipant extends StatelessWidget {
   Widget _genericUserImage(BuildContext context) {
     return Center(
       child: Icon(
-        Icons.account_circle_rounded,
+        LucideIcons.user,
         size: 80,
         color: Theme.of(context).themeColors.primaryText,
       ),

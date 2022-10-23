@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:totem/app/circle/index.dart';
 import 'package:totem/theme/index.dart';
 
@@ -39,8 +40,7 @@ class CircleDeviceSettingsButtonState
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.settings_outlined,
-              size: 24, color: themeColors.primaryText),
+          Icon(LucideIcons.settings, size: 24, color: themeColors.primaryText),
           const SizedBox(
             width: 6,
           ),

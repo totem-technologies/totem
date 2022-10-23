@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:totem/app/circle/index.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
@@ -105,7 +106,7 @@ class TestSessionControlsState extends ConsumerState<TestSessionControls> {
         ),
         ThemedControlButton(
           label: muted ? t.unmute : t.mute,
-          icon: muted ? Icons.mic_off : Icons.mic,
+          icon: muted ? LucideIcons.micOff : LucideIcons.mic,
           onPressed: () {
             setState(() => muted = !muted);
           },
@@ -113,7 +114,7 @@ class TestSessionControlsState extends ConsumerState<TestSessionControls> {
         const SizedBox(width: _btnSpacing),
         ThemedControlButton(
           label: videoMuted ? t.startVideo : t.stopVideo,
-          icon: !videoMuted ? Icons.videocam : Icons.videocam_off,
+          icon: !videoMuted ? LucideIcons.video : LucideIcons.videoOff,
           onPressed: () {
             setState(() => videoMuted = !videoMuted);
           },
@@ -139,7 +140,7 @@ class TestSessionControlsState extends ConsumerState<TestSessionControls> {
         const SizedBox(width: _btnSpacing),
         ThemedControlButton(
           label: t.info,
-          icon: Icons.info_outline,
+          icon: LucideIcons.info,
           onPressed: () {
             debugPrint('info pressed');
           },
@@ -169,7 +170,7 @@ class TestSessionControlsState extends ConsumerState<TestSessionControls> {
                 ThemedControlButton(
                   label: muted ? t.unmute : t.mute,
                   labelColor: themeColors.reversedText,
-                  icon: muted ? Icons.mic_off : Icons.mic,
+                  icon: muted ? LucideIcons.micOff : LucideIcons.mic,
                   onPressed: () {
                     setState(() => muted = !muted);
                   },
@@ -180,7 +181,7 @@ class TestSessionControlsState extends ConsumerState<TestSessionControls> {
                 ThemedControlButton(
                   label: videoMuted ? t.startVideo : t.stopVideo,
                   labelColor: themeColors.reversedText,
-                  icon: !videoMuted ? Icons.videocam : Icons.videocam_off,
+                  icon: !videoMuted ? LucideIcons.video : LucideIcons.videoOff,
                   onPressed: () {
                     setState(() => videoMuted = !videoMuted);
                   },
@@ -192,7 +193,9 @@ class TestSessionControlsState extends ConsumerState<TestSessionControls> {
                   ThemedControlButton(
                     label: !_more ? t.more : t.less,
                     labelColor: themeColors.reversedText,
-                    icon: !_more ? Icons.more_horiz : Icons.more_vert,
+                    icon: !_more
+                        ? LucideIcons.moreHorizontal
+                        : LucideIcons.moreVertical,
                     onPressed: () {
                       setState(() => _more = !_more);
                     },
@@ -203,7 +206,7 @@ class TestSessionControlsState extends ConsumerState<TestSessionControls> {
                   ThemedControlButton(
                     label: t.leaveSession,
                     labelColor: themeColors.reversedText,
-                    icon: Icons.exit_to_app,
+                    icon: LucideIcons.logOut,
                     onPressed: () {},
                   ),
                 ],
@@ -224,7 +227,7 @@ class TestSessionControlsState extends ConsumerState<TestSessionControls> {
                   ThemedControlButton(
                     label: t.next,
                     labelColor: themeColors.reversedText,
-                    icon: Icons.fast_forward,
+                    icon: LucideIcons.fastForward,
                     onPressed: () {},
                   ),
                   const SizedBox(
@@ -233,14 +236,14 @@ class TestSessionControlsState extends ConsumerState<TestSessionControls> {
                   ThemedControlButton(
                     label: t.endSession,
                     labelColor: themeColors.reversedText,
-                    icon: Icons.exit_to_app,
+                    icon: LucideIcons.logOut,
                     onPressed: () {},
                   ),
                   const SizedBox(width: _btnSpacing),
                   ThemedControlButton(
                     label: t.info,
                     labelColor: themeColors.reversedText,
-                    icon: Icons.info_outline,
+                    icon: LucideIcons.info,
                     onPressed: () {
                       debugPrint('info pressed');
                     },
