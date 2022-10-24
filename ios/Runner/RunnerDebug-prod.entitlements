@@ -6,10 +6,14 @@
 	<string>development</string>
 	<key>com.apple.developer.associated-domains</key>
 	<array>
+		<string>webcredentials:stage.heytotem.com</string>
+		<string>applinks:stage.heytotem.com</string>
+		<string>webcredentials:c.heytotem.com</string>
+		<string>applinks:c.heytotem.com</string>
 		<string>applinks:link.totem.com</string>
 		<string>webcredentials:link.totem.org</string>
-		<string>webcredentials:app.totem.org</string>
-		<string>applinks:app.totem.org</string>
+		<string>webcredentials:stage.totem.org</string>
+		<string>applinks:stage.totem.org</string>
 	</array>
 </dict>
 </plist>
