@@ -95,3 +95,11 @@ export interface CreateSnapCircleArgs {
     repeating?: RepeatOptions;
   };
 }
+
+export interface Participant {
+  joined: Timestamp;
+  name: string;
+  sessionUserId: string;
+  uid: string;
+  role: string;
+}

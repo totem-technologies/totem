@@ -392,6 +392,12 @@ class ActiveSession extends ChangeNotifier {
           sessionChange != null ? sessionChange.name : lastChange.name,
       "speakingOrder": items,
     };
+    // if the order of participants is being updated, then set a flag to indicate
+    // that the order was specifically changed so that the order won't be modified
+    // by the server at start if the keeper is not first in the list
+    if (participantsOrder != null) {
+      data['reordered'] = true;
+    }
     return data;
   }
 
