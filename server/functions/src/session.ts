@@ -151,21 +151,24 @@ export const startSnapSession = functions.https.onCall(async ({circleId}, {auth}
           const activeRef = admin.firestore().collection("activeCircles").doc(circleId);
           const activeCircleSnapshot = await transaction.get(activeRef);
           const activeSession = activeCircleSnapshot.data() ?? {};
-          const {participants, speakingOrder} = activeSession;
+          const {participants, speakingOrder, reordered} = activeSession;
           activeSession["totemReceived"] = false;
           if (Object.keys(participants).length > 0 && speakingOrder.length > 0) {
-            // Assert that the keeper is the first participant in the list
-            const firstId = speakingOrder[0];
-            const {uid} = participants[firstId];
-            if (uid !== keeper) {
-              // find the keepers sessionId
-              const participant = (Object.values(participants) as Array<Participant>).find((participant: Participant) => participant.uid === keeper);
-              if (participant && participant.sessionUserId) {
-                const index = speakingOrder.indexOf(participant.sessionUserId);
-                if (index != -1) {
-                  speakingOrder.splice(index, 1);
-                  speakingOrder.unshift(participant.sessionUserId);
-                  activeSession["speakingOrder"] = speakingOrder;
+            // Assert that the keeper is the first participant in the list, only if the keeper has
+            // not changed the order specifically
+            if (!reordered) {
+              const firstId = speakingOrder[0];
+              const {uid} = participants[firstId];
+              if (uid !== keeper) {
+                // find the keepers sessionId
+                const participant = (Object.values(participants) as Array<Participant>).find((participant: Participant) => participant.uid === keeper);
+                if (participant && participant.sessionUserId) {
+                  const index = speakingOrder.indexOf(participant.sessionUserId);
+                  if (index != -1) {
+                    speakingOrder.splice(index, 1);
+                    speakingOrder.unshift(participant.sessionUserId);
+                    activeSession["speakingOrder"] = speakingOrder;
+                  }
                 }
               }
             }
