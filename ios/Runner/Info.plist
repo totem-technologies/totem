@@ -47,7 +47,7 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>Bundle ID Dev</string>
+			<string>io.kbl.totem.dev</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>io.kbl.totem.dev</string>
