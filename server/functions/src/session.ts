@@ -1,14 +1,21 @@
-import * as admin from "firebase-admin";
 import * as functions from "firebase-functions";
-import {add} from "date-fns";
+import * as admin from "firebase-admin";
 // eslint-disable-next-line import/no-unresolved -- https://github.com/firebase/firebase-admin-node/issues/1827#issuecomment-1226224988
-import {DocumentReference, FieldValue, Timestamp} from "firebase-admin/firestore";
-import {kickUserFromSession} from "./agora";
-import {hasAnyRole, isAuthenticated, Role} from "./auth";
-import {
-  CircleSessionSummary, CreateSnapCircleArgs, RecurringType, RepeatOptions, RepeatUnit, SessionState, SnapCircleData,
-} from "./common-types";
+import {DocumentReference, Timestamp, FieldValue} from "firebase-admin/firestore";
 import * as dynamicLinks from "./dynamic-links";
+import {hasAnyRole, isAuthenticated, Role} from "./auth";
+import {kickUserFromSession} from "./agora";
+import {
+  SnapCircleData,
+  SessionState,
+  CircleSessionSummary,
+  RepeatOptions,
+  RecurringType,
+  RepeatUnit,
+  CreateSnapCircleArgs,
+  Participant,
+} from "./common-types";
+import {add} from "date-fns";
 
 // The Firebase Admin SDK to access the Firebase Realtime Database.
 // make sure that this initializeApp call hasn't already
@@ -151,9 +158,28 @@ export const startSnapSession = functions.https.onCall(async ({circleId}, {auth}
           const activeRef = admin.firestore().collection("activeCircles").doc(circleId);
           const activeCircleSnapshot = await transaction.get(activeRef);
           const activeSession = activeCircleSnapshot.data() ?? {};
-          const {participants, speakingOrder} = activeSession;
+          const {participants, speakingOrder, reordered} = activeSession;
           activeSession["totemReceived"] = false;
           if (Object.keys(participants).length > 0 && speakingOrder.length > 0) {
+            // Assert that the keeper is the first participant in the list, only if the keeper has
+            // not changed the order specifically
+            if (!reordered) {
+              const firstId = speakingOrder[0];
+              const {uid} = participants[firstId];
+              if (uid !== keeper) {
+                // find the keepers sessionId
+                const participant = (Object.values(participants) as Array<Participant>).find((participant: Participant) => participant.uid === keeper);
+                if (participant && participant.sessionUserId) {
+                  const index = speakingOrder.indexOf(participant.sessionUserId);
+                  if (index != -1) {
+                    speakingOrder.splice(index, 1);
+                    speakingOrder.unshift(participant.sessionUserId);
+                    activeSession["speakingOrder"] = speakingOrder;
+                  }
+                }
+              }
+            }
+            // set the initial totem to the first participant
             activeSession["totemUser"] = participants[speakingOrder[0]].sessionUserId;
           }
           // update the active session
@@ -309,7 +335,7 @@ export const createSnapCircle = functions.https.onCall(
         {
           dynamicLinkInfo: {
             domainUriPrefix: functions.config().applinks.link,
-            link: `https://${host}.heytotem.com/?snap=${ref.id}`,
+            link: `https://${host}.totem.org/?snap=${ref.id}`,
             androidInfo: {
               androidPackageName: "io.kbl.totem",
             },
