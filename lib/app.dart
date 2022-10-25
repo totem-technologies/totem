@@ -41,13 +41,15 @@ class _AppState extends ConsumerState<App> {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      systemNavigationBarColor: Color(0xFF000000),
+      systemNavigationBarColor: Colors.transparent,
       systemNavigationBarDividerColor: null,
       statusBarColor: Colors.transparent,
       systemNavigationBarIconBrightness: Brightness.dark,
       statusBarIconBrightness: Brightness.dark,
       statusBarBrightness: Brightness.light,
     ));
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge,
+        overlays: [SystemUiOverlay.top]);
     ref.watch(authStateChangesProvider);
     return _wrapWithBanner(MaterialApp.router(
       routeInformationProvider: _router.routeInformationProvider,
