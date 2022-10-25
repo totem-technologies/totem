@@ -33,6 +33,26 @@
 				<string>com.googleusercontent.apps.35349008308-f0i832q0bgd158ptsr8d68h2eb2purhd</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>io.kbl.totem</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>io.kbl.totem</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>io.kbl.totem.dev</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>io.kbl.totem.dev</string>
+			</array>
+		</dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
@@ -41,6 +61,7 @@
 	<key>FirebaseDynamicLinksCustomDomains</key>
 	<array>
 		<string>https://c.heytotem.com</string>
+		<string>https://link.totem.org</string>
 	</array>
 	<key>GOOGLE_ANALYTICS_REGISTRATION_WITH_AD_NETWORK_ENABLED</key>
 	<false/>

@@ -296,7 +296,7 @@ export const createSnapCircle = functions.https.onCall(
         {
           dynamicLinkInfo: {
             domainUriPrefix: functions.config().applinks.link,
-            link: `https://${host}.heytotem.com/?snap=${ref.id}`,
+            link: `https://${host}.totem.org/?snap=${ref.id}`,
             androidInfo: {
               androidPackageName: "io.kbl.totem",
             },
