@@ -4,5 +4,11 @@
     "default": "totem-dev-184f1"
   },
   "targets": {},
-  "etags": {}
+  "etags": {
+    "totem-dev-184f1": {
+      "extensionInstances": {
+        "delete-user-data": "5c7d904acfca77e36b3ff1c7c94d68c2eb0d10085fcde088b6be8aa32f4ed210"
+      }
+    }
+  }
 }
