@@ -1,6 +1,5 @@
 import {RtcTokenBuilder, RtcRole} from "agora-access-token";
-import axios from "axios";
-import {AxiosError} from "axios";
+import axios, {AxiosError} from "axios";
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 import {isAuthenticated} from "./auth";
