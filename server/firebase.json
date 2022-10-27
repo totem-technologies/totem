@@ -14,7 +14,7 @@
     "source": "functions"
   },
   "extensions": {
-    "delete-user-data": "firebase/delete-user-data@0.1.13"
+    "delete-user-data": "firebase/delete-user-data@0.1.14"
   },
   "emulators": {
     "auth": {

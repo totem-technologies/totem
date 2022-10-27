@@ -82,6 +82,6 @@ flutter {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation "io.grpc:grpc-okhttp:1.44.0"
-    implementation 'com.google.firebase:firebase-appcheck-debug:16.0.0-beta04'
+    implementation "io.grpc:grpc-okhttp:1.50.2"
+    implementation 'com.google.firebase:firebase-appcheck-debug:16.0.1'
 }
