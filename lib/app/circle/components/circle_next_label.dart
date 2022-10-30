@@ -46,7 +46,7 @@ class CircleNextLabel extends StatelessWidget {
                           fontSize: fontSize)),
                     ),
                   ),
-                  const SizedBox(width: 14),
+                  const SizedBox(width: 5),
                   FaIcon(
                     FontAwesomeIcons.wandMagicSparkles,
                     color: !reversed
