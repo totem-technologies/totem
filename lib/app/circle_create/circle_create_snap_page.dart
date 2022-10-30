@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_spinbox/flutter_spinbox.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:totem/app/circle_create/components/index.dart';
 import 'package:totem/app_routes.dart';
 import 'package:totem/components/widgets/index.dart';
@@ -331,7 +332,7 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
                         });
                       },
                       icon: const Icon(
-                        Icons.delete,
+                        LucideIcons.trash,
                         size: 18,
                       ),
                     ),
@@ -426,7 +427,7 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
                   )
                 : const Center(
                     child: Icon(
-                      Icons.image,
+                      LucideIcons.image,
                       size: 30,
                     ),
                   ),
@@ -833,7 +834,7 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
         DateTimeFormField(
             mode: DateTimeFieldPickerMode.date,
             decoration: const InputDecoration(
-              suffixIcon: Icon(Icons.event_note),
+              suffixIcon: Icon(LucideIcons.calendarDays),
               isDense: true,
             ),
             autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -869,7 +870,7 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
         const SizedBox(height: 10),
         DateTimeFormField(
           decoration: const InputDecoration(
-            suffixIcon: Icon(Icons.access_time),
+            suffixIcon: Icon(LucideIcons.clock),
             isDense: true,
           ),
           mode: DateTimeFieldPickerMode.time,
@@ -961,7 +962,7 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
         DateTimeFormField(
             mode: DateTimeFieldPickerMode.date,
             decoration: const InputDecoration(
-              suffixIcon: Icon(Icons.event_note),
+              suffixIcon: Icon(LucideIcons.calendarDays),
               isDense: true,
             ),
             autovalidateMode: AutovalidateMode.onUserInteraction,

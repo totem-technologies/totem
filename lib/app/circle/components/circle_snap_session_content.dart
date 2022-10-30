@@ -2,6 +2,7 @@ import 'package:after_layout/after_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:totem/app/circle/components/circle_live_video_session.dart';
 import 'package:totem/app/circle/index.dart';
@@ -193,7 +194,7 @@ class _CircleSnapSessionContentState
                         }
                       : null,
               icon: Icon(
-                Icons.close,
+                LucideIcons.x,
                 color: themeColors.primaryText,
               ),
             ),

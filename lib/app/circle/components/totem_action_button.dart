@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/theme/app_theme_styles.dart';
 
@@ -84,7 +85,7 @@ class TotemActionButtonState extends State<TotemActionButton> {
                     top: 5,
                     child: IconButton(
                         icon: const Icon(
-                          Icons.close,
+                          LucideIcons.x,
                           size: 20,
                         ),
                         onPressed: () => setState(() => _showToolTips = false)))
@@ -130,7 +131,8 @@ class TotemActionButtonState extends State<TotemActionButton> {
         children: [
           Padding(
             padding: const EdgeInsets.only(top: 4),
-            child: Icon(Icons.circle, color: themeColors.primaryText, size: 12),
+            child: Icon(LucideIcons.circle,
+                color: themeColors.primaryText, size: 12),
           ),
           const SizedBox(width: 10),
           Expanded(

@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:totem/components/widgets/bottom_tray_container.dart';
 import 'package:totem/theme/index.dart';
 
@@ -72,7 +73,7 @@ class BottomTrayHelpDialog extends StatelessWidget {
                     padding: const EdgeInsets.only(
                         left: 10, right: 10, top: 5, bottom: 5),
                     child: Icon(
-                      Icons.close,
+                      LucideIcons.x,
                       size: 24,
                       color: themeColors.primaryText,
                     ),

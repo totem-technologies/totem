@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:keybinder/keybinder.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:slide_to_act/slide_to_act.dart';
 import 'package:totem/app/circle/index.dart';
 import 'package:totem/components/widgets/index.dart';
@@ -227,7 +227,7 @@ class _CircleLiveVideoSessionState
           child: !isMobile
               ? ((activeSession.totemReceived)
                   ? TotemActionButton(
-                      image: FaIcon(FontAwesomeIcons.hand,
+                      image: Icon(LucideIcons.arrowBigRight,
                           size: 30, color: themeColors.primaryText),
                       label: t.pass,
                       message: t.circleTotemPass,
@@ -279,7 +279,7 @@ class _CircleLiveVideoSessionState
                               color: themeColors.primary,
                             ),
                             child: Center(
-                              child: Icon(Icons.check_circle_outline,
+                              child: Icon(LucideIcons.checkCircle2,
                                   size: 24, color: themeColors.primaryText),
                             ),
                           ),
@@ -334,7 +334,7 @@ class _CircleLiveVideoSessionState
                           sliderButtonIconPadding: 0,
                           sliderButtonIcon:
                               const SizedBox(height: 48, width: 48),
-                          submittedIcon: Icon(Icons.check_circle_outline,
+                          submittedIcon: Icon(LucideIcons.checkCircle2,
                               size: 24, color: themeColors.primaryText),
                           onSubmit: !_processingRequest
                               ? () {

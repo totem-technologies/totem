@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:totem/app/circle_create/components/theme_item.dart';
 import 'package:totem/components/index.dart';
 import 'package:totem/models/index.dart';
@@ -87,7 +88,7 @@ class ThemeSelectorState extends ConsumerState<ThemeSelector> {
                         Navigator.of(context).pop();
                       },
                       icon: Icon(
-                        Icons.close,
+                        LucideIcons.x,
                         color: themeColors.primaryText,
                       ),
                     ),

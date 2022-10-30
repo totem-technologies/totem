@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:totem/theme/index.dart';
 
@@ -85,7 +86,7 @@ class WidgetContainer extends StatelessWidget {
           right: 0,
           top: 0,
           child: IconButton(
-            icon: const Icon(Icons.close),
+            icon: const Icon(LucideIcons.x),
             onPressed: () {
               reset();
             },

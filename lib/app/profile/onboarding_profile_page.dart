@@ -11,6 +11,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:libphonenumber_plugin/libphonenumber_plugin.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:totem/components/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
@@ -170,7 +171,7 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage>
                                                 detail: t.helpPublicInformation,
                                               );
                                             },
-                                            child: Icon(Icons.help_outline,
+                                            child: Icon(LucideIcons.helpCircle,
                                                 size: 24,
                                                 color: themeColors.primaryText),
                                           )
@@ -217,7 +218,7 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage>
         ..._errors.map((error) =>
             Row(mainAxisSize: MainAxisSize.min, children: [
               const Icon(
-                Icons.circle,
+                LucideIcons.circle,
                 size: 8,
               ),
               const SizedBox(
@@ -416,7 +417,7 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage>
                     child: Padding(
                       padding:
                           const EdgeInsets.only(bottom: 5, top: 5, left: 4),
-                      child: Icon(Icons.help_outline,
+                      child: Icon(LucideIcons.helpCircle,
                           size: 24, color: themeColors.primaryText),
                     ),
                   )
@@ -460,7 +461,7 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage>
                     child: Padding(
                       padding:
                           const EdgeInsets.only(bottom: 5, top: 5, left: 4),
-                      child: Icon(Icons.help_outline,
+                      child: Icon(LucideIcons.helpCircle,
                           size: 24, color: themeColors.primaryText),
                     ),
                   )
@@ -567,7 +568,7 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage>
       ),
       child: Center(
         child: Icon(
-          Icons.camera_alt_outlined,
+          LucideIcons.camera,
           color: themeData.themeColors.primaryText,
         ),
       ),

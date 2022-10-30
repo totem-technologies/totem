@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:totem/app/circle/components/circle_network_indicator.dart';
 import 'package:totem/app/circle/index.dart';
 import 'package:totem/components/widgets/index.dart';
@@ -112,7 +112,7 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
         ),
         ThemedControlButton(
           label: communications.muted ? t.unmute : t.mute,
-          icon: communications.muted ? Icons.mic_off : Icons.mic,
+          icon: communications.muted ? LucideIcons.micOff : LucideIcons.mic,
           onPressed: () {
             triggerPress(() {
               communications.muteAudio(communications.muted ? false : true);
@@ -123,8 +123,9 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
         const SizedBox(width: _btnSpacing),
         ThemedControlButton(
           label: communications.videoMuted ? t.startVideo : t.stopVideo,
-          icon:
-              !communications.videoMuted ? Icons.videocam : Icons.videocam_off,
+          icon: !communications.videoMuted
+              ? LucideIcons.video
+              : LucideIcons.videoOff,
           onPressed: () {
             triggerPress(() {
               communications
@@ -155,7 +156,7 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
         const SizedBox(width: _btnSpacing),
         ThemedControlButton(
           label: t.info,
-          icon: Icons.info_outline,
+          icon: LucideIcons.info,
           onPressed: () {
             debugPrint('info pressed');
             _showCircleInfo(context);
@@ -191,7 +192,8 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
               ThemedControlButton(
                 label: communications.muted ? t.unmute : t.mute,
                 labelColor: themeColors.reversedText,
-                icon: communications.muted ? Icons.mic_off : Icons.mic,
+                icon:
+                    communications.muted ? LucideIcons.micOff : LucideIcons.mic,
                 onPressed: () {
                   triggerPress(() {
                     if (communications.muted) {
@@ -210,8 +212,8 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
                 label: communications.videoMuted ? t.startVideo : t.stopVideo,
                 labelColor: themeColors.reversedText,
                 icon: !communications.videoMuted
-                    ? Icons.videocam
-                    : Icons.videocam_off,
+                    ? LucideIcons.video
+                    : LucideIcons.videoOff,
                 onPressed: () {
                   triggerPress(() {
                     communications
@@ -225,7 +227,7 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
                 ThemedControlButton(
                   label: t.reverse,
                   labelColor: themeColors.reversedText,
-                  icon: Icons.refresh,
+                  icon: LucideIcons.rotateCw,
                   onPressed: () {
                     debugPrint('info pressed');
                     _reverseOrder(context, ref);
@@ -237,7 +239,9 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
                 ThemedControlButton(
                   label: !_more ? t.more : t.less,
                   labelColor: themeColors.reversedText,
-                  icon: !_more ? Icons.more_horiz : Icons.more_vert,
+                  icon: !_more
+                      ? LucideIcons.moreHorizontal
+                      : LucideIcons.moreVertical,
                   onPressed: () {
                     setState(() => _more = !_more);
                   },
@@ -249,8 +253,9 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
                   ThemedControlButton(
                     label: _fullscreen ? t.exit_fullscreen : t.fullscreen,
                     labelColor: themeColors.reversedText,
-                    icon:
-                        _fullscreen ? Icons.close_fullscreen : Icons.fullscreen,
+                    icon: _fullscreen
+                        ? LucideIcons.minimize
+                        : LucideIcons.maximize,
                     onPressed: _toggleFullscreen,
                   ),
                 ],
@@ -258,7 +263,7 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
                 ThemedControlButton(
                   label: t.leaveSession,
                   labelColor: themeColors.reversedText,
-                  icon: Icons.exit_to_app,
+                  icon: LucideIcons.logOut,
                   onPressed: () {
                     _endSessionPrompt(context, ref, role);
                   },
@@ -281,7 +286,7 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
                 ThemedControlButton(
                   label: t.muteAll,
                   labelColor: themeColors.reversedText,
-                  child: FaIcon(FontAwesomeIcons.users,
+                  child: Icon(LucideIcons.users,
                       size: 20, color: themeColors.primaryText),
                   onPressed: () {
                     _muteAllExceptTotem(context, ref);
@@ -291,7 +296,7 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
                 ThemedControlButton(
                   label: t.next,
                   labelColor: themeColors.reversedText,
-                  icon: Icons.fast_forward,
+                  icon: LucideIcons.fastForward,
                   onPressed: () {
                     _nextUser(context, ref);
                   },
@@ -300,7 +305,7 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
                 ThemedControlButton(
                   label: t.info,
                   labelColor: themeColors.reversedText,
-                  icon: Icons.info_outline,
+                  icon: LucideIcons.info,
                   onPressed: () {
                     debugPrint('info pressed');
                     _showCircleInfo(context);
@@ -311,8 +316,9 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
                   ThemedControlButton(
                     label: _fullscreen ? t.exit_fullscreen : t.fullscreen,
                     labelColor: themeColors.reversedText,
-                    icon:
-                        _fullscreen ? Icons.close_fullscreen : Icons.fullscreen,
+                    icon: _fullscreen
+                        ? LucideIcons.minimize
+                        : LucideIcons.maximize,
                     onPressed: _toggleFullscreen,
                   ),
                 ],
@@ -324,7 +330,7 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
                   labelColor: themeColors.reversedText,
                   backgroundColor: themeColors.error,
                   imageColor: themeColors.reversedText,
-                  icon: Icons.close,
+                  icon: LucideIcons.x,
                   onPressed: () {
                     _endSessionPrompt(context, ref, role);
                   },
@@ -353,7 +359,7 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
                   ThemedControlButton(
                     label: t.muteAll,
                     labelColor: themeColors.reversedText,
-                    child: FaIcon(FontAwesomeIcons.users,
+                    child: Icon(LucideIcons.users,
                         size: 20, color: themeColors.primaryText),
                     onPressed: () {
                       _muteAllExceptTotem(context, ref);
@@ -366,7 +372,9 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
                 ThemedControlButton(
                   label: communications.muted ? t.unmute : t.mute,
                   labelColor: themeColors.reversedText,
-                  icon: communications.muted ? Icons.mic_off : Icons.mic,
+                  icon: communications.muted
+                      ? LucideIcons.micOff
+                      : LucideIcons.mic,
                   onPressed: () {
                     triggerPress(() {
                       if (communications.muted) {
@@ -385,8 +393,8 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
                   label: communications.videoMuted ? t.startVideo : t.stopVideo,
                   labelColor: themeColors.reversedText,
                   icon: !communications.videoMuted
-                      ? Icons.videocam
-                      : Icons.videocam_off,
+                      ? LucideIcons.video
+                      : LucideIcons.videoOff,
                   onPressed: () {
                     triggerPress(() {
                       communications
@@ -402,8 +410,8 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
                       label: _fullscreen ? t.exit_fullscreen : t.fullscreen,
                       labelColor: themeColors.reversedText,
                       icon: _fullscreen
-                          ? Icons.close_fullscreen
-                          : Icons.fullscreen,
+                          ? LucideIcons.minimize
+                          : LucideIcons.maximize,
                       onPressed: _toggleFullscreen,
                     ),
                   ],
@@ -411,7 +419,7 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
                   ThemedControlButton(
                     label: t.leaveSession,
                     labelColor: themeColors.reversedText,
-                    icon: Icons.exit_to_app,
+                    icon: LucideIcons.logOut,
                     onPressed: () {
                       _endSessionPrompt(context, ref, role);
                     },
@@ -424,7 +432,7 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
                   ThemedControlButton(
                     label: t.next,
                     labelColor: themeColors.reversedText,
-                    icon: Icons.fast_forward,
+                    icon: LucideIcons.fastForward,
                     onPressed: () {
                       _nextUser(context, ref);
                     },
@@ -433,7 +441,7 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
                   ThemedControlButton(
                     label: t.reverse,
                     labelColor: themeColors.reversedText,
-                    icon: Icons.refresh,
+                    icon: LucideIcons.rotateCw,
                     onPressed: () {
                       debugPrint('info pressed');
                       _reverseOrder(context, ref);
@@ -443,7 +451,7 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
                   ThemedControlButton(
                     label: t.info,
                     labelColor: themeColors.reversedText,
-                    icon: Icons.info_outline,
+                    icon: LucideIcons.info,
                     onPressed: () {
                       debugPrint('info pressed');
                       _showCircleInfo(context);
@@ -455,8 +463,8 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
                       label: _fullscreen ? t.exit_fullscreen : t.fullscreen,
                       labelColor: themeColors.reversedText,
                       icon: _fullscreen
-                          ? Icons.close_fullscreen
-                          : Icons.fullscreen,
+                          ? LucideIcons.minimize
+                          : LucideIcons.maximize,
                       onPressed: _toggleFullscreen,
                     ),
                   ],
@@ -466,7 +474,7 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
                     imageColor: themeColors.reversedText,
                     label: t.endSession,
                     labelColor: themeColors.reversedText,
-                    icon: Icons.close,
+                    icon: LucideIcons.x,
                     onPressed: () {
                       _endSessionPrompt(context, ref, role);
                     },

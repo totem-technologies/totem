@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:totem/app_routes.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/auth_user.dart';
@@ -83,7 +84,7 @@ class GuidelineScreen extends ConsumerWidget {
               child: Row(
                 children: [
                   Icon(
-                    Icons.arrow_back,
+                    LucideIcons.arrowLeft,
                     color: themeColors.primaryText,
                   ),
                   const SizedBox(

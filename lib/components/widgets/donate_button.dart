@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/theme/app_theme_styles.dart';
@@ -23,7 +23,7 @@ class DonateButton extends StatelessWidget {
       child: Wrap(
         crossAxisAlignment: WrapCrossAlignment.center,
         children: [
-          const FaIcon(FontAwesomeIcons.circleDollarToSlot),
+          const Icon(LucideIcons.coins),
           const SizedBox(
             width: 8,
           ),

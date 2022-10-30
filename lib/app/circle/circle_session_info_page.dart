@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_reorderable_list/flutter_reorderable_list.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:totem/app/circle/circle_session_page.dart';
 import 'package:totem/app/circle/components/circle_session_participant_list_item.dart';
 import 'package:totem/components/widgets/index.dart';
@@ -105,7 +106,7 @@ class CircleSessionInfoPageState extends ConsumerState<CircleSessionInfoPage> {
                         Navigator.of(context).pop();
                       },
                       icon: Icon(
-                        Icons.close,
+                        LucideIcons.x,
                         color: themeColors.primaryText,
                       ),
                     ),

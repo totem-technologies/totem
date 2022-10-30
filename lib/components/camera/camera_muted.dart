@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:totem/theme/index.dart';
 
 class CameraMuted extends StatelessWidget {
@@ -42,7 +43,7 @@ class CameraMuted extends StatelessWidget {
                 ])
               : Align(
                   alignment: Alignment.center,
-                  child: Icon(Icons.person,
+                  child: Icon(LucideIcons.user,
                       size: imageSize, color: color ?? themeColors.primaryText),
                 ),
         );
