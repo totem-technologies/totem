@@ -44,31 +44,31 @@ export interface SnapCircleBannedParticipants {
 
 export interface SnapCircleData {
   name: string;
+  description?: string;
+  createdBy: DocumentReference;
   createdOn: Timestamp;
   updatedOn: Timestamp;
-  createdBy: DocumentReference;
-  isPrivate: boolean;
-  maxMinutes?: number;
+  exipresOn?: Timestamp;
+  participantCount?: number;
   maxParticipants?: number;
-  keeper: string;
-  state: SessionState;
-  description?: string;
+  maxMinutes?: number;
   link?: string;
   previewLink?: string;
+  keeper: string;
   previousCircle?: string;
   bannedParticipants?: SnapCircleBannedParticipants;
-  repeating?: RepeatOptions;
-  scheduledSessions?: Timestamp[];
-  nextSession?: Timestamp;
-
-  participantCount?: number;
-  startedDate?: Timestamp;
-  completedDate?: Timestamp;
-  exipresOn?: Timestamp;
-  circleParticipants?: string[];
   themeRef?: string;
   imageUrl?: string;
   bannerImageUrl?: string;
+  isPrivate: boolean;
+  nextSession?: Timestamp;
+  scheduledSessions?: Timestamp[];
+  repeating?: RepeatOptions;
+
+  state: SessionState;
+  startedDate?: Timestamp;
+  completedDate?: Timestamp;
+  circleParticipants?: string[];
 }
 
 export interface CircleSessionSummary {
