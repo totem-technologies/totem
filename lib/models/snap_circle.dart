@@ -32,6 +32,14 @@ class SnapCircle extends Circle {
     completed = DateTimeEx.fromMapValue(json['completedDate']);
   }
 
+  bool get isComplete {
+    const completeStates = [
+      SessionState.complete,
+      SessionState.cancelled,
+    ];
+    return completeStates.contains(state);
+  }
+
   SnapSession get snapSession {
     return SnapSession.fromJson({}, circle: this);
   }

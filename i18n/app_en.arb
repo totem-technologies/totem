@@ -7,6 +7,12 @@
     "ageMissing": "Age verification",
     "ageVerification": "I am at least 18 years of age",
     "areYouSureSignOut": "Are you sure you want to sign out?",
+    "attendeeLimit": "{num} attendees limit",
+    "@attendeeLimit": {
+        "placeholders": {
+            "num": {}
+        }
+    },
     "audioInput": "Audio Input",
     "audioOutput": "Audio Output",
     "audioVideoSettings": "Audio and Video Settings",
@@ -41,6 +47,7 @@
     "circleEnding": "Circle is ending",
     "circles": "Circles",
     "circleInProgress": "Circle in progress",
+    "circleNotInSession": "Circle is not in session",
     "circleLogo": "Logo Image",
     "circleName": "Circle Name",
     "circleRejoinWaiting": "Waiting for keeper to let you into the session in progress",
@@ -52,6 +59,13 @@
     },
     "circleReturnToApp": "Tap to return to Totem",
     "circleStarting": "Circle is starting",
+    "circleTimeRange": "{start} to {end}",
+    "@circleTimeRange": {
+        "placeholders": {
+            "start": {},
+            "end": {}
+        }
+    },
     "circleTotemPass": "Finishes sharing by:",
     "circleTotemPassLine1": "muting microphone",
     "circleTotemPassLine2": "hiding video or image",
@@ -75,7 +89,11 @@
     "deleteAccount": "Delete Account",
     "deleteAccountMessage": "Are you sure you want to delete all your data? This cannot be undone?",
     "deleteEverythingButton": "Yes, delete everything",
+    "daily": "Daily",
+    "day": "Day",
+    "days": "Days",
     "description": "Description",
+    "doesNotRepeat": "Does not repeat",
     "donate": "Donate",
     "done": "Done",
     "duration": "Duration",
@@ -83,6 +101,9 @@
     "edit": "Edit",
     "editProfile": "Edit Profile",
     "editProfilePicture": "Edit Profile Picture",
+    "endDate": "End Date",
+    "endDateRequired": "End date is required",
+    "endDateMustBeAfterStartDate": "End date must be after start date",
     "endSession": "End Circle",
     "endSessionPrompt": "End Circle?",
     "endSessionPromptMessage": "Are you sure you want to end this session?",
@@ -100,6 +121,8 @@
     "errorEnterNumSessions": "Enter a number of sessions between 1 and 100",
     "errorInvalidPhoneNumber": "Invalid Phone Number",
     "errorJoinSession": "Unable to join session",
+    "errorLoadingCircle": "This circle is not available",
+    "errorLoadingCircleBanned": "This circle is no longer available",
     "errorPinCode": "Please enter a 6 digit code",
     "errorNoMicrophone": "Unable to access microphone",
     "errorNoProfile": "There is no profile",
@@ -131,6 +154,8 @@
     "helpPublicInformation": "This is public information. This is shown to other people in your circles.",
     "helpSessionProfileImage": "You can take an updated profile picture before the circle",
     "home": "Home",
+    "hostedBy": "Hosted By:",
+    "hourly": "Hourly",
     "hourOne": "1 hour",
     "hourOneAndMinsValue": "1 hour and {mins} mins",
     "@hourOneAndMinsValue": {
@@ -138,6 +163,8 @@
             "mins": {}
         }
     },
+    "hour": "Hour",
+    "hours": "Hours",
     "hoursAndMinsValue": "{hrs} hours and {mins} mins",
     "@hoursAndMinsValue": {
         "placeholders": {
@@ -167,6 +194,7 @@
     "introScreenMessage3": "Press **Receive** to accept the totem when it’s your turn to share.\\\nYou may respond to the prompt, share a story, or react to a share.\\\nIt’s always OK to not say anything at all.\\\nPress **Pass** to hand the totem to the next person.",
     "introScreenTitle4": "Let's Begin!",
     "introScreenMessage4": "Please find a quiet place where you are unlikely to be distracted.\\\nAlways speak from your own **experience**, try to not offer advice.\\\nIt helps to disable all notifications and put everything on silent.\\\n**Enjoy** this rare opportunity to be heard without interruption.",
+    "instantSession": "Instant Session",
     "joinCircle": "Join Circle",
     "joinCircleMessage": "Welcome! Before you enter the waiting room, please check that your audio and video are working as intended.",
     "joiningCircle": "Joining Circle",
@@ -194,11 +222,15 @@
             "mins": {}
         }
     },
+    "month": "Month",
+    "monthly": "Monthly",
+    "months": "Months",
     "more": "More",
     "moreInfo": "More Info",
     "mute": "Mute",
     "muteAll": "Mute All",
     "name": "Name",
+    "never": "Never",
     "next": "Up Next",
     "nextSession": "Next Session",
     "no": "No",
@@ -209,6 +241,7 @@
     "noSnapCirclesMessage": "seems like there are no active circles",
     "noUpcomingSessions": "No upcoming sessions",
     "numberOfSessions": "Number of Sessions",
+    "numberOfSessionsAtLeastOne": "Number of sessions must be at least 1",
     "ooh": "Ooh!",
     "ok": "OK",
     "otherCircles": "Other circles",
@@ -236,6 +269,20 @@
             "name": {}
         }
     },
+    "repeatingSession": "Repeating Session",
+    "repeateIntervalAtLeastOne": "Repeat interval must be at least 1",
+    "repeats": "Repeats",
+    "repeatsEvery": "Repeats Every",
+    "repeatsEveryFor": "Every {count} for {count, plural, =0{forever} =1{1 {unit}} other{{count} {units}}}",
+    "@repeatsEveryFor": {
+        "placeholders": {
+            "count": {},
+            "unit": {},
+            "units": {}
+        }
+    },
+    "repeatsUntil": "Repeats Until",
+    "restartCircle": "Start Circle",
     "retake": "Retake",
     "retryPhone": "Didn’t receive a code?\nEnter a new number",
     "retrySignin": "Retry",
@@ -243,6 +290,8 @@
     "role": "Role",
     "save": "Save",
     "saveProfileImage": "Save Profile Image",
+    "scheduledSession": "Scheduled Session",
+    "scheduledSessions": "Scheduled Sessions",
     "selectImage": "Select Image",
     "selectProfilePicture": "Select Profile Picture",
     "selectPhotoExisting": "Existing photo",
@@ -251,9 +300,11 @@
     "sendCode": "Send Code",
     "sessionFeedbackRequest": "Tell us about your Totem experience",
     "sessionInProgress": "Session in progress",
+    "sessions": "Sessions",
     "sessionsCompleted": "All session completed",
     "sessionStateCancelled": "The session was cancelled",
     "sessionStateComplete": "The session has ended.",
+    "sessionType": "Session Type",
     "sessionsUpcoming": "Upcoming sessions",
     "sessionUserRemoved": "You were removed from the circle",
     "sessionWaiting": "Waiting to start. Tap to join.",
@@ -268,8 +319,11 @@
     "start": "Start",
     "started": "Started",
     "startDate": "Start Date",
+    "startDateRequired": "Start date is required",
     "startSession": "Start Session",
     "startTime": "Start Time",
+    "startTimeRequired": "Start time is required",
+    "startTimeMustBeInTheFuture": "Start time must be in the future",
     "startVideo": "Start Video",
     "stopVideo": "Stop Video",
     "tAndC": "I have read, understand and agree with the {privacyPolicy} and {termsOfService}",
@@ -313,6 +367,9 @@
     "version": "Version",
     "videoSettings": "Video Settings",
     "visibility": "Visibility",
+    "week": "Week",
+    "weekly": "Weekly",
+    "weeks": "Weeks",
     "welcome": "Welcome to Totem",
     "welcomeDetail": "We are a Community, made to let you share and participate with others, by communicating your thoughts on a topic of your interest.",
     "worksBestChrome": "This works best in Chrome browsers",

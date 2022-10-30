@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:totem/models/index.dart';
 
 enum SessionState {
-  pending,
   waiting,
   starting,
   live,
@@ -11,10 +10,10 @@ enum SessionState {
   complete,
   cancelling,
   cancelled,
-  idle,
   removed,
   expiring,
-  expired
+  expired,
+  scheduled,
 }
 
 enum ActiveSessionChange {
@@ -59,6 +58,15 @@ class ActiveSession extends ChangeNotifier {
       return _totemUser;
     }
     return null;
+  }
+
+  bool get ended {
+    return [
+      SessionState.complete,
+      SessionState.cancelled,
+      SessionState.removed,
+      SessionState.scheduled
+    ].contains(_state);
   }
 
   bool get userStatus {

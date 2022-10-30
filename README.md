@@ -15,16 +15,23 @@ Bringing people together to heal.
 1. You will need to run this command once:
    - `cd server/functions; firebase functions:config:get > .runtimeconfig.json`
    - ***NOTE:*** This file should never be checked in as it contains secrets (it's in the .gitignore)
-2. Start the local firebase emulator:
-   - From the terminal: `cd server/functions; npm run serve`
+2. Make sure you have node version 14 installed locally
+   - If you are using nvm to manage node: `nvm install 14` or if already installed `nvm use 14`
+3. Start the local firebase emulator:
+   - Make sure to install the firebase cli: `npm install -g firebase-tools`
+   - Change directory to functions `cd server/functions`
+   - Install node modules: `npm install`
+   - Start the server: `npm run serve`
    -or-
    - From VSCode click the start button next to the "serve" line under 'NPM Scripts'
-3. Run the totem flutter application with the environment variable `USE_EMULATOR=true`
+5. Run the totem flutter application with the environment variable `USE_EMULATOR=true`
    - For VSCode there is a checked in configuration in the `launch.json` file.
    - For Android Studio, create a new configuration with the run args `--dart-define=USE_EMULATOR=true`
-4. Since the emulator runs on localhost, you will need to either use web or a device emulator as the target device.
+6. Since the emulator runs on localhost, you will need to either use web or a device emulator as the target device.
    - It will work for an Android device attached to the local system
-
+7. To trigger the scheduler to run locally in your emulator, you can use the following command:
+   - `curl http://localhost:5001/totem-dev-184f1/us-central1/runScheduler`
+   
 ## Release
 
 1. Switch to 'main' branch: `git checkout main`

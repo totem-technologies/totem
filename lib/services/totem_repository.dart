@@ -56,26 +56,6 @@ class TotemRepository {
   Stream<List<Topic>> topics({String sort = TopicSort.title}) =>
       _topicsProvider.topics(sort: sort);
 
-  // Circles
-  Future<ScheduledCircle?> createScheduledCircle({
-    required String name,
-    required int numSessions,
-    required DateTime startDate,
-    required DateTime startTime,
-    required List<int> daysOfTheWeek,
-    String? description,
-    bool addAsMember = true,
-  }) =>
-      _circlesProvider.createScheduledCircle(
-        name: name,
-        numSessions: numSessions,
-        startDate: startDate,
-        startTime: startTime,
-        daysOfTheWeek: daysOfTheWeek,
-        description: description,
-        uid: user!.uid,
-        addAsMember: addAsMember,
-      );
   Future<SnapCircle?> createSnapCircle({
     required String name,
     String? description,
@@ -89,6 +69,9 @@ class TotemRepository {
     String? themeRef,
     String? imageUrl,
     String? bannerUrl,
+    RecurringType? recurringType,
+    List<DateTime>? instances,
+    RepeatOptions? repeatOptions,
   }) =>
       _circlesProvider.createSnapCircle(
         name: name,
@@ -103,11 +86,12 @@ class TotemRepository {
         themeRef: themeRef,
         imageUrl: imageUrl,
         bannerUrl: bannerUrl,
+        recurringType: recurringType,
+        instances: instances,
+        repeatOptions: repeatOptions,
       );
   Future<bool> removeSnapCircle({required SnapCircle circle}) =>
       _circlesProvider.removeSnapCircle(circle: circle, uid: user!.uid);
-  Stream<List<ScheduledCircle>> scheduledCircles({bool allCircles = false}) =>
-      _circlesProvider.scheduledCircles(!allCircles ? user?.uid : null);
   Stream<List<SnapCircle>> snapCircles() => _circlesProvider.snapCircles();
   Stream<List<SnapCircle>> rejoinableSnapCircles() =>
       _circlesProvider.rejoinableSnapCircles(user!.uid);
@@ -115,8 +99,6 @@ class TotemRepository {
           {bool privateOnly = true, bool activeOnly = true}) =>
       _circlesProvider.mySnapCircles(user!.uid,
           privateOnly: privateOnly, activeOnly: activeOnly);
-  Stream<ScheduledCircle> scheduledCircle({required String circleId}) =>
-      _circlesProvider.scheduledCircle(circleId, user!.uid);
   Future<SnapCircle?> circleFromId(String id) =>
       _circlesProvider.circleFromId(id, user!.uid);
   Future<SnapCircle?> circleFromPreviousIdAndState(
@@ -129,10 +111,10 @@ class TotemRepository {
           previousId: previousId, state: state, uid: user!.uid);
   Future<bool> canJoinCircle(String circleId) =>
       _circlesProvider.canJoinCircle(circleId: circleId, uid: user!.uid);
+  Stream<SnapCircle?> snapCircleStream(String circleId) =>
+      _circlesProvider.snapCircleStream(circleId);
 
   // Sessions
-  Future<ActiveSession> activateSession({required ScheduledSession session}) =>
-      _sessionProvider.activateSession(session: session, uid: user!.uid);
   Future<void> joinSession(
           {required Session session,
           String? sessionImage,

@@ -3,7 +3,7 @@ import {Timestamp} from "firebase-admin/firestore";
 import * as admin from "firebase-admin";
 import * as functions from "firebase-functions";
 import {SessionState, SnapCircleData} from "./common-types";
-import {endSessionFor} from "./session";
+import {endSessionFor, initializeSessionFor} from "./session";
 import {PubSub} from "@google-cloud/pubsub";
 
 const SchedulerInterval = 5;
@@ -84,11 +84,13 @@ async function activateScheduledSessions(): Promise<void> {
     .firestore()
     .collection("snapCircles")
     .where("state", "==", SessionState.scheduled)
-    .where("scheduledSession", "<", in5Mins);
+    .where("nextSession", "<", in5Mins);
   const snapshot = await ref.get();
-  for (const doc of snapshot.docs) {
-    admin.firestore().collection("snapCircles").doc(doc.id).update({state: SessionState.waiting});
-  }
+  const promises = snapshot.docs.flatMap(({id: circleId}) => [
+    admin.firestore().collection("snapCircles").doc(circleId).update({state: SessionState.waiting}),
+    initializeSessionFor(circleId),
+  ]);
+  await Promise.all(promises);
 }
 
 if (process.env.FUNCTIONS_EMULATOR === "true") {
