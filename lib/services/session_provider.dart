@@ -13,7 +13,7 @@ abstract class SessionProvider extends ChangeNotifier {
   Future<void> leaveSession(
       {required Session session, required String sessionUid});
   Future<ActiveSession> createActiveSession(
-      {required Circle circle, required String uid});
+      {required SnapCircle circle, required String uid});
   Future<void> startActiveSession();
   Future<void> endActiveSession();
   void clear();

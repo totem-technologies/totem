@@ -2,7 +2,7 @@ import 'package:totem/models/index.dart';
 
 abstract class Session {
   late final String id;
-  late final Circle circle;
+  late final SnapCircle circle;
   late String topic;
 
   String get ref {

@@ -12,7 +12,7 @@ class SnapSession extends Session {
 
   SnapSession.fromJson(
     Map<String, dynamic> json, {
-    required Circle circle,
+    required SnapCircle circle,
   }) : super.fromJson(
           json,
           id: circle.id,
@@ -31,12 +31,12 @@ class SnapSession extends Session {
 
   @override
   SessionState get state {
-    return (circle as SnapCircle).state;
+    return circle.state;
   }
 
   @override
   set state(SessionState stateVal) {
-    (circle as SnapCircle).state = stateVal;
+    circle.state = stateVal;
   }
 
   @override

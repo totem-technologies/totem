@@ -480,7 +480,9 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
       final circle = await repo.createSnapCircle(
         name: _nameController.text,
         description: _descriptionController.text,
-        keeper: widget.fromCircle?.keeper,
+        keeper: (widget.fromCircle is SnapCircle?)
+            ? (widget.fromCircle as SnapCircle).keeper
+            : null,
         previousCircle: widget.fromCircle?.id,
         isPrivate: _selectedVisibility.value,
         duration: _selectedDuration.value,

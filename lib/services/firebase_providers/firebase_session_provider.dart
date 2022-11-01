@@ -332,7 +332,9 @@ class FirebaseSessionProvider extends SessionProvider {
 
   @override
   Future<ActiveSession> createActiveSession(
-      {required Circle circle, required String uid, bool snap = true}) async {
+      {required SnapCircle circle,
+      required String uid,
+      bool snap = true}) async {
     clear();
     _activeSession = ActiveSession(circle: circle, userId: uid);
     DocumentReference ref = FirebaseFirestore.instance.doc(circle.ref);

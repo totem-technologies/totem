@@ -124,7 +124,7 @@ class TotemRepository {
           uid: user!.uid,
           sessionImage: sessionImage,
           sessionUserId: sessionUserId);
-  Future<ActiveSession> createActiveSession({required Circle circle}) =>
+  Future<ActiveSession> createActiveSession({required SnapCircle circle}) =>
       _sessionProvider.createActiveSession(circle: circle, uid: user!.uid);
   Future<void> startActiveSession() => _sessionProvider.startActiveSession();
   Future<void> endActiveSession() => _sessionProvider.endActiveSession();
