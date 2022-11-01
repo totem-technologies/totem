@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:totem/app_routes.dart';
 import 'package:totem/components/widgets/index.dart';
 
 class CreateCircleButton extends StatelessWidget {
-  const CreateCircleButton({Key? key}) : super(key: key);
+  const CreateCircleButton({Key? key, this.onPressed}) : super(key: key);
+  final Function()? onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -13,10 +13,7 @@ class CreateCircleButton extends StatelessWidget {
     return ThemedRaisedButton(
       elevation: 5,
       height: 52,
-      onPressed: () {
-        // build new circle
-        context.goNamed(AppRoutes.circleCreate);
-      },
+      onPressed: onPressed,
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
       child: Wrap(
         crossAxisAlignment: WrapCrossAlignment.center,
