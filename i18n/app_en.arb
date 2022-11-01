@@ -83,7 +83,7 @@
             "name": {}
         }
     },
-    "createCircle": "Create Circle",
+    "createCircle": "Create",
     "createNewCircle": "Create New Circle",
     "createdOn": "Created on",
     "deleteAccount": "Delete Account",
@@ -363,6 +363,12 @@
     "uploadErrorGeneric": "An unknown error occurred trying to save your image.",
     "uploadErrorTitle": "Unable to save image",
     "useImage": "Use Image",
+    "usersCircle": "{name}'s Circle",
+    "@usersCircle": {
+        "placeholders": {
+            "name": {}
+        }
+    },
     "verificationDescription": "You must meet this requirement in order for us to provide services",
     "version": "Version",
     "videoSettings": "Video Settings",

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:totem/app/home/components/index.dart';
 import 'package:totem/app_routes.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 final rejoinableCircles = StreamProvider.autoDispose<List<SnapCircle>>((ref) {
   final repo = ref.read(repositoryProvider);
@@ -28,50 +28,50 @@ class SnapCirclesRejoinableState extends ConsumerState<SnapCirclesRejoinable> {
     return ref.watch(rejoinableCircles).when(
           data: (List<SnapCircle> data) {
             if (data.isNotEmpty) {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: Theme.of(context).pageHorizontalPadding),
-                    child: Text(
-                      t.rejoinCircle,
-                      style: Theme.of(context).textStyles.headline2,
+              return SliverToBoxAdapter(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const SizedBox(
+                      height: 10,
                     ),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  SnapCircleItem(
-                    circle: data.first,
-                    onPressed: (circle) => _handleShowCircle(context, circle),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                        vertical: 8.0,
-                        horizontal: Theme.of(context).pageHorizontalPadding),
-                    child: Divider(
-                      height: 1,
-                      thickness: 1,
-                      color: Theme.of(context).themeColors.divider,
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: Theme.of(context).pageHorizontalPadding),
+                      child: Text(
+                        t.rejoinCircle,
+                        style: Theme.of(context).textStyles.headline2,
+                      ),
                     ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                        vertical: 8.0,
-                        horizontal: Theme.of(context).pageHorizontalPadding),
-                    child: Text(
-                      t.otherCircles,
-                      style: Theme.of(context).textStyles.headline2,
+                    const SizedBox(
+                      height: 10,
                     ),
-                  ),
-                ],
+                    SnapCircleItem(
+                      circle: data.first,
+                      onPressed: (circle) => _handleShowCircle(context, circle),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          vertical: 8.0,
+                          horizontal: Theme.of(context).pageHorizontalPadding),
+                      child: Divider(
+                        height: 1,
+                        thickness: 1,
+                        color: Theme.of(context).themeColors.divider,
+                      ),
+                    ),
+                  ],
+                ),
               );
             }
-            return Container();
+            return SliverToBoxAdapter(child: Container());
           },
-          loading: () => Container(),
-          error: (Object error, StackTrace? stackTrace) => Container(),
+          loading: () => SliverToBoxAdapter(
+            child: Container(),
+          ),
+          error: (Object error, StackTrace? stackTrace) => SliverToBoxAdapter(
+            child: Container(),
+          ),
         );
   }
 
