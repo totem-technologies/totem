@@ -13,7 +13,7 @@ import 'package:totem/theme/index.dart';
 
 import 'menu.dart';
 
-class HomePage extends ConsumerWidget {
+class HomePage extends ConsumerStatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
   @override
@@ -90,7 +90,7 @@ class HomePageState extends ConsumerState<HomePage> {
         TotemHeader(
           text: t.circles,
           trailing: (isKeeper || !hasPrivateCircles)
-              ? const CreateCircleButton(onPressed: !_busy ? _createCircle : null)
+              ? CreateCircleButton(onPressed: !_busy ? _createCircle : null)
               : null,
         ),
         Expanded(
