@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/services/index.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -24,7 +25,7 @@ class SettingsPage extends ConsumerWidget {
                   children: [
                     IconButton(
                       icon: const Icon(
-                        Icons.close,
+                        LucideIcons.x,
                       ),
                       onPressed: () {
                         Navigator.pop(context);

@@ -1,5 +1,6 @@
 import 'package:decorated_icon/decorated_icon.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:totem/theme/index.dart';
 
 class CameraMuteIndicator extends StatelessWidget {
@@ -15,7 +16,7 @@ class CameraMuteIndicator extends StatelessWidget {
     final themeColors = Theme.of(context).themeColors;
     return shadow
         ? DecoratedIcon(
-            Icons.videocam_off,
+            LucideIcons.videoOff,
             size: size,
             color: color ?? themeColors.reversedText,
             shadows: const [
@@ -28,7 +29,7 @@ class CameraMuteIndicator extends StatelessWidget {
             ],
           )
         : Icon(
-            Icons.videocam_off,
+            LucideIcons.videoOff,
             size: size,
             color: color ?? themeColors.reversedText,
           );

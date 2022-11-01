@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/theme/index.dart';
 
@@ -40,7 +41,7 @@ class TopicItem extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Icon(
-                      Icons.error_outline,
+                      LucideIcons.alertCircle,
                       size: 24,
                       color: themeColors.error,
                     ),
@@ -67,7 +68,7 @@ class TopicItem extends StatelessWidget {
               const SizedBox(
                 width: 8,
               ),
-              Icon(Icons.arrow_forward,
+              Icon(LucideIcons.arrowRight,
                   size: 24, color: themeData.themeColors.iconNext),
             ],
           ),

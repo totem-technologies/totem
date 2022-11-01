@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 
 import 'draw_arc.dart';
 
@@ -114,14 +115,14 @@ class WaitAnimationState extends State<WaitAnimation>
     animationWidgets.add(drawImageContainer(
         size,
         Icon(
-          Icons.mic,
+          LucideIcons.mic,
           size: size * 0.70,
           color: widget.imageColor,
         )));
     animationWidgets.add(drawImageContainer(
         size,
         Icon(
-          Icons.videocam,
+          LucideIcons.video,
           size: size * 0.70,
           color: widget.imageColor,
         )));

@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:totem/components/camera/camera_capture_component.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
@@ -75,7 +76,7 @@ class _ProfileImageDialogState extends ConsumerState<ProfileImageDialog> {
                         Navigator.of(context).pop();
                       },
                       icon: Icon(
-                        Icons.close,
+                        LucideIcons.x,
                         color: themeColors.primaryText,
                       ),
                     ),

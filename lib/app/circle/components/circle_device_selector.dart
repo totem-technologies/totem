@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:totem/app/circle/circle_session_page.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
@@ -53,7 +54,7 @@ class CircleDeviceSelectorState extends ConsumerState<ConsumerStatefulWidget> {
                         padding: const EdgeInsets.only(
                             left: 10, right: 10, top: 5, bottom: 5),
                         child: Icon(
-                          Icons.close,
+                          LucideIcons.x,
                           size: 24,
                           color: themeColors.primaryText,
                         ),

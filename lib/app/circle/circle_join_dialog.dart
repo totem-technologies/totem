@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:totem/app/circle/circle_session_page.dart';
 import 'package:totem/app/circle/components/circle_device_settings_button.dart';
 import 'package:totem/components/camera/index.dart';
@@ -104,7 +105,7 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
                                 Navigator.of(context).pop();
                               },
                               icon: Icon(
-                                Icons.close,
+                                LucideIcons.x,
                                 color: themeColors.primaryText,
                               ),
                             ),
@@ -197,7 +198,7 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
                                   padding: const EdgeInsets.only(
                                       left: 5, right: 5, top: 5, bottom: 5),
                                   child: Icon(
-                                    Icons.close,
+                                    LucideIcons.x,
                                     size: 24,
                                     color: themeColors.primaryText,
                                   ),
@@ -247,7 +248,7 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
               ThemedControlButton(
                 label: commProvider.muted ? t.unmute : t.mute,
                 labelColor: themeColors.reversedText,
-                icon: commProvider.muted ? Icons.mic_off : Icons.mic,
+                icon: commProvider.muted ? LucideIcons.micOff : LucideIcons.mic,
                 onPressed: () {
                   commProvider.muteAudio(!commProvider.muted);
                   debugPrint('mute pressed');
@@ -260,8 +261,8 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
                 label: commProvider.videoMuted ? t.startVideo : t.stopVideo,
                 labelColor: themeColors.reversedText,
                 icon: commProvider.videoMuted
-                    ? Icons.videocam_off
-                    : Icons.videocam,
+                    ? LucideIcons.videoOff
+                    : LucideIcons.video,
                 onPressed: () {
                   commProvider.muteVideo(!commProvider.videoMuted);
                   debugPrint('video pressed');
@@ -275,7 +276,7 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
                   label: t.camera,
                   labelColor: themeColors.reversedText,
                   child: Icon(
-                    Icons.cameraswitch_outlined,
+                    LucideIcons.switchCamera,
                     size: 24,
                     color: themeColors.primaryText,
                   ),

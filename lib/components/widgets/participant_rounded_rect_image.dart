@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/theme/index.dart';
 
@@ -47,7 +48,7 @@ class ParticipantRoundedRectImage extends StatelessWidget {
 
   Widget _genericUserImage(BuildContext context) {
     return const Center(
-      child: Icon(Icons.person_outline, size: 24),
+      child: Icon(LucideIcons.user, size: 24),
     );
   }
 }

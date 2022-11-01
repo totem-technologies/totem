@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:totem/app_routes.dart';
 import 'package:totem/components/widgets/index.dart';
 
@@ -24,7 +25,7 @@ class CreateCircleButton extends StatelessWidget {
           const SizedBox(
             width: 8,
           ),
-          const Icon(Icons.add)
+          const Icon(LucideIcons.plus)
         ],
       ),
     );

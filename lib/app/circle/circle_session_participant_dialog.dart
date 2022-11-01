@@ -4,6 +4,7 @@ import 'package:flutter/material.dart' hide ReorderableList;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:totem/app/circle/index.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
@@ -95,7 +96,7 @@ class CircleSessionParticipantDialogState
                             Navigator.of(context).pop();
                           },
                           icon: Icon(
-                            Icons.close,
+                            LucideIcons.x,
                             color: themeColors.primaryText,
                           ),
                         ),
@@ -229,7 +230,7 @@ class CircleSessionParticipantDialogState
         },
         child: Row(
           children: [
-            Icon(Icons.delete, color: themeColors.primaryText),
+            Icon(LucideIcons.trash, color: themeColors.primaryText),
             const SizedBox(width: 10),
             Text(AppLocalizations.of(context)!.removeFromCircle,
                 style: textStyles.button),

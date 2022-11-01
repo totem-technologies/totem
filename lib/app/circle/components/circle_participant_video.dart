@@ -4,6 +4,7 @@ import 'package:agora_rtc_engine/rtc_local_view.dart' as rtc_local_view;
 import 'package:agora_rtc_engine/rtc_remote_view.dart' as rtc_remote_view;
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:totem/app/circle/components/circle_network_indicator.dart';
 import 'package:totem/app/circle/index.dart';
 import 'package:totem/components/camera/index.dart';
@@ -202,7 +203,7 @@ class CircleParticipantVideo extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               child: Row(
                 children: [
-                  Icon(Icons.star, color: themeColors.primary, size: 24),
+                  Icon(LucideIcons.star, color: themeColors.primary, size: 24),
                   const SizedBox(
                     width: 4,
                   ),
