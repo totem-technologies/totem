@@ -29,29 +29,37 @@ class SnapCirclesListState extends ConsumerState<SnapCirclesList> {
     return ref.watch(snapCircles).when(
       data: (List<SnapCircle> list) {
         if (list.isNotEmpty) {
-          return ListView.builder(
-            padding:
-                EdgeInsets.only(bottom: bottomPadding, top: widget.topPadding),
-            itemCount: list.length,
-            itemBuilder: (c, i) => SnapCircleItem(
-              circle: list[i],
-              onPressed: (circle) => _handleShowCircle(context, circle),
+          return SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (context, index) {
+                return SnapCircleItem(
+                  circle: list[index],
+                  onPressed: (circle) => _handleShowCircle(context, circle),
+                );
+              },
+              childCount: list.length,
             ),
           );
         }
-        return _noCircles(context, bottomPadding);
+        return SliverFillRemaining(
+          child: _noCircles(context, bottomPadding),
+        );
       },
       loading: () {
-        return Center(
-          child: Padding(
-            padding: EdgeInsets.only(bottom: bottomPadding),
-            child: const BusyIndicator(),
+        return SliverFillRemaining(
+          child: Center(
+            child: Padding(
+              padding: EdgeInsets.only(bottom: bottomPadding),
+              child: const BusyIndicator(),
+            ),
           ),
         );
       },
       error: (Object error, StackTrace? stackTrace) {
-        return Center(
-          child: Text(error.toString()),
+        return SliverToBoxAdapter(
+          child: Center(
+            child: Text(error.toString()),
+          ),
         );
       },
     );
