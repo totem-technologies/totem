@@ -103,6 +103,12 @@ export async function endSessionFor(
     }
   }
 
+  // if the session state was 'expired', then we don't want to update the state for the main circle
+  // entry to that but instead 'complete'.
+  if (endState === SessionState.expired) {
+    endState = SessionState.complete;
+  }
+
   // update the circle to completed state
   batch.update(circleRef, {
     state: nextSession ? SessionState.scheduled : endState,

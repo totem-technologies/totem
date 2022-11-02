@@ -704,7 +704,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
       return;
     }
     sessionProvider.activeSession?.userJoined(sessionUserId: user.toString());
-    if (sessionProvider.activeSession?.state == SessionState.live) {
+    if (sessionProvider.activeSession?.live ?? false) {
       _updateVideoStreamState();
     } else {
       _engine!.setRemoteVideoStreamType(user, VideoStreamType.Low);
@@ -782,10 +782,9 @@ class AgoraCommunicationProvider extends CommunicationProvider {
           session.state == SessionState.cancelling) {
         // mute users for the transitional states
         muteAudio(true);
-      } else if (session.state == SessionState.live && !session.userStatus) {
+      } else if (session.live && !session.userStatus) {
         // have to manage mute state based on changes to the state
-        bool started = (_lastState == SessionState.starting &&
-            session.state == SessionState.live);
+        bool started = (_lastState == SessionState.starting && session.live);
         if (started ||
             session.lastChange == ActiveSessionChange.totemChange ||
             session.lastChange == ActiveSessionChange.totemReceive) {

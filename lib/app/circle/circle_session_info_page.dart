@@ -234,7 +234,9 @@ class CircleSessionInfoPageState extends ConsumerState<CircleSessionInfoPage> {
           shrinkWrap: true,
           itemBuilder: (context, index) {
             SessionParticipant participant = participants[index];
-            if (_sessionState == SessionState.live && index == 0) {
+            if ((_sessionState == SessionState.live ||
+                    _sessionState == SessionState.expiring) &&
+                index == 0) {
               // for a live session, the first user in the list is the current
               // totem user. Don't allow them to be reordered for this case
               return CircleSessionParticipantListItem(
