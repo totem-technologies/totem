@@ -184,8 +184,7 @@ class FirebaseSessionProvider extends SessionProvider {
       if (!validStates.contains(_activeSession!.state)) {
         return;
       }
-      bool complete = _activeSession!.state == SessionState.live ||
-          _activeSession!.state == SessionState.expiring;
+      bool complete = _activeSession!.live;
       try {
         await updateActiveSessionState(
             complete ? SessionState.ending : SessionState.cancelling);

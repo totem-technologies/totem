@@ -51,14 +51,13 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
         children: [
           BottomTrayContainer(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 16),
-            backgroundColor:
-                activeSession.state == SessionState.live ? Colors.black : null,
+            backgroundColor: activeSession.live ? Colors.black : null,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
               child: activeSession.state == SessionState.waiting
                   ? waitingControls(
                       context, ref, activeSession, role, authUser.uid)
-                  : activeSession.state == SessionState.live
+                  : activeSession.live
                       ? liveControls(context, ref, activeSession, role,
                           isPhoneLayout, constraints.maxWidth)
                       : emptyControls(context),
@@ -70,7 +69,7 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
             right: 0,
             child: Container(
               height: 1,
-              color: activeSession.state == SessionState.live
+              color: activeSession.live
                   ? Colors.black
                   : Theme.of(context).themeColors.trayBackground,
             ),

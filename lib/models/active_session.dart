@@ -60,6 +60,10 @@ class ActiveSession extends ChangeNotifier {
     return null;
   }
 
+  bool get live {
+    return [SessionState.live, SessionState.expiring].contains(_state);
+  }
+
   bool get ended {
     return [
       SessionState.complete,
@@ -237,7 +241,7 @@ class ActiveSession extends ChangeNotifier {
       }
     }
     _speakingOrder = List<String>.from(data["speakingOrder"] ?? []);
-    if (totemUser != null && state == SessionState.live) {
+    if (totemUser != null && live) {
       // ensure the totemUser is still valid... if not patch
       if (!_speakingOrder.contains(totemUser) && _speakingOrder.isNotEmpty) {
         //need to set a new totemUser
