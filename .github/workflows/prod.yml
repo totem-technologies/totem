@@ -52,7 +52,7 @@ jobs:
       - run: npm -g install firebase-tools
       - run: cd server && make deploy
   build_ios:
-    runs-on: macos-11
+    runs-on: macos-12
     steps:
       - uses: actions/checkout@v3
       - name: Install Flutter
