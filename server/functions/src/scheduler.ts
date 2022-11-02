@@ -46,7 +46,7 @@ async function endExpiredSessions(): Promise<void> {
   // Added a grace period from when the session is set to expiring to when it is actually ended
   // by the server. This gives the frontend a chance to end gracefully rather then end abruptly
   // at the exact time the session is set to expire
-  const gracePeriod: number = 1800; // 30 minutes in seconds,
+  const gracePeriod = 1800; // 30 minutes in seconds,
   const now: Timestamp = new Timestamp(Timestamp.now().seconds - gracePeriod, 0);
   const ref = admin
     .firestore()
