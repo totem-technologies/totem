@@ -1,61 +1,99 @@
 import 'package:totem/models/index.dart';
 
-class Circle {
-  static const int maxNonKeeperParticipants = 5;
-  static const int maxKeeperParticipants = 20;
-  static const int minParticipants = 2;
+class Circle extends CircleTemplate {
+  static const snapSessionId = "snap";
 
-  late final String id;
-  late String name;
-  String? description;
-  int participantCount = 0;
-  int maxParticipants = -1;
-  int maxMinutes = -1;
-  String? themeRef;
-  String? imageUrl;
-  String? bannerImageUrl;
-  bool isPrivate = false;
-  late int colorIndex;
-  RepeatOptions? repeating;
+  late SessionState state;
+  DateTime? started;
+  DateTime? completed;
+  late final String ref;
+  UserProfile? createdBy;
+  late DateTime createdOn;
+  DateTime? updatedOn;
+  DateTime? expiresOn;
+  String? activeSession;
+  String? link;
+  late String keeper;
+  String? previousCircle;
+  Map<String, dynamic>? bannedParticipants;
+  DateTime? nextSession;
+  List<DateTime>? scheduledSessions;
+  bool _canJoin = true;
 
   Circle.fromJson(
     Map<String, dynamic> json, {
-    required this.id,
-  }) {
-    name = json['name'] ?? "";
-    description = json['description'];
-    participantCount = json['participantCount'] ?? 0;
-    maxParticipants = json['maxParticipants'] ?? -1;
-    maxMinutes = json['maxMinutes'] ?? -1;
-    themeRef = json['themeRef'];
-    imageUrl = json['imageUrl'];
-    bannerImageUrl = json['bannerImageUrl'];
-    isPrivate = json['isPrivate'] ?? false;
-    if (json['repeating'] != null) {
-      repeating = RepeatOptions.fromJson(json['repeating']);
+    required String id,
+    required this.ref,
+    UserProfile? createdUser,
+    String? uid,
+  }) : super.fromJson(
+          json,
+          id: id,
+        ) {
+    createdBy = createdUser;
+    createdOn = DateTimeEx.fromMapValue(json['createdOn']) ?? DateTime.now();
+    updatedOn = DateTimeEx.fromMapValue(json['updatedOn']);
+    expiresOn = DateTimeEx.fromMapValue(json['expiresOn']);
+    link = json['link'];
+    keeper = json['keeper'];
+    previousCircle = json['previousCircle'];
+    if (json['state'] != null) {
+      state = SessionState.values.byName(json['state']);
+    } else {
+      state = SessionState.waiting;
     }
-    colorIndex = name.hashCode;
+    if (json['activeSession'] != null) {
+      activeSession = json['activeSession'];
+    }
+    started = DateTimeEx.fromMapValue(json['startedDate']);
+    completed = DateTimeEx.fromMapValue(json['completedDate']);
+    if (json['bannedParticipants'] != null) {
+      bannedParticipants =
+          Map<String, dynamic>.from(json['bannedParticipants']);
+    }
+    if (uid != null && bannedParticipants != null) {
+      _canJoin = bannedParticipants![uid] == null;
+    }
+    nextSession = DateTimeEx.fromMapValue(json['nextSession']);
+    if (json['scheduledSessions'] != null) {
+      scheduledSessions = [];
+      for (var date in json['scheduledSessions']) {
+        scheduledSessions!.add(DateTimeEx.fromMapValue(date)!);
+      }
+    }
   }
 
-  Map<String, dynamic> toJson() {
-    Map<String, dynamic> data = {
-      "name": name,
-      "participantCount": participantCount,
-    };
-    if (maxParticipants != -1) {
-      data["maxParticipants"] = maxParticipants;
+  bool get canJoin => _canJoin;
+
+  Role participantRole(String participantId) {
+    return keeper == participantId ? Role.keeper : Role.member;
+  }
+
+  bool get isComplete {
+    const completeStates = [
+      SessionState.complete,
+      SessionState.cancelled,
+    ];
+    return completeStates.contains(state);
+  }
+
+  Session get session {
+    return Session.fromJson({}, circle: this, id: id);
+  }
+
+  @override
+  Map<String, dynamic> toJson({bool includeParticipants = true}) {
+    Map<String, dynamic> data = super.toJson();
+    data["createdOn"] = createdOn;
+    data["state"] = state.name;
+    if (activeSession != null) {
+      data['activeSession'] = activeSession;
     }
-    if (description != null) {
-      data["description"] = description!;
+    if (updatedOn != null) {
+      data["updatedOn"] = updatedOn!;
     }
-    if (themeRef != null) {
-      data["themeRef"] = themeRef!;
-    }
-    if (imageUrl != null) {
-      data["imageUrl"] = imageUrl!;
-    }
-    if (bannerImageUrl != null) {
-      data["bannerImageUrl"] = bannerImageUrl!;
+    if (bannedParticipants != null) {
+      data["bannedParticipants"] = bannedParticipants!;
     }
     return data;
   }

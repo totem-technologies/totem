@@ -26,9 +26,9 @@ final communicationsProvider =
 });
 
 final circleProvider =
-    StreamProvider.autoDispose.family<SnapCircle?, String>((ref, circleId) {
+    StreamProvider.autoDispose.family<Circle?, String>((ref, circleId) {
   final repo = ref.read(repositoryProvider);
-  return repo.snapCircleStream(circleId);
+  return repo.circleStream(circleId);
 });
 
 class CircleSessionPage extends ConsumerStatefulWidget {
@@ -63,19 +63,20 @@ class CircleSessionPageState extends ConsumerState<CircleSessionPage> {
   Widget build(BuildContext context) {
     ref.watch(communicationsProvider);
     ref.listen<AsyncValue?>(circleProvider(widget.sessionID),
-        (previous, circle) {
-      if (circle?.value != null && _sessionState == SessionPageState.loading) {
-        SnapCircle snapCircle = circle!.value!;
-        if (!snapCircle.isPrivate || snapCircle.isComplete) {
+        (previous, newCircle) {
+      if (newCircle?.value != null &&
+          _sessionState == SessionPageState.loading) {
+        Circle circle = newCircle!.value!;
+        if (!circle.isPrivate || circle.isComplete) {
           _showInfo = true;
           setState(() => _sessionState = SessionPageState.info);
           _showCircleInfo();
         } else {
           _showInfo = false;
           setState(() => _sessionState = SessionPageState.prompt);
-          _showJoinPrompt(snapCircle);
+          _showJoinPrompt(circle);
         }
-      } else if (circle?.value == null) {
+      } else if (newCircle?.value == null) {
         setState(() => _sessionState = SessionPageState.error);
       }
     });
@@ -106,7 +107,7 @@ class CircleSessionPageState extends ConsumerState<CircleSessionPage> {
     );
   }
 
-  Future<void> _showJoinPrompt(SnapCircle circle) async {
+  Future<void> _showJoinPrompt(Circle circle) async {
     var repo = ref.read(repositoryProvider);
     setState(() => _sessionState = SessionPageState.prompt);
     await ref
@@ -121,7 +122,7 @@ class CircleSessionPageState extends ConsumerState<CircleSessionPage> {
       }
       _userProfile = user;
       repo.activeSession!.userProfile = user;
-      _session = circle.snapSession;
+      _session = circle.session;
       setState(() => _sessionState = SessionPageState.ready);
     } else if (_showInfo) {
       if (mounted) {
@@ -134,7 +135,7 @@ class CircleSessionPageState extends ConsumerState<CircleSessionPage> {
   }
 
   Future<void> _showCircleInfo() async {
-    SnapCircle? joinCircle = await CircleInfoDialog.showCircleInfo(context,
+    Circle? joinCircle = await CircleInfoDialog.showCircleInfo(context,
         circleId: widget.sessionID);
     if (!mounted) return;
     if (joinCircle != null) {

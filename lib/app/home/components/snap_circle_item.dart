@@ -12,7 +12,7 @@ class SnapCircleItem extends StatelessWidget {
     required this.circle,
     required this.onPressed,
   }) : super(key: key);
-  final SnapCircle circle;
+  final Circle circle;
   final Function onPressed;
 
   @override

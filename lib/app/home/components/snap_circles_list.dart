@@ -9,9 +9,9 @@ import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
 
-final snapCircles = StreamProvider.autoDispose<List<SnapCircle>>((ref) {
+final snapCircles = StreamProvider.autoDispose<List<Circle>>((ref) {
   final repo = ref.read(repositoryProvider);
-  return repo.snapCircles();
+  return repo.circles();
 });
 
 class SnapCirclesList extends ConsumerStatefulWidget {
@@ -27,7 +27,7 @@ class SnapCirclesListState extends ConsumerState<SnapCirclesList> {
   Widget build(BuildContext context) {
     final bottomPadding = MediaQuery.of(context).padding.bottom + 100;
     return ref.watch(snapCircles).when(
-      data: (List<SnapCircle> list) {
+      data: (List<Circle> list) {
         if (list.isNotEmpty) {
           return SliverList(
             delegate: SliverChildBuilderDelegate(
@@ -100,10 +100,9 @@ class SnapCirclesListState extends ConsumerState<SnapCirclesList> {
     );
   }
 
-  Future<void> _handleShowCircle(
-      BuildContext context, SnapCircle circle) async {
+  Future<void> _handleShowCircle(BuildContext context, Circle circle) async {
     if (!mounted) return;
-    Map<String, String> params = {'id': circle.snapSession.id};
+    Map<String, String> params = {'id': circle.session.id};
     context.goNamed(AppRoutes.circle, params: params);
   }
 }

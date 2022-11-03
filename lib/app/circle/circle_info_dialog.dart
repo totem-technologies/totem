@@ -24,10 +24,10 @@ class CircleInfoDialog extends ConsumerStatefulWidget {
   final String circleId;
   final bool cropEnabled;
 
-  static Future<SnapCircle?> showCircleInfo(BuildContext context,
+  static Future<Circle?> showCircleInfo(BuildContext context,
       {required String circleId}) async {
     return DeviceType.isPhone()
-        ? showModalBottomSheet<SnapCircle?>(
+        ? showModalBottomSheet<Circle?>(
             enableDrag: false,
             isScrollControlled: true,
             isDismissible: false,
@@ -38,7 +38,7 @@ class CircleInfoDialog extends ConsumerStatefulWidget {
               circleId: circleId,
             ),
           )
-        : showDialog<SnapCircle?>(
+        : showDialog<Circle?>(
             context: context,
             barrierColor: Theme.of(context).themeColors.blurBackground,
             barrierDismissible: false,
@@ -166,7 +166,7 @@ class _CircleInfoDialogState extends ConsumerState<CircleInfoDialog> {
   }
 
   Widget _circleContent(
-      {required AsyncValue<SnapCircle?> circleProvider,
+      {required AsyncValue<Circle?> circleProvider,
       EdgeInsetsGeometry contentPadding = EdgeInsets.zero}) {
     final themeColors = Theme.of(context).themeColors;
     final textStyles = Theme.of(context).textStyles;
@@ -176,7 +176,7 @@ class _CircleInfoDialogState extends ConsumerState<CircleInfoDialog> {
         maxWidth: 800,
       ),
       child: circleProvider.when(
-        data: (SnapCircle? circle) {
+        data: (Circle? circle) {
           if (circle != null) {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -275,7 +275,7 @@ class _CircleInfoDialogState extends ConsumerState<CircleInfoDialog> {
     );
   }
 
-  Widget _scheduleInfo(SnapCircle circle) {
+  Widget _scheduleInfo(Circle circle) {
     final t = AppLocalizations.of(context)!;
     final DateFormat timeFormat = DateFormat('hh:mm a');
     DateTime start = circle.createdOn;
@@ -366,7 +366,7 @@ class _CircleInfoDialogState extends ConsumerState<CircleInfoDialog> {
     );
   }
 
-  Widget _keeperInfo(SnapCircle circle) {
+  Widget _keeperInfo(Circle circle) {
     final textStyles = Theme.of(context).textStyles;
     final t = AppLocalizations.of(context)!;
 
@@ -390,7 +390,7 @@ class _CircleInfoDialogState extends ConsumerState<CircleInfoDialog> {
     );
   }
 
-  Widget _joinStatus(SnapCircle circle) {
+  Widget _joinStatus(Circle circle) {
     final t = AppLocalizations.of(context)!;
     final textStyles = Theme.of(context).textStyles;
     final authUser = ref.read(authStateChangesProvider).asData?.value;
@@ -430,11 +430,11 @@ class _CircleInfoDialogState extends ConsumerState<CircleInfoDialog> {
     );
   }
 
-  void _join(SnapCircle circle) {
+  void _join(Circle circle) {
     Navigator.of(context).pop(circle);
   }
 
-  String _repeatType(SnapCircle circle) {
+  String _repeatType(Circle circle) {
     final t = AppLocalizations.of(context)!;
     String repeatSingleUnit = "";
     String repeatPluralUnit = "";

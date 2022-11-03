@@ -1,11 +1,11 @@
 import 'package:totem/models/index.dart';
 
 abstract class CirclesProvider {
-  Stream<List<SnapCircle>> snapCircles();
-  Stream<List<SnapCircle>> rejoinableSnapCircles(String uid);
-  Stream<List<SnapCircle>> mySnapCircles(String uid,
+  Stream<List<Circle>> circles();
+  Stream<List<Circle>> rejoinableCircles(String uid);
+  Stream<List<Circle>> myCircles(String uid,
       {bool privateOnly, bool activeOnly});
-  Future<SnapCircle?> createSnapCircle({
+  Future<Circle?> createCircle({
     required String name,
     String? description,
     required String uid,
@@ -23,17 +23,16 @@ abstract class CirclesProvider {
     RepeatOptions? repeatOptions,
   });
 
-  Future<bool> removeSnapCircle(
-      {required SnapCircle circle, required String uid});
-  Future<SnapCircle?> circleFromId(String id, String uid);
-  Future<SnapCircle?> circleFromPreviousIdAndState(
+  Future<bool> removeCircle({required Circle circle, required String uid});
+  Future<Circle?> circleFromId(String id, String uid);
+  Future<Circle?> circleFromPreviousIdAndState(
       {required String previousId,
       required List<SessionState> state,
       required String uid});
-  Future<SnapCircle?> circleFromPreviousIdAndNotState(
+  Future<Circle?> circleFromPreviousIdAndNotState(
       {required String previousId,
       required List<SessionState> state,
       required String uid});
   Future<bool> canJoinCircle({required String circleId, required String uid});
-  Stream<SnapCircle?> snapCircleStream(String circleId);
+  Stream<Circle?> circleStream(String circleId);
 }

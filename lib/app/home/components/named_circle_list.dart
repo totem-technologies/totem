@@ -7,9 +7,9 @@ import 'package:totem/theme/index.dart';
 
 import 'snap_circle_item.dart';
 
-final userPrivateCircles = StreamProvider.autoDispose<List<SnapCircle>>((ref) {
+final userPrivateCircles = StreamProvider.autoDispose<List<Circle>>((ref) {
   final repo = ref.read(repositoryProvider);
-  return repo.mySnapCircles();
+  return repo.myCircles();
 });
 
 class NamedCircleList extends ConsumerWidget {
@@ -18,9 +18,9 @@ class NamedCircleList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    List<SnapCircle> privateWaitingCircles = [];
+    List<Circle> privateWaitingCircles = [];
     return ref.watch(userPrivateCircles).when(
-      data: (List<SnapCircle> data) {
+      data: (List<Circle> data) {
         if (data.isNotEmpty) {
           privateWaitingCircles = data
               .where((element) => element.state == SessionState.waiting)
@@ -72,8 +72,7 @@ class NamedCircleList extends ConsumerWidget {
     );
   }
 
-  List<Widget> _buildCircleList(
-      BuildContext context, List<SnapCircle> circles) {
+  List<Widget> _buildCircleList(BuildContext context, List<Circle> circles) {
     List<Widget> circleList = circles
         .map<Widget>((circle) => SnapCircleItem(
               circle: circle,
@@ -83,7 +82,7 @@ class NamedCircleList extends ConsumerWidget {
     return circleList;
   }
 
-  void _handleShowCircle(BuildContext context, SnapCircle circle) {
-    context.goNamed(AppRoutes.circle, params: {'id': circle.snapSession.id});
+  void _handleShowCircle(BuildContext context, Circle circle) {
+    context.goNamed(AppRoutes.circle, params: {'id': circle.session.id});
   }
 }

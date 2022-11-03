@@ -45,20 +45,21 @@ class FirebaseSystemProvider extends SystemProvider {
     return themes;
   }
 
-  Future<List<Circle>> getSystemCircleTemplates() async {
+  Future<List<CircleTemplate>> getSystemCircleTemplates() async {
     final systemTemplatesCollection = FirebaseFirestore.instance
         .collection(Paths.system)
         .doc(Paths.systemCircles)
         .collection(Paths.systemCircleTemplates)
-        .withConverter<Circle>(
+        .withConverter<CircleTemplate>(
           fromFirestore: (snapshots, _) {
-            return Circle.fromJson(snapshots.data()!, id: snapshots.id);
+            return CircleTemplate.fromJson(snapshots.data()!,
+                id: snapshots.id, ref: snapshots.reference.path);
           },
           toFirestore: (circleTheme, _) => circleTheme.toJson(),
         );
     final snapshot = await systemTemplatesCollection.get();
-    List<Circle> templates = snapshot.docs
-        .map((DocumentSnapshot<Circle> doc) => doc.data()!)
+    List<CircleTemplate> templates = snapshot.docs
+        .map((DocumentSnapshot<CircleTemplate> doc) => doc.data()!)
         .toList()
       ..sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
     return templates;

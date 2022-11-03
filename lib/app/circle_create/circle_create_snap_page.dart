@@ -62,8 +62,8 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
     final authUser = ref.read(authServiceProvider).currentUser()!;
     isKeeper = authUser.hasRole(Role.keeper);
     maxParticipants = (isKeeper
-            ? Circle.maxKeeperParticipants
-            : Circle.maxNonKeeperParticipants)
+            ? CircleTemplate.maxKeeperParticipants
+            : CircleTemplate.maxNonKeeperParticipants)
         .toDouble();
     numParticipants = maxParticipants;
     visibilityOptions = isKeeper
@@ -477,12 +477,10 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
           );
         }
       }
-      final circle = await repo.createSnapCircle(
+      final circle = await repo.createCircle(
         name: _nameController.text,
         description: _descriptionController.text,
-        keeper: (widget.fromCircle is SnapCircle?)
-            ? (widget.fromCircle as SnapCircle).keeper
-            : null,
+        keeper: widget.fromCircle?.keeper,
         previousCircle: widget.fromCircle?.id,
         isPrivate: _selectedVisibility.value,
         duration: _selectedDuration.value,
@@ -496,8 +494,8 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
       );
       if (circle != null) {
         if (!mounted) return;
-        context.replaceNamed(AppRoutes.circle,
-            params: {'id': circle.snapSession.id});
+        context
+            .replaceNamed(AppRoutes.circle, params: {'id': circle.session.id});
       }
     } on ServiceException catch (ex, stack) {
       debugPrint('Error creating circle: $ex');
@@ -542,7 +540,7 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
         const SizedBox(height: 6),
         SpinBox(
           keyboardType: const TextInputType.numberWithOptions(decimal: false),
-          min: Circle.minParticipants.toDouble(),
+          min: CircleTemplate.minParticipants.toDouble(),
           max: maxParticipants,
           value: numParticipants,
           onChanged: (value) {

@@ -31,7 +31,7 @@ class ActiveSession extends ChangeNotifier {
   ActiveSession(
       {required this.circle, required this.userId, this.isSnap = true});
   String topic = "";
-  final SnapCircle circle;
+  final Circle circle;
   final String userId;
   final bool isSnap;
   final Map<String, SessionParticipant> _activeParticipants = {};
