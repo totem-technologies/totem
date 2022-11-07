@@ -404,7 +404,8 @@ class _CircleInfoDialogState extends ConsumerState<CircleInfoDialog> {
     final List<SessionState> validStates = [
       SessionState.waiting,
       SessionState.starting,
-      SessionState.live
+      SessionState.live,
+      SessionState.expiring,
     ];
     if (validStates.contains(circle.state)) {
       return ThemedRaisedButton(

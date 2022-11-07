@@ -63,7 +63,7 @@ class _CircleSnapSessionContentState
           },
           child: AnimatedSwitcher(
             duration: const Duration(milliseconds: 300),
-            child: (sessionProvider.state == SessionState.live)
+            child: (sessionProvider.live)
                 ? const CircleLiveVideoSession()
                 : Stack(
                     children: [
