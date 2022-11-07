@@ -456,7 +456,7 @@ class _CircleInfoDialogState extends ConsumerState<CircleInfoDialog> {
         repeatPluralUnit = t.days;
         break;
     }
-    return t.repeatsEveryFor(
-        circle.repeating!.count ?? 0, repeatSingleUnit, repeatPluralUnit);
+    return t.repeatsEveryFor(circle.repeating!.count ?? 0,
+        circle.repeating!.every, repeatSingleUnit, repeatPluralUnit);
   }
 }

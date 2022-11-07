@@ -45,6 +45,7 @@ class FirebaseSystemProvider extends SystemProvider {
     return themes;
   }
 
+  @override
   Future<List<CircleTemplate>> getSystemCircleTemplates() async {
     final systemTemplatesCollection = FirebaseFirestore.instance
         .collection(Paths.system)

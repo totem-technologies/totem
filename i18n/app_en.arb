@@ -273,10 +273,11 @@
     "repeateIntervalAtLeastOne": "Repeat interval must be at least 1",
     "repeats": "Repeats",
     "repeatsEvery": "Repeats Every",
-    "repeatsEveryFor": "Every {count} for {count, plural, =0{forever} =1{1 {unit}} other{{count} {units}}}",
+    "repeatsEveryFor": "Every {every} for {count, plural, =0{forever} =1{1 {unit}} other{{count} {units}}}",
     "@repeatsEveryFor": {
         "placeholders": {
             "count": {},
+            "every": {},
             "unit": {},
             "units": {}
         }
