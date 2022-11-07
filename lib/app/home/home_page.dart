@@ -135,6 +135,7 @@ class HomePageState extends ConsumerState<HomePage> {
     // build new circle
     if (isKeeper) {
       context.goNamed(AppRoutes.circleCreate);
+      // context.goNamed(AppRoutes.circleCreateTemplateSelector);
     } else {
       final Circle? createdCircle =
           await CircleCreateNonKeeper.showNonKeeperCreateDialog(context);

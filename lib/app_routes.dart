@@ -1,12 +1,16 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:totem/app/circle_create/circle_template_selector.dart';
 import 'package:totem/app/startup_events/startup_events_screen.dart';
+import 'package:totem/components/index.dart';
 import 'package:totem/services/account_state/account_state_event_manager.dart';
+import 'package:totem/theme/app_theme_styles.dart';
 
 import 'app/index.dart';
 import 'dev/dev_page.dart';
@@ -41,6 +45,8 @@ class AppRoutes {
   static const String circle = "circle";
   static const String circleCreateScheduled = 'scheduledcreate';
   static const String circleCreate = 'create';
+  static const String circleCreateTemplateSelector =
+      'circleCreateTemplateSelector';
   static const String circleEnded = 'circleEnded';
   static const String userProfile = 'profile';
   static const String dev = 'dev';
@@ -64,6 +70,14 @@ class AppRoutes {
           pageBuilder: (context, state) => _fadeTransitionPage(
               state: state, child: const WithForegroundTask(child: HomePage())),
           routes: [
+            GoRoute(
+                name: circleCreateTemplateSelector,
+                path: 'circle_template',
+                pageBuilder: (context, state) {
+                  return const DialogPage(
+                    child: CircleTemplateSelector(),
+                  );
+                }),
             GoRoute(
               name: userProfile,
               path: 'profile',
@@ -225,4 +239,33 @@ class AppRoutes {
           FadeTransition(opacity: animation, child: child),
     );
   }
+}
+
+class DialogPage<T> extends Page<T> {
+  final Widget child;
+
+  const DialogPage({required this.child, super.key});
+
+  @override
+  Route<T> createRoute(BuildContext context) => DialogRoute<T>(
+      context: context,
+      settings: this,
+      barrierColor: Theme.of(context).themeColors.blurBackground,
+      builder: (context) => Material(
+            color: Colors.transparent,
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 2.5, sigmaY: 2.5),
+              child: Center(
+                child: SingleChildScrollView(
+                  child: DialogContainer(
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                          maxWidth: Theme.of(context).maxRenderWidth),
+                      child: child,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ));
 }

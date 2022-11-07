@@ -52,8 +52,10 @@ class FirebaseSystemProvider extends SystemProvider {
         .collection(Paths.systemCircleTemplates)
         .withConverter<CircleTemplate>(
           fromFirestore: (snapshots, _) {
-            return CircleTemplate.fromJson(snapshots.data()!,
-                id: snapshots.id, ref: snapshots.reference.path);
+            return CircleTemplate.fromJson(
+              snapshots.data()!,
+              id: snapshots.id,
+            );
           },
           toFirestore: (circleTheme, _) => circleTheme.toJson(),
         );
