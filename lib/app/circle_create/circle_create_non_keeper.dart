@@ -15,9 +15,8 @@ import 'package:totem/theme/index.dart';
 class CircleCreateNonKeeper extends ConsumerStatefulWidget {
   const CircleCreateNonKeeper({Key? key, this.fromCircle}) : super(key: key);
   final Circle? fromCircle;
-  static Future<SnapCircle?> showNonKeeperCreateDialog(
-      BuildContext context) async {
-    return showDialog<SnapCircle?>(
+  static Future<Circle?> showNonKeeperCreateDialog(BuildContext context) async {
+    return showDialog<Circle?>(
       context: context,
       barrierDismissible: true,
       useRootNavigator: true,
@@ -176,7 +175,7 @@ class CircleCreateNonKeeperState extends ConsumerState<CircleCreateNonKeeper> {
     final t = AppLocalizations.of(context)!;
     var repo = ref.read(repositoryProvider);
     try {
-      final circle = await repo.createSnapCircle(
+      final circle = await repo.createCircle(
         name: t.usersCircle(userProfile?.name ?? ""),
         keeper: widget.fromCircle?.keeper,
         previousCircle: widget.fromCircle?.id,
@@ -235,7 +234,7 @@ class CircleCreateNonKeeperState extends ConsumerState<CircleCreateNonKeeper> {
         const SizedBox(height: 6),
         SpinBox(
           keyboardType: const TextInputType.numberWithOptions(decimal: false),
-          min: Circle.minParticipants.toDouble(),
+          min: CircleTemplate.minParticipants.toDouble(),
           max: maxParticipants,
           value: numParticipants,
           onChanged: (value) {

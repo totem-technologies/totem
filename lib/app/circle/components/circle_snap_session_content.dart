@@ -22,7 +22,7 @@ class CircleSnapSessionContent extends ConsumerStatefulWidget {
     required this.circle,
     required this.userProfile,
   }) : super(key: key);
-  final SnapCircle circle;
+  final Circle circle;
   final UserProfile userProfile;
 
   @override
@@ -498,7 +498,8 @@ class _CircleSnapSessionContentState
     final provider = ref.read(communicationsProvider);
     provider.joinSession(
       sessionImage: widget.userProfile.image,
-      session: SnapSession.fromJson({}, circle: widget.circle),
+      session:
+          Session.fromJson({}, circle: widget.circle, id: widget.circle.id),
       enableVideo: true,
       handler: CommunicationHandler(
         joinedCircle: (String sessionId, String sessionUserId) {

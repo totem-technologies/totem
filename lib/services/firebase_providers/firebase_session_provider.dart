@@ -58,7 +58,7 @@ class FirebaseSessionProvider extends SessionProvider {
     // participant? For now just allow it till we get functional
     try {
       bool result = await _joinSnapSession(
-          session as SnapSession, uid, sessionUserId, sessionImage,
+          session, uid, sessionUserId, sessionImage,
           muted: muted, videoMuted: videoMuted);
       if (!result) {
         throw ServiceException(
@@ -90,8 +90,7 @@ class FirebaseSessionProvider extends SessionProvider {
       bool result = false;
       if (session.state != SessionState.cancelled &&
           session.state != SessionState.complete) {
-        result = await _removeSnapSessionParticipant(
-            session as SnapSession, sessionUid);
+        result = await _removeSnapSessionParticipant(session, sessionUid);
         if (!result) {
           throw ServiceException(
             code: ServiceException.errorCodeInvalidSession,
@@ -407,7 +406,7 @@ class FirebaseSessionProvider extends SessionProvider {
   }
 
   Future<bool> _removeSnapSessionParticipant(
-      SnapSession session, String sessionUid) async {
+      Session session, String sessionUid) async {
     List<String> validStates = [
       SessionState.waiting.name,
       SessionState.starting.name,
@@ -447,8 +446,8 @@ class FirebaseSessionProvider extends SessionProvider {
     return true;
   }
 
-  Future<bool> _joinSnapSession(SnapSession session, String uid,
-      String sessionUserId, String? sessionImage,
+  Future<bool> _joinSnapSession(
+      Session session, String uid, String sessionUserId, String? sessionImage,
       {bool muted = false, bool videoMuted = false}) async {
     await FirebaseFirestore.instance.runTransaction((transaction) async {
       DocumentReference activeCircleRef = FirebaseFirestore.instance

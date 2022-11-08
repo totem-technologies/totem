@@ -11,4 +11,5 @@ class Paths {
   static const String systemVideo = "video";
   static const String systemCircles = "circles";
   static const String systemCircleThemes = "themes";
+  static const String systemCircleTemplates = "templates";
 }

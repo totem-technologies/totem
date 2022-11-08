@@ -7,9 +7,9 @@ import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
 
-final rejoinableCircles = StreamProvider.autoDispose<List<SnapCircle>>((ref) {
+final rejoinableCircles = StreamProvider.autoDispose<List<Circle>>((ref) {
   final repo = ref.read(repositoryProvider);
-  return repo.rejoinableSnapCircles();
+  return repo.rejoinableCircles();
 });
 
 class SnapCirclesRejoinable extends ConsumerStatefulWidget {
@@ -26,7 +26,7 @@ class SnapCirclesRejoinableState extends ConsumerState<SnapCirclesRejoinable> {
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context)!;
     return ref.watch(rejoinableCircles).when(
-          data: (List<SnapCircle> data) {
+          data: (List<Circle> data) {
             if (data.isNotEmpty) {
               return SliverToBoxAdapter(
                 child: Column(
@@ -75,7 +75,7 @@ class SnapCirclesRejoinableState extends ConsumerState<SnapCirclesRejoinable> {
         );
   }
 
-  void _handleShowCircle(BuildContext context, SnapCircle circle) {
-    context.goNamed(AppRoutes.circle, params: {'id': circle.snapSession.id});
+  void _handleShowCircle(BuildContext context, Circle circle) {
+    context.goNamed(AppRoutes.circle, params: {'id': circle.session.id});
   }
 }
