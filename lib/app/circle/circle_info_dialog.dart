@@ -353,6 +353,7 @@ class _CircleInfoDialogState extends ConsumerState<CircleInfoDialog> {
                       ),
                       Text(
                         repeatType,
+                        maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ],
@@ -457,7 +458,19 @@ class _CircleInfoDialogState extends ConsumerState<CircleInfoDialog> {
         repeatPluralUnit = t.days;
         break;
     }
-    return t.repeatsEveryFor(circle.repeating!.count ?? 0,
-        circle.repeating!.every, repeatSingleUnit, repeatPluralUnit);
+    if ((circle.repeating!.count ?? 0) > 0) {
+      return t.repeatsEveryFor(
+          t.repeatEveryClause(circle.repeating!.every,
+              repeatSingleUnit.toLowerCase(), repeatPluralUnit.toLowerCase()),
+          t.repeatEveryForClause(circle.repeating!.count!));
+    } else if (circle.repeating!.until != null) {
+      return t.repeatsEveryFor(
+          t.repeatEveryClause(circle.repeating!.every,
+              repeatSingleUnit.toLowerCase(), repeatPluralUnit.toLowerCase()),
+          t.repeatsUntilDateClause(
+              DateFormat.yMMMMEEEEd().format(circle.repeating!.until!)));
+      //return t.repeatsEveryFor();
+    }
+    return "";
   }
 }

@@ -273,13 +273,31 @@
     "repeateIntervalAtLeastOne": "Repeat interval must be at least 1",
     "repeats": "Repeats",
     "repeatsEvery": "Repeats Every",
-    "repeatsEveryFor": "Every {every} for {count, plural, =0{forever} =1{1 {unit}} other{{count} {units}}}",
+    "repeatEveryClause": "Every {every, plural, =1{{unit}} other{{every} {units}}}",
+    "@repeatEveryClause": {
+        "placeholders": {
+          "every": {},
+          "unit": {},
+          "units": {}
+        }
+    },
+    "repeatEveryForClause": "{count, plural, =0{forever} =1{for {count} session} other{for {count} sessions}}",
+    "@repeatEveryForClause": {
+        "placeholders": {
+            "count": {}
+        }
+    },
+    "repeatsEveryFor": "{repeatEveryClause} {repeatEveryForClause}",
     "@repeatsEveryFor": {
         "placeholders": {
-            "count": {},
-            "every": {},
-            "unit": {},
-            "units": {}
+            "repeatEveryClause": {},
+            "repeatEveryForClause": {}
+        }
+    },
+    "repeatsUntilDateClause": "until {date}",
+    "@repeatsUntilDateClause": {
+        "placeholders": {
+            "date": {}
         }
     },
     "repeatsUntil": "Repeats Until",
