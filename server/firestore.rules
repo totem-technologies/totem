@@ -32,7 +32,8 @@ service cloud.firestore {
       allow create: if false; // Only created by cloud function
       match /{documents=**} {
         allow read: if request.auth != null;
-        allow write: if isDocOwner(resource.data.keeper); // Only circle keeper can update
+        // Only circle keeper or admincan update
+        allow write: if isDocOwner(resource.data.keeper) || hasAnyRole(["admin"]); 
       }
     }
     match /activeCircles/{circleId}/{documents=**} {

@@ -65,28 +65,23 @@ export async function endSessionFor(
   } else if (state === SessionState.expiring) {
     endState = SessionState.expired;
   }
-  if (state != SessionState.cancelling && state != SessionState.waiting) {
-    // If the session went live then record it as a session
-    const entry = {circleRef, completedDate};
-    const sessionId = completedDate.seconds.toString();
-    if (circleParticipants) {
-      const sessionRef = circleRef.collection("sessions").doc(sessionId);
-      // Record it in the participants' records and then make a session record for the circle
+  const sessionId = completedDate.seconds.toString();
+  const sessionRef = circleRef.collection("sessions").doc(sessionId);
+  const sessionSummary: CircleSessionSummary = {completedDate, state: endState};
+  if (circleParticipants) {
+    sessionSummary.circleParticipants = circleParticipants;
+    if (state != SessionState.cancelling && state != SessionState.waiting) {
+      sessionSummary.startedDate = startedDate;
+      // If the session went live then record it in the participant's history
+      const entry = {circleRef, completedDate};
       circleParticipants.forEach((uid: string) => {
         const entryRef = admin.firestore().collection("users").doc(uid).collection("snapCircles").doc();
         const role = keeper === uid ? "keeper" : "member";
         batch.set(entryRef, {...entry, role, completedDate, sessionRef});
       });
     }
-    const sessionSummary: CircleSessionSummary = {startedDate, completedDate, state: endState, circleParticipants};
-    const sessionRef: DocumentReference = admin
-      .firestore()
-      .collection("snapCircles")
-      .doc(circleId)
-      .collection("sessions")
-      .doc(sessionId);
-    batch.set(sessionRef, sessionSummary);
   }
+  batch.set(sessionRef, sessionSummary);
 
   // delete active circle session
   const activeRef = admin.firestore().collection("activeCircles").doc(circleId);
@@ -103,15 +98,9 @@ export async function endSessionFor(
     }
   }
 
-  // if the session state was 'expired', then we don't want to update the state for the main circle
-  // entry to that but instead 'complete'.
-  if (endState === SessionState.expired) {
-    endState = SessionState.complete;
-  }
-
   // update the circle to completed state
   batch.update(circleRef, {
-    state: nextSession ? SessionState.scheduled : endState,
+    state: nextSession ? SessionState.scheduled : SessionState.complete,
     completedDate,
     expiresOn: FieldValue.delete(),
     circleParticipants: [],
@@ -174,7 +163,9 @@ export const startSnapSession = functions.https.onCall(async ({circleId}, {auth}
               const {uid} = participants[firstId];
               if (uid !== keeper) {
                 // find the keepers sessionId
-                const participant = (Object.values(participants) as Array<Participant>).find((participant: Participant) => participant.uid === keeper);
+                const participant = (Object.values(participants) as Array<Participant>).find(
+                  (participant: Participant) => participant.uid === keeper
+                );
                 if (participant && participant.sessionUserId) {
                   const index = speakingOrder.indexOf(participant.sessionUserId);
                   if (index != -1) {

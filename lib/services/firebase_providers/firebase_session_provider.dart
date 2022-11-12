@@ -187,49 +187,10 @@ class FirebaseSessionProvider extends SessionProvider {
       try {
         await updateActiveSessionState(
             complete ? SessionState.ending : SessionState.cancelling);
-        if (activeSession!.isSnap) {
-          HttpsCallable callable =
-              FirebaseFunctions.instance.httpsCallable('endSnapSession');
-          final result = await callable({"circleId": activeSession!.circle.id});
-          debugPrint('completed endSnapSession with result ${result.data}');
-        } else {
-          WriteBatch batch = FirebaseFirestore.instance.batch();
-          DocumentReference ref =
-              FirebaseFirestore.instance.doc(_activeSession!.circle.ref);
-          Map<String, dynamic> circleData = {"activeSession": null};
-          batch.update(ref, circleData);
-          /* TODO - Update for scheduled session support
-          if (!complete) {
-            // restore session back to pending, this is just a cancel
-            Map<String, dynamic> sessionData = {
-              "state": SessionState.pending.name,
-              "participants": null,
-            };
-            batch.update(
-                FirebaseFirestore.instance.doc(activeSession!.session.ref),
-                sessionData);
-          } else {
-            // session has completed, archive to completed collection
-            Map<String, dynamic> sessionData = activeSession!.toJson();
-            sessionData["participants"] =
-                activeSession!.participants.map((key, participant) {
-              Map<String, dynamic> data = participant.toJson();
-              // convert to doc reference for firebase
-              data["ref"] = FirebaseFirestore.instance.doc(data['uid']);
-              return MapEntry(key, data);
-            });
-            sessionData["completed"] = DateTime.now();
-            DocumentReference sessionRef = FirebaseFirestore.instance
-                .doc(activeSession!.session.circle.ref)
-                .collection(Paths.completedSessions)
-                .doc(activeSession!.session.id);
-            batch.set(sessionRef, sessionData);
-            batch.delete(
-                FirebaseFirestore.instance.doc(activeSession!.session.ref));
-          } */
-          await batch.commit();
-        }
-//        clear();
+        HttpsCallable callable =
+            FirebaseFunctions.instance.httpsCallable('endSnapSession');
+        final result = await callable({"circleId": activeSession!.circle.id});
+        debugPrint('completed endSnapSession with result ${result.data}');
       } on FirebaseException catch (ex, stack) {
         await reportError(ex, stack);
         throw ServiceException(
@@ -238,6 +199,29 @@ class FirebaseSessionProvider extends SessionProvider {
           message: ex.message,
         );
       }
+    }
+  }
+
+  @override
+  Future<void> cancelPendingSession({required Session session}) async {
+    if (session.state == SessionState.waiting) {
+      // If the session is already waiting to start then we can just end it
+      try {
+        await _updateCircleState(session.circle, SessionState.cancelling);
+        HttpsCallable callable =
+            FirebaseFunctions.instance.httpsCallable('endSnapSession');
+        final result = await callable({"circleId": session.circle.id});
+        debugPrint('completed endSnapSession with result ${result.data}');
+      } on FirebaseException catch (ex, stack) {
+        await reportError(ex, stack);
+        throw ServiceException(
+          code: ex.code,
+          reference: _activeSession!.circle.ref,
+          message: ex.message,
+        );
+      }
+    } else if (session.state == SessionState.scheduled) {
+      // TODO: implement cancelScheduledSession
     }
   }
 
@@ -271,23 +255,18 @@ class FirebaseSessionProvider extends SessionProvider {
   Future<bool> updateActiveSession(Map<String, dynamic> update) async {
     if (_activeSession != null) {
       try {
-        if (_activeSession!.isSnap) {
-          await FirebaseFirestore.instance.runTransaction((transaction) async {
-            DocumentReference activeCircleRef = FirebaseFirestore.instance
-                .collection(Paths.activeCircles)
-                .doc(_activeSession!.circle.id);
-            DocumentSnapshot snapshot = await transaction.get(activeCircleRef);
-            Map<String, dynamic> data =
-                snapshot.data()! as Map<String, dynamic>;
-            for (String key in update.keys) {
-              data[key] = update[key];
-            }
-            data["userStatus"] = false;
-            transaction.update(activeCircleRef, data);
-          });
-        } else {
-          // todo for scheduled session
-        }
+        await FirebaseFirestore.instance.runTransaction((transaction) async {
+          DocumentReference activeCircleRef = FirebaseFirestore.instance
+              .collection(Paths.activeCircles)
+              .doc(_activeSession!.circle.id);
+          DocumentSnapshot snapshot = await transaction.get(activeCircleRef);
+          Map<String, dynamic> data = snapshot.data()! as Map<String, dynamic>;
+          for (String key in update.keys) {
+            data[key] = update[key];
+          }
+          data["userStatus"] = false;
+          transaction.update(activeCircleRef, data);
+        });
         return true;
       } on FirebaseException catch (ex, stack) {
         await reportError(ex, stack);
@@ -304,28 +283,24 @@ class FirebaseSessionProvider extends SessionProvider {
   @override
   Future<bool> updateActiveSessionState(SessionState state) async {
     if (_activeSession != null) {
-      try {
-        // first update the state of the session to 'starting'
-        if (_activeSession!.isSnap) {
-          await FirebaseFirestore.instance.runTransaction((transaction) async {
-            DocumentReference ref =
-                FirebaseFirestore.instance.doc(_activeSession!.circle.ref);
-            Map<String, dynamic> data = {
-              "state": state.name,
-              "userStatus": false
-            };
-            transaction.update(ref, data);
-          });
-          return true;
-        } else {
-          // todo for scheduled session
-        }
-      } on FirebaseException catch (ex, stack) {
-        await reportError(ex, stack);
-        throw ServiceException(code: ex.code);
-      }
+      return _updateCircleState(_activeSession!.circle, state);
     }
     return false;
+  }
+
+  Future<bool> _updateCircleState(Circle circle, SessionState state) async {
+    try {
+      // first update the state of the session to 'starting'
+      await FirebaseFirestore.instance.runTransaction((transaction) async {
+        DocumentReference ref = FirebaseFirestore.instance.doc(circle.ref);
+        Map<String, dynamic> data = {"state": state.name, "userStatus": false};
+        transaction.update(ref, data);
+      });
+      return true;
+    } on FirebaseException catch (ex, stack) {
+      await reportError(ex, stack);
+      throw ServiceException(code: ex.code);
+    }
   }
 
   @override

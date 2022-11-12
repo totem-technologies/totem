@@ -132,6 +132,8 @@ class TotemRepository {
   ActiveSession? get activeSession => _sessionProvider.activeSession;
   Future<void> updateActiveSession(Map<String, dynamic> sessionData) =>
       _sessionProvider.updateActiveSession(sessionData);
+  Future<void> cancelPendingSession({required Circle circle}) =>
+      _sessionProvider.cancelPendingSession(session: circle.session);
 
   // Analytics
   AnalyticsProvider get analyticsProvider {
