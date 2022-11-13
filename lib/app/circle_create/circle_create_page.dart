@@ -1,4 +1,8 @@
+import 'dart:async';
+
+import 'package:after_layout/after_layout.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:collection/collection.dart';
 import 'package:date_field/date_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -20,15 +24,16 @@ import 'package:totem/services/index.dart';
 import 'package:totem/services/utils/device_type.dart';
 import 'package:totem/theme/index.dart';
 
-class CircleCreateSnapPage extends ConsumerStatefulWidget {
-  const CircleCreateSnapPage({Key? key, this.fromCircle}) : super(key: key);
-  final Circle? fromCircle;
+class CircleCreatePage extends ConsumerStatefulWidget {
+  const CircleCreatePage({Key? key, this.fromCircle}) : super(key: key);
+  final CircleTemplate? fromCircle;
 
   @override
-  CircleCreateSnapPageState createState() => CircleCreateSnapPageState();
+  CircleCreatePageState createState() => CircleCreatePageState();
 }
 
-class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
+class CircleCreatePageState extends ConsumerState<CircleCreatePage>
+    with AfterLayoutMixin<CircleCreatePage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
@@ -110,8 +115,8 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
       CircleRepeatEndOption(value: 'endDate'),
     ];
     if (widget.fromCircle != null) {
-      _nameController.text = widget.fromCircle!.name;
-      _descriptionController.text = widget.fromCircle!.description ?? "";
+      // TODO: templates description is probably not what we want here
+      // _descriptionController.text = widget.fromCircle!.description ?? "";
       _selectedVisibility = visibilityOptions
           .firstWhere((e) => e.value == widget.fromCircle!.isPrivate);
       _selectedDuration = durationOptions
@@ -125,16 +130,18 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
         _repeatIntervalController.text =
             widget.fromCircle!.repeating?.every.toString() ?? "1";
         _repeatCountController.text =
-            widget.fromCircle!.repeating?.count.toString() ?? "1";
+            widget.fromCircle!.repeating?.count?.toString() ?? "1";
         _selectedRepeatUnit = repeatUnitOptions
             .firstWhere((e) => e.value == widget.fromCircle!.repeating!.unit);
         _selectedStartDate = widget.fromCircle!.repeating!.start;
         _selectedStartTime = widget.fromCircle!.repeating!.start;
-        if (widget.fromCircle!.repeating!.until != null) {
-          _selectedRepeatEnd = repeatEndOptions[1];
-          _selectedEndDate = widget.fromCircle!.repeating!.until;
-        } else {
+        if (widget.fromCircle!.repeating?.count != null) {
           _selectedRepeatEnd = repeatEndOptions[0];
+        } else {
+          _selectedRepeatEnd = repeatEndOptions[1];
+          if (widget.fromCircle!.repeating?.until != null) {
+            _selectedEndDate = widget.fromCircle!.repeating!.until;
+          }
         }
       }
       _selectedStartDate = widget.fromCircle!.repeating?.start;
@@ -157,6 +164,7 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
     final themeData = Theme.of(context);
     final textStyles = themeData.textStyles;
     final t = AppLocalizations.of(context)!;
+    ref.watch(circleThemesProvider);
     return GradientBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
@@ -469,8 +477,7 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
             start: _selectedStartDate!,
             every: every,
             unit: _selectedRepeatUnit.value!,
-            count:
-                _selectedRepeatEnd.value == 'numberOfSessions' ? count : null,
+            count: _selectedRepeatEnd.value == 'numberOfSessions' ? count : 1,
             until: _selectedRepeatEnd.value == 'endDate'
                 ? _selectedEndDate!
                 : null,
@@ -480,7 +487,6 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
       final circle = await repo.createCircle(
         name: _nameController.text,
         description: _descriptionController.text,
-        keeper: widget.fromCircle?.keeper,
         previousCircle: widget.fromCircle?.id,
         isPrivate: _selectedVisibility.value,
         duration: _selectedDuration.value,
@@ -1025,6 +1031,25 @@ class CircleCreateSnapPageState extends ConsumerState<CircleCreateSnapPage> {
       setState(() {
         _selectedTheme = result;
       });
+    }
+  }
+
+  @override
+  FutureOr<void> afterFirstLayout(BuildContext context) async {
+    if (widget.fromCircle != null) {
+      final t = AppLocalizations.of(context)!;
+      final user = await ref.read(repositoryProvider).userProfile();
+      final circleThemes = await ref.read(circleThemesProvider.future);
+      if (user != null) {
+        setState(() {
+          if (widget.fromCircle!.themeRef != null && circleThemes.isNotEmpty) {
+            _selectedTheme = circleThemes.firstWhereOrNull(
+                (element) => element.ref == widget.fromCircle!.themeRef);
+          }
+          _nameController.text = t.circleNameWithUser(
+              user.name.toTitleCase(), t.circle.toLowerCase());
+        });
+      }
     }
   }
 }

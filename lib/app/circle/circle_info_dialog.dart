@@ -298,7 +298,7 @@ class _CircleInfoDialogState extends ConsumerState<CircleInfoDialog> {
     String repeatType = t.doesNotRepeat;
     if (circle.repeating != null) {
       sessionType = t.repeatingSession;
-      repeatType = _repeatType(circle);
+      repeatType = circle.repeating!.toLocalizedString(t);
     }
     return Center(
       child: Row(
@@ -434,43 +434,5 @@ class _CircleInfoDialogState extends ConsumerState<CircleInfoDialog> {
 
   void _join(Circle circle) {
     Navigator.of(context).pop(circle);
-  }
-
-  String _repeatType(Circle circle) {
-    final t = AppLocalizations.of(context)!;
-    String repeatSingleUnit = "";
-    String repeatPluralUnit = "";
-    switch (circle.repeating!.unit) {
-      case RepeatUnit.hours:
-        repeatSingleUnit = t.hour;
-        repeatPluralUnit = t.hours;
-        break;
-      case RepeatUnit.weeks:
-        repeatSingleUnit = t.week;
-        repeatPluralUnit = t.weeks;
-        break;
-      case RepeatUnit.months:
-        repeatSingleUnit = t.month;
-        repeatPluralUnit = t.months;
-        break;
-      case RepeatUnit.days:
-        repeatSingleUnit = t.day;
-        repeatPluralUnit = t.days;
-        break;
-    }
-    if ((circle.repeating!.count ?? 0) > 0) {
-      return t.repeatsEveryFor(
-          t.repeatEveryClause(circle.repeating!.every,
-              repeatSingleUnit.toLowerCase(), repeatPluralUnit.toLowerCase()),
-          t.repeatEveryForClause(circle.repeating!.count!));
-    } else if (circle.repeating!.until != null) {
-      return t.repeatsEveryFor(
-          t.repeatEveryClause(circle.repeating!.every,
-              repeatSingleUnit.toLowerCase(), repeatPluralUnit.toLowerCase()),
-          t.repeatsUntilDateClause(
-              DateFormat.yMMMMEEEEd().format(circle.repeating!.until!)));
-      //return t.repeatsEveryFor();
-    }
-    return "";
   }
 }

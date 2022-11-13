@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:totem/app/circle_create/circle_template_selector.dart';
 import 'package:totem/app/circle_create/index.dart';
 import 'package:totem/app/home/components/index.dart';
 import 'package:totem/app/home/components/named_circle_list.dart';
 import 'package:totem/app_routes.dart';
+import 'package:totem/components/widgets/dialog_bottomsheet.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
@@ -134,8 +136,14 @@ class HomePageState extends ConsumerState<HomePage> {
 
     // build new circle
     if (isKeeper) {
-      context.goNamed(AppRoutes.circleCreate);
-      // context.goNamed(AppRoutes.circleCreateTemplateSelector);
+      final template = await showDialogOrBottomSheet(
+          child: const CircleTemplateSelector(),
+          context: context,
+          maxWidth: 1000);
+      if (template != null && mounted) {
+        context.goNamed(AppRoutes.circleCreate,
+            extra: template is CircleTemplate ? template : null);
+      }
     } else {
       final Circle? createdCircle =
           await CircleCreateNonKeeper.showNonKeeperCreateDialog(context);

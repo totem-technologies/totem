@@ -50,6 +50,13 @@
     "circleNotInSession": "Circle is not in session",
     "circleLogo": "Logo Image",
     "circleName": "Circle Name",
+    "circleNameWithUser": "{name}'s {circleName}",
+    "@circleNameWithUser": {
+        "placeholders": {
+            "name": {},
+            "circleName": {}
+        }
+    },
     "circleRejoinWaiting": "Waiting for keeper to let you into the session in progress",
     "circleRejoinRequest": "{name} is requesting to rejoin the circle",
     "@circleRejoinRequest": {
@@ -165,14 +172,14 @@
     },
     "hour": "Hour",
     "hours": "Hours",
-    "hoursAndMinsValue": "{hrs} hours and {mins} mins",
+    "hoursAndMinsValue": "{hrs, plural, =1{1 hour} other{{hrs} hours} and {mins} mins",
     "@hoursAndMinsValue": {
         "placeholders": {
             "hrs": {},
             "mins": {}
         }
     },
-    "hoursValue": "{hrs} hours",
+    "hoursValue": "{hrs, plural, =1{1 hour} other{{hrs} hours}}",
     "@hoursValue": {
         "placeholders": {
             "hrs": {}
@@ -231,6 +238,8 @@
     "muteAll": "Mute All",
     "name": "Name",
     "never": "Never",
+    "newCircleTemplate": "New Circle from Scratch",
+    "newCircleTemplateMessage": "Create a new circle specifying all the details",
     "next": "Next",
     "nextSession": "Next Session",
     "no": "No",

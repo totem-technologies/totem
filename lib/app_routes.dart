@@ -6,7 +6,6 @@ import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
-import 'package:totem/app/circle_create/circle_template_selector.dart';
 import 'package:totem/app/startup_events/startup_events_screen.dart';
 import 'package:totem/components/index.dart';
 import 'package:totem/services/account_state/account_state_event_manager.dart';
@@ -45,8 +44,6 @@ class AppRoutes {
   static const String circle = "circle";
   static const String circleCreateScheduled = 'scheduledcreate';
   static const String circleCreate = 'create';
-  static const String circleCreateTemplateSelector =
-      'circleCreateTemplateSelector';
   static const String circleEnded = 'circleEnded';
   static const String userProfile = 'profile';
   static const String dev = 'dev';
@@ -71,14 +68,6 @@ class AppRoutes {
               state: state, child: const WithForegroundTask(child: HomePage())),
           routes: [
             GoRoute(
-                name: circleCreateTemplateSelector,
-                path: 'circle_template',
-                pageBuilder: (context, state) {
-                  return const DialogPage(
-                    child: CircleTemplateSelector(),
-                  );
-                }),
-            GoRoute(
               name: userProfile,
               path: 'profile',
               builder: (context, state) => const UserProfilePage(),
@@ -99,8 +88,12 @@ class AppRoutes {
             GoRoute(
               name: circleCreate,
               path: 'create',
-              pageBuilder: (context, state) => const MaterialPage(
-                  child: CircleCreateSnapPage(), fullscreenDialog: true),
+              pageBuilder: (context, state) {
+                CircleTemplate? template = state.extra as CircleTemplate?;
+                return MaterialPage(
+                    child: CircleCreatePage(fromCircle: template),
+                    fullscreenDialog: true);
+              },
             ),
             GoRoute(
               name: circleEnded,
@@ -243,8 +236,8 @@ class AppRoutes {
 
 class DialogPage<T> extends Page<T> {
   final Widget child;
-
-  const DialogPage({required this.child, super.key});
+  final double? maxWidth;
+  const DialogPage({required this.child, super.key, this.maxWidth});
 
   @override
   Route<T> createRoute(BuildContext context) => DialogRoute<T>(
@@ -260,7 +253,8 @@ class DialogPage<T> extends Page<T> {
                   child: DialogContainer(
                     child: ConstrainedBox(
                       constraints: BoxConstraints(
-                          maxWidth: Theme.of(context).maxRenderWidth),
+                          maxWidth:
+                              maxWidth ?? Theme.of(context).maxRenderWidth),
                       child: child,
                     ),
                   ),
