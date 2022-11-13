@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:introduction_screen/introduction_screen.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
