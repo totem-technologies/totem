@@ -77,6 +77,14 @@ class Circle extends CircleTemplate {
     return completeStates.contains(state);
   }
 
+  bool get isPending {
+    const pendingStates = [
+      SessionState.waiting,
+      SessionState.scheduled,
+    ];
+    return pendingStates.contains(state);
+  }
+
   Session get session {
     return Session.fromJson({}, circle: this, id: id);
   }
