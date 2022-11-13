@@ -7,7 +7,6 @@ import 'package:totem/app/circle_create/index.dart';
 import 'package:totem/app/home/components/index.dart';
 import 'package:totem/app/home/components/named_circle_list.dart';
 import 'package:totem/app_routes.dart';
-import 'package:totem/components/widgets/dialog_bottomsheet.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
