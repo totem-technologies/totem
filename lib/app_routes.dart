@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
@@ -7,9 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:totem/app/startup_events/startup_events_screen.dart';
-import 'package:totem/components/index.dart';
 import 'package:totem/services/account_state/account_state_event_manager.dart';
-import 'package:totem/theme/app_theme_styles.dart';
 
 import 'app/index.dart';
 import 'dev/dev_page.dart';
