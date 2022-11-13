@@ -31,44 +31,70 @@ class ThemedControlButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeColors = Theme.of(context).themeColors;
-    return InkWell(
-      onTap: onPressed,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Opacity(
-            opacity: onPressed != null ? 1.0 : 0.2,
-            child: Container(
-              width: size,
-              height: size,
-              decoration: ShapeDecoration(
-                color: backgroundColor ?? themeColors.controlButtonBackground,
-                shape: const CircleBorder(),
-              ),
-              child: Center(
-                child: Padding(
-                  padding: iconPadding,
-                  child: icon != null
-                      ? Icon(icon, size: iconHeight, color: imageColor)
-                      : child,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 2),
-          Container(
-            constraints: const BoxConstraints(
-              minWidth: 80,
-            ),
-            child: Text(
-              label,
-              style: TextStyle(
-                  fontSize: 12, color: labelColor ?? themeColors.primaryText),
-              textAlign: TextAlign.center,
-            ),
-          ),
-        ],
+    final background = backgroundColor ?? themeColors.controlButtonBackground;
+    final foreground = labelColor ?? themeColors.primaryText;
+    final btnStyle = ButtonStyle(
+      shape: MaterialStateProperty.resolveWith((states) => CircleBorder(
+            side: BorderSide(color: background, width: 1),
+          )),
+      shadowColor: MaterialStateProperty.resolveWith<Color>(
+        (Set<MaterialState> states) => themeColors.shadow,
       ),
+      elevation: MaterialStateProperty.resolveWith<double>(
+          (states) => states.contains(MaterialState.disabled) ? 0 : 2),
+      //padding: MaterialStateProperty.resolveWith((states) => padding),
+      foregroundColor: MaterialStateProperty.resolveWith<Color>(
+        // text color
+        (Set<MaterialState> states) => states.contains(MaterialState.disabled)
+            ? foreground.withAlpha(102)
+            : foreground,
+      ),
+      backgroundColor: MaterialStateProperty.resolveWith<Color>(
+          // background color    this is color:
+          (Set<MaterialState> states) {
+        if (states.contains(MaterialState.disabled)) {
+          return background.withAlpha(102);
+        }
+        if (states.contains(MaterialState.hovered) &&
+            !states.contains(MaterialState.pressed)) {
+          return background.withAlpha(150);
+        }
+        return background;
+      }),
+    );
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        ElevatedButton(
+          style: btnStyle,
+          onPressed: onPressed,
+          child: SizedBox(
+            height: size,
+            width: size,
+            child: Center(
+              child: Padding(
+                padding: iconPadding,
+                child: icon != null
+                    ? Icon(icon, size: iconHeight, color: imageColor)
+                    : child,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 2),
+        Container(
+          constraints: const BoxConstraints(
+            minWidth: 80,
+          ),
+          child: Text(
+            label,
+            style: TextStyle(
+                fontSize: 12, color: labelColor ?? themeColors.primaryText),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      ],
     );
   }
 }
