@@ -5,6 +5,7 @@ export 'circle_image.dart';
 export 'circular_layout_delegate.dart';
 export 'content_divider.dart';
 export 'day_of_week_form_field.dart';
+export 'dialog_bottomsheet.dart';
 export 'dialog_container.dart';
 export 'donate_button.dart';
 export 'error_info_block.dart';

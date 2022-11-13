@@ -16,6 +16,7 @@ export 'session.dart';
 export 'session_data_message.dart';
 export 'session_participant.dart';
 export 'session_token.dart';
+export 'string_ext.dart';
 export 'system_video.dart';
 export 'topic.dart';
 export 'user_auth_account_state.dart';
