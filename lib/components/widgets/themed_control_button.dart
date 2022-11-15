@@ -76,7 +76,9 @@ class ThemedControlButton extends StatelessWidget {
               child: Padding(
                 padding: iconPadding,
                 child: icon != null
-                    ? Icon(icon, size: iconHeight, color: imageColor)
+                    ? Icon(icon,
+                        size: iconHeight,
+                        color: imageColor ?? themeColors.primaryText)
                     : child,
               ),
             ),
