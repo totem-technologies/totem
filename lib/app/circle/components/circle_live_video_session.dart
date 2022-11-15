@@ -102,6 +102,10 @@ class _CircleLiveVideoSessionState
                                       ),
                                     ),
                                   ),
+                                  if (activeSession.expiresOn != null) ...[
+                                    _countdownTimer(activeSession),
+                                    const SizedBox(width: 16)
+                                  ],
                                 ],
                               ),
                               const SizedBox(height: 10),
@@ -177,6 +181,32 @@ class _CircleLiveVideoSessionState
       );
     }
     return Container();
+  }
+
+  Widget _countdownTimer(ActiveSession activeSession) {
+    final t = AppLocalizations.of(context)!;
+    final themeData = Theme.of(context);
+    final themeColors = themeData.themeColors;
+    bool isExpiring = activeSession.state == SessionState.expiring;
+
+    SessionParticipant? participant = activeSession.me();
+    if (participant != null) {
+      return CountdownTimer(
+        startTime: activeSession.startedOn!,
+        endTime: activeSession.expiresOn!,
+        displayValue: participant.role == Role.keeper ? true : isExpiring,
+        displayType: isExpiring
+            ? CountdownDisplayType.minutes
+            : CountdownDisplayType.hoursAndMinutes,
+        color: isExpiring ? themeColors.reversedText : themeColors.primary,
+        backgroundColor: themeColors.secondaryText,
+        valueLabel: isExpiring ? t.endsIn : t.remaining,
+        endValue: t.now,
+        endValueLabel: t.ending,
+      );
+    } else {
+      return Container();
+    }
   }
 
   Widget _speakerUserView(BuildContext context,

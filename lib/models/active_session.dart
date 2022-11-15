@@ -40,6 +40,8 @@ class ActiveSession extends ChangeNotifier {
   bool totemReceived = false;
   bool locked = true;
   ActiveSessionChange lastChange = ActiveSessionChange.none;
+  DateTime? startedOn;
+  DateTime? expiresOn;
   final List<String> _connectedUsers = [];
   List<String> _speakingOrder = [];
   SessionState _state = SessionState.waiting;
@@ -186,12 +188,23 @@ class ActiveSession extends ChangeNotifier {
         ? SessionState.values.byName(data["state"]!)
         : SessionState.waiting;
     bool removed = _removedUsers[userId] != null;
+    bool expireChanged = false;
+    DateTime? newExpiresOn = DateTimeEx.fromMapValue(data['expiresOn']);
+    startedOn = DateTimeEx.fromMapValue(data['startedDate']);
+    if (newExpiresOn != null) {
+      if (expiresOn == null || newExpiresOn.compareTo(expiresOn!) != 0) {
+        expiresOn = newExpiresOn;
+        expireChanged = true;
+      }
+    }
     if (newState != _state && !removed) {
       _state = newState;
       notifyListeners();
     } else if (removed) {
       // User has been removed from the session by keeper, so update state
       _state = SessionState.removed;
+      notifyListeners();
+    } else if (expireChanged) {
       notifyListeners();
     }
   }
