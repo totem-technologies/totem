@@ -487,7 +487,6 @@ class CircleCreatePageState extends ConsumerState<CircleCreatePage>
       final circle = await repo.createCircle(
         name: _nameController.text,
         description: _descriptionController.text,
-        previousCircle: widget.fromCircle?.id,
         isPrivate: _selectedVisibility.value,
         duration: _selectedDuration.value,
         maxParticipants: numParticipants.toInt(),

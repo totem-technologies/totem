@@ -9,6 +9,7 @@ import 'package:slide_to_act/slide_to_act.dart';
 import 'package:totem/app/circle/index.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
+import 'package:totem/services/index.dart';
 import 'package:totem/services/utils/device_type.dart';
 import 'package:totem/theme/index.dart';
 
@@ -54,6 +55,7 @@ class _CircleLiveVideoSessionState
   @override
   Widget build(BuildContext context) {
     final activeSession = ref.watch(activeSessionProvider);
+    final commProvider = ref.watch(communicationsProvider);
     final participants = activeSession.activeParticipants;
     final t = AppLocalizations.of(context)!;
     final themeData = Theme.of(context);
@@ -106,45 +108,54 @@ class _CircleLiveVideoSessionState
                               ),
                               const SizedBox(height: 10),
                               Expanded(
-                                child: participants.isNotEmpty
-                                    ? AnimatedSwitcher(
-                                        duration:
-                                            const Duration(milliseconds: 500),
-                                        child: activeSession.totemReceived &&
-                                                (totemParticipant.me)
-                                            ? _speakerUserView(context,
-                                                activeSession: activeSession,
-                                                isPhoneLayout: isPhoneLayout)
-                                            : ListenerUserLayout(
-                                                speaker: SpeakerVideoView(
-                                                  onReceive: () {
-                                                    final participant =
-                                                        activeSession
-                                                            .totemParticipant;
-                                                    _receiveTurn(
-                                                        context, participant!);
-                                                  },
-                                                  onSettings: () {
-                                                    _showDeviceSettings();
-                                                  },
-                                                ),
-                                                userList:
-                                                    CircleLiveSessionUsers(
+                                child: commProvider.state ==
+                                        CommunicationState.active
+                                    ? (participants.isNotEmpty
+                                        ? AnimatedSwitcher(
+                                            duration: const Duration(
+                                                milliseconds: 500),
+                                            child:
+                                                activeSession.totemReceived &&
+                                                        (totemParticipant.me)
+                                                    ? _speakerUserView(context,
+                                                        activeSession:
+                                                            activeSession,
                                                         isPhoneLayout:
-                                                            isPhoneLayout),
-                                                isPhoneLayout: isPhoneLayout,
-                                              ),
-                                      )
-                                    : Center(
-                                        child: Text(
-                                          t.noParticipantsActiveSession,
-                                          style: textStyles.headline3!.merge(
-                                              TextStyle(
-                                                  color: themeColors
-                                                      .reversedText)),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      ),
+                                                            isPhoneLayout)
+                                                    : ListenerUserLayout(
+                                                        speaker:
+                                                            SpeakerVideoView(
+                                                          onReceive: () {
+                                                            final participant =
+                                                                activeSession
+                                                                    .totemParticipant;
+                                                            _receiveTurn(
+                                                                context,
+                                                                participant!);
+                                                          },
+                                                          onSettings: () {
+                                                            _showDeviceSettings();
+                                                          },
+                                                        ),
+                                                        userList:
+                                                            CircleLiveSessionUsers(
+                                                                isPhoneLayout:
+                                                                    isPhoneLayout),
+                                                        isPhoneLayout:
+                                                            isPhoneLayout,
+                                                      ),
+                                          )
+                                        : Center(
+                                            child: Text(
+                                              t.noParticipantsActiveSession,
+                                              style: textStyles.headline3!
+                                                  .merge(TextStyle(
+                                                      color: themeColors
+                                                          .reversedText)),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ))
+                                    : _renderSessionState(commProvider.state),
                               ),
                               const SizedBox(
                                 height: 10,
@@ -372,6 +383,37 @@ class _CircleLiveVideoSessionState
       }
     }
     return null;
+  }
+
+  Widget _renderSessionState(CommunicationState state) {
+    switch (state) {
+      case CommunicationState.joining:
+        return _joiningSession();
+      default:
+        return Container();
+    }
+  }
+
+  Widget _joiningSession() {
+    final t = AppLocalizations.of(context)!;
+    final textStyles = Theme.of(context).textStyles;
+    final themeColors = Theme.of(context).themeColors;
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            t.joiningCircle,
+            style: textStyles.headline3!
+                .merge(TextStyle(color: themeColors.reversedText)),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          BusyIndicator(color: themeColors.reversedText),
+        ],
+      ),
+    );
   }
 
   Future<void> _receiveTurn(
