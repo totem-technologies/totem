@@ -157,8 +157,8 @@ class CountdownTimerState extends ConsumerState<CountdownTimer> {
   // Update the remaining minutes, percentage and any UI state transitions
   void _updateTimeAndState() {
     _timeRemaining = _endTime.difference(DateTime.now());
-    debugPrint(
-        'CountdownTimer: total: $_totalTime, remaining: $_timeRemaining');
+    // debugPrint(
+    //     'CountdownTimer: total: $_totalTime, remaining: $_timeRemaining');
     _lastPercentage = _percentRemaining;
     if (_timeRemaining.inSeconds > 0) {
       _percentRemaining = _timeRemaining.inSeconds / _totalTime.inSeconds;
