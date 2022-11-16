@@ -181,6 +181,11 @@ class CountdownTimerState extends ConsumerState<CountdownTimer> {
         newState = state;
       }
     }
+    // if there is no new state, make sure the default state is applied
+    // as this could be a reset
+    if (newState == null && _currentState != widget.defaultState) {
+      newState = widget.defaultState;
+    }
     if (newState != null) {
       _currentState = CountdownState.from(widget.defaultState, newState);
     }
@@ -206,10 +211,13 @@ class CountdownTimerState extends ConsumerState<CountdownTimer> {
           Stack(
             alignment: Alignment.center,
             children: [
-              Icon(
-                LucideIcons.clock,
-                color: _currentState.backgroundColor,
-                size: 40,
+              Padding(
+                padding: const EdgeInsets.only(bottom: 3),
+                child: Icon(
+                  LucideIcons.clock,
+                  color: _currentState.backgroundColor!.withOpacity(1),
+                  size: 41,
+                ),
               ),
               TweenAnimationBuilder<double>(
                 tween: Tween(begin: _lastPercentage, end: _percentRemaining),
