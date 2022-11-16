@@ -249,6 +249,7 @@
     "ok": "OK",
     "otherCircles": "Other circles",
     "openFloor": "Open Floor",
+    "overtime": "overtime",
     "participantCount": "{count, plural, =0{No participants} =1{1 participant} other{{count} participants}}",
     "@participantCount": {
         "placeholders": {

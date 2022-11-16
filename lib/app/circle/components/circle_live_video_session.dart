@@ -104,7 +104,7 @@ class _CircleLiveVideoSessionState
                                   ),
                                   if (activeSession.expiresOn != null) ...[
                                     _countdownTimer(activeSession),
-                                    const SizedBox(width: 16)
+                                    const SizedBox(width: 40)
                                   ],
                                 ],
                               ),
@@ -187,22 +187,44 @@ class _CircleLiveVideoSessionState
     final t = AppLocalizations.of(context)!;
     final themeData = Theme.of(context);
     final themeColors = themeData.themeColors;
-    bool isExpiring = activeSession.state == SessionState.expiring;
 
     SessionParticipant? participant = activeSession.me();
     if (participant != null) {
       return CountdownTimer(
         startTime: activeSession.startedOn!,
         endTime: activeSession.expiresOn!,
-        displayValue: participant.role == Role.keeper ? true : isExpiring,
-        displayType: isExpiring
-            ? CountdownDisplayType.minutes
-            : CountdownDisplayType.hoursAndMinutes,
-        color: isExpiring ? themeColors.reversedText : themeColors.primary,
-        backgroundColor: themeColors.secondaryText,
-        valueLabel: isExpiring ? t.endsIn : t.remaining,
-        endValue: t.now,
-        endValueLabel: t.ending,
+        defaultState: CountdownState(
+          displayValue: participant.role == Role.keeper,
+          displayFormat: CountdownDisplayFormat.hoursAndMinutes,
+          color: themeColors.primary,
+          backgroundColor: themeColors.secondaryText,
+          valueLabel: t.remaining,
+        ),
+        stateTransitions: [
+          CountdownState(
+            minutesRemaining: 5,
+            displayValue: true,
+            displayFormat: CountdownDisplayFormat.minutes,
+            color: themeColors.reversedText,
+            valueLabel: t.endsIn,
+          ),
+          CountdownState(
+            minutesRemaining: 0,
+            displayValue: true,
+            displayFormat: CountdownDisplayFormat.override,
+            color: themeColors.alertBackground,
+            backgroundColor: themeColors.alertBackground,
+            valueLabel: t.ending,
+            valueOverride: t.now,
+          ),
+          CountdownState(
+            minutesRemaining: -1,
+            displayValue: true,
+            displayFormat: CountdownDisplayFormat.hoursAndMinutes,
+            color: themeColors.alertBackground,
+            valueLabel: t.overtime,
+          ),
+        ],
       );
     } else {
       return Container();
