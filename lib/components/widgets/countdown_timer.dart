@@ -287,7 +287,7 @@ class CountdownTimerState extends ConsumerState<CountdownTimer> {
   }
 
   void _updateTimerValue(Timer timer) {
-    debugPrint('CountdownTimer: ${DateTime.now()}');
+//    debugPrint('CountdownTimer: ${DateTime.now()}');
     setState(() {
       _updateTimeAndState();
     });
