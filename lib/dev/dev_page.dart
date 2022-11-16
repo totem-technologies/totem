@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:totem/dev/tests/index.dart';
 import 'package:totem/theme/index.dart';
 
 import '../components/widgets/content_divider.dart';
@@ -15,6 +16,7 @@ final widgetList = <String, Function>{
   "Onboarding Dialog": OnboardingDialogTest.new,
   "Circle User Profile": CircleUserProfileTest.new,
   "Onboarding Profile Dialog": OnboardingProfilePageTest.new,
+  "Countdown Timer": CountdownTimerTest.new,
   "Buttons": ButtonsScreen.new
 };
 

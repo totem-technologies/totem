@@ -104,6 +104,10 @@ class _CircleLiveVideoSessionState
                                       ),
                                     ),
                                   ),
+                                  if (activeSession.expiresOn != null) ...[
+                                    _countdownTimer(activeSession),
+                                    const SizedBox(width: 40)
+                                  ],
                                 ],
                               ),
                               const SizedBox(height: 10),
@@ -188,6 +192,54 @@ class _CircleLiveVideoSessionState
       );
     }
     return Container();
+  }
+
+  Widget _countdownTimer(ActiveSession activeSession) {
+    final t = AppLocalizations.of(context)!;
+    final themeData = Theme.of(context);
+    final themeColors = themeData.themeColors;
+
+    SessionParticipant? participant = activeSession.me();
+    if (participant != null) {
+      return CountdownTimer(
+        startTime: activeSession.startedOn!,
+        endTime: activeSession.expiresOn!,
+        defaultState: CountdownState(
+          displayValue: participant.role == Role.keeper,
+          displayFormat: CountdownDisplayFormat.hoursAndMinutes,
+          color: themeColors.primary,
+          backgroundColor: themeColors.secondaryText,
+          valueLabel: t.remaining,
+        ),
+        stateTransitions: [
+          CountdownState(
+            minutesRemaining: 5,
+            displayValue: true,
+            displayFormat: CountdownDisplayFormat.minutes,
+            color: themeColors.reversedText,
+            valueLabel: t.endsIn,
+          ),
+          CountdownState(
+            minutesRemaining: 0,
+            displayValue: true,
+            displayFormat: CountdownDisplayFormat.override,
+            color: themeColors.alertBackground,
+            backgroundColor: themeColors.alertBackground,
+            valueLabel: t.ending,
+            valueOverride: t.now,
+          ),
+          CountdownState(
+            minutesRemaining: -1,
+            displayValue: true,
+            displayFormat: CountdownDisplayFormat.hoursAndMinutes,
+            color: themeColors.alertBackground,
+            valueLabel: t.overtime,
+          ),
+        ],
+      );
+    } else {
+      return Container();
+    }
   }
 
   Widget _speakerUserView(BuildContext context,
