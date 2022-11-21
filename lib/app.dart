@@ -65,7 +65,7 @@ class _AppState extends ConsumerState<App> {
         Locale('en', ''),
       ],
       debugShowCheckedModeBanner: false,
-      title: 'totem',
+      title: 'Totem',
       theme: _appTheme(context),
     ));
   }
