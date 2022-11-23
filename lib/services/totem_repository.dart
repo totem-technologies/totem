@@ -134,6 +134,8 @@ class TotemRepository {
       _sessionProvider.updateActiveSession(sessionData);
   Future<void> cancelPendingSession({required Circle circle}) =>
       _sessionProvider.cancelPendingSession(session: circle.session);
+  Future<void> addTimeToActiveSession({required int minutes}) =>
+      _sessionProvider.addTimeToSession(minutes: minutes);
 
   // Analytics
   AnalyticsProvider get analyticsProvider {

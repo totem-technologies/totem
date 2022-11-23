@@ -2,6 +2,7 @@
     "@@locale": "en",
     "aboutYou": "About You",
     "acceptGuidelines": "Accept Guidelines",
+    "addMoreTime": "Add more time",
     "addProfilePicture": "Add a profile picture",
     "admin": "Admin",
     "ageMissing": "Age verification",
@@ -112,6 +113,7 @@
     "endDateRequired": "End date is required",
     "endDateMustBeAfterStartDate": "End date must be after start date",
     "ending": "ending",
+    "endNow": "End Now",
     "endSession": "End Circle",
     "endSessionPrompt": "End Circle?",
     "endSessionPromptMessage": "Are you sure you want to end this session?",
@@ -204,6 +206,7 @@
     "introScreenTitle4": "Let's Begin!",
     "introScreenMessage4": "Please find a quiet place where you are unlikely to be distracted.\\\nAlways speak from your own **experience**, try to not offer advice.\\\nIt helps to disable all notifications and put everything on silent.\\\n**Enjoy** this rare opportunity to be heard without interruption.",
     "instantSession": "Instant Session",
+    "invalidNumber": "Invalid number",
     "joinCircle": "Join Circle",
     "joinCircleMessage": "Welcome! Before you enter the waiting room, please check that your audio and video are working as intended.",
     "joiningCircle": "Joining Circle",
@@ -231,6 +234,7 @@
             "mins": {}
         }
     },
+    "modifyTime": "Modify Time",
     "month": "Month",
     "monthly": "Monthly",
     "months": "Months",

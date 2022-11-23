@@ -123,6 +123,7 @@ class CountdownTimerState extends ConsumerState<CountdownTimer> {
   void initState() {
     _currentState = CountdownState.from(widget.defaultState, null);
     _updateInitialValues();
+    _displayValue = _currentState.displayValue ?? false;
     _timer = Timer.periodic(const Duration(seconds: 1), _updateTimerValue);
     super.initState();
   }
@@ -150,7 +151,6 @@ class CountdownTimerState extends ConsumerState<CountdownTimer> {
       59,
     );
     _totalTime = _endTime.difference(widget.startTime);
-    _displayValue = _currentState.displayValue ?? false;
     _updateTimeAndState();
   }
 

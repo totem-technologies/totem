@@ -112,6 +112,53 @@ export async function endSessionFor(
   return true;
 }
 
+export const addMinutesToSession = functions.https.onCall(async ({circleId, minutes}, {auth}) => {
+  auth = isAuthenticated(auth);
+  if (circleId) {
+    const circleRef = admin.firestore().collection("snapCircles").doc(circleId);
+    const circleSnapshot = await circleRef.get();
+    if (circleSnapshot.exists) {
+      const circleData = (circleSnapshot.data() as SnapCircleData) ?? {};
+      const {keeper, expiresOn, state} = circleData;
+      if (expiresOn == null) {
+        // Just ignore this request if there is no expiresOn date to add time to
+        return;
+      }
+      if (auth.uid !== keeper && !hasAnyRole(auth, [Role.ADMIN])) {
+        throw new functions.https.HttpsError(
+          "permission-denied",
+          "The function can only be called by the keeper of the circle or an admin."
+        );
+      }
+      if (![SessionState.live, SessionState.expiring].includes(state)) {
+        throw new functions.https.HttpsError(
+          "failed-precondition",
+          "The session must be live or expiring to add minutes."
+        );
+      }
+      const endTime = expiresOn.toDate();
+      const now = new Date();
+      if (endTime <= now) {
+        throw new functions.https.HttpsError("failed-precondition", "The session has already expired.");
+      }
+      let newState = state;
+      let newEndTime = add(endTime, {minutes});
+      console.log(`Adding ${minutes} minutes to session ${circleId} to ${newEndTime}`);
+      if (newEndTime < now) {
+        newEndTime = now;
+        // If it wasn't expiring then it is now
+        newState = SessionState.expiring;
+      } else {
+        // otherwise just set it live and let the scheduler handle it if necessary
+        newState = SessionState.live;
+      }
+      await circleRef.update({state: newState, expiresOn: Timestamp.fromDate(newEndTime)});
+      return true;
+    }
+  }
+  return false;
+});
+
 export const endSnapSession = functions.https.onCall(async ({circleId}, {auth}): Promise<boolean> => {
   auth = isAuthenticated(auth);
   if (circleId) {

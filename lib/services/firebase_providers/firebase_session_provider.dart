@@ -203,6 +203,29 @@ class FirebaseSessionProvider extends SessionProvider {
   }
 
   @override
+  Future<void> addTimeToSession({required int minutes}) async {
+    if (_activeSession != null && _activeSession!.live) {
+      try {
+        HttpsCallable callable =
+            FirebaseFunctions.instance.httpsCallable('addMinutesToSession');
+        final result = await callable({
+          "circleId": _activeSession!.circle.id,
+          "minutes": minutes,
+        });
+        debugPrint('completed addTimeToSnapSession($minutes) with result ${result.data}');
+      } on FirebaseException catch (ex, stack) {
+        await reportError(ex, stack);
+        throw ServiceException(
+          code: ex.code,
+          reference: _activeSession!.circle.ref,
+          message: ex.message,
+        );
+      }
+    }
+    return;
+  }
+
+  @override
   Future<void> cancelPendingSession({required Session session}) async {
     if (session.state == SessionState.waiting) {
       // If the session is already waiting to start then we can just end it
