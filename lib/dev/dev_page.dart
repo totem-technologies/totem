@@ -87,7 +87,7 @@ class WidgetContainer extends StatelessWidget {
         child,
         Positioned(
           right: 0,
-          top: 0,
+          top: 30,
           child: IconButton(
             icon: const Icon(LucideIcons.x),
             onPressed: () {
@@ -117,6 +117,7 @@ class WidgetList extends StatelessWidget {
     return Padding(
         padding: const EdgeInsets.all(20),
         child: Column(children: [
+          const SizedBox(height: 30),
           Text("Dev Page!", style: textStyles.headline1),
           const Center(
             child: ContentDivider(),
