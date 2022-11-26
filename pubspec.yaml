@@ -89,7 +89,6 @@ dependencies:
   uuid: ^3.0.6
   wakelock: ^0.6.1+2
   web_browser_detect: ^2.0.2
-  firebase_performance: ^0.9.0+6
 
 dev_dependencies:
   flutter_test:
