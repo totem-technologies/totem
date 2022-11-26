@@ -46,20 +46,6 @@ class PendingTotemUserState extends ConsumerState<PendingTotemUser> {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
-        if (constraints.maxWidth < 500) {
-          return SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _receiveTotem(context, vertical: true),
-                const SizedBox(
-                  height: 15,
-                ),
-                _settingsVideo(context, vertical: true),
-              ],
-            ),
-          );
-        }
         final themeColors = Theme.of(context).themeColors;
         return Stack(children: [
           Positioned.fill(
@@ -114,8 +100,6 @@ class PendingTotemUserState extends ConsumerState<PendingTotemUser> {
   Widget _receiveTotem(BuildContext context, {bool vertical = false}) {
     final t = AppLocalizations.of(context)!;
     return TotemActionButton(
-      image: Icon(LucideIcons.wand2,
-          size: iconSize, color: Theme.of(context).themeColors.primaryText),
       label: t.receive,
       message: t.circleTotemReceive,
       toolTips: [t.circleTotemReceiveLine1, t.circleTotemReceiveLine2],

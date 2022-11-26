@@ -45,15 +45,7 @@ class CircleNextLabel extends StatelessWidget {
                               : themeColors.primaryText,
                           fontSize: fontSize)),
                     ),
-                  ),
-                  const SizedBox(width: 5),
-                  Icon(
-                    LucideIcons.wand2,
-                    color: !reversed
-                        ? themeColors.reversedText
-                        : themeColors.primaryText,
-                    size: 16,
-                  ),
+                  )
                 ],
               ),
             ),
