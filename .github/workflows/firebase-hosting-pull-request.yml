@@ -5,6 +5,7 @@ name: Deploy to Firebase Hosting Dev on PR
 on: [pull_request, workflow_dispatch]
 jobs:
   build_and_preview:
+    timeout-minutes: 10
     environment: dev
     if: '${{ github.event.pull_request.head.repo.full_name == github.repository }}'
     runs-on: ubuntu-latest

@@ -3,6 +3,7 @@ on: [push]
 jobs:
   flutter-test:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v3
       - name: Install Flutter
@@ -14,6 +15,7 @@ jobs:
       - run: flutter test
   server-test:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     defaults:
       run:
         working-directory: ./server/functions

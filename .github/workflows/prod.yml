@@ -9,6 +9,7 @@ on:
 jobs:
   build_web:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     env:
       ENVIRONMENT: prod
     steps:
@@ -37,6 +38,7 @@ jobs:
           channelId: live
           projectId: totem-26659
   build_and_deploy_server:
+    timeout-minutes: 10
     environment: dev
     env:
       FIREBASE_TOKEN: "${{ secrets.FIREBASE_TOKEN }}"
@@ -53,6 +55,7 @@ jobs:
       - run: cd server && make deploy
   build_ios:
     runs-on: macos-12
+    timeout-minutes: 120
     steps:
       - uses: actions/checkout@v3
       - name: Install Flutter
@@ -60,7 +63,7 @@ jobs:
         with:
           flutter-version: '3.3.x'
           cache: true
-      - uses: webfactory/ssh-agent@v0.5.4
+      - uses: webfactory/ssh-agent@v0.7.0
         with:
           ssh-private-key: ${{ secrets.MATCH_REPO_PRIVATE_KEY }}
       - run: ENVIRONMENT=prod make build-ios
@@ -76,6 +79,7 @@ jobs:
           APPLE_STORE_CONNECT_API_KEY: ${{ secrets.APPLE_STORE_CONNECT_API_KEY }}
   build_android:
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v3
       - name: Install Flutter
