@@ -128,7 +128,11 @@ class WidgetList extends StatelessWidget {
           ),
           TextButton(
               onPressed: () {
-                context.replaceNamed(AppRoutes.home);
+                if (context.canPop()) {
+                  context.pop();
+                } else {
+                  context.replaceNamed(AppRoutes.home);
+                }
               },
               child: const Text('Home'))
         ]));
