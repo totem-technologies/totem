@@ -6,7 +6,7 @@ import 'package:totem/theme/app_theme_styles.dart';
 class TotemActionButton extends StatefulWidget {
   const TotemActionButton(
       {Key? key,
-      required this.image,
+      this.image,
       required this.label,
       required this.message,
       this.toolTips = const [],
@@ -14,7 +14,7 @@ class TotemActionButton extends StatefulWidget {
       this.vertical = false,
       this.onPressed})
       : super(key: key);
-  final Widget image;
+  final Widget? image;
   final String label;
   final String message;
   final List<String> toolTips;
@@ -105,10 +105,12 @@ class TotemActionButtonState extends State<TotemActionButton> {
             child: Wrap(
               crossAxisAlignment: WrapCrossAlignment.center,
               children: [
-                widget.image,
-                const SizedBox(
-                  width: 8,
-                ),
+                if (widget.image != null) ...[
+                  widget.image!,
+                  const SizedBox(
+                    width: 8,
+                  ),
+                ],
                 Text(
                   widget.label,
                   style: style,

@@ -3,6 +3,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:totem/dev/tests/index.dart';
 import 'package:totem/theme/index.dart';
+import 'package:totem/app_routes.dart';
 
 import '../components/widgets/content_divider.dart';
 import 'buttons.dart';
@@ -123,7 +124,8 @@ class WidgetList extends StatelessWidget {
           const Padding(padding: EdgeInsets.only(top: 20)),
           Column(
             children: children,
-          )
+          ),
+          TextButton(onPressed: context.pop, child: const Text('Back'))
         ]));
   }
 }

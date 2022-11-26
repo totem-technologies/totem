@@ -1,5 +1,6 @@
 import 'package:after_layout/after_layout.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -54,7 +55,9 @@ class _CircleSnapSessionContentState
     final commProvider = ref.watch(communicationsProvider);
     final sessionProvider = ref.watch(activeSessionProvider);
     // ref.watch(audioLevelStream);
-    return GradientBackground(
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      // This makes it so the status bar text on iOS isn't blacked out.
+      value: SystemUiOverlayStyle.light,
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: WillPopScope(
