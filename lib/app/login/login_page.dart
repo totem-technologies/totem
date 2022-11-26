@@ -45,6 +45,11 @@ class _LoginPanel extends StatelessWidget {
             ),
           ),
         ),
+        SvgPicture.asset(
+          'assets/totem_icon.svg',
+          color: theme.themeColors.primaryText,
+          height: 200,
+        ),
         Expanded(
           child: Center(
             child: !isMobile
