@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -11,6 +13,7 @@ import 'package:totem/services/utils/device_type.dart';
 import 'package:totem/theme/index.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:web_browser_detect/web_browser_detect.dart';
+import 'package:metaballs/metaballs.dart';
 
 class _LoginPanel extends StatelessWidget {
   const _LoginPanel({Key? key}) : super(key: key);
@@ -57,6 +60,8 @@ class _LoginPanel extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       ThemedRaisedButton(
+                        backgroundColor:
+                            theme.themeColors.alternateButtonBackground,
                         label: t.login,
                         width: 294,
                         onPressed: () {
@@ -76,6 +81,8 @@ class _LoginPanel extends StatelessWidget {
                 : (kIsWeb
                     ? _showGetMobileApp(context)
                     : ThemedRaisedButton(
+                        backgroundColor:
+                            theme.themeColors.alternateButtonBackground,
                         label: t.login,
                         width: 294,
                         onPressed: () {
@@ -121,24 +128,11 @@ class WelcomePage extends ConsumerWidget {
     final themeColors = Theme.of(context).themeColors;
     final authState = ref.watch(authStateChangesProvider);
     return Scaffold(
-      backgroundColor: themeColors.dialogBackground,
+      backgroundColor: themeColors.altBackground,
       body: Stack(
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Expanded(
-                flex: 4,
-                child: Container(),
-              ),
-              Expanded(
-                flex: 6,
-                child: SvgPicture.asset(
-                  'assets/background_shape.svg',
-                  fit: BoxFit.fill,
-                ),
-              ),
-            ],
+          MetaballsBackground(
+            color: themeColors.primary,
           ),
           Positioned.fill(
               child: authState.when(loading: () {
@@ -155,6 +149,28 @@ class WelcomePage extends ConsumerWidget {
           })),
         ],
       ),
+    );
+  }
+}
+
+class MetaballsBackground extends StatelessWidget {
+  const MetaballsBackground({super.key, required this.color});
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return ImageFiltered(
+      imageFilter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+      child: Metaballs(
+          color: color,
+          metaballs: 20,
+          animationDuration: const Duration(milliseconds: 2000),
+          speedMultiplier: .5,
+          bounceStiffness: 3,
+          minBallRadius: 50,
+          maxBallRadius: 70,
+          glowRadius: 0.7,
+          glowIntensity: 0.6),
     );
   }
 }
