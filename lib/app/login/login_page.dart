@@ -163,12 +163,12 @@ class MetaballsBackground extends StatelessWidget {
       imageFilter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
       child: Metaballs(
           color: color,
-          metaballs: 20,
-          animationDuration: const Duration(milliseconds: 2000),
-          speedMultiplier: .5,
+          metaballs: 5,
+          animationDuration: const Duration(milliseconds: 200),
+          speedMultiplier: 1,
           bounceStiffness: 3,
-          minBallRadius: 50,
-          maxBallRadius: 70,
+          minBallRadius: 70,
+          maxBallRadius: 200,
           glowRadius: 0.7,
           glowIntensity: 0.6),
     );
