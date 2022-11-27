@@ -29,6 +29,9 @@ class PhoneRegisterCodeEntryState
 
   ///Validates OTP code
   void signInWithPhoneNumber() async {
+    if (_busy) {
+      return;
+    }
     setState(() => _busy = true);
     try {
       await ref.read(authServiceProvider).verifyCode(pinValue);
@@ -102,7 +105,7 @@ class PhoneRegisterCodeEntryState
                 },
                 onComplete: (v) {
                   pinValue = v;
-                  if (kIsWeb && int.tryParse(pinValue) != null) {
+                  if (int.tryParse(pinValue) != null) {
                     signInWithPhoneNumber();
                   }
                 },

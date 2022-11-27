@@ -41,15 +41,8 @@ class _AppState extends ConsumerState<App> {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      systemNavigationBarColor: Colors.transparent,
-      systemNavigationBarDividerColor: null,
       statusBarColor: Colors.transparent,
-      systemNavigationBarIconBrightness: Brightness.dark,
-      statusBarIconBrightness: Brightness.dark,
-      statusBarBrightness: Brightness.light,
     ));
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge,
-        overlays: [SystemUiOverlay.top]);
     ref.watch(authStateChangesProvider);
     return _wrapWithBanner(MaterialApp.router(
       routeInformationProvider: _router.routeInformationProvider,
@@ -79,6 +72,9 @@ class _AppState extends ConsumerState<App> {
         centerTitle: true,
         systemOverlayStyle: SystemUiOverlayStyle.dark,
         iconTheme: IconThemeData(color: themeColors.primaryText),
+      ),
+      colorScheme: ColorScheme.fromSwatch(
+        accentColor: themeColors.primary, // Overscroll color on Android
       ),
       primaryColor: themeColors.primary,
       scaffoldBackgroundColor: themeColors.screenBackground,

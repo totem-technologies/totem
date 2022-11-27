@@ -146,9 +146,7 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
             child: SizedBox(
               height: 24,
               width: 24,
-              child: activeSession.state == SessionState.waiting
-                  ? SvgPicture.asset('assets/view_circle.svg')
-                  : SvgPicture.asset('assets/view_circle.svg'),
+              child: SvgPicture.asset('assets/view_circle.svg'),
             ),
           ),
         ],
