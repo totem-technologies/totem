@@ -751,6 +751,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.8.0"
+  metaballs:
+    dependency: "direct main"
+    description:
+      name: metaballs
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.4.2"
   mime:
     dependency: transitive
     description:

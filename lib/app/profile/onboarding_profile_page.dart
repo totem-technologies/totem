@@ -40,17 +40,13 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage>
   File? _pendingImageChangeFile;
   XFile? _pendingImageChange;
   final List<String> _errors = [];
-  bool _ageCheck = false;
-  bool _tAndCCheck = false;
   bool _newUser = false;
 
   bool get hasChanged {
     return (_userProfile!.name != _nameController.text ||
         (_userProfile!.email != null &&
                 _userProfile!.email != _emailController.text ||
-            _pendingImageChange != null ||
-            _ageCheck != _userProfile!.ageVerified ||
-            _tAndCCheck != _userProfile!.acceptedTOS));
+            _pendingImageChange != null));
   }
 
   @override
@@ -64,8 +60,6 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage>
     _userProfile = widget.profile;
     _nameController.text = _userProfile?.name ?? "";
     _emailController.text = _userProfile?.email ?? "";
-    _ageCheck = _userProfile?.ageVerified ?? false;
-    _tAndCCheck = _userProfile?.acceptedTOS ?? false;
     _userProfileFetch = repo.userProfile();
     super.initState();
   }
@@ -116,8 +110,11 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage>
             child: SafeArea(
               top: true,
               bottom: false,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+              child: ListView(
+                padding: EdgeInsets.only(
+                  left: themeData.pageHorizontalPadding,
+                  right: themeData.pageHorizontalPadding,
+                ),
                 children: [
                   _header(context),
                   AnimatedSwitcher(
@@ -136,68 +133,43 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage>
                             ),
                           ),
                   ),
-                  Expanded(
-                    child: LayoutBuilder(
-                      builder: (context, constraint) {
-                        return SingleChildScrollView(
-                          padding: EdgeInsets.only(
-                            left: themeData.pageHorizontalPadding,
-                            right: themeData.pageHorizontalPadding,
-                          ),
-                          child: ConstrainedBox(
-                            constraints: BoxConstraints(
-                              minHeight: constraint.maxHeight,
-                            ),
-                            child: IntrinsicHeight(
-                              child: Center(
-                                child: ConstrainedBox(
-                                  constraints: BoxConstraints(
-                                      maxWidth:
-                                          Theme.of(context).maxRenderWidth),
-                                  child: Column(
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Text(t.addProfilePicture,
-                                              style: textStyles.headline3),
-                                          const SizedBox(width: 6),
-                                          InkWell(
-                                            onTap: () {
-                                              BottomTrayHelpDialog.showTrayHelp(
-                                                context,
-                                                title: t.profilePicture,
-                                                detail: t.helpPublicInformation,
-                                              );
-                                            },
-                                            child: Icon(LucideIcons.helpCircle,
-                                                size: 24,
-                                                color: themeColors.primaryText),
-                                          )
-                                        ],
-                                      ),
-                                      const SizedBox(height: 10),
-                                      _profileEditForm(context, authUser),
-                                      const SizedBox(height: 20),
-                                      ThemedRaisedButton(
-                                        label: t.finish,
-                                        busy: _busy,
-                                        onPressed: !_busy ? _saveForm : null,
-                                        width: Theme.of(context)
-                                            .standardButtonWidth,
-                                      ),
-                                      const SizedBox(height: 20),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(t.addProfilePicture, style: textStyles.headline3),
+                      const SizedBox(width: 6),
+                      InkWell(
+                        onTap: () {
+                          BottomTrayHelpDialog.showTrayHelp(
+                            context,
+                            title: t.profilePicture,
+                            detail: t.helpPublicInformation,
+                          );
+                        },
+                        child: Icon(LucideIcons.helpCircle,
+                            size: 24, color: themeColors.primaryText),
+                      )
+                    ],
                   ),
+                  const SizedBox(height: 10),
+                  Column(
+                    children: [
+                      _profileEditForm(context, authUser),
+                      const SizedBox(height: 20),
+                      ThemedRaisedButton(
+                        label: t.finish,
+                        busy: _busy,
+                        onPressed: !_busy ? _saveForm : null,
+                        width: Theme.of(context).standardButtonWidth,
+                      ),
+                      const SizedBox(height: 20),
+                      Container(
+                          constraints: BoxConstraints(
+                              maxWidth: Theme.of(context).maxRenderWidth),
+                          child: RichText(text: _generateTextSpan()))
+                    ],
+                  ),
+                  const SizedBox(height: 20),
                 ],
               ),
             ),
@@ -267,9 +239,7 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage>
     }
     if (_userProfile!.name != _nameController.text ||
         _userProfile!.email != _emailController.text ||
-        _pendingImageChange != null ||
-        _userProfile!.ageVerified != _ageCheck ||
-        _userProfile!.acceptedTOS != _tAndCCheck) {
+        _pendingImageChange != null) {
       setState(() {
         _busy = true;
         _errors.clear();
@@ -277,8 +247,8 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage>
       _formKey.currentState!.save();
       _userProfile!.name = _nameController.text;
       _userProfile!.email = _emailController.text;
-      _userProfile!.ageVerified = _ageCheck;
-      _userProfile!.acceptedTOS = _tAndCCheck;
+      _userProfile!.ageVerified = true;
+      _userProfile!.acceptedTOS = true;
       if (_pendingImageChange != null) {
         AuthUser user = ref.read(authServiceProvider).currentUser()!;
         await _uploader.currentState!
@@ -302,215 +272,181 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage>
     final themeData = Theme.of(context);
     final textStyles = themeData.textStyles;
     final themeColors = themeData.themeColors;
-    return FutureBuilder<UserProfile?>(
-      future: _userProfileFetch,
-      builder: (context, asyncSnapshot) {
-        if (asyncSnapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: BusyIndicator(),
-          );
-        }
-        if (!asyncSnapshot.hasData) {
-          return Center(
+    return Container(
+      constraints: BoxConstraints(maxWidth: Theme.of(context).maxRenderWidth),
+      child: FutureBuilder<UserProfile?>(
+        future: _userProfileFetch,
+        builder: (context, asyncSnapshot) {
+          if (asyncSnapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: BusyIndicator(),
+            );
+          }
+          if (!asyncSnapshot.hasData) {
+            return Center(
+              child: Column(
+                children: [
+                  Text(
+                    t.errorNoProfile,
+                    style: textStyles.headline3,
+                  )
+                ],
+              ),
+            );
+          }
+          if (_userProfile == null) {
+            _userProfile = asyncSnapshot.data!;
+            _nameController.text = _userProfile!.name;
+            _emailController.text = _userProfile!.email ?? "";
+          }
+          return Form(
+            key: _formKey,
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text(
-                  t.errorNoProfile,
-                  style: textStyles.headline3,
-                )
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    InkWell(
+                      customBorder: const CircleBorder(),
+                      onTap: () {
+                        // edit
+                        _getUserImage(context);
+                      },
+                      child: Stack(
+                        children: [
+                          ((_userProfile != null && _userProfile!.hasImage) ||
+                                  _pendingImageChange != null)
+                              ? ProfileImage(
+                                  size: 100,
+                                  localImagePath: _pendingImageChange?.path,
+                                  localImageFile: _pendingImageChangeFile,
+                                  shape: BoxShape.circle,
+                                )
+                              : _emptyProfileImage(context),
+                          if (_pendingImageChange != null)
+                            Positioned.fill(
+                              child: FileUploader(
+                                key: _uploader,
+                                assignProfile: false,
+                                showBusy: false,
+                                onComplete: (
+                                    {String? error,
+                                    String? url,
+                                    String? path}) {
+                                  _handleUploadComplete(url, error);
+                                },
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 24),
+                Text(t.phoneNumber, style: textStyles.inputLabel),
+                const SizedBox(height: 4),
+                (user != null
+                    ? FutureBuilder<String>(
+                        future: _formatPhoneNumber(user.phoneNumber),
+                        builder: (context, asyncSnapshot) {
+                          return Text(asyncSnapshot.data ?? user.phoneNumber);
+                        },
+                      )
+                    : const Text("")),
+                const SizedBox(height: 24),
+                Text(t.name, style: textStyles.inputLabel),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Expanded(
+                      child: ThemedTextFormField(
+                        hintText: t.helpExampleName,
+                        controller: _nameController,
+                        autocorrect: false,
+                        textCapitalization: TextCapitalization.sentences,
+                        textInputAction: TextInputAction.done,
+                        keyboardType: TextInputType.name,
+                        autofillHints: const [AutofillHints.givenName],
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return t.errorEnterName;
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 8,
+                    ),
+                    InkWell(
+                      onTap: () {
+                        BottomTrayHelpDialog.showTrayHelp(
+                          context,
+                          title: t.name,
+                          detail: t.helpPublicInformation,
+                        );
+                      },
+                      child: Padding(
+                        padding:
+                            const EdgeInsets.only(bottom: 5, top: 5, left: 4),
+                        child: Icon(LucideIcons.helpCircle,
+                            size: 24, color: themeColors.primaryText),
+                      ),
+                    )
+                  ],
+                ),
+                const SizedBox(height: 32),
+                Text(t.email, style: textStyles.inputLabel),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: ThemedTextFormField(
+                        hintText: t.helpExampleEmail,
+                        controller: _emailController,
+                        keyboardType: TextInputType.emailAddress,
+                        textInputAction: TextInputAction.done,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        autofillHints: const [AutofillHints.email],
+                        autocorrect: false,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return t.errorEnterEmail;
+                          } else if (!EmailValidator.validate(value)) {
+                            return t.errorEmailInvalid;
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 8,
+                    ),
+                    InkWell(
+                      onTap: () {
+                        BottomTrayHelpDialog.showTrayHelp(
+                          context,
+                          title: t.email,
+                          detail: t.helpPrivateInformation,
+                        );
+                      },
+                      child: Padding(
+                        padding:
+                            const EdgeInsets.only(bottom: 5, top: 5, left: 4),
+                        child: Icon(LucideIcons.helpCircle,
+                            size: 24, color: themeColors.primaryText),
+                      ),
+                    )
+                  ],
+                ),
+                const SizedBox(height: 20),
               ],
             ),
           );
-        }
-        if (_userProfile == null) {
-          _userProfile = asyncSnapshot.data!;
-          _nameController.text = _userProfile!.name;
-          _emailController.text = _userProfile!.email ?? "";
-        }
-        return Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  InkWell(
-                    customBorder: const CircleBorder(),
-                    onTap: () {
-                      // edit
-                      _getUserImage(context);
-                    },
-                    child: Stack(
-                      children: [
-                        ((_userProfile != null && _userProfile!.hasImage) ||
-                                _pendingImageChange != null)
-                            ? ProfileImage(
-                                size: 100,
-                                localImagePath: _pendingImageChange?.path,
-                                localImageFile: _pendingImageChangeFile,
-                                shape: BoxShape.circle,
-                              )
-                            : _emptyProfileImage(context),
-                        if (_pendingImageChange != null)
-                          Positioned.fill(
-                            child: FileUploader(
-                              key: _uploader,
-                              assignProfile: false,
-                              showBusy: false,
-                              onComplete: (
-                                  {String? error, String? url, String? path}) {
-                                _handleUploadComplete(url, error);
-                              },
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 24),
-              Text(t.phoneNumber, style: textStyles.inputLabel),
-              const SizedBox(height: 4),
-              (user != null
-                  ? FutureBuilder<String>(
-                      future: _formatPhoneNumber(user.phoneNumber),
-                      builder: (context, asyncSnapshot) {
-                        return Text(asyncSnapshot.data ?? user.phoneNumber);
-                      },
-                    )
-                  : const Text("")),
-              const SizedBox(height: 24),
-              Text(t.name, style: textStyles.inputLabel),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Expanded(
-                    child: ThemedTextFormField(
-                      hintText: t.helpExampleName,
-                      controller: _nameController,
-                      autocorrect: false,
-                      textCapitalization: TextCapitalization.sentences,
-                      textInputAction: TextInputAction.done,
-                      keyboardType: TextInputType.name,
-                      autofillHints: const [AutofillHints.givenName],
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return t.errorEnterName;
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 8,
-                  ),
-                  InkWell(
-                    onTap: () {
-                      BottomTrayHelpDialog.showTrayHelp(
-                        context,
-                        title: t.name,
-                        detail: t.helpPublicInformation,
-                      );
-                    },
-                    child: Padding(
-                      padding:
-                          const EdgeInsets.only(bottom: 5, top: 5, left: 4),
-                      child: Icon(LucideIcons.helpCircle,
-                          size: 24, color: themeColors.primaryText),
-                    ),
-                  )
-                ],
-              ),
-              const SizedBox(height: 32),
-              Text(t.email, style: textStyles.inputLabel),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: ThemedTextFormField(
-                      hintText: t.helpExampleEmail,
-                      controller: _emailController,
-                      keyboardType: TextInputType.emailAddress,
-                      textInputAction: TextInputAction.done,
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
-                      autofillHints: const [AutofillHints.email],
-                      autocorrect: false,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return t.errorEnterEmail;
-                        } else if (!EmailValidator.validate(value)) {
-                          return t.errorEmailInvalid;
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 8,
-                  ),
-                  InkWell(
-                    onTap: () {
-                      BottomTrayHelpDialog.showTrayHelp(
-                        context,
-                        title: t.email,
-                        detail: t.helpPrivateInformation,
-                      );
-                    },
-                    child: Padding(
-                      padding:
-                          const EdgeInsets.only(bottom: 5, top: 5, left: 4),
-                      child: Icon(LucideIcons.helpCircle,
-                          size: 24, color: themeColors.primaryText),
-                    ),
-                  )
-                ],
-              ),
-              const SizedBox(height: 24),
-              CheckboxFormField(
-                  context: context,
-                  value: _ageCheck,
-                  initialValue: _userProfile?.ageVerified ?? _ageCheck,
-                  onChanged: (value) {
-                    setState(() {
-                      _ageCheck = value ?? false;
-                    });
-                  },
-                  validator: (value) {
-                    if (value == null || !value) {
-                      return t.verificationDescription;
-                    }
-                    return null;
-                  },
-                  child: Text(t.ageVerification,
-                      style: const TextStyle(fontWeight: FontWeight.bold))),
-              const SizedBox(height: 16),
-              CheckboxFormField(
-                context: context,
-                alignment: CrossAxisAlignment.start,
-                value: _tAndCCheck,
-                initialValue: _userProfile?.acceptedTOS ?? _tAndCCheck,
-                onChanged: (value) {
-                  setState(() {
-                    _tAndCCheck = value ?? false;
-                  });
-                },
-                validator: (value) {
-                  if (value == null || !value) {
-                    return t.verificationDescription;
-                  }
-                  return null;
-                },
-                child: RichText(
-                  text: _generateTextSpan(),
-                ),
-              ),
-              const SizedBox(height: 20),
-            ],
-          ),
-        );
-      },
+        },
+      ),
     );
   }
 
@@ -535,7 +471,10 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage>
             recognizer: TapGestureRecognizer()
               ..onTap = () {
                 debugPrint('Privacy Policy');
-                launchUrl(Uri.parse(DataUrls.privacyPolicy));
+                launchUrl(
+                  Uri.parse(DataUrls.privacyPolicy),
+                  mode: LaunchMode.externalApplication,
+                );
               },
           ),
           TextSpan(text: parts2.first),
@@ -548,7 +487,10 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage>
             recognizer: TapGestureRecognizer()
               ..onTap = () {
                 debugPrint('Terms of Service');
-                launchUrl(Uri.parse(DataUrls.termsOfService));
+                launchUrl(
+                  Uri.parse(DataUrls.termsOfService),
+                  mode: LaunchMode.externalApplication,
+                );
               },
           ),
           TextSpan(text: parts2.last),
@@ -659,10 +601,7 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage>
       if (_userProfile!.email == null || _userProfile!.email!.isEmpty) {
         _errors.add(t.email);
       }
-      if (!_userProfile!.ageVerified) {
-        _errors.add(t.ageMissing);
-      }
-      if (!_userProfile!.acceptedTOS) {
+      if (!_userProfile!.ageVerified || !_userProfile!.acceptedTOS) {
         _errors.add(t.termsOfService);
       }
       Future.delayed(const Duration(milliseconds: 100), () {

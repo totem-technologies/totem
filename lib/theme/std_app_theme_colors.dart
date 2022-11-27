@@ -11,8 +11,7 @@ class StdThemePalette {
   static const offWhite2 = Color(0xfffffdf9);
   static const offWhite3 = Color(0xfffef7e8);
   static const dirtyWhite = Color.fromRGBO(255, 255, 255, 0.8);
-  static const welcomeGradient = [Color(0xfffff9ec), Color(0xffffd472)];
-  static const mainGradient = [offWhite2, Color(0xfffeeecc)];
+  static const mainGradient = [newcreme, Color(0xfffeeecc)];
   static const homeGradient = [offWhite2, offWhite3];
   static const red = Color(0xffdf0000);
   static const red2 = Color(0xffCB0E14);
@@ -63,10 +62,10 @@ class StdAppThemeColors extends AppThemeColors {
   StdAppThemeColors()
       : super(
           alternateButtonBackground: StdThemePalette.baseWhite,
-          busyIndicator: StdThemePalette.baseBlack,
-          primary: StdThemePalette.yellow,
-          primaryButtonBackground: StdThemePalette.yellow,
-          primaryText: StdThemePalette.baseBlack,
+          busyIndicator: StdThemePalette.newslate,
+          primary: StdThemePalette.newyellow,
+          primaryButtonBackground: StdThemePalette.newyellow,
+          primaryText: StdThemePalette.newslate,
           profileBackground: StdThemePalette.baseWhite,
           secondaryText: StdThemePalette.grey,
           reversedText: StdThemePalette.baseWhite,
@@ -80,7 +79,6 @@ class StdAppThemeColors extends AppThemeColors {
           itemBorder: StdThemePalette.baseWhite,
           shadow: const Color.fromRGBO(115, 115, 115, 0.16),
           error: StdThemePalette.red,
-          welcomeGradient: StdThemePalette.welcomeGradient,
           linkText: StdThemePalette.newmauve,
           divider: StdThemePalette.lightGrey,
           profileGradient: StdThemePalette.profileGradient,
@@ -88,14 +86,15 @@ class StdAppThemeColors extends AppThemeColors {
           blurBackground: StdThemePalette.baseBlack.withAlpha(40),
           participantBorder: StdThemePalette.lighterGrey,
           sliderBackground: StdThemePalette.offWhite3,
-          altBackground: StdThemePalette.lightYellow2,
+          altBackground: StdThemePalette.newcreme,
           containerBackground: StdThemePalette.offWhite2,
           titleBarGradient: StdThemePalette.blackGradient,
           cameraBorder: StdThemePalette.grey,
           contentDivider: StdThemePalette.grey,
           alertBackground: StdThemePalette.red2,
           videoOverlayBackground: StdThemePalette.transparentGrey,
-          reversedVideoOverlayBackground: StdThemePalette.transparentYellow,
+          reversedVideoOverlayBackground:
+              StdThemePalette.newyellow.withAlpha(200),
           secondaryButtonBackground: StdThemePalette.lightYellow,
           iconNext: StdThemePalette.mediumGrey,
           circleColors: StdThemePalette.circleColors,

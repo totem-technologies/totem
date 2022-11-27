@@ -136,7 +136,7 @@
     "errorNoMicrophone": "Unable to access microphone",
     "errorNoProfile": "There is no profile",
     "errorNoSpeakers": "Unable to access device speakers",
-    "errorProfileInfoMissing": "We couldn't find this required information",
+    "errorProfileInfoMissing": "We couldn't find this required information or the Terms of Service has been updated",
     "errorRegister": "An error occurred registering",
     "errorRegisterUnknown": "Unknown error, please contact support",
     "errorSelectAtLeastOneDay": "Select at least one day",
@@ -152,7 +152,7 @@
     "feedback": "Feedback",
     "fullscreen": "Fullscreen",
     "exit_fullscreen": "Exit Fullscreen",
-    "finish": "Finish!",
+    "finish": "Finish",
     "forceUnMute": "Force Unmute",
     "getStarted": "Get Started",
     "guidelines": "*",
@@ -359,7 +359,7 @@
     "startTimeMustBeInTheFuture": "Start time must be in the future",
     "startVideo": "Start Video",
     "stopVideo": "Stop Video",
-    "tAndC": "I have read, understand and agree with the {privacyPolicy} and {termsOfService}",
+    "tAndC": "I have read, understood and agreed with the {privacyPolicy} and {termsOfService} and I am at least 18 years of age.",
     "@tAndC": {
         "placeholders": {
             "privacyPolicy": {},

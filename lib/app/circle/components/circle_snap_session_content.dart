@@ -56,10 +56,12 @@ class _CircleSnapSessionContentState
     final sessionProvider = ref.watch(activeSessionProvider);
     // ref.watch(audioLevelStream);
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      // This makes it so the status bar text on iOS isn't blacked out.
-      value: SystemUiOverlayStyle.light,
+      // This makes it so the status bar text isn't blacked out on mobile.
+      value: sessionProvider.live
+          ? SystemUiOverlayStyle.light
+          : SystemUiOverlayStyle.dark,
       child: Scaffold(
-        backgroundColor: Colors.transparent,
+        backgroundColor: themeColors.altBackground,
         body: WillPopScope(
           onWillPop: () async {
             return await _exitPrompt(context);
@@ -72,7 +74,7 @@ class _CircleSnapSessionContentState
                     children: [
                       SafeArea(
                         top: true,
-                        bottom: false,
+                        bottom: true,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
@@ -158,55 +160,51 @@ class _CircleSnapSessionContentState
     final themeData = Theme.of(context);
     final themeColors = themeData.themeColors;
     final textStyles = themeData.textStyles;
-    return Padding(
-      padding: EdgeInsets.only(top: themeData.titleTopPadding),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(width: themeData.pageHorizontalPadding),
-                CircleImage(
-                  circle: widget.circle,
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SizedBox(width: themeData.pageHorizontalPadding),
+              CircleImage(
+                circle: widget.circle,
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Text(
+                  widget.circle.name,
+                  style: textStyles.headline2,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Text(
-                    widget.circle.name,
-                    style: textStyles.headline2,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ],
+              ),
+            ],
+          ),
+        ),
+        if (state == SessionState.waiting) ...[
+          const SizedBox(width: 16),
+          IconButton(
+            onPressed: (commProvider.state != CommunicationState.disconnecting)
+                ? () async {
+                    if (commProvider.state != CommunicationState.active) {
+                      Navigator.of(context).pop();
+                    } else {
+                      await _exitPrompt(context);
+                    }
+                  }
+                : null,
+            icon: Icon(
+              LucideIcons.x,
+              color: themeColors.primaryText,
             ),
           ),
-          if (state == SessionState.waiting) ...[
-            const SizedBox(width: 16),
-            IconButton(
-              onPressed:
-                  (commProvider.state != CommunicationState.disconnecting)
-                      ? () async {
-                          if (commProvider.state != CommunicationState.active) {
-                            Navigator.of(context).pop();
-                          } else {
-                            await _exitPrompt(context);
-                          }
-                        }
-                      : null,
-              icon: Icon(
-                LucideIcons.x,
-                color: themeColors.primaryText,
-              ),
-            ),
-            const SizedBox(
-              width: 8,
-            ),
-          ],
+          const SizedBox(
+            width: 8,
+          ),
         ],
-      ),
+      ],
     );
   }
 
