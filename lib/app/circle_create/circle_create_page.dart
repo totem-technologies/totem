@@ -4,6 +4,7 @@ import 'package:after_layout/after_layout.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:collection/collection.dart';
 import 'package:date_field/date_field.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -878,6 +879,8 @@ class CircleCreatePageState extends ConsumerState<CircleCreatePage>
             suffixIcon: Icon(LucideIcons.clock),
             isDense: true,
           ),
+          initialTimePickerEntryMode:
+              !kIsWeb ? TimePickerEntryMode.dial : TimePickerEntryMode.input,
           mode: DateTimeFieldPickerMode.time,
           autovalidateMode: AutovalidateMode.onUserInteraction,
           initialValue: _selectedStartDate,

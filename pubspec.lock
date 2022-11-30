@@ -244,9 +244,11 @@ packages:
   date_field:
     dependency: "direct main"
     description:
-      name: date_field
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: "."
+      ref: HEAD
+      resolved-ref: d3474da603e5a2ec31c12459f7063f282970b5a2
+      url: "https://github.com/totem-technologies/date_field.git"
+    source: git
     version: "3.0.2"
   decorated_icon:
     dependency: "direct main"
