@@ -48,7 +48,7 @@ export interface SnapCircleData {
   createdBy: DocumentReference;
   createdOn: Timestamp;
   updatedOn: Timestamp;
-  exipresOn?: Timestamp;
+  expiresOn?: Timestamp;
   participantCount?: number;
   maxParticipants?: number;
   maxMinutes?: number;

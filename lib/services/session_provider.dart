@@ -16,6 +16,7 @@ abstract class SessionProvider extends ChangeNotifier {
       {required Circle circle, required String uid});
   Future<void> startActiveSession();
   Future<void> endActiveSession();
+  Future<void> addTimeToSession({required int minutes});
   Future<void> cancelPendingSession({required Session session});
   void clear();
   ActiveSession? get activeSession;

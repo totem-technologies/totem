@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:keybinder/keybinder.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:slide_to_act/slide_to_act.dart';
+import 'package:totem/app/circle/components/circle_session_timer.dart';
 import 'package:totem/app/circle/index.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
@@ -104,10 +105,7 @@ class _CircleLiveVideoSessionState
                                       ),
                                     ),
                                   ),
-                                  if (activeSession.expiresOn != null) ...[
-                                    _countdownTimer(activeSession),
-                                    const SizedBox(width: 40)
-                                  ],
+                                  const CircleSessionTimer(),
                                 ],
                               ),
                               const SizedBox(height: 10),
@@ -194,53 +192,83 @@ class _CircleLiveVideoSessionState
     return Container();
   }
 
-  Widget _countdownTimer(ActiveSession activeSession) {
-    final t = AppLocalizations.of(context)!;
-    final themeData = Theme.of(context);
-    final themeColors = themeData.themeColors;
+  // List<Widget> _countdownTimer(ActiveSession activeSession) {
+  //   final t = AppLocalizations.of(context)!;
+  //   final themeData = Theme.of(context);
+  //   final themeColors = themeData.themeColors;
 
-    SessionParticipant? participant = activeSession.me();
-    if (participant != null) {
-      return CountdownTimer(
-        startTime: activeSession.startedOn!,
-        endTime: activeSession.expiresOn!,
-        defaultState: CountdownState(
-          displayValue: participant.role == Role.keeper,
-          displayFormat: CountdownDisplayFormat.hoursAndMinutes,
-          color: themeColors.primary,
-          backgroundColor: themeColors.secondaryText,
-          valueLabel: t.remaining,
-        ),
-        stateTransitions: [
-          CountdownState(
-            minutesRemaining: 5,
-            displayValue: true,
-            displayFormat: CountdownDisplayFormat.minutes,
-            color: themeColors.reversedText,
-            valueLabel: t.endsIn,
-          ),
-          CountdownState(
-            minutesRemaining: 0,
-            displayValue: true,
-            displayFormat: CountdownDisplayFormat.override,
-            color: themeColors.alertBackground,
-            backgroundColor: themeColors.alertBackground,
-            valueLabel: t.ending,
-            valueOverride: t.now,
-          ),
-          CountdownState(
-            minutesRemaining: -1,
-            displayValue: true,
-            displayFormat: CountdownDisplayFormat.hoursAndMinutes,
-            color: themeColors.alertBackground,
-            valueLabel: t.overtime,
-          ),
-        ],
-      );
-    } else {
-      return Container();
-    }
-  }
+  //   SessionParticipant? participant = activeSession.me();
+  //   if (participant != null) {
+  //     return [
+  //       CountdownTimer(
+  //         startTime: activeSession.startedOn!,
+  //         endTime: activeSession.expiresOn!,
+  //         defaultState: CountdownState(
+  //           displayValue: participant.role == Role.keeper,
+  //           displayFormat: CountdownDisplayFormat.hoursAndMinutes,
+  //           color: themeColors.primary,
+  //           backgroundColor: themeColors.secondaryText,
+  //           valueLabel: t.remaining,
+  //         ),
+  //         stateTransitions: [
+  //           CountdownState(
+  //             minutesRemaining: 5,
+  //             displayValue: true,
+  //             displayFormat: CountdownDisplayFormat.minutes,
+  //             color: themeColors.reversedText,
+  //             valueLabel: t.endsIn,
+  //           ),
+  //           CountdownState(
+  //             minutesRemaining: 0,
+  //             displayValue: true,
+  //             displayFormat: CountdownDisplayFormat.override,
+  //             color: themeColors.alertBackground,
+  //             backgroundColor: themeColors.alertBackground,
+  //             valueLabel: t.ending,
+  //             valueOverride: t.now,
+  //           ),
+  //           CountdownState(
+  //             minutesRemaining: -1,
+  //             displayValue: true,
+  //             displayFormat: CountdownDisplayFormat.hoursAndMinutes,
+  //             color: themeColors.alertBackground,
+  //             valueLabel: t.overtime,
+  //           ),
+  //         ],
+  //       ),
+  //       if (participant.role == Role.keeper) ...[
+  //         const SizedBox(
+  //           width: 10,
+  //         ),
+  //         PopupMenuButton(
+  //           itemBuilder: (context) => [
+  //             if (DateTime.now().compareTo(activeSession.expiresOn!) <= 0)
+  //               PopupMenuItem(
+  //                 value: 0,
+  //                 child: Text(t.endSession),
+  //               ),
+  //             if (DateTime.now().compareTo(activeSession.expiresOn!) > 0)
+  //               PopupMenuItem(
+  //                 value: 1,
+  //                 child: Text(t.modifyTime),
+  //               ),
+  //           ],
+  //           onSelected: (value) {
+  //             if (value == 0) {
+  //               _endSession(context);
+  //             } else if (value == 1) {
+  //               _modifyTime(context);
+  //             }
+  //           },
+  //           },
+  //         ),
+  //       ],
+  //       const SizedBox(width: 40)
+  //     ];
+  //   } else {
+  //     return [];
+  //   }
+  // }
 
   Widget _speakerUserView(BuildContext context,
       {required ActiveSession activeSession, required bool isPhoneLayout}) {
