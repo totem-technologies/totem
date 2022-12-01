@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -11,9 +9,7 @@ import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
 import 'package:totem/services/utils/device_type.dart';
 import 'package:totem/theme/index.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:web_browser_detect/web_browser_detect.dart';
-import 'package:metaballs/metaballs.dart';
 
 class _LoginPanel extends StatelessWidget {
   const _LoginPanel({Key? key}) : super(key: key);
@@ -24,9 +20,16 @@ class _LoginPanel extends StatelessWidget {
     final theme = Theme.of(context);
     final browser = Browser.detectOrNull();
     final isMobile = DeviceType.isMobile();
+    final isSafari = browser?.browserAgent == BrowserAgent.Safari;
 
-    final isSafari =
-        kIsWeb && (browser?.browser.toLowerCase().contains('safari') ?? false);
+    final loginButton = ThemedRaisedButton(
+      label: t.login,
+      width: 294,
+      onPressed: () {
+        context.goNamed(AppRoutes.loginPhone);
+      },
+    );
+
     return Column(
       children: [
         Expanded(
@@ -55,67 +58,50 @@ class _LoginPanel extends StatelessWidget {
         ),
         Expanded(
           child: Center(
-            child: !isMobile
-                ? Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ThemedRaisedButton(
-                        backgroundColor:
-                            theme.themeColors.alternateButtonBackground,
-                        label: t.login,
-                        width: 294,
-                        onPressed: () {
-                          context.goNamed(AppRoutes.loginPhone);
-                        },
-                      ),
-                      if (isSafari)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 16),
-                          child: Text(
-                            t.worksBestChrome,
-                            textAlign: TextAlign.center,
+              child: isMobile && kIsWeb
+                  ? _showGetMobileApp(context)
+                  : Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        loginButton,
+                        if (isSafari)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 16),
+                            child: Text(
+                              t.worksBestChrome,
+                              textAlign: TextAlign.center,
+                            ),
                           ),
-                        ),
-                    ],
-                  )
-                : (kIsWeb
-                    ? _showGetMobileApp(context)
-                    : ThemedRaisedButton(
-                        backgroundColor:
-                            theme.themeColors.alternateButtonBackground,
-                        label: t.login,
-                        width: 294,
-                        onPressed: () {
-                          context.goNamed(AppRoutes.loginPhone);
-                        },
-                      )),
-          ),
+                      ],
+                    )),
         ),
       ],
     );
   }
 
   Widget _showGetMobileApp(BuildContext context) {
-    if (defaultTargetPlatform == TargetPlatform.android) {
-      return GestureDetector(
-        onTap: () {
-          //launchUrl(Uri.parse("https://play.google.com/store/apps/details?hl=en_US&id=<todo>"));
-        },
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-          child: Image.asset('assets/android_download.png', height: 64),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        GestureDetector(
+          onTap: () {
+            DataUrls.launch(DataUrls.appleStore);
+          },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+            child: Image.asset('assets/ios_download.png', height: 64),
+          ),
         ),
-      );
-    }
-    return GestureDetector(
-      onTap: () {
-        // TODO - this should be modified to be App Store url when available
-        launchUrl(Uri.parse("https://testflight.apple.com/join/p5k8gSEA"));
-      },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-        child: Image.asset('assets/ios_download.png', height: 64),
-      ),
+        GestureDetector(
+          onTap: () {
+            DataUrls.launch(DataUrls.androidStore);
+          },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+            child: Image.asset('assets/android_download.png', height: 64),
+          ),
+        )
+      ],
     );
   }
 }
@@ -131,9 +117,9 @@ class WelcomePage extends ConsumerWidget {
       backgroundColor: themeColors.altBackground,
       body: Stack(
         children: [
-          MetaballsBackground(
-            color: themeColors.primary,
-          ),
+          // MetaballsBackground(
+          //   color: themeColors.primary,
+          // ),
           Positioned.fill(
               child: authState.when(loading: () {
             return const Center(
@@ -153,24 +139,24 @@ class WelcomePage extends ConsumerWidget {
   }
 }
 
-class MetaballsBackground extends StatelessWidget {
-  const MetaballsBackground({super.key, required this.color});
-  final Color color;
+// class MetaballsBackground extends StatelessWidget {
+//   const MetaballsBackground({super.key, required this.color});
+//   final Color color;
 
-  @override
-  Widget build(BuildContext context) {
-    return ImageFiltered(
-      imageFilter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-      child: Metaballs(
-          color: color,
-          metaballs: 5,
-          animationDuration: const Duration(milliseconds: 200),
-          speedMultiplier: 1,
-          bounceStiffness: 3,
-          minBallRadius: 70,
-          maxBallRadius: 200,
-          glowRadius: 0.7,
-          glowIntensity: 0.6),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return ImageFiltered(
+//       imageFilter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+//       child: Metaballs(
+//           color: color,
+//           metaballs: 5,
+//           animationDuration: const Duration(milliseconds: 200),
+//           speedMultiplier: 1,
+//           bounceStiffness: 3,
+//           minBallRadius: 70,
+//           maxBallRadius: 200,
+//           glowRadius: 0.7,
+//           glowIntensity: 0.6),
+//     );
+//   }
+// }

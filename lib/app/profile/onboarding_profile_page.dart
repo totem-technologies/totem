@@ -471,10 +471,7 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage>
             recognizer: TapGestureRecognizer()
               ..onTap = () {
                 debugPrint('Privacy Policy');
-                launchUrl(
-                  Uri.parse(DataUrls.privacyPolicy),
-                  mode: LaunchMode.externalApplication,
-                );
+                DataUrls.launch(DataUrls.privacyPolicy);
               },
           ),
           TextSpan(text: parts2.first),
@@ -487,10 +484,7 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage>
             recognizer: TapGestureRecognizer()
               ..onTap = () {
                 debugPrint('Terms of Service');
-                launchUrl(
-                  Uri.parse(DataUrls.termsOfService),
-                  mode: LaunchMode.externalApplication,
-                );
+                DataUrls.launch(DataUrls.termsOfService);
               },
           ),
           TextSpan(text: parts2.last),

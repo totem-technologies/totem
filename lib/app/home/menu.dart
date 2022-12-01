@@ -68,40 +68,28 @@ class TotemDrawer extends ConsumerWidget {
               icon: LucideIcons.helpCircle,
               onTap: () {
                 Navigator.pop(context);
-                launchUrl(
-                  Uri.parse(DataUrls.docs),
-                  mode: LaunchMode.externalApplication,
-                );
+                DataUrls.launch(DataUrls.docs);
               }),
           DrawerItem(
               text: t.donate,
               icon: LucideIcons.coins,
               onTap: () {
                 Navigator.pop(context);
-                launchUrl(
-                  Uri.parse(DataUrls.donate),
-                  mode: LaunchMode.externalApplication,
-                );
+                DataUrls.launch(DataUrls.donate);
               }),
           DrawerItem(
               text: t.feedback,
               icon: LucideIcons.messageSquare,
               onTap: () {
                 Navigator.pop(context);
-                launchUrl(
-                  Uri.parse(DataUrls.userFeedback),
-                  mode: LaunchMode.externalApplication,
-                );
+                DataUrls.launch(DataUrls.userFeedback);
               }),
           DrawerItem(
               text: t.reportIssue,
               icon: LucideIcons.bug,
               onTap: () {
                 Navigator.pop(context);
-                launchUrl(
-                  Uri.parse(DataUrls.bugReport),
-                  mode: LaunchMode.externalApplication,
-                );
+                DataUrls.launch(DataUrls.bugReport);
               }),
           if (AppConfig.isDev)
             DrawerItem(

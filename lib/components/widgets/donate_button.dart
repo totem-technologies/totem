@@ -34,6 +34,6 @@ class DonateButton extends StatelessWidget {
   }
 
   void _launchDonateLink() async {
-    await launchUrl(Uri.parse(DataUrls.donate));
+    await DataUrls.launch(DataUrls.donate);
   }
 }
