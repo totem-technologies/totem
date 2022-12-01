@@ -2,7 +2,6 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:lucide_icons/lucide_icons.dart';
 
 import 'draw_arc.dart';
 
@@ -31,13 +30,8 @@ class WaitAnimationState extends State<WaitAnimation>
   late final CurvedAnimation _firstArchInterval;
   late final CurvedAnimation _secondRotationInterval;
   late final CurvedAnimation _secondArchInterval;
-  late final Animation<double> _imageShowInterval;
-  late final Animation<double> _imageHideInterval;
 
   final List<Widget> animationWidgets = <Widget>[];
-  int _imageIndex = 0;
-  int _imageNext = 1;
-  int _imagePrev = -1;
 
   @override
   void initState() {
@@ -83,62 +77,8 @@ class WaitAnimationState extends State<WaitAnimation>
         curve: Curves.easeInOut,
       ),
     );
-
-    _imageShowInterval = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: const Interval(
-          0.0,
-          0.4,
-          curve: Curves.easeInOut,
-        ),
-      ),
-    );
-    _imageHideInterval = Tween<double>(begin: 1, end: 0).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: const Interval(
-          0.6,
-          1,
-          curve: Curves.easeInOut,
-        ),
-      ),
-    );
-    final double size = widget.size - (widget.size * 0.16) - 5;
-
-    animationWidgets.add(drawImageContainer(
-        size,
-        SvgPicture.asset(
-          'assets/totem_icon.svg',
-          color: widget.imageColor,
-        )));
-    animationWidgets.add(drawImageContainer(
-        size,
-        Icon(
-          LucideIcons.mic,
-          size: size * 0.70,
-          color: widget.imageColor,
-        )));
-    animationWidgets.add(drawImageContainer(
-        size,
-        Icon(
-          LucideIcons.video,
-          size: size * 0.70,
-          color: widget.imageColor,
-        )));
     _animationController.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
-        _imagePrev = _imageNext;
-        if (_imageIndex + 2 < animationWidgets.length) {
-          _imageIndex += 2;
-        } else {
-          _imageIndex = (_imageIndex + 2) - animationWidgets.length;
-        }
-        if (_imageIndex < animationWidgets.length - 1) {
-          _imageNext = _imageIndex + 1;
-        } else {
-          _imageNext = 0;
-        }
         _animationController.forward(from: 0);
       }
     });
@@ -244,25 +184,12 @@ class WaitAnimationState extends State<WaitAnimation>
                         ],
                       ),
                     ),
-              if (_imagePrev != -1)
-                Opacity(
-                  opacity: _animationController.value <= 0.5
-                      ? 1 - _imageShowInterval.value
-                      : 0,
-                  child: animationWidgets[_imagePrev],
-                ),
-              Opacity(
-                opacity: _animationController.value <= 0.5
-                    ? _imageShowInterval.value
-                    : _imageHideInterval.value,
-                child: animationWidgets[_imageIndex],
-              ),
-              Opacity(
-                opacity: _animationController.value <= 0.5
-                    ? 0
-                    : 1 - _imageHideInterval.value,
-                child: animationWidgets[_imageNext],
-              ),
+              drawImageContainer(
+                  widget.size - (widget.size * 0.16) - 5,
+                  SvgPicture.asset(
+                    'assets/totem_icon.svg',
+                    color: widget.imageColor,
+                  ))
             ],
           );
         },

@@ -318,8 +318,6 @@ class _CircleLiveVideoSessionState
           child: !isMobile
               ? ((activeSession.totemReceived)
                   ? TotemActionButton(
-                      image: Icon(LucideIcons.arrowBigRight,
-                          size: 30, color: themeColors.primaryText),
                       label: t.pass,
                       message: t.circleTotemPass,
                       toolTips: [

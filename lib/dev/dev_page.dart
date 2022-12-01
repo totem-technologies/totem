@@ -3,6 +3,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:totem/dev/tests/index.dart';
 import 'package:totem/theme/index.dart';
+import 'package:totem/app_routes.dart';
 
 import '../components/widgets/content_divider.dart';
 import 'buttons.dart';
@@ -86,7 +87,7 @@ class WidgetContainer extends StatelessWidget {
         child,
         Positioned(
           right: 0,
-          top: 0,
+          top: 30,
           child: IconButton(
             icon: const Icon(LucideIcons.x),
             onPressed: () {
@@ -116,6 +117,7 @@ class WidgetList extends StatelessWidget {
     return Padding(
         padding: const EdgeInsets.all(20),
         child: Column(children: [
+          const SizedBox(height: 30),
           Text("Dev Page!", style: textStyles.headline1),
           const Center(
             child: ContentDivider(),
@@ -123,7 +125,16 @@ class WidgetList extends StatelessWidget {
           const Padding(padding: EdgeInsets.only(top: 20)),
           Column(
             children: children,
-          )
+          ),
+          TextButton(
+              onPressed: () {
+                if (context.canPop()) {
+                  context.pop();
+                } else {
+                  context.replaceNamed(AppRoutes.home);
+                }
+              },
+              child: const Text('Home'))
         ]));
   }
 }

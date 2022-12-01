@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -29,6 +28,9 @@ class PhoneRegisterCodeEntryState
 
   ///Validates OTP code
   void signInWithPhoneNumber() async {
+    if (_busy) {
+      return;
+    }
     setState(() => _busy = true);
     try {
       await ref.read(authServiceProvider).verifyCode(pinValue);
@@ -102,7 +104,7 @@ class PhoneRegisterCodeEntryState
                 },
                 onComplete: (v) {
                   pinValue = v;
-                  if (kIsWeb && int.tryParse(pinValue) != null) {
+                  if (int.tryParse(pinValue) != null) {
                     signInWithPhoneNumber();
                   }
                 },

@@ -68,7 +68,9 @@ class CircleSessionParticipantListItem extends ConsumerWidget {
                 onPressed: () {
                   onRemove!(participant);
                 },
-                icon: const Icon(LucideIcons.trash, size: 24)),
+                icon: Icon(LucideIcons.x,
+                    size: 24,
+                    color: Theme.of(context).themeColors.secondaryText)),
           if (reorder)
             ReorderableListener(
               child: Container(
