@@ -40,7 +40,9 @@ dependencies:
   collection: <2.0.0
   cupertino_icons: ^1.0.2
   cupertino_will_pop_scope: ^1.2.0
-  date_field: ^3.0.1
+  date_field:
+    git:
+      url: https://github.com/totem-technologies/date_field.git
   decorated_icon: ^1.2.1
   diffutil_dart: ^3.0.0
   email_validator: ^2.0.1
