@@ -8,7 +8,6 @@ import 'package:totem/config.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
 import 'package:totem/theme/app_theme_styles.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class TotemDrawer extends ConsumerWidget {
   const TotemDrawer({super.key});

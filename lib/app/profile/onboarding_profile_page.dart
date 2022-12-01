@@ -16,7 +16,6 @@ import 'package:totem/components/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class OnboardingProfilePage extends ConsumerStatefulWidget {
   const OnboardingProfilePage({Key? key, this.onProfileUpdated, this.profile})
