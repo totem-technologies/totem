@@ -64,8 +64,8 @@ class AppRoutes {
         GoRoute(
           name: home,
           path: '/',
-          pageBuilder: (context, state) => _fadeTransitionPage(
-              state: state, child: const WithForegroundTask(child: HomePage())),
+          pageBuilder: (context, state) =>
+              _fadeTransitionPage(state: state, child: const HomePage()),
           routes: [
             GoRoute(
               name: userProfile,
@@ -80,7 +80,8 @@ class AppRoutes {
                 state.params['id'];
                 return _fadeTransitionPage(
                     state: state,
-                    child: CircleSessionPage(sessionID: id),
+                    child: WithForegroundTask(
+                        child: CircleSessionPage(sessionID: id)),
                     opaque: false,
                     fullscreenDialog: true);
               },
