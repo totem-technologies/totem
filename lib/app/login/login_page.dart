@@ -7,7 +7,7 @@ import 'package:totem/app_routes.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
-import 'package:totem/services/utils/device_type.dart';
+import 'package:totem/services/utils/index.dart';
 import 'package:totem/theme/index.dart';
 import 'package:web_browser_detect/web_browser_detect.dart';
 
@@ -19,67 +19,82 @@ class _LoginPanel extends StatelessWidget {
     final t = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final browser = Browser.detectOrNull();
-    final isMobile = DeviceType.isMobile();
     final isSafari = browser?.browserAgent == BrowserAgent.Safari;
 
-    final loginButton = ThemedRaisedButton(
+    Widget loginButton = ThemedRaisedButton(
       label: t.login,
-      width: 294,
+      width: 220,
       onPressed: () {
         context.goNamed(AppRoutes.loginPhone);
       },
     );
 
+    if (kIsWeb && DeviceType.isMobile()) {
+      loginButton = Container();
+    }
+
     return Column(
       children: [
         Expanded(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  t.welcome,
-                  style: theme.textStyles.headline1,
-                  textAlign: TextAlign.center,
-                ),
-                const Center(
-                  child: ContentDivider(),
-                ),
-              ],
-            ),
-          ),
-        ),
-        SvgPicture.asset(
-          'assets/totem_icon.svg',
-          color: theme.themeColors.primaryText,
-          height: 200,
-        ),
-        Expanded(
           child: Center(
-              child: isMobile && kIsWeb
-                  ? _showGetMobileApp(context)
-                  : Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        loginButton,
-                        if (isSafari)
-                          Padding(
-                            padding: const EdgeInsets.only(top: 16),
-                            child: Text(
-                              t.worksBestChrome,
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                      ],
-                    )),
+              child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 30),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      t.welcome,
+                      style: theme.textStyles.headline1,
+                      textAlign: TextAlign.center,
+                    ),
+                    const Center(
+                      child: ContentDivider(),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                height: 50,
+              ),
+              SvgPicture.asset(
+                'assets/totem_icon.svg',
+                color: theme.themeColors.primaryText,
+                height: 200,
+              ),
+              Container(
+                height: 50,
+              ),
+              _showGetMobileApp(context),
+              Container(
+                height: 10,
+              ),
+              loginButton,
+              if (isSafari)
+                Padding(
+                  padding: const EdgeInsets.only(top: 16),
+                  child: Text(
+                    t.worksBestChrome,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+            ],
+          )),
         ),
+        Container(
+          height: 50,
+        )
       ],
     );
   }
 
   Widget _showGetMobileApp(BuildContext context) {
+    if (!kIsWeb) {
+      return Container();
+    }
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
