@@ -116,6 +116,7 @@ class CircleCreatePageState extends ConsumerState<CircleCreatePage>
       CircleRepeatEndOption(value: 'endDate'),
     ];
     if (widget.fromCircle != null) {
+      DateTime start = DateTime.now().add(const Duration(minutes: 5));
       // TODO: templates description is probably not what we want here
       // _descriptionController.text = widget.fromCircle!.description ?? "";
       _selectedVisibility = visibilityOptions
@@ -134,8 +135,8 @@ class CircleCreatePageState extends ConsumerState<CircleCreatePage>
             widget.fromCircle!.repeating?.count?.toString() ?? "1";
         _selectedRepeatUnit = repeatUnitOptions
             .firstWhere((e) => e.value == widget.fromCircle!.repeating!.unit);
-        _selectedStartDate = widget.fromCircle!.repeating!.start;
-        _selectedStartTime = widget.fromCircle!.repeating!.start;
+        _selectedStartDate = start;
+        _selectedStartTime = start;
         if (widget.fromCircle!.repeating?.count != null) {
           _selectedRepeatEnd = repeatEndOptions[0];
         } else {
@@ -145,7 +146,6 @@ class CircleCreatePageState extends ConsumerState<CircleCreatePage>
           }
         }
       }
-      _selectedStartDate = widget.fromCircle!.repeating?.start;
       _selectedEndDate = widget.fromCircle!.repeating?.until;
     } else {
       _selectedVisibility = visibilityOptions[0];

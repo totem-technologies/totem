@@ -185,7 +185,7 @@ export const startSnapSession = functions.https.onCall(async ({circleId}, {auth}
     const ref = admin.firestore().collection("snapCircles").doc(circleId);
     const circleSnapshot = await ref.get();
     if (circleSnapshot.exists) {
-      const {state, keeper, maxMinutes} = (circleSnapshot.data() as SnapCircleData) ?? {};
+      const {state, keeper} = (circleSnapshot.data() as SnapCircleData) ?? {};
       if (auth.uid !== keeper) {
         throw new functions.https.HttpsError(
           "permission-denied",
@@ -246,9 +246,6 @@ export const startSnapSession = functions.https.onCall(async ({circleId}, {auth}
           circleParticipants: string[];
           expiresOn?: Timestamp;
         } = {state: SessionState.live, startedDate, circleParticipants};
-        if (maxMinutes != null) {
-          circleUpdate["expiresOn"] = new Timestamp(startedDate.seconds + maxMinutes * 60, 0);
-        }
         ref.update(circleUpdate);
         return true;
       }
@@ -368,6 +365,11 @@ export const createSnapCircle = functions.https.onCall(
     if (bannerImageUrl) {
       data.bannerImageUrl = bannerImageUrl;
     }
+    if (data.state == SessionState.waiting && data.maxMinutes != null) {
+      // It's an instant circle so set the expiration time when it's created
+      data["expiresOn"] = new Timestamp(data.createdOn.seconds + data.maxMinutes * 60, 0);
+    }
+
     const ref = await admin.firestore().collection("snapCircles").add(data);
     if (data.state === SessionState.waiting) {
       await initializeSessionFor(ref.id);

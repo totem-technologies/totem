@@ -20,12 +20,24 @@ class CircleSessionTimer extends ConsumerWidget {
     final themeData = Theme.of(context);
     final themeColors = themeData.themeColors;
     SessionParticipant? participant = activeSession.me();
+    late DateTime startTime;
+    if (activeSession.circle.nextSession != null) {
+      // This is a scheduled session so count from the earliest of either the
+      // scheduled start time or the actual start time.
+      startTime =
+          activeSession.circle.nextSession!.isBefore(activeSession.startedOn!)
+              ? activeSession.circle.nextSession!
+              : activeSession.startedOn!;
+    } else {
+      // This is an instant session so count from creation
+      startTime = activeSession.circle.createdOn;
+    }
 
     if (activeSession.expiresOn != null && participant != null) {
       return Row(
         children: [
           CountdownTimer(
-            startTime: activeSession.startedOn!,
+            startTime: startTime,
             endTime: activeSession.expiresOn!,
             defaultState: CountdownState(
               displayValue: participant.role == Role.keeper,
