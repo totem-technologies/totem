@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 import 'dart:math';
 
 import 'package:agora_rtc_engine/rtc_engine.dart';
@@ -13,7 +12,6 @@ import 'package:totem/config.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/error_report.dart';
 import 'package:totem/services/index.dart';
-import 'package:wakelock/wakelock.dart';
 
 enum PermissionType {
   video,
@@ -240,15 +238,6 @@ class AgoraCommunicationProvider extends CommunicationProvider {
 
   @override
   Future<void> leaveSession({bool requested = true}) async {
-    // disable wakelock
-    unawaited(Wakelock.disable());
-
-    // for android, stop the foreground service to keep the process running
-    // to prevent drops in connection
-    if (!kIsWeb && Platform.isAndroid) {
-      await SessionForeground.instance.stopSessionTask();
-    }
-
     _pendingRequestLeave = requested;
 
     if (requested &&
@@ -657,15 +646,6 @@ class AgoraCommunicationProvider extends CommunicationProvider {
       _handler!.joinedCircle!(_session!.id, uid.toString());
     }
     _updateState(CommunicationState.active);
-
-    // Prevent device from going to sleep while the session is active
-    unawaited(Wakelock.enable());
-
-    // for android, start a foreground service to keep the process running
-    // to prevent drops in connection
-    if (!kIsWeb && Platform.isAndroid) {
-      await SessionForeground.instance.startSessionTask();
-    }
     // notify of state to others
     notifyState();
     _startStateUpdates();
@@ -677,7 +657,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     // end the data session and update state
     try {
       if (_pendingComplete) {
-        await sessionProvider.endActiveSession();
+        unawaited(sessionProvider.endActiveSession());
       } else {
         await sessionProvider.leaveSession(
             session: _session!, sessionUid: commUid.toString());

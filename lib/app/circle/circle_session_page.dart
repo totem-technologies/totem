@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:ui';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:totem/app/circle/index.dart';
@@ -9,6 +11,7 @@ import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/account_state/account_state_event_manager.dart';
 import 'package:totem/services/index.dart';
+import 'package:wakelock/wakelock.dart';
 
 final activeSessionProvider =
     ChangeNotifierProvider.autoDispose<ActiveSession>((ref) {
@@ -167,11 +170,25 @@ class CircleSessionLivePageState extends ConsumerState<CircleSessionLivePage> {
   @override
   void initState() {
     ref.read(activeSessionProvider).addListener(_handleActiveSessionChange);
+    // Prevent device from going to sleep while the session is active
+    unawaited(Wakelock.enable());
+    // for android, start a foreground service to keep the process running
+    // to prevent drops in connection
+    if (!kIsWeb && Platform.isAndroid) {
+      unawaited(SessionForeground.instance.startSessionTask());
+    }
     super.initState();
   }
 
   @override
   void dispose() {
+    // disable wakelock
+    unawaited(Wakelock.disable());
+    // for android, stop the foreground service to keep the process running
+    // to prevent drops in connection
+    if (!kIsWeb && Platform.isAndroid) {
+      unawaited(SessionForeground.instance.stopSessionTask());
+    }
     super.dispose();
   }
 
