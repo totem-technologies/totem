@@ -657,7 +657,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     // end the data session and update state
     try {
       if (_pendingComplete) {
-        await sessionProvider.endActiveSession();
+        unawaited(sessionProvider.endActiveSession());
       } else {
         await sessionProvider.leaveSession(
             session: _session!, sessionUid: commUid.toString());
