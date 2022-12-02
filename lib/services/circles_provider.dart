@@ -35,4 +35,5 @@ abstract class CirclesProvider {
       required String uid});
   Future<bool> canJoinCircle({required String circleId, required String uid});
   Stream<Circle?> circleStream(String circleId);
+  Stream<List<Circle>> scheduledUpcomingCircles(int timeWindowDuration);
 }

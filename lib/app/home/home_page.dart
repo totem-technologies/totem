@@ -119,6 +119,20 @@ class HomePageState extends ConsumerState<HomePage> {
               const SliverToBoxAdapter(
                 child: SizedBox(height: 20),
               ),
+              SliverToBoxAdapter(
+                  child: Padding(
+                padding: EdgeInsets.symmetric(
+                    vertical: 8.0,
+                    horizontal: Theme.of(context).pageHorizontalPadding),
+                child: Text(
+                  t.scheduledCircles,
+                  style: Theme.of(context).textStyles.headline2,
+                ),
+              )),
+              const ScheduledCirclesList(),
+              const SliverToBoxAdapter(
+                child: SizedBox(height: 20),
+              ),
             ],
           ),
         ),

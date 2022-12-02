@@ -113,6 +113,8 @@ class TotemRepository {
       _circlesProvider.canJoinCircle(circleId: circleId, uid: user!.uid);
   Stream<Circle?> circleStream(String circleId) =>
       _circlesProvider.circleStream(circleId);
+  Stream<List<Circle>> scheduledUpcomingCircles(int timeWindowDuration) =>
+      _circlesProvider.scheduledUpcomingCircles(timeWindowDuration);
 
   // Sessions
   Future<void> joinSession(

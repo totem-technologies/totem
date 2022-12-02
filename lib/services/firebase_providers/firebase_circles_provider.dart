@@ -83,7 +83,29 @@ class FirebaseCirclesProvider extends CirclesProvider {
           Circle?>.fromHandlers(
         handleData: (DocumentSnapshot<Map<String, dynamic>> documentSnapshot,
             EventSink<Circle?> sink) {
-          _mapSingleCircleUserReference(documentSnapshot, sink);
+          mapSingleCircleUserReference(documentSnapshot, sink);
+        },
+      ),
+    );
+  }
+
+  @override
+  Stream<List<Circle>> scheduledUpcomingCircles(int timeWindowDuration) {
+    DateTime now = DateTime.now();
+    DateTime timeWindowEnd = now.add(Duration(seconds: timeWindowDuration));
+    final collection = FirebaseFirestore.instance.collection(Paths.snapCircles);
+    return collection
+        .where('state', isEqualTo: SessionState.scheduled.name)
+        .where('isPrivate', isEqualTo: false)
+        .where('nextSession', isLessThanOrEqualTo: timeWindowEnd)
+        .where('nextSession', isGreaterThan: now)
+        .snapshots()
+        .transform(
+      StreamTransformer<QuerySnapshot<Map<String, dynamic>>,
+          List<Circle>>.fromHandlers(
+        handleData: (QuerySnapshot<Map<String, dynamic>> querySnapshot,
+            EventSink<List<Circle>> sink) {
+          _mapCircleUserReference(querySnapshot, sink);
         },
       ),
     );
@@ -266,7 +288,7 @@ class FirebaseCirclesProvider extends CirclesProvider {
     sink.add(circles);
   }
 
-  void _mapSingleCircleUserReference(
+  void mapSingleCircleUserReference(
       DocumentSnapshot<Map<String, dynamic>> documentSnapshot,
       EventSink sink) async {
     if (documentSnapshot.exists) {

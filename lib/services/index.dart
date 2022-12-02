@@ -5,6 +5,7 @@ export 'communication_provider.dart';
 export 'error_code_translation.dart';
 export 'foreground/index.dart';
 export 'providers.dart';
+export 'scheduled_circles_provider.dart';
 export 'service_exception.dart';
 export 'session_provider.dart';
 export 'system_provider.dart';

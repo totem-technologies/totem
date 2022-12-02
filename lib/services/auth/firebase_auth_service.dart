@@ -48,7 +48,7 @@ class FirebaseAuthService implements AuthService {
 
   @override
   Stream<AuthUser?> get onAuthStateChanged {
-    _currentUser = _userFromFirebase(
+    _currentUser ??= _userFromFirebase(
       _firebaseAuth.currentUser,
     );
     streamController ??= BehaviorSubject<AuthUser?>();
