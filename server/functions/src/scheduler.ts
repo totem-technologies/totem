@@ -32,10 +32,7 @@ async function performAllTasks(): Promise<void> {
  * @return {Promise}
  */
 async function performExpirationTasks(): Promise<void> {
-  // Do them in this order so we don't end sessions that were just set to expiring in the same run
-  // This gives the frontend a chance to handle the expiring state
-  await endExpiredSessions();
-  await setExpiringSessions();
+  await Promise.all([endUnstartedSessions(), endExpiredSessions(), setExpiringSessions()]);
 }
 
 /**
@@ -80,7 +77,26 @@ async function setExpiringSessions(): Promise<void> {
 }
 
 /**
- * This function is used to move any upcoming scheduled sessions into the waiting state
+ * Queries snapCircles for any sessions that haven't started by their expiration time and ends them
+ * @return {Promise}
+ */
+async function endUnstartedSessions(): Promise<void> {
+  const now: Timestamp = new Timestamp(Timestamp.now().seconds, 0);
+  const ref = admin
+    .firestore()
+    .collection("snapCircles")
+    .where("state", "==", SessionState.waiting)
+    .where("expiresOn", "<", now);
+  const snapshot = await ref.get();
+  for (const doc of snapshot.docs) {
+    console.warn(`Session for circle ${doc.id} has was never started, ending session`);
+    await endSessionFor(doc.id, doc.data() as SnapCircleData);
+  }
+}
+
+/**
+ * This function is used to move any sessions that are set to start in the next few minutes
+ * into the waiting state and to prepare the session data for the circle.
  */
 async function activateScheduledSessions(): Promise<void> {
   const in5Mins: Timestamp = new Timestamp(Timestamp.now().seconds + SchedulerInterval * 60, 0);
@@ -90,11 +106,31 @@ async function activateScheduledSessions(): Promise<void> {
     .where("state", "==", SessionState.scheduled)
     .where("nextSession", "<", in5Mins);
   const snapshot = await ref.get();
-  const promises = snapshot.docs.flatMap(({id: circleId}) => [
-    admin.firestore().collection("snapCircles").doc(circleId).update({state: SessionState.waiting}),
-    initializeSessionFor(circleId),
+  const promises = snapshot.docs.flatMap((doc) => [
+    initializeSessionFor(doc.id),
+    activateCircle(doc.id, doc.data() as SnapCircleData),
   ]);
   await Promise.all(promises);
+}
+
+/**
+ * Puts the circle into the waiting state and calcualates the expiration time for the session
+ *
+ * @param {string} circleId - circle ID
+ * @param {SnapCircleData} circleData - the circle data object
+ * @return {Promise}
+ */
+async function activateCircle(circleId: string, circleData: SnapCircleData): Promise<void> {
+  const {maxMinutes, nextSession} = circleData;
+  const circleUpdate: {state: string; expiresOn?: Timestamp} = {
+    state: SessionState.waiting,
+  };
+  if (maxMinutes != null && nextSession != null) {
+    // A scheduled circle's expiration time is based on the time it was scheduled to start
+    circleUpdate["expiresOn"] = new Timestamp(nextSession.seconds + maxMinutes * 60, 0);
+  }
+
+  await admin.firestore().collection("snapCircles").doc(circleId).update(circleUpdate);
 }
 
 if (process.env.FUNCTIONS_EMULATOR === "true") {
