@@ -194,7 +194,7 @@ class CountdownTimerState extends ConsumerState<CountdownTimer> {
   @override
   Widget build(BuildContext context) {
     _updateValueDisplay();
-    return InkWell(
+    return GestureDetector(
       onTap: () {
         setState(() {
           _displayValue = !_displayValue;
