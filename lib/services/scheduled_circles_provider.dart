@@ -35,8 +35,8 @@ class ScheduledCirclesProvider {
     _timer?.cancel();
     _scheduledCirclesSubscription?.cancel();
     // fetch the user profile data
-    final scheduledStream =
-        repository.scheduledUpcomingCircles(timeWindowDuration);
+    final scheduledStream = repository.scheduledUpcomingCircles(
+        timeWindowDuration: timeWindowDuration);
     _scheduledCirclesSubscription = scheduledStream.listen((circles) {
       _streamController.add(circles);
     });

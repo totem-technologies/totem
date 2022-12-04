@@ -65,6 +65,8 @@ class Circle extends CircleTemplate {
 
   bool get canJoin => _canJoin;
 
+  DateTime get sortDate => (nextSession ?? createdOn);
+
   Role participantRole(String participantId) {
     return keeper == participantId ? Role.keeper : Role.member;
   }
@@ -75,6 +77,15 @@ class Circle extends CircleTemplate {
       SessionState.cancelled,
     ];
     return completeStates.contains(state);
+  }
+
+  bool get isRunning {
+    const runningStates = [
+      SessionState.live,
+      SessionState.waiting,
+      SessionState.expiring,
+    ];
+    return runningStates.contains(state);
   }
 
   bool get isPending {

@@ -14,6 +14,26 @@ import 'package:totem/theme/index.dart';
 
 import 'menu.dart';
 
+final activeCirclesProvider = StreamProvider.autoDispose<List<Circle>>((ref) {
+  final repo = ref.read(repositoryProvider);
+  return repo.circles();
+});
+
+final scheduledCirclesProvider =
+    StreamProvider.autoDispose<List<Circle>>((ref) {
+  final authService = ref.read(authServiceProvider);
+  final totemRepository = ref.read(repositoryProvider);
+  return ScheduledCirclesProvider(
+          authStream: authService.onAuthStateChanged,
+          repository: totemRepository)
+      .stream;
+});
+
+final ownerCirclesProvider = StreamProvider.autoDispose<List<Circle>>((ref) {
+  final totemRepository = ref.read(repositoryProvider);
+  return totemRepository.ownerUpcomingCircles();
+});
+
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
@@ -30,6 +50,8 @@ class HomePageState extends ConsumerState<HomePage> {
     final themeData = Theme.of(context);
     final themeColors = themeData.themeColors;
     AuthUser? user = ref.read(authServiceProvider).currentUser();
+    ref.watch(scheduledCirclesProvider);
+    ref.watch(ownerCirclesProvider);
     bool isMobile = Theme.of(context).isMobile(context);
     return Scaffold(
       appBar: AppBar(
@@ -80,8 +102,6 @@ class HomePageState extends ConsumerState<HomePage> {
     final bool isKeeper = user.hasRole(Role.keeper);
     final bool hasPrivateCircles =
         ref.watch(userPrivateCircles).value?.isNotEmpty ?? false;
-    final bool hasRejoinable =
-        ref.watch(rejoinableCircles).value?.isNotEmpty ?? false;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -100,36 +120,24 @@ class HomePageState extends ConsumerState<HomePage> {
               NamedCircleList(
                 name: t.yourPrivateCircles,
               ),
-              const SnapCirclesRejoinable(),
-              SliverToBoxAdapter(
-                child: (hasPrivateCircles || hasRejoinable)
-                    ? Padding(
-                        padding: EdgeInsets.symmetric(
-                            vertical: 8.0,
-                            horizontal:
-                                Theme.of(context).pageHorizontalPadding),
-                        child: Text(
-                          t.otherCircles,
-                          style: Theme.of(context).textStyles.headline2,
-                        ),
-                      )
-                    : const SizedBox(height: 10),
-              ),
-              const SnapCirclesList(),
+              const CirclesRejoinable(),
               const SliverToBoxAdapter(
-                child: SizedBox(height: 20),
+                child: SizedBox(height: 10),
               ),
-              SliverToBoxAdapter(
-                  child: Padding(
-                padding: EdgeInsets.symmetric(
-                    vertical: 8.0,
-                    horizontal: Theme.of(context).pageHorizontalPadding),
-                child: Text(
-                  t.scheduledCircles,
-                  style: Theme.of(context).textStyles.headline2,
-                ),
-              )),
-              const ScheduledCirclesList(),
+              CirclesList(
+                provider: activeCirclesProvider,
+                title: t.activeCircles,
+                description: t.activeCirclesDescription,
+                noCircles: const NoCircles(),
+              ),
+              CirclesList(
+                  provider: ownerCirclesProvider,
+                  title: t.ownedCircles,
+                  description: t.ownedCirclesDescription),
+              CirclesList(
+                  provider: scheduledCirclesProvider,
+                  title: t.scheduledCircles,
+                  description: t.scheduledCirclesDescription),
               const SliverToBoxAdapter(
                 child: SizedBox(height: 20),
               ),
