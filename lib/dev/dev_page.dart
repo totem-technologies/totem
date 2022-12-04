@@ -89,7 +89,10 @@ class WidgetContainer extends StatelessWidget {
           right: 0,
           top: 30,
           child: IconButton(
-            icon: const Icon(LucideIcons.x),
+            icon: const Icon(
+              LucideIcons.x,
+              shadows: <Shadow>[Shadow(color: Colors.white, blurRadius: 3.0)],
+            ),
             onPressed: () {
               reset();
             },

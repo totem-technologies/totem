@@ -11,19 +11,18 @@ class CountdownTimerTest extends StatefulWidget {
 }
 
 class CountdownTimerTestState extends State<CountdownTimerTest> {
+  final max = 1800.0;
   bool showing = true;
   int duration = 1800; // 30 min in seconds
-  DateTime startTime = DateTime.now();
+  late DateTime startTime;
   late DateTime endTime;
-  int overtime = 1800; // 30 min in seconds
+  int overtime = 300;
   final TextEditingController _durationController = TextEditingController();
-  final TextEditingController _overtimeController = TextEditingController();
 
   @override
   void initState() {
     _durationController.text = duration.toString();
-    _overtimeController.text = overtime.toString();
-    endTime = DateTime.now().add(Duration(seconds: duration));
+    reset();
     super.initState();
   }
 
@@ -93,7 +92,7 @@ class CountdownTimerTestState extends State<CountdownTimerTest> {
                   const SizedBox(height: 30),
                   Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                     SizedBox(
-                      width: 100,
+                      width: 400,
                       child: Column(
                         children: [
                           const Text('Duration',
@@ -117,35 +116,17 @@ class CountdownTimerTestState extends State<CountdownTimerTest> {
                               updateState();
                             },
                           ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 30),
-                    SizedBox(
-                      width: 100,
-                      child: Column(
-                        children: [
-                          const Text('Overtime',
-                              style: TextStyle(color: Colors.white)),
-                          TextField(
-                            controller: _overtimeController,
-                            keyboardType: TextInputType.number,
-                            decoration: InputDecoration(
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8.0),
-                                borderSide: const BorderSide(
-                                  color: Colors.white,
-                                  width: 1.0,
-                                ),
-                              ),
-                              hintText: 'seconds',
-                              hintStyle: const TextStyle(color: Colors.white),
-                            ),
-                            style: const TextStyle(color: Colors.white),
-                            onEditingComplete: () {
-                              updateState();
+                          Slider(
+                            value: double.parse(_durationController.text),
+                            max: max,
+                            onChanged: (double value) {
+                              setState(() {
+                                _durationController.text =
+                                    value.toInt().toString();
+                                updateState();
+                              });
                             },
-                          ),
+                          )
                         ],
                       ),
                     ),
@@ -182,7 +163,6 @@ class CountdownTimerTestState extends State<CountdownTimerTest> {
     setState(() {
       try {
         duration = int.parse(_durationController.text);
-        overtime = int.parse(_overtimeController.text);
         endTime = startTime.add(Duration(seconds: duration));
       } catch (ex) {
         debugPrint(ex.toString());
@@ -192,7 +172,7 @@ class CountdownTimerTestState extends State<CountdownTimerTest> {
 
   void reset() {
     setState(() {
-      startTime = DateTime.now();
+      startTime = DateTime.now().subtract(const Duration(seconds: 300));
       endTime = DateTime.now().add(Duration(seconds: duration));
     });
   }
