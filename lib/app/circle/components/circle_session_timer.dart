@@ -73,9 +73,6 @@ class CircleSessionTimer extends ConsumerWidget {
             ],
           ),
           if (participant.role == Role.keeper) ...[
-            const SizedBox(
-              width: 10,
-            ),
             PopupMenuButton(
               child: Icon(
                 LucideIcons.moreVertical,
@@ -103,8 +100,7 @@ class CircleSessionTimer extends ConsumerWidget {
                 }
               },
             ),
-          ],
-          const SizedBox(width: 40)
+          ]
         ],
       );
     } else {
