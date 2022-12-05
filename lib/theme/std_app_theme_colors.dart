@@ -91,7 +91,7 @@ class StdAppThemeColors extends AppThemeColors {
           titleBarGradient: StdThemePalette.blackGradient,
           cameraBorder: StdThemePalette.grey,
           contentDivider: StdThemePalette.grey,
-          alertBackground: StdThemePalette.red2,
+          alertBackground: StdThemePalette.pinktint,
           videoOverlayBackground: StdThemePalette.transparentGrey,
           reversedVideoOverlayBackground:
               StdThemePalette.newyellow.withAlpha(200),

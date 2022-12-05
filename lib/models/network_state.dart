@@ -19,7 +19,7 @@ class NetworkState {
   static const int maxSamples = 10;
   static const int minSamples = 5;
   // just above poor threshold
-  static const double networkQualityThreshold = 3.2;
+  static const double networkQualityThreshold = 3.0;
 
   final List<int> _receiveQuality = [];
   final List<int> _transmitQuality = [];
