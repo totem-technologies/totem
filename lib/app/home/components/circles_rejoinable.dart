@@ -12,16 +12,15 @@ final rejoinableCircles = StreamProvider.autoDispose<List<Circle>>((ref) {
   return repo.rejoinableCircles();
 });
 
-class SnapCirclesRejoinable extends ConsumerStatefulWidget {
-  const SnapCirclesRejoinable({Key? key, this.topPadding = 140})
-      : super(key: key);
+class CirclesRejoinable extends ConsumerStatefulWidget {
+  const CirclesRejoinable({Key? key, this.topPadding = 140}) : super(key: key);
   final double topPadding;
 
   @override
-  SnapCirclesRejoinableState createState() => SnapCirclesRejoinableState();
+  CirclesRejoinableState createState() => CirclesRejoinableState();
 }
 
-class SnapCirclesRejoinableState extends ConsumerState<SnapCirclesRejoinable> {
+class CirclesRejoinableState extends ConsumerState<CirclesRejoinable> {
   @override
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context)!;
@@ -46,7 +45,7 @@ class SnapCirclesRejoinableState extends ConsumerState<SnapCirclesRejoinable> {
                     const SizedBox(
                       height: 10,
                     ),
-                    SnapCircleItem(
+                    CircleItem(
                       circle: data.first,
                       onPressed: (circle) => _handleShowCircle(context, circle),
                     ),

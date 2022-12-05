@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
@@ -8,9 +9,9 @@ import 'package:totem/services/error_report.dart';
 import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
 
-class SnapCircleItem extends ConsumerWidget {
+class CircleItem extends ConsumerWidget {
   static const double maxFullInfoWidth = 250;
-  const SnapCircleItem({
+  const CircleItem({
     Key? key,
     required this.circle,
     required this.onPressed,
@@ -24,6 +25,7 @@ class SnapCircleItem extends ConsumerWidget {
     final themeData = Theme.of(context);
     final themeColor = Theme.of(context).themeColors;
     final textStyles = themeData.textTheme;
+
     AuthUser? user = ref.read(authServiceProvider).currentUser();
     bool canCancel = user != null &&
         circle.isPending &&
@@ -99,7 +101,10 @@ class SnapCircleItem extends ConsumerWidget {
                         ],
                       ),
                       const SizedBox(height: 8),
-                      _sessionInfo(context),
+                      if (circle.state == SessionState.waiting)
+                        _sessionInfo(context),
+                      if (circle.state == SessionState.scheduled)
+                        _scheduledSessionInfo(context)
                     ],
                   ),
                 ),
@@ -172,6 +177,42 @@ class SnapCircleItem extends ConsumerWidget {
                       )
                     : Container(),
               ),
+            ],
+          ),
+        ],
+      );
+    });
+  }
+
+  Widget _scheduledSessionInfo(BuildContext context) {
+    final DateFormat timeFormat = DateFormat('hh:mm a');
+    final t = AppLocalizations.of(context)!;
+    final themeColor = Theme.of(context).themeColors;
+    return LayoutBuilder(builder: (context, constraints) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Divider(
+            height: 5,
+            thickness: 1,
+            color: themeColor.divider,
+          ),
+          const SizedBox(
+            height: 8,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              if (circle.nextSession != null)
+                Text(
+                    '${DateFormat.yMMMMEEEEd().format(circle.nextSession!)} @ ${timeFormat.format(circle.nextSession!)}'),
+              if (circle.repeating != null &&
+                  ((circle.repeating!.count ?? 0) > 1))
+                Text(
+                  t.repeats,
+                  style: const TextStyle(fontStyle: FontStyle.italic),
+                  textAlign: TextAlign.end,
+                ),
             ],
           ),
         ],

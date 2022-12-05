@@ -5,7 +5,7 @@ import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
 
-import 'snap_circle_item.dart';
+import 'circle_item.dart';
 
 final userPrivateCircles = StreamProvider.autoDispose<List<Circle>>((ref) {
   final repo = ref.read(repositoryProvider);
@@ -74,7 +74,7 @@ class NamedCircleList extends ConsumerWidget {
 
   List<Widget> _buildCircleList(BuildContext context, List<Circle> circles) {
     List<Widget> circleList = circles
-        .map<Widget>((circle) => SnapCircleItem(
+        .map<Widget>((circle) => CircleItem(
               circle: circle,
               onPressed: (circle) => _handleShowCircle(context, circle),
             ))

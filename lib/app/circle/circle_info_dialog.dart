@@ -284,6 +284,7 @@ class _CircleInfoDialogState extends ConsumerState<CircleInfoDialog> {
     String startTime = timeFormat.format(start);
     if (circle.nextSession != null) {
       start = circle.nextSession!;
+      startTime = timeFormat.format(start);
       sessionType = t.scheduledSession;
       DateTime ends = start.add(Duration(minutes: circle.maxMinutes));
       String endTime = timeFormat.format(ends);

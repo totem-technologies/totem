@@ -83,10 +83,57 @@ class FirebaseCirclesProvider extends CirclesProvider {
           Circle?>.fromHandlers(
         handleData: (DocumentSnapshot<Map<String, dynamic>> documentSnapshot,
             EventSink<Circle?> sink) {
-          _mapSingleCircleUserReference(documentSnapshot, sink);
+          mapSingleCircleUserReference(documentSnapshot, sink);
         },
       ),
     );
+  }
+
+  @override
+  Stream<List<Circle>> scheduledUpcomingCircles(
+      {required int timeWindowDuration}) {
+    DateTime now = DateTime.now();
+    DateTime timeWindowEnd = now.add(Duration(seconds: timeWindowDuration));
+    final collection = FirebaseFirestore.instance.collection(Paths.snapCircles);
+    return collection
+        .where('state', isEqualTo: SessionState.scheduled.name)
+        .where('isPrivate', isEqualTo: false)
+        .where('nextSession', isLessThanOrEqualTo: timeWindowEnd)
+        .where('nextSession', isGreaterThan: now)
+        .snapshots()
+        .transform(
+      StreamTransformer<QuerySnapshot<Map<String, dynamic>>,
+          List<Circle>>.fromHandlers(
+        handleData: (QuerySnapshot<Map<String, dynamic>> querySnapshot,
+            EventSink<List<Circle>> sink) {
+          _mapCircleUserReference(querySnapshot, sink);
+        },
+      ),
+    );
+  }
+
+  @override
+  Stream<List<Circle>> ownerUpcomingCircles({required String uid}) {
+    final collection = FirebaseFirestore.instance.collection(Paths.snapCircles);
+    final userRef = FirebaseFirestore.instance.collection(Paths.users).doc(uid);
+    return collection
+        .where('state', whereIn: [
+          SessionState.scheduled.name,
+          SessionState.waiting.name,
+          SessionState.live.name,
+          SessionState.expiring.name,
+        ])
+        .where('createdBy', isEqualTo: userRef)
+        .snapshots()
+        .transform(
+          StreamTransformer<QuerySnapshot<Map<String, dynamic>>,
+              List<Circle>>.fromHandlers(
+            handleData: (QuerySnapshot<Map<String, dynamic>> querySnapshot,
+                EventSink<List<Circle>> sink) {
+              _mapCircleUserReference(querySnapshot, sink);
+            },
+          ),
+        );
   }
 
   @override
@@ -263,10 +310,20 @@ class FirebaseCirclesProvider extends CirclesProvider {
         await reportError(ex, stack);
       }
     }
+    circles.sort((a, b) {
+      if (b.isRunning && a.isRunning) {
+        return a.name.compareTo(b.name);
+      } else if (b.isRunning) {
+        return 1;
+      } else if (a.isRunning) {
+        return -1;
+      }
+      return a.sortDate.compareTo(b.sortDate);
+    });
     sink.add(circles);
   }
 
-  void _mapSingleCircleUserReference(
+  void mapSingleCircleUserReference(
       DocumentSnapshot<Map<String, dynamic>> documentSnapshot,
       EventSink sink) async {
     if (documentSnapshot.exists) {
