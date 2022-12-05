@@ -12,6 +12,7 @@ class TotemActionButton extends StatefulWidget {
       this.toolTips = const [],
       this.showToolTips = false,
       this.vertical = false,
+      this.busy = false,
       this.onPressed})
       : super(key: key);
   final Widget? image;
@@ -20,6 +21,7 @@ class TotemActionButton extends StatefulWidget {
   final List<String> toolTips;
   final bool showToolTips;
   final bool vertical;
+  final bool busy;
   final Function()? onPressed;
 
   @override
@@ -95,6 +97,7 @@ class TotemActionButtonState extends State<TotemActionButton> {
             height: !widget.vertical ? 14 : 5,
           ),
           ThemedRaisedButton(
+            busy: widget.busy,
             horzPadding: 0,
             width: !widget.vertical ? 250 : 350,
             onPressed: () {

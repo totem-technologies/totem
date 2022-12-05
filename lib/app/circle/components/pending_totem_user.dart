@@ -30,6 +30,7 @@ class PendingTotemUserState extends ConsumerState<PendingTotemUser> {
   static const double standardFontSize = 15;
   static const double iconSize = 30;
   late final bool _showToolTips;
+  bool busy = false;
 
   @override
   void initState() {
@@ -96,15 +97,27 @@ class PendingTotemUserState extends ConsumerState<PendingTotemUser> {
     );
   }
 
-  Widget _receiveTotem(BuildContext context, {bool vertical = false}) {
+  Widget _receiveTotem(BuildContext context) {
     final t = AppLocalizations.of(context)!;
     return TotemActionButton(
       label: t.receive,
+      busy: busy,
       message: t.circleTotemReceive,
       toolTips: [t.circleTotemReceiveLine1, t.circleTotemReceiveLine2],
       showToolTips: _showToolTips,
-      vertical: vertical,
-      onPressed: widget.onReceive,
+      onPressed: () {
+        setState(() {
+          busy = true;
+        });
+        Future.delayed(const Duration(seconds: 10), () {
+          if (mounted) {
+            setState(() {
+              busy = false;
+            });
+          }
+        });
+        widget.onReceive!();
+      },
     );
   }
 }
