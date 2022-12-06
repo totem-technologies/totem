@@ -797,13 +797,13 @@ class AgoraCommunicationProvider extends CommunicationProvider {
       String? totemSessionId = totemParticipant?.sessionUserId;
       for (final participant in session.activeParticipants) {
         if (participant.sessionUserId != null && !participant.me) {
+          final mode = participant.sessionUserId == totemSessionId
+              ? VideoStreamType.High
+              : VideoStreamType.Low;
           _engine?.setRemoteVideoStreamType(
-              int.parse(participant.sessionUserId!),
-              participant.sessionUserId == totemSessionId
-                  ? VideoStreamType.High
-                  : VideoStreamType.Low);
+              int.parse(participant.sessionUserId!), mode);
           debugPrint(
-              'Setting video stream for ${participant.name} to ${participant.sessionUserId == totemSessionId ? 'high' : 'low'}');
+              'Setting video stream for ${participant.uid} to ${mode.name}');
         }
       }
     }

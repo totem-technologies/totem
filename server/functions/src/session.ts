@@ -2,7 +2,7 @@ import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 // eslint-disable-next-line import/no-unresolved -- https://github.com/firebase/firebase-admin-node/issues/1827#issuecomment-1226224988
 import {DocumentReference, Timestamp, FieldValue} from "firebase-admin/firestore";
-import * as dynamicLinks from "./dynamic-links";
+// import * as dynamicLinks from "./dynamic-links";
 import {hasAnyRole, isAuthenticated, Role} from "./auth";
 import {kickUserFromSession} from "./agora";
 import {
@@ -26,7 +26,7 @@ try {
   console.log("re-initializing admin");
 }
 
-const firebaseDynamicLinks = new dynamicLinks.FirebaseDynamicLinks(functions.config().applinks.key);
+// const firebaseDynamicLinks = new dynamicLinks.FirebaseDynamicLinks(functions.config().applinks.key);
 const isDev = (process.env.GCLOUD_PROJECT || "").startsWith("totem-dev");
 const NonKeeperMaxMinutes = 60;
 const NonKeeperMaxParticipants = 5;
@@ -377,26 +377,28 @@ export const createSnapCircle = functions.https.onCall(
     // Generate a dynamic link for this circle
     try {
       const host = isDev ? "stage" : "app";
-      const {shortLink, previewLink} = await firebaseDynamicLinks.createLink(
-        {
-          dynamicLinkInfo: {
-            domainUriPrefix: functions.config().applinks.link,
-            link: `https://${host}.totem.org/?snap=${ref.id}`,
-            androidInfo: {
-              androidPackageName: "io.kbl.totem",
-            },
-            iosInfo: {
-              iosBundleId: "io.kbl.totem",
-            },
-          },
-          suffix: {
-            option: "UNGUESSABLE",
-          },
-        },
-        "createSnapCircle"
-      );
+      // Enable dynamic links when https://github.com/firebase/flutterfire/issues/9469 is fixed
+      // const {shortLink, previewLink} = await firebaseDynamicLinks.createLink(
+      //   {
+      //     dynamicLinkInfo: {
+      //       domainUriPrefix: functions.config().applinks.link,
+      //       link: `https://${host}.totem.org/circle/${ref.id}`,
+      //       androidInfo: {
+      //         androidPackageName: "io.kbl.totem",
+      //       },
+      //       iosInfo: {
+      //         iosBundleId: "io.kbl.totem",
+      //       },
+      //     },
+      //     suffix: {
+      //       option: "UNGUESSABLE",
+      //     },
+      //   },
+      //   "createSnapCircle"
+      // );
       // update with the link
-      await admin.firestore().collection("snapCircles").doc(ref.id).update({link: shortLink, previewLink});
+      const link = `https://${host}.totem.org/circle/${ref.id}`;
+      await admin.firestore().collection("snapCircles").doc(ref.id).update({link: link, previewLink: link});
     } catch (ex) {
       if (!process.env.FIREBASE_EMULATOR_HUB) {
         console.log("Failed to create dynamic link for circle ${ref.id}: ", ex);

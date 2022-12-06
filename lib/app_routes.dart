@@ -18,19 +18,24 @@ import 'services/index.dart';
 
 export 'package:go_router/src/misc/extensions.dart';
 
-class GoRouterRefreshStream extends ChangeNotifier {
-  GoRouterRefreshStream(Stream<dynamic> stream) {
+class GoRouterRefreshStreams extends ChangeNotifier {
+  late final List<StreamSubscription<dynamic>> _subscriptions;
+  GoRouterRefreshStreams(List<Stream<dynamic>> streams) {
     notifyListeners();
-    _subscription = stream.asBroadcastStream().listen(
-          (dynamic _) => notifyListeners(),
-        );
+    _subscriptions = streams.map((stream) {
+      return stream.asBroadcastStream().listen(
+            (dynamic _) => notifyListeners(),
+          );
+    }).toList();
   }
-
-  late final StreamSubscription<dynamic> _subscription;
 
   @override
   void dispose() {
-    _subscription.cancel();
+    void cancel(StreamSubscription<dynamic> e) {
+      e.cancel();
+    }
+
+    _subscriptions.forEach(cancel);
     super.dispose();
   }
 }
@@ -115,7 +120,7 @@ class AppRoutes {
                     opaque: false,
                     fullscreenDialog: true);
               },
-            ),
+            )
           ],
         ),
         GoRoute(
@@ -148,7 +153,7 @@ class AppRoutes {
           ],
         ),
       ],
-      redirect: (context, state) {
+      redirect: (context, state) async {
         // Is there a logged in user?
         UserAuthAccountState? user =
             ref.read(userAccountStateProvider).asData?.value;
@@ -214,7 +219,7 @@ class AppRoutes {
         return null;
       },
       refreshListenable:
-          GoRouterRefreshStream(ref.read(userAccountStateProvider.stream)),
+          GoRouterRefreshStreams([ref.read(userAccountStateProvider.stream)]),
     );
   }
 
