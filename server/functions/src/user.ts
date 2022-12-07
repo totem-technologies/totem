@@ -47,9 +47,10 @@ export const updateAccountState = functions.https.onCall(async ({key, value}, {a
     }
   } catch (ex) {
     console.error("Failed updating account state: ", ex);
+    return false;
   }
   // return information
-  return await userAccountStateRef.get();
+  return true;
 });
 
 /**
