@@ -45,9 +45,7 @@ class _AppState extends ConsumerState<App> {
     ));
     ref.watch(authStateChangesProvider);
     return _wrapWithBanner(MaterialApp.router(
-      routeInformationProvider: _router.routeInformationProvider,
-      routeInformationParser: _router.routeInformationParser,
-      routerDelegate: _router.routerDelegate,
+      routerConfig: _router,
       localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,

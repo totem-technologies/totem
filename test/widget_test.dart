@@ -26,7 +26,7 @@ class WidgetTestHarness extends StatelessWidget {
 
 void main() {
   testWidgets('Test header widget shows text', (WidgetTester tester) async {
-    /* TODO
+    /*
     await tester.pumpWidget(
         const WidgetTestHarness(child: TotemHeader(text: 'Welcome')));
     // Verify text
