@@ -1,0 +1,82 @@
+{
+  "project_info": {
+    "project_number": "818015549149",
+    "project_id": "totem-dev-184f1",
+    "storage_bucket": "totem-dev-184f1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:818015549149:android:f1bdf1b89fefa3cf0ecd34",
+        "android_client_info": {
+          "package_name": "io.kbl.totem"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "818015549149-8ci4mgq5vqi2ehcrqdrdfamebr41eqgs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCsPEU7nB4lBzC-v4emBNtYaP-lwlVVRA0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "818015549149-8ci4mgq5vqi2ehcrqdrdfamebr41eqgs.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "818015549149-g8ucglbo1bs4j2qj6hu3aujmr744o8ul.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "io.kbl.totem"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:818015549149:android:1255de9069b1aac80ecd34",
+        "android_client_info": {
+          "package_name": "io.kbl.totem.dev"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "818015549149-8ci4mgq5vqi2ehcrqdrdfamebr41eqgs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCsPEU7nB4lBzC-v4emBNtYaP-lwlVVRA0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "818015549149-8ci4mgq5vqi2ehcrqdrdfamebr41eqgs.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "818015549149-g8ucglbo1bs4j2qj6hu3aujmr744o8ul.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "io.kbl.totem"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
