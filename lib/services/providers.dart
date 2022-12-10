@@ -8,17 +8,17 @@ final authServiceProvider =
     Provider<AuthService>((ref) => FirebaseAuthService());
 
 final authStateChangesProvider = StreamProvider<AuthUser?>(
-    (ref) => ref.read(authServiceProvider).onAuthStateChanged);
+    (ref) => ref.watch(authServiceProvider).onAuthStateChanged);
 
 final repositoryProvider =
     Provider<TotemRepository>((ref) => TotemRepository(ref));
 
 final analyticsProvider = Provider<AnalyticsProvider>(
-    (ref) => ref.read(repositoryProvider).analyticsProvider);
+    (ref) => ref.watch(repositoryProvider).analyticsProvider);
 
 final userAccountStateProvider = StreamProvider<UserAuthAccountState>((ref) {
-  final authService = ref.read(authServiceProvider);
-  final totemRepository = ref.read(repositoryProvider);
+  final authService = ref.watch(authServiceProvider);
+  final totemRepository = ref.watch(repositoryProvider);
   return UserAccountStateProvider(
           authStream: authService.onAuthStateChanged,
           repository: totemRepository)

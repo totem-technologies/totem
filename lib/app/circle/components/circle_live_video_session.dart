@@ -235,10 +235,6 @@ class _CircleLiveVideoSessionState
                 ? TotemActionButton(
                     busy: _processingRequest,
                     label: t.pass,
-                    message: t.circleTotemPass,
-                    toolTips: [t.circleTotemPassLine1, t.circleTotemPassLine3],
-                    showToolTips: activeSession.showTooltips,
-                    vertical: false,
                     onPressed: !_processingRequest
                         ? () {
                             _endTurn(context, participant);

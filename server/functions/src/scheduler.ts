@@ -77,16 +77,17 @@ async function setExpiringSessions(): Promise<void> {
 }
 
 /**
- * Queries snapCircles for any sessions that haven't started by their expiration time and ends them
+ * Queries snapCircles for any sessions that haven't started by their expiration time (plus a buffer) and ends them
  * @return {Promise}
  */
 async function endUnstartedSessions(): Promise<void> {
-  const now: Timestamp = new Timestamp(Timestamp.now().seconds, 0);
+  const min30 = 30*60;
+  const nowWithBuffer: Timestamp = new Timestamp(Timestamp.now().seconds + min30, 0);
   const ref = admin
     .firestore()
     .collection("snapCircles")
     .where("state", "==", SessionState.waiting)
-    .where("expiresOn", "<", now);
+    .where("expiresOn", "<", nowWithBuffer);
   const snapshot = await ref.get();
   for (const doc of snapshot.docs) {
     console.warn(`Session for circle ${doc.id} has was never started, ending session`);
