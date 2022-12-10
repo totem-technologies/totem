@@ -40,6 +40,7 @@ class StdThemePalette {
     baseBlack.withAlpha(50),
     Colors.transparent,
   ];
+  static final ctaGradient = [newyellow, pink];
   static final List<Color> circleColors = [
     mediumGrey,
     newyellow,
@@ -73,6 +74,7 @@ class StdAppThemeColors extends AppThemeColors {
           screenBackground: StdThemePalette.offWhite,
           primaryGradient: StdThemePalette.mainGradient,
           secondaryGradient: StdThemePalette.homeGradient,
+          ctaGradient: StdThemePalette.ctaGradient,
           trayBackground: StdThemePalette.dirtyWhite,
           trayBorder: const Color.fromRGBO(201, 201, 201, 0.72),
           itemBackground: StdThemePalette.dirtyWhite,

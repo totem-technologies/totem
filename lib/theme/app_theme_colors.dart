@@ -20,6 +20,7 @@ class AppThemeColors {
     required this.error,
     required this.primaryGradient,
     required this.secondaryGradient,
+    required this.ctaGradient,
     required this.itemBackground,
     required this.itemBorder,
     required this.divider,
@@ -73,6 +74,7 @@ class AppThemeColors {
   final Color iconNext;
   final List<Color> primaryGradient;
   final List<Color> secondaryGradient;
+  final List<Color> ctaGradient;
   final List<Color> profileGradient;
   final List<Color> titleBarGradient;
   final List<Color> circleColors;

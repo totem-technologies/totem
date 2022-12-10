@@ -90,6 +90,7 @@ class PendingTotemUserState extends ConsumerState<PendingTotemUser> {
     return TotemActionButton(
       label: t.receive,
       busy: busy,
+      cta: true,
       onPressed: () {
         setState(() {
           busy = true;
