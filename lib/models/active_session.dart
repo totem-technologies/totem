@@ -26,8 +26,6 @@ enum ActiveSessionChange {
 }
 
 class ActiveSession extends ChangeNotifier {
-  static const int tooltipCount = 3;
-
   ActiveSession(
       {required this.circle, required this.userId, this.isSnap = true});
   String topic = "";
@@ -77,10 +75,6 @@ class ActiveSession extends ChangeNotifier {
 
   bool get userStatus {
     return _userStatus;
-  }
-
-  bool get showTooltips {
-    return (userProfile?.completedCircles ?? 0) < tooltipCount;
   }
 
   List<SessionParticipant> get activeParticipants {

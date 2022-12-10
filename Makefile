@@ -27,6 +27,10 @@ run-web:
 release: test
 	./scripts/tag_release.sh
 
+upgrade:
+	flutter pub upgrade
+	cd ios && pod update
+
 test:
 	flutter analyze
 	flutter test

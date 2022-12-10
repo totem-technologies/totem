@@ -76,13 +76,6 @@
             "end": {}
         }
     },
-    "circleTotemPass": "Finishes sharing by:",
-    "circleTotemPassLine1": "muting microphone",
-    "circleTotemPassLine2": "hiding video or image",
-    "circleTotemPassLine3": "passing to next person",
-    "circleTotemReceive": "Begins sharing by:",
-    "circleTotemReceiveLine1": "un-muting microphone",
-    "circleTotemReceiveLine2": "showing video or image",
     "circleTotemSettings": "To make changes to your microphone, speakers, or camera, select here",
     "circleWaitForUser": "Please wait while the next person gets ready to share.",
     "circleWeeksSession": "This Weeks Session",

@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:totem/app/circle/circle_session_page.dart';
 import 'package:totem/app/circle/components/index.dart';
 import 'package:totem/theme/app_theme_styles.dart';
 
@@ -29,18 +28,7 @@ class PendingTotemUserState extends ConsumerState<PendingTotemUser> {
   static const double labelFontSize = 20;
   static const double standardFontSize = 15;
   static const double iconSize = 30;
-  late final bool _showToolTips;
   bool busy = false;
-
-  @override
-  void initState() {
-    try {
-      _showToolTips = ref.read(activeSessionProvider).showTooltips;
-    } catch (ex) {
-      _showToolTips = false;
-    }
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -102,9 +90,6 @@ class PendingTotemUserState extends ConsumerState<PendingTotemUser> {
     return TotemActionButton(
       label: t.receive,
       busy: busy,
-      message: t.circleTotemReceive,
-      toolTips: [t.circleTotemReceiveLine1, t.circleTotemReceiveLine2],
-      showToolTips: _showToolTips,
       onPressed: () {
         setState(() {
           busy = true;
