@@ -22,6 +22,7 @@ class _LoginPanel extends StatelessWidget {
     final isSafari = browser?.browserAgent == BrowserAgent.Safari;
 
     Widget loginButton = ThemedRaisedButton(
+      cta: true,
       label: t.login,
       width: 220,
       onPressed: () {

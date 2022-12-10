@@ -6,6 +6,7 @@ class TotemActionButton extends StatefulWidget {
   const TotemActionButton(
       {Key? key,
       this.image,
+      this.cta = false,
       required this.label,
       this.busy = false,
       this.onPressed})
@@ -13,6 +14,7 @@ class TotemActionButton extends StatefulWidget {
   final Widget? image;
   final String label;
   final bool busy;
+  final bool cta;
   final Function()? onPressed;
 
   @override
@@ -35,6 +37,7 @@ class TotemActionButtonState extends State<TotemActionButton> {
             height: 14,
           ),
           ThemedRaisedButton(
+            cta: widget.cta,
             busy: widget.busy,
             horzPadding: 0,
             width: 250,

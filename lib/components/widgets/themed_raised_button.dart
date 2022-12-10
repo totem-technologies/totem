@@ -3,25 +3,26 @@ import 'package:flutter/material.dart';
 import 'package:totem/theme/index.dart';
 
 class ThemedRaisedButton extends StatelessWidget {
-  const ThemedRaisedButton({
-    Key? key,
-    this.child,
-    this.disabledColor,
-    this.width,
-    this.height = 60.0,
-    this.borderRadius = 16.0,
-    this.padding,
-    this.busy = false,
-    this.onPressed,
-    this.label,
-    this.elevation = 4,
-    this.side,
-    this.maxLines = 1,
-    this.textAlign = TextAlign.center,
-    this.horzPadding = 15,
-    this.backgroundColor,
-    this.textStyle,
-  }) : super(key: key);
+  const ThemedRaisedButton(
+      {Key? key,
+      this.child,
+      this.disabledColor,
+      this.width,
+      this.height = 60.0,
+      this.borderRadius = 16.0,
+      this.padding,
+      this.busy = false,
+      this.onPressed,
+      this.label,
+      this.elevation = 4,
+      this.side,
+      this.maxLines = 1,
+      this.textAlign = TextAlign.center,
+      this.horzPadding = 15,
+      this.backgroundColor,
+      this.textStyle,
+      this.cta = false})
+      : super(key: key);
   final Widget? child;
   final Color? disabledColor;
   final double height;
@@ -38,6 +39,7 @@ class ThemedRaisedButton extends StatelessWidget {
   final double horzPadding;
   final Color? backgroundColor;
   final TextStyle? textStyle;
+  final bool cta;
 
   Widget _busySpinner(BuildContext context) {
     final themeColors = Theme.of(context).themeColors;
@@ -54,6 +56,7 @@ class ThemedRaisedButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeColors = Theme.of(context).themeColors;
+    final bgColor = backgroundColor ?? themeColors.primaryButtonBackground;
     final btnStyle = ButtonStyle(
       shape:
           MaterialStateProperty.resolveWith((states) => RoundedRectangleBorder(
@@ -88,26 +91,37 @@ class ThemedRaisedButton extends StatelessWidget {
         (Set<MaterialState> states) => states.contains(MaterialState.disabled)
             ? (backgroundColor?.withAlpha(102) ??
                 themeColors.primaryButtonBackground.withAlpha(102))
-            : (backgroundColor ?? themeColors.primaryButtonBackground),
+            : Colors.transparent,
       ),
     );
+    var bg = [bgColor, bgColor];
+    if (cta) {
+      bg = themeColors.ctaGradient;
+    }
     return SizedBox(
         height: height,
         width: width,
-        child: ElevatedButton(
-          style: btnStyle,
-          onPressed: onPressed,
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: horzPadding),
-            child: busy
-                ? SizedBox(width: 35, height: 35, child: _busySpinner(context))
-                : child != null
-                    ? child!
-                    : AutoSizeText(
-                        label ?? "",
-                        maxLines: maxLines,
-                        textAlign: textAlign,
-                      ),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(colors: bg),
+            borderRadius: BorderRadius.circular(borderRadius),
+          ),
+          child: ElevatedButton(
+            style: btnStyle,
+            onPressed: onPressed,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: horzPadding),
+              child: busy
+                  ? SizedBox(
+                      width: 35, height: 35, child: _busySpinner(context))
+                  : child != null
+                      ? child!
+                      : AutoSizeText(
+                          label ?? "",
+                          maxLines: maxLines,
+                          textAlign: textAlign,
+                        ),
+            ),
           ),
         ));
   }
