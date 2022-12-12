@@ -11,7 +11,6 @@ class CreateCircleButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context)!;
     return ThemedRaisedButton(
-      elevation: 5,
       height: 52,
       onPressed: onPressed,
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),

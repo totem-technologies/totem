@@ -1,4 +1,4 @@
-window.AudioLevels = {
+window.FlutterAudioLevel = {
     _timerID: null,
     _stream: null,
     stopAudioStream: () => {
@@ -22,22 +22,19 @@ window.AudioLevels = {
             const mediaStreamAudioSourceNode = audioContext.createMediaStreamSource(this._stream);
             const analyserNode = audioContext.createAnalyser();
             analyserNode.fftSize = 256;
-            var bufferLength = analyserNode.frequencyBinCount;
-            console.log(bufferLength);
-            var dataArray = new Float32Array(bufferLength);
+            var dataArray = new Uint8Array(analyserNode.frequencyBinCount);
             mediaStreamAudioSourceNode.connect(analyserNode);
 
             const _tick = () => {
-                analyserNode.getFloatFrequencyData(dataArray);
-                dataArray.sort();
-                var min = dataArray[0] + 140;
-                var max = dataArray[dataArray.length-1] + 140;
-                var mean = 0.5 * (Math.abs(min) + Math.abs(max));
+                analyserNode.getByteFrequencyData(dataArray);
+                let val = dataArray.reduce((a, b) => a + b, 0)
+                // Get average dB level.
+                var average = 20*Math.log10(Math.abs(val)/dataArray.length);
                 if (cb) {
-                    cb(mean);
+                    cb(average);
                 }
             };
-            this._timerID = setInterval(_tick, 100);
+            this._timerID = setInterval(_tick, 50);
         });
     },
 }

@@ -1,48 +1,70 @@
-// import 'package:flutter/material.dart';
-// import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-// import 'package:flutter_riverpod/flutter_riverpod.dart';
-// import 'package:totem/app/circle/circle_session_page.dart';
-// import 'package:totem/app/circle/components/circle_snap_session_content.dart';
-// import 'package:totem/services/audio_level/audio_level.dart';
-// import 'package:totem/theme/index.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:totem/app/circle/components/circle_snap_session_content.dart';
 
-// class CircleMutedIndicator extends ConsumerWidget {
-//   const CircleMutedIndicator({Key? key, required this.live}) : super(key: key);
-//   final bool live;
+class CircleMutedIndicator extends ConsumerStatefulWidget {
+  const CircleMutedIndicator({super.key});
 
-//   @override
-//   Widget build(BuildContext context, WidgetRef ref) {
-//     final audioLevel = ref.watch(audioLevelStream);
-//     final communications = ref.watch(communicationsProvider);
-//     final themeColors = Theme.of(context).themeColors;
-//     final t = AppLocalizations.of(context)!;
-//     return audioLevel.when(
-//         loading: () => Container(),
-//         error: (Object error, StackTrace? stackTrace) => Container(),
-//         data: (AudioLevelData auidoData) {
-//           if (auidoData.speaking && communications.muted) {
-//             return Container(
-//               decoration: BoxDecoration(
-//                 borderRadius: BorderRadius.circular(8),
-//                 color: live ? Colors.white : Colors.black,
-//                 boxShadow: [
-//                   BoxShadow(
-//                       color: themeColors.shadow,
-//                       offset: const Offset(0, 2),
-//                       blurRadius: 8),
-//                 ],
-//               ),
-//               padding: const EdgeInsets.all(10),
-//               child: Text(
-//                 t.speakingMuted,
-//                 style: TextStyle(
-//                     color: live
-//                         ? themeColors.primaryText
-//                         : themeColors.reversedText),
-//               ),
-//             );
-//           }
-//           return Container();
-//         });
-//   }
-// }
+  @override
+  ConsumerState<CircleMutedIndicator> createState() =>
+      _CircleMutedIndicatorState();
+}
+
+class _CircleMutedIndicatorState extends ConsumerState<CircleMutedIndicator> {
+  final numberOfLevels = 8;
+  var minLevel = 100.0;
+  var maxLevel = 0.0;
+  @override
+  Widget build(BuildContext context) {
+    final audioLevel = ref.watch(audioLevelStream);
+    return audioLevel.when(
+      data: (data) {
+        final rawLevel = data.level;
+        if (minLevel > rawLevel) {
+          setState(() {
+            minLevel = rawLevel;
+          });
+        }
+        if (maxLevel < rawLevel) {
+          setState(() {
+            maxLevel = rawLevel;
+          });
+        }
+        final intLevel = _mapRange(rawLevel);
+        final bars = List.generate(numberOfLevels, (i) {
+          final active = intLevel >= (i + 1) ? true : false;
+          return _VolumeBar(
+            active: active,
+          );
+        });
+        return Container(
+            color: Colors.redAccent.withOpacity(0), child: Row(children: bars));
+      },
+      error: (error, stackTrace) => Container(),
+      loading: () => Container(),
+    );
+  }
+
+  int _mapRange(double rawVal) {
+    // Maps a double from [0, 1] to an int [0, numberOfLevels]
+    var normal = (maxLevel - minLevel) == 0 ? 0.1 : maxLevel - minLevel;
+    return (((rawVal - minLevel) * (numberOfLevels + 1)) / normal).floor();
+  }
+}
+
+class _VolumeBar extends StatelessWidget {
+  const _VolumeBar({this.active = false});
+  final bool active;
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(left: 4, right: 4),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        color: active ? Colors.blue : Colors.grey,
+      ),
+      height: 20,
+      width: 10,
+    );
+  }
+}

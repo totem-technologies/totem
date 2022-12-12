@@ -14,13 +14,10 @@ class ThemedRaisedButton extends StatelessWidget {
       this.busy = false,
       this.onPressed,
       this.label,
-      this.elevation = 4,
-      this.side,
       this.maxLines = 1,
       this.textAlign = TextAlign.center,
       this.horzPadding = 15,
       this.backgroundColor,
-      this.textStyle,
       this.cta = false})
       : super(key: key);
   final Widget? child;
@@ -31,14 +28,11 @@ class ThemedRaisedButton extends StatelessWidget {
   final EdgeInsetsGeometry? padding;
   final bool busy;
   final VoidCallback? onPressed;
-  final double elevation;
   final String? label;
-  final BorderSide? side;
   final int maxLines;
   final TextAlign textAlign;
   final double horzPadding;
   final Color? backgroundColor;
-  final TextStyle? textStyle;
   final bool cta;
 
   Widget _busySpinner(BuildContext context) {
@@ -53,61 +47,37 @@ class ThemedRaisedButton extends StatelessWidget {
     );
   }
 
+  Decoration _buttonStyles(BuildContext context) {
+    final themeColors = Theme.of(context).themeColors;
+    if (cta) {
+      return BoxDecoration(
+          gradient: LinearGradient(colors: themeColors.ctaGradient),
+          borderRadius: BorderRadius.circular(borderRadius),
+          boxShadow: [BoxShadow(color: themeColors.shadow)]);
+    }
+    return BoxDecoration(
+        color: themeColors.primaryButtonBackground,
+        borderRadius: BorderRadius.circular(borderRadius),
+        boxShadow: [BoxShadow(color: themeColors.shadow)]);
+  }
+
   @override
   Widget build(BuildContext context) {
     final themeColors = Theme.of(context).themeColors;
-    final bgColor = backgroundColor ?? themeColors.primaryButtonBackground;
-    final btnStyle = ButtonStyle(
-      shape:
-          MaterialStateProperty.resolveWith((states) => RoundedRectangleBorder(
-                side: side != null ? side! : BorderSide.none,
-                borderRadius: BorderRadius.all(
-                  Radius.circular(borderRadius),
-                ),
-              )),
-      shadowColor: MaterialStateProperty.resolveWith<Color>(
-        (Set<MaterialState> states) => themeColors.shadow,
-      ),
-      elevation: MaterialStateProperty.resolveWith<double>(
-          (states) => states.contains(MaterialState.disabled) ? 0 : elevation),
-      padding: MaterialStateProperty.resolveWith((states) => padding),
-      foregroundColor: MaterialStateProperty.resolveWith<Color>(
-        // text color
-        (Set<MaterialState> states) => states.contains(MaterialState.disabled)
-            ? themeColors.primaryText.withAlpha(102)
-            : themeColors.primaryText,
-      ),
-      textStyle: textStyle != null
-          ? MaterialStateProperty.resolveWith<TextStyle>(
-              (states) => states.contains(MaterialState.disabled)
-                  ? textStyle!.copyWith(
-                      color: themeColors.primaryText.withAlpha(102),
-                    )
-                  : textStyle!,
-            )
-          : null,
-      backgroundColor: MaterialStateProperty.resolveWith<Color>(
-        // background color    this is color:
-        (Set<MaterialState> states) => states.contains(MaterialState.disabled)
-            ? (backgroundColor?.withAlpha(102) ??
-                themeColors.primaryButtonBackground.withAlpha(102))
-            : Colors.transparent,
-      ),
-    );
-    var bg = [bgColor, bgColor];
-    if (cta) {
-      bg = themeColors.ctaGradient;
-    }
+
     return SizedBox(
         height: height,
         width: width,
         child: DecoratedBox(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(colors: bg),
-            borderRadius: BorderRadius.circular(borderRadius),
-          ),
+          decoration: _buttonStyles(context),
           child: ElevatedButton(
-            style: btnStyle,
+            style: ElevatedButton.styleFrom(
+                padding: padding,
+                backgroundColor: Colors.transparent,
+                foregroundColor: themeColors.primaryText,
+                shadowColor: Colors.transparent,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(borderRadius))),
             onPressed: onPressed,
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: horzPadding),

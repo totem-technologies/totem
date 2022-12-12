@@ -10,6 +10,7 @@ import 'package:totem/app/circle/circle_session_page.dart';
 import 'package:totem/app/circle/components/circle_device_settings_button.dart';
 import 'package:totem/components/camera/index.dart';
 import 'package:totem/components/widgets/index.dart';
+import 'package:totem/components/widgets/mute_button.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
 import 'package:totem/services/utils/device_type.dart';
@@ -136,13 +137,13 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,
                                         ),
-                                        const SizedBox(height: 24),
+                                        const SizedBox(height: 10),
                                         Divider(
                                           thickness: 1,
                                           height: 1,
                                           color: themeColors.divider,
                                         ),
-                                        const SizedBox(height: 24),
+                                        const SizedBox(height: 10),
                                         Expanded(
                                             child: _userInfo(
                                                 context, commProvider)),
@@ -245,15 +246,21 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              ThemedControlButton(
-                label: commProvider.muted ? t.unmute : t.mute,
-                labelColor: themeColors.reversedText,
-                icon: commProvider.muted ? LucideIcons.micOff : LucideIcons.mic,
-                onPressed: () {
-                  commProvider.muteAudio(!commProvider.muted);
-                  debugPrint('mute pressed');
-                },
-              ),
+              MuteButton(
+                  muted: commProvider.muted,
+                  onPressed: () {
+                    commProvider.muteAudio(!commProvider.muted);
+                    debugPrint('mute pressed');
+                  }),
+              // ThemedControlButton(
+              //   label: commProvider.muted ? t.unmute : t.mute,
+              //   labelColor: themeColors.reversedText,
+              //   icon: commProvider.muted ? LucideIcons.micOff : LucideIcons.mic,
+              //   onPressed: () {
+              //     commProvider.muteAudio(!commProvider.muted);
+              //     debugPrint('mute pressed');
+              //   },
+              // ),
               const SizedBox(
                 width: 15,
               ),

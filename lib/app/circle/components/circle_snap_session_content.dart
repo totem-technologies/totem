@@ -12,10 +12,10 @@ import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
 
-// final audioLevelStream = StreamProvider.autoDispose<AudioLevelData>((ref) {
-//   final audioLevel = AudioLevel();
-//   return audioLevel.stream;
-// });
+final audioLevelStream = StreamProvider.autoDispose<AudioLevelData>((ref) {
+  final audioLevel = AudioLevel();
+  return audioLevel.stream;
+});
 
 class CircleSnapSessionContent extends ConsumerStatefulWidget {
   const CircleSnapSessionContent({
@@ -54,7 +54,6 @@ class _CircleSnapSessionContentState
     final t = AppLocalizations.of(context)!;
     final commProvider = ref.watch(communicationsProvider);
     final sessionProvider = ref.watch(activeSessionProvider);
-    // ref.watch(audioLevelStream);
     return AnnotatedRegion<SystemUiOverlayStyle>(
       // This makes it so the status bar text isn't blacked out on mobile.
       value: sessionProvider.live
