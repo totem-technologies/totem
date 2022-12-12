@@ -252,15 +252,6 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
                     commProvider.muteAudio(!commProvider.muted);
                     debugPrint('mute pressed');
                   }),
-              // ThemedControlButton(
-              //   label: commProvider.muted ? t.unmute : t.mute,
-              //   labelColor: themeColors.reversedText,
-              //   icon: commProvider.muted ? LucideIcons.micOff : LucideIcons.mic,
-              //   onPressed: () {
-              //     commProvider.muteAudio(!commProvider.muted);
-              //     debugPrint('mute pressed');
-              //   },
-              // ),
               const SizedBox(
                 width: 15,
               ),

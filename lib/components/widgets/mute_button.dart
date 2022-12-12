@@ -36,10 +36,9 @@ class _MuteButtonState extends ConsumerState<MuteButton> {
     final t = AppLocalizations.of(context)!;
     var size = muted ? 0.0 : _mapRange(audioLevel).abs();
     if (size < maxSize * threshPercent) {
+      // Below the threshold, set to zero
       size = 0.0;
     }
-    // final size = maxSize;
-    // print(maxSize * threshPercent);
     return ThemedControlButton(
         label: muted ? t.unmute : t.mute,
         labelColor: themeColors.reversedText,
@@ -63,6 +62,7 @@ class _MuteButtonState extends ConsumerState<MuteButton> {
   }
 
   void _setMaxMin(double level) {
+    // Dynamically set the upper and lower bounds based on the values we've seen.
     if (minLevel > level) {
       setState(() {
         minLevel = level;
