@@ -82,7 +82,7 @@ async function setExpiringSessions(): Promise<void> {
  */
 async function endUnstartedSessions(): Promise<void> {
   const min30 = 30*60;
-  const nowWithBuffer: Timestamp = new Timestamp(Timestamp.now().seconds + min30, 0);
+  const nowWithBuffer: Timestamp = new Timestamp(Timestamp.now().seconds - min30, 0);
   const ref = admin
     .firestore()
     .collection("snapCircles")
