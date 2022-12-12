@@ -11,10 +11,8 @@ class DonateButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context)!;
-    final textStyles = Theme.of(context).textStyles;
     return ThemedRaisedButton(
       backgroundColor: Theme.of(context).themeColors.secondaryButtonBackground,
-      textStyle: textStyles.button!.merge(const TextStyle(fontSize: 14)),
       onPressed: () {
         _launchDonateLink();
       },

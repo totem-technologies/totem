@@ -18,6 +18,7 @@ final widgetList = <String, Function>{
   "Circle User Profile": CircleUserProfileTest.new,
   "Onboarding Profile Dialog": OnboardingProfilePageTest.new,
   "Countdown Timer": CountdownTimerTest.new,
+  "Audio Level": AudioLevelTest.new,
   "Buttons": ButtonsScreen.new
 };
 
