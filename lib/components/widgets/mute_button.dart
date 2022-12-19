@@ -20,6 +20,7 @@ class _MuteButtonState extends ConsumerState<MuteButton> {
   var threshPercent = 0.15;
   var minLevel = 100.0;
   var maxLevel = 0.0;
+  var currentSize = 0.0;
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +40,8 @@ class _MuteButtonState extends ConsumerState<MuteButton> {
       // Below the threshold, set to zero
       size = 0.0;
     }
+    var shrinking = size < currentSize;
+    currentSize = size;
     return ThemedControlButton(
         label: muted ? t.unmute : t.mute,
         labelColor: themeColors.reversedText,
@@ -46,7 +49,8 @@ class _MuteButtonState extends ConsumerState<MuteButton> {
         child: Stack(children: [
           Center(
             child: AnimatedContainer(
-              duration: const Duration(milliseconds: 20),
+              // Fast to grow, slow to fade.
+              duration: Duration(milliseconds: shrinking ? 500 : 100),
               decoration: BoxDecoration(
                   color: themeColors.primaryButtonBackground,
                   borderRadius: BorderRadius.circular(50.0)),
