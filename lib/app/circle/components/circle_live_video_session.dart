@@ -85,11 +85,12 @@ class _CircleLiveVideoSessionState
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                              const SizedBox(height: 10),
+                              if (kIsWeb) const SizedBox(height: 10),
                               Row(
                                 children: [
                                   CircleImage(
                                     circle: activeSession.circle,
+                                    size: 40,
                                   ),
                                   const SizedBox(width: 16),
                                   Expanded(

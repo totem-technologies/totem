@@ -81,10 +81,12 @@ class ListenerUserLayout extends StatelessWidget {
   }
 
   Widget _divider(BuildContext context, bool horizontal, double height) {
+    final theme = Theme.of(context);
     final themeColors = Theme.of(context).themeColors;
     if (horizontal) {
       return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32),
+          padding:
+              EdgeInsets.symmetric(horizontal: theme.pageHorizontalPadding),
           child: Container(
             height: height,
             width: 2,

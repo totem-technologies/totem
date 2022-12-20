@@ -1,4 +1,5 @@
 import 'package:after_layout/after_layout.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -81,62 +82,18 @@ class _CircleSnapSessionContentState
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
+                                  if (kIsWeb) const SizedBox(height: 10),
                                   _header(commProvider, sessionProvider.state),
-                                  if (sessionProvider.state ==
-                                          SessionState.waiting &&
-                                      widget.circle.description != null &&
-                                      widget.circle.description!.isNotEmpty)
-                                    Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: Theme.of(context)
-                                              .pageHorizontalPadding,
-                                          vertical: 12),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.stretch,
-                                        children: [
-                                          TrimmedText(
-                                            widget.circle.description!,
-                                            trimLines: 3,
-                                            style: textStyles.bodyText1,
-                                            more: Row(
-                                              children: [
-                                                TextButton(
-                                                  style: TextButton.styleFrom(
-                                                      padding: EdgeInsets.zero,
-                                                      alignment:
-                                                          Alignment.centerLeft),
-                                                  onPressed: () async {
-                                                    await CircleSessionInfoPage
-                                                        .showDialog(context);
-                                                  },
-                                                  child: Text(t.moreInfo),
-                                                )
-                                              ],
-                                            ),
-                                          ),
-                                          Divider(
-                                            height: 48,
-                                            thickness: 1,
-                                            color: themeColors.divider,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  if (sessionProvider.state !=
-                                      SessionState.live)
-                                    Expanded(
-                                      child: _validSession
-                                          ? AnimatedSwitcher(
-                                              duration: const Duration(
-                                                  milliseconds: 200),
-                                              child: _sessionContent(
-                                                  context,
-                                                  commProvider,
-                                                  sessionProvider),
-                                            )
-                                          : _invalidSession(context),
-                                    ),
+                                  Expanded(
+                                    child: _validSession
+                                        ? AnimatedSwitcher(
+                                            duration: const Duration(
+                                                milliseconds: 200),
+                                            child: _sessionContent(context,
+                                                commProvider, sessionProvider),
+                                          )
+                                        : _invalidSession(context),
+                                  ),
                                 ],
                               ),
                             ),
@@ -167,9 +124,7 @@ class _CircleSnapSessionContentState
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SizedBox(width: themeData.pageHorizontalPadding),
-              CircleImage(
-                circle: widget.circle,
-              ),
+              CircleImage(circle: widget.circle, size: 40),
               const SizedBox(width: 16),
               Expanded(
                 child: Text(

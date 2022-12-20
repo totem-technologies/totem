@@ -13,7 +13,7 @@ extension AppThemeStyles on ThemeData {
 
   AppThemeColors get themeColors => _themeColors!;
   AppTextStyles get textStyles => _textStyles!;
-  double get pageHorizontalPadding => 24.0;
+  double get pageHorizontalPadding => 12.0;
   double get backgroundGradientRotation => -26.0;
   double get titleTopPadding => 40.0;
   double get standardButtonWidth => 294.0;
