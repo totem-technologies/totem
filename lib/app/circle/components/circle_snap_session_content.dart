@@ -51,8 +51,6 @@ class _CircleSnapSessionContentState
   Widget build(BuildContext context) {
     final themeData = Theme.of(context);
     final themeColors = themeData.themeColors;
-    final textStyles = themeData.textStyles;
-    final t = AppLocalizations.of(context)!;
     final commProvider = ref.watch(communicationsProvider);
     final sessionProvider = ref.watch(activeSessionProvider);
     return AnnotatedRegion<SystemUiOverlayStyle>(

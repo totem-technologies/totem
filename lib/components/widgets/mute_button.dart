@@ -14,7 +14,7 @@ class MuteButton extends ConsumerStatefulWidget {
       this.reverseLabel = true});
   final bool muted;
   final void Function()? onPressed;
-  final reverseLabel;
+  final bool reverseLabel;
   @override
   ConsumerState<MuteButton> createState() => _MuteButtonState();
 }
