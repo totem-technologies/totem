@@ -104,5 +104,30 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>FlutterDeepLinkingEnabled</key>
+	<true/>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+		<key>CFBundleTypeRole</key>
+		<string>Editor</string>
+		<key>CFBundleURLName</key>
+		<string>app.totem.org</string>
+		<key>CFBundleURLSchemes</key>
+		<array>
+		<string>totem</string>
+		</array>
+		</dict>
+		<dict>
+		<key>CFBundleTypeRole</key>
+		<string>Editor</string>
+		<key>CFBundleURLName</key>
+		<string>stage.totem.org</string>
+		<key>CFBundleURLSchemes</key>
+		<array>
+		<string>totemdev</string>
+		</array>
+		</dict>
+	</array>
 </dict>
 </plist>

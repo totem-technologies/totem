@@ -154,6 +154,8 @@ class AppRoutes {
         ),
       ],
       redirect: (context, state) async {
+        debugPrint(
+            'Router redirect: ${state.location}, query: ${state.queryParams}');
         // Is there a logged in user?
         UserAuthAccountState? user =
             ref.read(userAccountStateProvider).asData?.value;

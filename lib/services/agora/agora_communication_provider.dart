@@ -107,6 +107,11 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     try {
       await _assertEngine(enableVideo);
 
+      if (!kIsWeb) {
+        // All done if on mobile. The rest is for web.
+        return null;
+      }
+
       // Speakers
       SharedPreferences prefs = await SharedPreferences.getInstance();
       try {
