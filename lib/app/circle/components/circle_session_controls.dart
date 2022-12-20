@@ -9,6 +9,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:totem/app/circle/components/circle_network_indicator.dart';
 import 'package:totem/app/circle/index.dart';
 import 'package:totem/components/widgets/index.dart';
+import 'package:totem/components/widgets/mute_button.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/providers.dart';
 import 'package:totem/services/utils/device_type.dart';
@@ -98,6 +99,19 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
     );
   }
 
+  Widget _muteButton(communications, {bool reverse = true}) {
+    return MuteButton(
+      muted: communications.muted,
+      reverseLabel: reverse,
+      onPressed: () {
+        triggerPress(() {
+          communications.muteAudio(!communications.muted);
+          debugPrint('mute pressed');
+        });
+      },
+    );
+  }
+
   Widget waitingControls(BuildContext context, WidgetRef ref,
       ActiveSession activeSession, Role role, String userId) {
     final themeColors = Theme.of(context).themeColors;
@@ -109,16 +123,7 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
           flex: 1,
           child: Container(),
         ),
-        ThemedControlButton(
-          label: communications.muted ? t.unmute : t.mute,
-          icon: communications.muted ? LucideIcons.micOff : LucideIcons.mic,
-          onPressed: () {
-            triggerPress(() {
-              communications.muteAudio(communications.muted ? false : true);
-              debugPrint('mute pressed');
-            });
-          },
-        ),
+        _muteButton(communications, reverse: false),
         const SizedBox(width: _btnSpacing),
         ThemedControlButton(
           label: communications.videoMuted ? t.startVideo : t.stopVideo,
@@ -186,22 +191,7 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
                 flex: 1,
                 child: Container(),
               ),
-              ThemedControlButton(
-                label: communications.muted ? t.unmute : t.mute,
-                labelColor: themeColors.reversedText,
-                icon:
-                    communications.muted ? LucideIcons.micOff : LucideIcons.mic,
-                onPressed: () {
-                  triggerPress(() {
-                    if (communications.muted) {
-                      communications.muteAudio(false);
-                    } else {
-                      communications.muteAudio(true);
-                    }
-                    debugPrint('mute pressed');
-                  });
-                },
-              ),
+              _muteButton(communications),
               const SizedBox(
                 width: _btnSpacing,
               ),
@@ -366,23 +356,7 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
                     width: _btnSpacing,
                   ),
                 ],
-                ThemedControlButton(
-                  label: communications.muted ? t.unmute : t.mute,
-                  labelColor: themeColors.reversedText,
-                  icon: communications.muted
-                      ? LucideIcons.micOff
-                      : LucideIcons.mic,
-                  onPressed: () {
-                    triggerPress(() {
-                      if (communications.muted) {
-                        communications.muteAudio(false);
-                      } else {
-                        communications.muteAudio(true);
-                      }
-                      debugPrint('mute pressed');
-                    });
-                  },
-                ),
+                _muteButton(communications),
                 const SizedBox(
                   width: _btnSpacing,
                 ),

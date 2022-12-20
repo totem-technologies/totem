@@ -7,9 +7,14 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:totem/components/widgets/themed_control_button.dart';
 
 class MuteButton extends ConsumerStatefulWidget {
-  const MuteButton({super.key, this.muted = false, this.onPressed});
+  const MuteButton(
+      {super.key,
+      this.muted = false,
+      this.onPressed,
+      this.reverseLabel = true});
   final bool muted;
   final void Function()? onPressed;
+  final reverseLabel;
   @override
   ConsumerState<MuteButton> createState() => _MuteButtonState();
 }
@@ -44,7 +49,9 @@ class _MuteButtonState extends ConsumerState<MuteButton> {
     currentSize = size;
     return ThemedControlButton(
         label: muted ? t.unmute : t.mute,
-        labelColor: themeColors.reversedText,
+        labelColor: widget.reverseLabel
+            ? themeColors.reversedText
+            : themeColors.primaryText,
         onPressed: widget.onPressed,
         child: Stack(children: [
           Center(
