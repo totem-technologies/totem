@@ -113,7 +113,7 @@ class CircleSessionEndedPage extends StatelessWidget {
               style: textStyles.headline3),
           const SizedBox(height: 20),
           ThemedRaisedButton(
-            label: t.leaveSession,
+            label: t.returnHome,
             onPressed: () async {
               context.pop();
             },
