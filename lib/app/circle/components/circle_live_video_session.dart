@@ -106,7 +106,6 @@ class _CircleLiveVideoSessionState
                                     ),
                                   ),
                                   const CircleSessionTimer(),
-                                  if (!isPhoneLayout) const SizedBox(width: 40),
                                 ],
                               ),
                               const SizedBox(height: 10),
