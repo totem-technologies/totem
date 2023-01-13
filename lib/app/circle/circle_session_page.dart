@@ -210,7 +210,7 @@ class CircleSessionLivePageState extends ConsumerState<CircleSessionLivePage> {
         commProvider.leaveSession(requested: false);
         debugPrint('triggering leave session for session that has ended');
       }
-      context.replaceNamed(AppRoutes.circleEnded, extra: {
+      context.pushReplacementNamed(AppRoutes.circleEnded, extra: {
         'removed': activeSession.state == SessionState.removed,
         'circle': activeSession.circle
       });

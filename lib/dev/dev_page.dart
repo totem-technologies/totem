@@ -135,7 +135,7 @@ class WidgetList extends StatelessWidget {
                 if (context.canPop()) {
                   context.pop();
                 } else {
-                  context.replaceNamed(AppRoutes.home);
+                  context.pushReplacementNamed(AppRoutes.home);
                 }
               },
               child: const Text('Home'))

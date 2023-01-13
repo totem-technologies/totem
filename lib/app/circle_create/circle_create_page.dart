@@ -500,8 +500,8 @@ class CircleCreatePageState extends ConsumerState<CircleCreatePage>
       );
       if (circle != null) {
         if (!mounted) return;
-        context
-            .replaceNamed(AppRoutes.circle, params: {'id': circle.session.id});
+        context.pushReplacementNamed(AppRoutes.circle,
+            params: {'id': circle.session.id});
       }
     } on ServiceException catch (ex, stack) {
       debugPrint('Error creating circle: $ex');

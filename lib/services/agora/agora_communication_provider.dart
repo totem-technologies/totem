@@ -638,10 +638,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
     );
     sessionProvider.activeSession
         ?.userJoined(sessionUserId: commUid.toString());
-    bool? onSpeaker = await _engine!.isSpeakerphoneEnabled();
-    if (onSpeaker != true) {
-      await _engine!.setEnableSpeakerphone(true);
-    }
+    await _engine!.setEnableSpeakerphone(true);
 /*    _statsStreamId = await _engine
         ?.createDataStreamWithConfig(DataStreamConfig(false, false));
     debugPrint(

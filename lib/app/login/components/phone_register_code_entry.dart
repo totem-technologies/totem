@@ -40,7 +40,7 @@ class PhoneRegisterCodeEntryState
       final authSvc = ref.read(authServiceProvider);
       final AuthUser? authUser = authSvc.currentUser();
       if (authUser != null && authUser.isNewUser) {
-        context.replaceNamed(AppRoutes.loginGuideline);
+        context.pushReplacementNamed(AppRoutes.loginGuideline);
       }
        */
     } on AuthException catch (e) {
