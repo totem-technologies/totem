@@ -15,13 +15,13 @@ class PhoneRegisterNumberHeader extends StatelessWidget {
         SizedBox(height: Theme.of(context).titleTopPadding),
         Text(
           t.signup,
-          style: textTheme.headline1,
+          style: textTheme.displayLarge,
         ),
         const Center(
           child: ContentDivider(),
         ),
         const SizedBox(height: 20),
-        Text(t.enterPhonePrompt, style: textTheme.headline3),
+        Text(t.enterPhonePrompt, style: textTheme.displaySmall),
         const SizedBox(height: 10),
         Text(
           t.enterPhonePromptDetail,

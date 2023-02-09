@@ -8,8 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:intl_phone_number_input/intl_phone_number_input.dart';
-import 'package:libphonenumber_plugin/libphonenumber_plugin.dart';
+import 'package:phone_form_field/phone_form_field.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:totem/app/profile/components/index.dart';
 import 'package:totem/components/camera/index.dart';
@@ -628,12 +627,7 @@ class UserProfilePageState extends ConsumerState<UserProfilePage> {
                     _profileLabelItem(context,
                         label: t.phoneNumber,
                         helpType: t.helpPrivateInformation),
-                    FutureBuilder<String>(
-                      future: _formatPhoneNumber(user.phoneNumber),
-                      builder: (context, asyncSnapshot) {
-                        return Text(asyncSnapshot.data ?? user.phoneNumber);
-                      },
-                    ),
+                    Text(_formatPhoneNumber(user.phoneNumber)),
                     const SizedBox(height: 10),
                     Divider(
                       color: themeData.themeColors.divider,
@@ -718,12 +712,8 @@ class UserProfilePageState extends ConsumerState<UserProfilePage> {
     }
   }
 
-  Future<String> _formatPhoneNumber(String phoneNumber) async {
-    PhoneNumber num =
-        await PhoneNumber.getRegionInfoFromPhoneNumber(phoneNumber);
-    String? formattedNumber =
-        await PhoneNumberUtil.formatAsYouType(num.phoneNumber!, num.isoCode!);
-    return formattedNumber ?? "";
+  String _formatPhoneNumber(String phoneNumber) {
+    return PhoneNumber.parse(phoneNumber).getFormattedNsn();
   }
 
   Future<bool> _savePrompt(bool pendingClose) async {

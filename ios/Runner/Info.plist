@@ -126,8 +126,11 @@
 		<key>CFBundleURLSchemes</key>
 		<array>
 		<string>totemdev</string>
+		<string>app-1-818015549149-ios-03f63a8e2314ad6a0ecd34</string>
 		</array>
 		</dict>
 	</array>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
 </dict>
 </plist>

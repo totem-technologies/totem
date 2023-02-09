@@ -1,11 +1,13 @@
-import 'package:flutter/foundation.dart';
+import 'dart:async';
+
+// import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+// import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_sim_country_code/flutter_sim_country_code.dart';
-import 'package:intl_phone_number_input/intl_phone_number_input.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:flutter_sim_country_code/flutter_sim_country_code.dart';
+import 'package:phone_form_field/phone_form_field.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
 import 'package:totem/app/login/components/phone_register_number_header.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/services/index.dart';
@@ -22,9 +24,12 @@ class PhoneRegisterNumberEntry extends ConsumerStatefulWidget {
 class PhoneRegisterNumberEntryState
     extends ConsumerState<PhoneRegisterNumberEntry> {
   final formKey = GlobalKey<FormState>();
+  final phoneKey = GlobalKey<FormFieldState<PhoneNumber>>();
   final TextEditingController _phoneNumberController = TextEditingController();
-  PhoneNumber numberController = PhoneNumber(isoCode: 'US');
+  PhoneController numberController = PhoneController(null);
   bool _busy = false;
+  CountrySelectorNavigator selectorNavigator =
+      const CountrySelectorNavigator.bottomSheet();
 
   @override
   void initState() {
@@ -56,49 +61,41 @@ class PhoneRegisterNumberEntryState
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  InternationalPhoneNumberInput(
-                    autofillHints: const [
-                      AutofillHints.telephoneNumberNational
-                    ],
-                    autoFocus: true,
-                    onInputChanged: (PhoneNumber number) {
-                      debugPrint(number.phoneNumber);
-                    },
-                    onInputValidated: (bool value) {
-                      debugPrint("$value");
-                    },
-                    selectorConfig: const SelectorConfig(
-                      setSelectorButtonAsPrefixIcon: true,
-                      selectorType: PhoneInputSelectorType.BOTTOM_SHEET,
-                      showFlags: true,
-                      trailingSpace: false,
+                  AutofillGroup(
+                    child: PhoneFormField(
+                      key: phoneKey,
+                      controller: numberController,
+                      shouldFormat: true,
+                      autofocus: true,
+                      autofillHints: const [AutofillHints.telephoneNumber],
+                      countrySelectorNavigator: selectorNavigator,
+                      defaultCountry: IsoCode.US,
+                      decoration: InputDecoration(
+                        label: Text(t.phoneNumber),
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide:
+                              BorderSide(color: themeColors.primaryText),
+                        ),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide:
+                              BorderSide(color: themeColors.primaryText),
+                        ),
+                        border: UnderlineInputBorder(
+                          borderSide:
+                              BorderSide(color: themeColors.primaryText),
+                        ),
+                        hintText: t.phoneNumber,
+                      ),
+                      enabled: true,
+                      showFlagInInput: true,
+                      // validator: _getValidator(),
+                      autovalidateMode: AutovalidateMode.disabled,
+                      cursorColor: Theme.of(context).colorScheme.primary,
+                      onSaved: (p) => debugPrint('saved $p'),
+                      onChanged: (p) => debugPrint('changed $p'),
+                      isCountryChipPersistent: true,
+                      onSubmitted: (p) => onSubmit(),
                     ),
-                    ignoreBlank: false,
-                    initialValue: numberController,
-                    textFieldController: _phoneNumberController,
-                    //formatInput: true,
-                    hintText: t.phoneNumber,
-                    errorMessage: t.errorInvalidPhoneNumber,
-                    inputDecoration: InputDecoration(
-                      hintText: t.phoneNumber,
-                      enabledBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: themeColors.primaryText),
-                      ),
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: themeColors.primaryText),
-                      ),
-                      border: UnderlineInputBorder(
-                        borderSide: BorderSide(color: themeColors.primaryText),
-                      ),
-                    ),
-                    keyboardType: TextInputType.phone,
-                    onSaved: (PhoneNumber number) {
-                      debugPrint('On Saved: $number');
-                      numberController = number;
-                    },
-                    onFieldSubmitted: (value) {
-                      onSubmit();
-                    },
                   ),
                   const SizedBox(height: 30),
                   ThemedRaisedButton(
@@ -117,49 +114,46 @@ class PhoneRegisterNumberEntryState
   }
 
   void _initISOCode() async {
-    try {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      String? number = ref.read(authServiceProvider).authRequestNumber;
-      // if there is a cached previously used value for ISO, use that
-      String? initialCountry = prefs.getString('lastIso');
-      if (initialCountry != null) {
-        setState(() {
-          numberController =
-              PhoneNumber(isoCode: initialCountry, phoneNumber: number);
-        });
-      } else {
-        // try reading from sim card
-        if (!kIsWeb) {
-          String? platformVersion = await FlutterSimCountryCode.simCountryCode;
-          if (platformVersion != null && platformVersion.isNotEmpty) {
-            setState(() {
-              numberController = PhoneNumber(
-                  isoCode: platformVersion.toUpperCase(), phoneNumber: number);
-            });
-          }
-        }
-      }
-    } on PlatformException catch (e) {
-      debugPrint('Error loading iso code: ${e.toString()}');
-    }
+    // try {
+    //   SharedPreferences prefs = await SharedPreferences.getInstance();
+    //   String? number = ref.read(authServiceProvider).authRequestNumber;
+    //   // if there is a cached previously used value for ISO, use that
+    //   String? initialCountry = prefs.getString('lastIso');
+    //   if (initialCountry != null) {
+    //     setState(() {
+    //       numberController =
+    //           PhoneNumber(isoCode: initialCountry, phoneNumber: number);
+    //     });
+    //   } else {
+    //     // try reading from sim card
+    //     if (!kIsWeb) {
+    //       String? platformVersion = await FlutterSimCountryCode.simCountryCode;
+    //       if (platformVersion != null && platformVersion.isNotEmpty) {
+    //         setState(() {
+    //           numberController = PhoneNumber(
+    //               isoCode: platformVersion.toUpperCase(), phoneNumber: number);
+    //         });
+    //       }
+    //     }
+    //   }
+    // } on PlatformException catch (e) {
+    //   debugPrint('Error loading iso code: ${e.toString()}');
+    // }
   }
 
   void onSubmit() async {
     var auth = ref.read(authServiceProvider);
     // Validate returns true if the form is valid, or false otherwise.
-    if (formKey.currentState!.validate()) {
+    if (phoneKey.currentState!.validate()) {
+      Timer(const Duration(seconds: 5), () {
+        setState(() => _busy = false);
+      });
       setState(() => _busy = true);
-      formKey.currentState!.save();
+      phoneKey.currentState!.save();
 
       // Number will have been validated by this point
       // and the phoneNumber member formats with iso code
-      String number = numberController.phoneNumber!;
-      // Stash isoCode in local storage so that its remembered if the user
-      // chooses a different one than the default
-      String isoCode = numberController.isoCode!;
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString('lastIso', isoCode);
-
+      String number = numberController.value!.international;
       debugPrint(number);
       try {
         await auth.signInWithPhoneNumber(number);

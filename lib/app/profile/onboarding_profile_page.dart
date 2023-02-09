@@ -9,8 +9,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl_phone_number_input/intl_phone_number_input.dart';
-import 'package:libphonenumber_plugin/libphonenumber_plugin.dart';
+// import 'package:intl_phone_number_input/intl_phone_number_input.dart';
+import 'package:phone_form_field/phone_form_field.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:totem/components/index.dart';
 import 'package:totem/models/index.dart';
@@ -346,12 +346,7 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage>
                 Text(t.phoneNumber, style: textStyles.inputLabel),
                 const SizedBox(height: 4),
                 (user != null
-                    ? FutureBuilder<String>(
-                        future: _formatPhoneNumber(user.phoneNumber),
-                        builder: (context, asyncSnapshot) {
-                          return Text(asyncSnapshot.data ?? user.phoneNumber);
-                        },
-                      )
+                    ? Text(_formatPhoneNumber(user.phoneNumber))
                     : const Text("")),
                 const SizedBox(height: 24),
                 Text(t.name, style: textStyles.inputLabel),
@@ -606,11 +601,7 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage>
     }
   }
 
-  Future<String> _formatPhoneNumber(String phoneNumber) async {
-    PhoneNumber num =
-        await PhoneNumber.getRegionInfoFromPhoneNumber(phoneNumber);
-    String? formattedNumber =
-        await PhoneNumberUtil.formatAsYouType(num.phoneNumber!, num.isoCode!);
-    return formattedNumber ?? "";
+  String _formatPhoneNumber(String phoneNumber) {
+    return PhoneNumber.parse(phoneNumber).getFormattedNsn();
   }
 }
