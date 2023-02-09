@@ -35,14 +35,14 @@ class GuidelineScreen extends ConsumerWidget {
                     children: [
                       Text(
                         t.guidelinesHeader,
-                        style: textStyles.headline1,
+                        style: textStyles.displayLarge,
                         textAlign: TextAlign.center,
                       ),
                       const Center(child: ContentDivider()),
                       const SizedBox(height: 24),
                       Text(
                         'Last Time Updated: May 12,2021',
-                        style: textStyles.bodyText1!.merge(
+                        style: textStyles.bodyLarge!.merge(
                             const TextStyle(fontWeight: FontWeight.bold)),
                       ),
                       const SizedBox(
@@ -50,7 +50,7 @@ class GuidelineScreen extends ConsumerWidget {
                       ),
                       Text(
                         t.guidelines,
-                        style: textStyles.bodyText1,
+                        style: textStyles.bodyLarge,
                       ),
                     ],
                   ),
@@ -92,7 +92,7 @@ class GuidelineScreen extends ConsumerWidget {
                   ),
                   Text(
                     t.back,
-                    style: textStyles.button,
+                    style: textStyles.labelLarge,
                   ),
                 ],
               )),

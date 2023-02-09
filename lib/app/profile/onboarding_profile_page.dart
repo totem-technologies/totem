@@ -135,7 +135,7 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage>
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(t.addProfilePicture, style: textStyles.headline3),
+                      Text(t.addProfilePicture, style: textStyles.displaySmall),
                       const SizedBox(width: 6),
                       InkWell(
                         onTap: () {
@@ -222,7 +222,7 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage>
         SizedBox(height: Theme.of(context).titleTopPadding),
         Text(
           t.aboutYou,
-          style: textTheme.headline1,
+          style: textTheme.displayLarge,
         ),
         const Center(
           child: ContentDivider(),
@@ -287,7 +287,7 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage>
                 children: [
                   Text(
                     t.errorNoProfile,
-                    style: textStyles.headline3,
+                    style: textStyles.displaySmall,
                   )
                 ],
               ),
@@ -453,7 +453,7 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage>
     List<String> parts2 = parts[1].split(t.termsOfService);
     return TextSpan(
         text: parts[0],
-        style: textStyles.bodyText1!
+        style: textStyles.bodyLarge!
             .merge(const TextStyle(height: 1.3, fontWeight: FontWeight.bold)),
         children: [
           TextSpan(

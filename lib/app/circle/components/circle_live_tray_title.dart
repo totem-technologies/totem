@@ -25,7 +25,7 @@ class CircleLiveTrayTitle extends StatelessWidget {
             title,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: textStyles.headline2!.merge(
+            style: textStyles.displayMedium!.merge(
               TextStyle(
                   fontWeight: FontWeight.w600, color: themeColors.reversedText),
             ),

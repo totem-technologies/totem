@@ -126,7 +126,7 @@ class ThemeSelectorState extends ConsumerState<ThemeSelector> {
                                     return Center(
                                       child: Text(
                                         t.noThemes,
-                                        style: textStyles.headline3,
+                                        style: textStyles.displaySmall,
                                       ),
                                     );
                                   }

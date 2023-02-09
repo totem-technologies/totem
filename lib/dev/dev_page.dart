@@ -122,7 +122,7 @@ class WidgetList extends StatelessWidget {
         padding: const EdgeInsets.all(20),
         child: Column(children: [
           const SizedBox(height: 30),
-          Text("Dev Page!", style: textStyles.headline1),
+          Text("Dev Page!", style: textStyles.displayLarge),
           const Center(
             child: ContentDivider(),
           ),

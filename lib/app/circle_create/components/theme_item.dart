@@ -65,7 +65,7 @@ class ThemeItem extends StatelessWidget {
               children: [
                 Text(
                   theme.name,
-                  style: Theme.of(context).textStyles.headline3,
+                  style: Theme.of(context).textStyles.displaySmall,
                 ),
                 if (theme.description.isNotEmpty)
                   Padding(

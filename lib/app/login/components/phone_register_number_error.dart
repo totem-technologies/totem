@@ -24,7 +24,7 @@ class PhoneRegisterNumberError extends ConsumerWidget {
             children: [
               const PhoneRegisterNumberHeader(),
               Text(t.errorRegister,
-                  style: textTheme.bodyText1!.merge(TextStyle(
+                  style: textTheme.bodyLarge!.merge(TextStyle(
                       color: themeColors.error, fontWeight: FontWeight.bold))),
               const SizedBox(
                 height: 10,

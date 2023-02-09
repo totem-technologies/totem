@@ -138,7 +138,7 @@ class UserProfilePageState extends ConsumerState<UserProfilePage> {
                                           children: [
                                             Text(
                                               t.editProfile,
-                                              style: textStyles.headline2,
+                                              style: textStyles.displayMedium,
                                               textAlign: TextAlign.center,
                                             ),
                                             const SizedBox(height: 24),
@@ -190,7 +190,7 @@ class UserProfilePageState extends ConsumerState<UserProfilePage> {
                                                           Text(
                                                             t.profilePicture,
                                                             style: textStyles
-                                                                .headline3,
+                                                                .displaySmall,
                                                           ),
                                                           const SizedBox(
                                                               width: 6),
@@ -378,7 +378,7 @@ class UserProfilePageState extends ConsumerState<UserProfilePage> {
             Expanded(
               child: Text(
                 label,
-                style: textStyles.button,
+                style: textStyles.labelLarge,
               ),
             ),
           ],
@@ -566,7 +566,7 @@ class UserProfilePageState extends ConsumerState<UserProfilePage> {
                     children: [
                       Text(
                         t.errorNoProfile,
-                        style: textStyles.headline3,
+                        style: textStyles.displaySmall,
                       )
                     ],
                   ),

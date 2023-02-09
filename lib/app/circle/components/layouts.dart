@@ -102,7 +102,7 @@ class ParticipantListLayout extends StatelessWidget {
             EdgeInsets.symmetric(horizontal: themeData.pageHorizontalPadding),
         child: Text(
           t.noParticipantsActiveSession,
-          style: textStyles.headline3,
+          style: textStyles.displaySmall,
           textAlign: TextAlign.center,
         ),
       ),
@@ -188,8 +188,8 @@ class WaitingRoomListLayout extends StatelessWidget {
         child: Text(
           t.noParticipantsActiveSession,
           style: !live
-              ? textStyles.headline3
-              : textStyles.headline3!
+              ? textStyles.displaySmall
+              : textStyles.displaySmall!
                   .merge(TextStyle(color: themeData.themeColors.reversedText)),
           textAlign: TextAlign.center,
         ),

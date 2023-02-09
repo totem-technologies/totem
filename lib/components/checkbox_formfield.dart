@@ -47,7 +47,7 @@ class CheckboxFormField extends FormField<bool> {
                 const SizedBox(height: 4),
                 Text(state.errorText ?? "",
                     style: TextStyle(
-                        color: Theme.of(context).errorColor, fontSize: 13)),
+                        color: Theme.of(context).colorScheme.error, fontSize: 13)),
               ],
             );
           },

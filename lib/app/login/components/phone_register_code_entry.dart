@@ -68,19 +68,19 @@ class PhoneRegisterCodeEntryState
         child: Column(
           children: [
             const SizedBox(height: 40),
-            Text(t.signup, style: textStyles.headline1),
+            Text(t.signup, style: textStyles.displayLarge),
             const ContentDivider(),
             const SizedBox(height: 20),
             Text(
               t.textSentTo(
                   _formatPhoneNumber(authService.authRequestNumber ?? "")),
-              style: textStyles.bodyText1!
+              style: textStyles.bodyLarge!
                   .merge(const TextStyle(fontWeight: FontWeight.w600)),
             ),
             const SizedBox(height: 8),
             Text(
               t.enterTheCodeDetail,
-              style: textStyles.bodyText1!,
+              style: textStyles.bodyLarge!,
             ),
             const SizedBox(
               height: 50,

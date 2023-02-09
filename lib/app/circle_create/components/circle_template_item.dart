@@ -28,7 +28,7 @@ class CircleTemplateItem extends StatelessWidget {
                 children: [
                   Text(
                     template != null ? template!.name : t.newCircleTemplate,
-                    style: Theme.of(context).textStyles.headline3,
+                    style: Theme.of(context).textStyles.displaySmall,
                   ),
                   const SizedBox(height: 6),
                   if (template?.description != null &&
@@ -37,7 +37,7 @@ class CircleTemplateItem extends StatelessWidget {
                       padding: const EdgeInsets.only(bottom: 6),
                       child: Text(
                         template!.description!,
-                        style: Theme.of(context).textStyles.bodyText1,
+                        style: Theme.of(context).textStyles.bodyLarge,
                       ),
                     ),
                   if (template == null)
@@ -45,7 +45,7 @@ class CircleTemplateItem extends StatelessWidget {
                       padding: const EdgeInsets.only(bottom: 6),
                       child: Text(
                         t.newCircleTemplateMessage,
-                        style: Theme.of(context).textStyles.bodyText1,
+                        style: Theme.of(context).textStyles.bodyLarge,
                       ),
                     ),
                   const SizedBox(height: 5),

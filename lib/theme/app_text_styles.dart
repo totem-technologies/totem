@@ -19,14 +19,14 @@ class AppTextStyles extends TextTheme {
     required this.hintInputLabel,
     required this.nextTag,
   }) : super(
-          bodyText1: body,
-          headline1: headline1,
-          headline2: headline2,
-          headline3: headline3,
-          headline4: headline4,
-          headline5: headline5,
-          headline6: headline6,
-          button: button,
+          bodyLarge: body,
+          displayLarge: headline1,
+          displayMedium: headline2,
+          displaySmall: headline3,
+          headlineMedium: headline4,
+          headlineSmall: headline5,
+          titleLarge: headline6,
+          labelLarge: button,
         );
   // custom styles go here
   final TextStyle pinInput;

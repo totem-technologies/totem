@@ -113,7 +113,7 @@ class CircleSessionParticipantDialogState
                           children: [
                             Text(
                               widget.participant.name,
-                              style: textStyles.headline2,
+                              style: textStyles.displayMedium,
                               textAlign: TextAlign.center,
                             ),
                             const SizedBox(height: 33),
@@ -153,7 +153,7 @@ class CircleSessionParticipantDialogState
                                             Expanded(
                                               child: Text(
                                                 t.memberSince,
-                                                style: textStyles.headline3,
+                                                style: textStyles.displaySmall,
                                               ),
                                             ),
                                             const SizedBox(
@@ -162,7 +162,7 @@ class CircleSessionParticipantDialogState
                                             Text(
                                                 timeFormat
                                                     .format(profile.createdOn),
-                                                style: textStyles.bodyText1)
+                                                style: textStyles.bodyLarge)
                                           ],
                                         ),
                                         Divider(
@@ -175,7 +175,7 @@ class CircleSessionParticipantDialogState
                                             Expanded(
                                               child: Text(
                                                 t.circlesDone,
-                                                style: textStyles.headline3,
+                                                style: textStyles.displaySmall,
                                               ),
                                             ),
                                             const SizedBox(
@@ -185,7 +185,7 @@ class CircleSessionParticipantDialogState
                                               profile.completedCircles
                                                       ?.toString() ??
                                                   "0",
-                                              style: textStyles.bodyText1,
+                                              style: textStyles.bodyLarge,
                                             ),
                                           ],
                                         ),
@@ -233,7 +233,7 @@ class CircleSessionParticipantDialogState
             Icon(LucideIcons.trash, color: themeColors.primaryText),
             const SizedBox(width: 10),
             Text(AppLocalizations.of(context)!.removeFromCircle,
-                style: textStyles.button),
+                style: textStyles.labelLarge),
           ],
         ),
       ),

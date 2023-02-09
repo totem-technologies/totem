@@ -38,7 +38,7 @@ class CircleNextLabel extends StatelessWidget {
                     child: Text(
                       t.next,
                       maxLines: 1,
-                      style: textStyles.headline4!.merge(TextStyle(
+                      style: textStyles.headlineMedium!.merge(TextStyle(
                           color: !reversed
                               ? themeColors.reversedText
                               : themeColors.primaryText,

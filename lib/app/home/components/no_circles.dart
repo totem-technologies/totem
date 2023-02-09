@@ -21,7 +21,7 @@ class NoCircles extends StatelessWidget {
         children: [
           Text(
             t.ooh,
-            style: themeData.textStyles.headline2,
+            style: themeData.textStyles.displayMedium,
             textAlign: TextAlign.center,
           ),
           const SizedBox(

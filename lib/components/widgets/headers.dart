@@ -24,7 +24,7 @@ class TotemHeader extends StatelessWidget {
               children: [
                 Text(
                   text,
-                  style: textStyles.headline1,
+                  style: textStyles.displayLarge,
                 ),
                 const ContentDivider(),
               ],

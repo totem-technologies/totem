@@ -40,7 +40,7 @@ class CirclesListState extends ConsumerState<CirclesList> {
                         right: Theme.of(context).pageHorizontalPadding),
                     child: Text(
                       widget.title,
-                      style: Theme.of(context).textStyles.headline2,
+                      style: Theme.of(context).textStyles.displayMedium,
                     ),
                   );
                 }
@@ -52,7 +52,7 @@ class CirclesListState extends ConsumerState<CirclesList> {
                         bottom: 10),
                     child: Text(
                       widget.description,
-                      style: Theme.of(context).textStyles.headline4,
+                      style: Theme.of(context).textStyles.headlineMedium,
                     ),
                   );
                 }

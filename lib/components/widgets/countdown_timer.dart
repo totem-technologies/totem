@@ -244,12 +244,12 @@ class CountdownTimerState extends ConsumerState<CountdownTimer> {
       children: [
         Text(
           _valueDisplay,
-          style: textStyles.headline6
+          style: textStyles.titleLarge
               ?.merge(TextStyle(color: _currentState.color)),
         ),
         Text(
           _currentState.valueLabel ?? '',
-          style: textStyles.headline5
+          style: textStyles.headlineSmall
               ?.merge(TextStyle(color: _currentState.color)),
         )
       ],

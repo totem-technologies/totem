@@ -32,11 +32,11 @@ class _CircleLiveTotemParticipantState
           Opacity(
             opacity: totemParticipant.me ? 1.0 : 0,
             child: !activeSession.totemReceived
-                ? Text(t.yourTurn, style: textStyles.headline3)
+                ? Text(t.yourTurn, style: textStyles.displaySmall)
                 : Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(t.youAreSharing, style: textStyles.headline3),
+                      Text(t.youAreSharing, style: textStyles.displaySmall),
                       const SizedBox(
                         width: 6,
                       ),

@@ -60,7 +60,7 @@ class CircleNameLabel extends StatelessWidget {
       name,
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
-      style: textStyles.headline4!.merge(
+      style: textStyles.headlineMedium!.merge(
           TextStyle(color: themeColors.reversedText, fontSize: fontSize)),
     );
   }
