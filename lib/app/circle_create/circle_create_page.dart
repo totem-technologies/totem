@@ -202,7 +202,7 @@ class CircleCreatePageState extends ConsumerState<CircleCreatePage>
                                       height: 46,
                                     ),
                                     Text(t.circleName,
-                                        style: textStyles.headline3),
+                                        style: textStyles.displaySmall),
                                     ThemedTextFormField(
                                       controller: _nameController,
                                       autofocus: true,
@@ -222,7 +222,7 @@ class CircleCreatePageState extends ConsumerState<CircleCreatePage>
                                     ),
                                     const SizedBox(height: 32),
                                     Text(t.description,
-                                        style: textStyles.headline3),
+                                        style: textStyles.displaySmall),
                                     ThemedTextFormField(
                                       focusNode: _focusNodeDescription,
                                       controller: _descriptionController,
@@ -307,7 +307,7 @@ class CircleCreatePageState extends ConsumerState<CircleCreatePage>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(t.theme, style: textStyles.headline3),
+        Text(t.theme, style: textStyles.displaySmall),
         const SizedBox(height: 10),
         Container(
           padding: const EdgeInsets.all(15),
@@ -321,7 +321,7 @@ class CircleCreatePageState extends ConsumerState<CircleCreatePage>
               if (_selectedTheme == null)
                 Text(
                   t.noTheme,
-                  style: textStyles.headline4,
+                  style: textStyles.headlineMedium,
                   textAlign: TextAlign.center,
                 ),
               if (_selectedTheme != null) ...[
@@ -330,7 +330,7 @@ class CircleCreatePageState extends ConsumerState<CircleCreatePage>
                     Expanded(
                       child: Text(
                         _selectedTheme?.name ?? '',
-                        style: textStyles.headline4,
+                        style: textStyles.headlineMedium,
                       ),
                     ),
                     const SizedBox(width: 10),
@@ -447,8 +447,9 @@ class CircleCreatePageState extends ConsumerState<CircleCreatePage>
             padding: const EdgeInsets.only(top: 8),
             child: Text(
               label,
-              style: Theme.of(context).textStyles.headline5!.merge(TextStyle(
-                  color: Theme.of(context).themeColors.secondaryText)),
+              style: Theme.of(context).textStyles.headlineSmall!.merge(
+                  TextStyle(
+                      color: Theme.of(context).themeColors.secondaryText)),
             ),
           ),
       ],
@@ -542,7 +543,7 @@ class CircleCreatePageState extends ConsumerState<CircleCreatePage>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(t.participantLimit, style: textStyles.headline3),
+        Text(t.participantLimit, style: textStyles.displaySmall),
         const SizedBox(height: 6),
         SpinBox(
           keyboardType: const TextInputType.numberWithOptions(decimal: false),
@@ -558,7 +559,7 @@ class CircleCreatePageState extends ConsumerState<CircleCreatePage>
         const SizedBox(height: 4),
         Text(
           t.maximumParticipants(maxParticipants.toInt().toString()),
-          style: textStyles.headline4,
+          style: textStyles.headlineMedium,
         ),
       ],
     );
@@ -571,7 +572,7 @@ class CircleCreatePageState extends ConsumerState<CircleCreatePage>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(t.visibility, style: textStyles.headline3),
+        Text(t.visibility, style: textStyles.displaySmall),
         const SizedBox(height: 10),
         _visibilityDropDown(
           visibilityOptions,
@@ -617,7 +618,7 @@ class CircleCreatePageState extends ConsumerState<CircleCreatePage>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(t.duration, style: textStyles.headline3),
+        Text(t.duration, style: textStyles.displaySmall),
         const SizedBox(height: 10),
         _durationDropDown(
           durationOptions,
@@ -663,7 +664,7 @@ class CircleCreatePageState extends ConsumerState<CircleCreatePage>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(t.sessionType, style: textStyles.headline3),
+        Text(t.sessionType, style: textStyles.displaySmall),
         const SizedBox(height: 10),
         _recurringDropDown(
           recurringOptions,
@@ -758,7 +759,7 @@ class CircleCreatePageState extends ConsumerState<CircleCreatePage>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(t.repeats, style: textStyles.headline3),
+        Text(t.repeats, style: textStyles.displaySmall),
         const SizedBox(height: 10),
         _repeatUnitDropDown(
           repeatUnitOptions,
@@ -804,7 +805,7 @@ class CircleCreatePageState extends ConsumerState<CircleCreatePage>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(t.repeatsEvery, style: textStyles.headline3),
+        Text(t.repeatsEvery, style: textStyles.displaySmall),
         const SizedBox(height: 15),
         ThemedTextFormField(
           controller: _repeatIntervalController,
@@ -835,7 +836,7 @@ class CircleCreatePageState extends ConsumerState<CircleCreatePage>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(t.startDate, style: textStyles.headline3),
+        Text(t.startDate, style: textStyles.displaySmall),
         const SizedBox(height: 10),
         DateTimeFormField(
             mode: DateTimeFieldPickerMode.date,
@@ -872,7 +873,7 @@ class CircleCreatePageState extends ConsumerState<CircleCreatePage>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(t.startTime, style: textStyles.headline3),
+        Text(t.startTime, style: textStyles.displaySmall),
         const SizedBox(height: 10),
         DateTimeFormField(
           decoration: const InputDecoration(
@@ -919,7 +920,7 @@ class CircleCreatePageState extends ConsumerState<CircleCreatePage>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(t.repeatsUntil, style: textStyles.headline3),
+        Text(t.repeatsUntil, style: textStyles.displaySmall),
         const SizedBox(height: 10),
         _repeatEndDropDown(
           repeatEndOptions,
@@ -965,7 +966,7 @@ class CircleCreatePageState extends ConsumerState<CircleCreatePage>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(t.endDate, style: textStyles.headline3),
+        Text(t.endDate, style: textStyles.displaySmall),
         const SizedBox(height: 10),
         DateTimeFormField(
             mode: DateTimeFieldPickerMode.date,
@@ -1002,7 +1003,7 @@ class CircleCreatePageState extends ConsumerState<CircleCreatePage>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(t.numberOfSessions, style: textStyles.headline3),
+        Text(t.numberOfSessions, style: textStyles.displaySmall),
         const SizedBox(height: 15),
         ThemedTextFormField(
           controller: _repeatCountController,

@@ -17,7 +17,7 @@ class CircleLoading extends StatelessWidget {
           const SizedBox(height: 40),
           Text(
             AppLocalizations.of(context)!.loadingCircle,
-            style: Theme.of(context).textTheme.headline3,
+            style: Theme.of(context).textTheme.displaySmall,
             textAlign: TextAlign.center,
           ),
           const SizedBox(

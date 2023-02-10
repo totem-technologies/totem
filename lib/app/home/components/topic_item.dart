@@ -53,11 +53,11 @@ class TopicItem extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const SizedBox(height: 2),
-                          Text(topic.title, style: textStyles.headline3),
+                          Text(topic.title, style: textStyles.displaySmall),
                           const SizedBox(height: 12),
                           Text(
                             topic.description,
-                            style: textStyles.headline4,
+                            style: textStyles.headlineMedium,
                           )
                         ],
                       ),

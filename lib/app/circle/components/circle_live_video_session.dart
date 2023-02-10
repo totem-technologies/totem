@@ -98,7 +98,7 @@ class _CircleLiveVideoSessionState
                                       activeSession.circle.name,
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
-                                      style: textStyles.headline2!.merge(
+                                      style: textStyles.displayMedium!.merge(
                                         TextStyle(
                                             fontWeight: FontWeight.w600,
                                             color: themeColors.reversedText),
@@ -150,7 +150,7 @@ class _CircleLiveVideoSessionState
                                         : Center(
                                             child: Text(
                                               t.noParticipantsActiveSession,
-                                              style: textStyles.headline3!
+                                              style: textStyles.displaySmall!
                                                   .merge(TextStyle(
                                                       color: themeColors
                                                           .reversedText)),
@@ -295,7 +295,7 @@ class _CircleLiveVideoSessionState
                                 ),
                                 child: Text(
                                   t.slideToPass,
-                                  style: textStyles.headline3,
+                                  style: textStyles.displaySmall,
                                 ),
                               ),
                             ),
@@ -328,7 +328,7 @@ class _CircleLiveVideoSessionState
         children: [
           Text(
             t.joiningCircle,
-            style: textStyles.headline3!
+            style: textStyles.displaySmall!
                 .merge(TextStyle(color: themeColors.reversedText)),
           ),
           const SizedBox(

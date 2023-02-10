@@ -167,7 +167,7 @@ class CircleParticipantVideo extends StatelessWidget {
                 children: [
                   Text(
                     t.me,
-                    style: textStyles.headline5!.merge(
+                    style: textStyles.headlineSmall!.merge(
                       TextStyle(
                         color: themeColors.primaryText,
                       ),
@@ -207,7 +207,7 @@ class CircleParticipantVideo extends StatelessWidget {
                   const SizedBox(
                     width: 4,
                   ),
-                  Text(t.keeper, style: textStyles.headline5),
+                  Text(t.keeper, style: textStyles.headlineSmall),
                 ],
               ),
             ),

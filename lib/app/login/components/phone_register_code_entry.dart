@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl_phone_number_input/intl_phone_number_input.dart';
-import 'package:libphonenumber_plugin/libphonenumber_plugin.dart';
+import 'package:phone_form_field/phone_form_field.dart';
 import 'package:totem/app/login/components/pin_code_widget.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/services/index.dart';
@@ -52,12 +51,8 @@ class PhoneRegisterCodeEntryState
     }
   }
 
-  Future<String> _formatPhoneNumber(String phoneNumber) async {
-    PhoneNumber num =
-        await PhoneNumber.getRegionInfoFromPhoneNumber(phoneNumber);
-    String? formattedNumber =
-        await PhoneNumberUtil.formatAsYouType(num.phoneNumber!, num.isoCode!);
-    return formattedNumber ?? "";
+  String _formatPhoneNumber(String phoneNumber) {
+    return PhoneNumber.parse(phoneNumber).getFormattedNsn();
   }
 
   @override
@@ -73,23 +68,19 @@ class PhoneRegisterCodeEntryState
         child: Column(
           children: [
             const SizedBox(height: 40),
-            Text(t.signup, style: textStyles.headline1),
+            Text(t.signup, style: textStyles.displayLarge),
             const ContentDivider(),
             const SizedBox(height: 20),
-            FutureBuilder<String>(
-              future: _formatPhoneNumber(authService.authRequestNumber ?? ""),
-              builder: (context, asyncSnapshot) {
-                return Text(
-                  t.textSentTo(asyncSnapshot.data ?? ""),
-                  style: textStyles.bodyText1!
-                      .merge(const TextStyle(fontWeight: FontWeight.w600)),
-                );
-              },
+            Text(
+              t.textSentTo(
+                  _formatPhoneNumber(authService.authRequestNumber ?? "")),
+              style: textStyles.bodyLarge!
+                  .merge(const TextStyle(fontWeight: FontWeight.w600)),
             ),
             const SizedBox(height: 8),
             Text(
               t.enterTheCodeDetail,
-              style: textStyles.bodyText1!,
+              style: textStyles.bodyLarge!,
             ),
             const SizedBox(
               height: 50,

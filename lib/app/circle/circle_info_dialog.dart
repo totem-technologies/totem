@@ -189,7 +189,7 @@ class _CircleInfoDialogState extends ConsumerState<CircleInfoDialog> {
                     children: [
                       Text(
                         circle.name,
-                        style: textStyles.headline2,
+                        style: textStyles.displayMedium,
                         textAlign: TextAlign.center,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
@@ -375,7 +375,7 @@ class _CircleInfoDialogState extends ConsumerState<CircleInfoDialog> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(t.hostedBy, style: textStyles.headline4),
+        Text(t.hostedBy, style: textStyles.headlineMedium),
         const SizedBox(height: 10),
         Row(
           children: [
@@ -385,7 +385,7 @@ class _CircleInfoDialogState extends ConsumerState<CircleInfoDialog> {
             const SizedBox(width: 10),
             Expanded(
                 child: Text(circle.createdBy?.name ?? '',
-                    style: textStyles.headline3)),
+                    style: textStyles.displaySmall)),
           ],
         )
       ],
@@ -400,7 +400,7 @@ class _CircleInfoDialogState extends ConsumerState<CircleInfoDialog> {
         circle.bannedParticipants!.keys.contains(authUser!.uid)) {
       return Text(
         t.errorLoadingCircleBanned,
-        style: textStyles.headline3,
+        style: textStyles.displaySmall,
       );
     }
     final List<SessionState> validStates = [
@@ -429,7 +429,7 @@ class _CircleInfoDialogState extends ConsumerState<CircleInfoDialog> {
     }
     return Text(
       t.circleNotInSession,
-      style: textStyles.headline3,
+      style: textStyles.displaySmall,
     );
   }
 

@@ -44,7 +44,7 @@ class CircleDeviceSelectorState extends ConsumerState<ConsumerStatefulWidget> {
                       commProvider.audioDeviceConfigurable
                           ? t.audioVideoSettings
                           : t.videoSettings,
-                      style: Theme.of(context).textStyles.headline2,
+                      style: Theme.of(context).textStyles.displayMedium,
                     )),
                     InkWell(
                       onTap: () {
@@ -67,7 +67,7 @@ class CircleDeviceSelectorState extends ConsumerState<ConsumerStatefulWidget> {
                 ),
                 Text(
                   t.camera,
-                  style: textStyles.headline4,
+                  style: textStyles.headlineMedium,
                 ),
                 _devicesDropDown(
                   commProvider.cameras,
@@ -82,7 +82,7 @@ class CircleDeviceSelectorState extends ConsumerState<ConsumerStatefulWidget> {
                   ),
                   Text(
                     t.audioOutput,
-                    style: textStyles.headline4,
+                    style: textStyles.headlineMedium,
                   ),
                   _devicesDropDown(
                     commProvider.audioOutputs,
@@ -118,7 +118,7 @@ class CircleDeviceSelectorState extends ConsumerState<ConsumerStatefulWidget> {
                   ),
                   Text(
                     t.audioInput,
-                    style: textStyles.headline4,
+                    style: textStyles.headlineMedium,
                   ),
                   _devicesDropDown(
                     commProvider.audioInputs,

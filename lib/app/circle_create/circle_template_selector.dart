@@ -45,7 +45,7 @@ class CircleTemplateSelectorState
               SizedBox(width: themeData.pageHorizontalPadding),
               Text(
                 t.createNewCircle,
-                style: textStyles.headline2,
+                style: textStyles.displayMedium,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),

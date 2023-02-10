@@ -54,17 +54,12 @@ class AccountStateDialog extends ConsumerStatefulWidget {
 class AccountStateDialogState extends ConsumerState<AccountStateDialog>
     with AfterLayoutMixin {
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     if (DeviceType.isPhone()) {
       // show as full screen dialog
       if (widget.event.fullScreenPhone) {
         return Material(
-          color: Theme.of(context).backgroundColor,
+          color: Theme.of(context).colorScheme.background,
           child: widget.event.eventContent(context, ref),
         );
       }

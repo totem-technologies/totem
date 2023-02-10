@@ -39,7 +39,7 @@ class CirclesRejoinableState extends ConsumerState<CirclesRejoinable> {
                           horizontal: Theme.of(context).pageHorizontalPadding),
                       child: Text(
                         t.rejoinCircle,
-                        style: Theme.of(context).textStyles.headline2,
+                        style: Theme.of(context).textStyles.displayMedium,
                       ),
                     ),
                     const SizedBox(

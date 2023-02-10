@@ -37,7 +37,7 @@ class NamedCircleList extends ConsumerWidget {
                           horizontal: Theme.of(context).pageHorizontalPadding),
                       child: Text(
                         name,
-                        style: Theme.of(context).textStyles.headline2,
+                        style: Theme.of(context).textStyles.displayMedium,
                       ),
                     ),
                     const SizedBox(

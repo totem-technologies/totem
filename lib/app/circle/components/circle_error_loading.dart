@@ -24,7 +24,7 @@ class CircleErrorLoading extends StatelessWidget {
             ),
             Text(
               AppLocalizations.of(context)!.errorLoadingCircle,
-              style: Theme.of(context).textTheme.headline3,
+              style: Theme.of(context).textTheme.displaySmall,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 30),

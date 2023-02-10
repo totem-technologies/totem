@@ -88,7 +88,7 @@ class CircleCreateNonKeeperState extends ConsumerState<CircleCreateNonKeeper> {
                 Expanded(
                   child: Text(
                     t.createNewCircle,
-                    style: textStyles.headline2,
+                    style: textStyles.displayMedium,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -230,7 +230,7 @@ class CircleCreateNonKeeperState extends ConsumerState<CircleCreateNonKeeper> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(t.participantLimit, style: textStyles.headline3),
+        Text(t.participantLimit, style: textStyles.displaySmall),
         const SizedBox(height: 6),
         SpinBox(
           keyboardType: const TextInputType.numberWithOptions(decimal: false),
@@ -246,7 +246,7 @@ class CircleCreateNonKeeperState extends ConsumerState<CircleCreateNonKeeper> {
         const SizedBox(height: 4),
         Text(
           t.maximumParticipants(maxParticipants.toInt().toString()),
-          style: textStyles.headline4,
+          style: textStyles.headlineMedium,
         ),
       ],
     );
@@ -259,7 +259,7 @@ class CircleCreateNonKeeperState extends ConsumerState<CircleCreateNonKeeper> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(t.duration, style: textStyles.headline3),
+        Text(t.duration, style: textStyles.displaySmall),
         const SizedBox(height: 10),
         _durationDropDown(
           durationOptions,

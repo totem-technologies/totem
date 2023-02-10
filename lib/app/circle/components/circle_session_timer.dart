@@ -208,7 +208,7 @@ class AddTimeDialogState extends ConsumerState<AddTimeDialog> {
             Expanded(
               child: Text(
                 t.addMoreTime,
-                style: textStyles.headline2,
+                style: textStyles.displayMedium,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),

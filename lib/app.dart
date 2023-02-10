@@ -90,7 +90,7 @@ class _AppState extends ConsumerState<App> {
       inputDecorationTheme: InputDecorationTheme(
         labelStyle: textStyles.inputLabel,
         hintStyle: textStyles.hintInputLabel,
-        errorStyle: textStyles.bodyText1!
+        errorStyle: textStyles.bodyLarge!
             .copyWith(color: themeColors.error, fontSize: 12),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8.0),

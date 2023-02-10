@@ -127,7 +127,7 @@ class _CircleSnapSessionContentState
               Expanded(
                 child: Text(
                   widget.circle.name,
-                  style: textStyles.headline2,
+                  style: textStyles.displayMedium,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -169,7 +169,7 @@ class _CircleSnapSessionContentState
         children: [
           Text(
             state == SessionState.starting ? t.circleStarting : t.circleEnding,
-            style: textStyles.headline3,
+            style: textStyles.displaySmall,
           ),
           const SizedBox(
             height: 20,
@@ -224,7 +224,7 @@ class _CircleSnapSessionContentState
               repo.activeSession!.state == SessionState.complete
                   ? t.sessionStateComplete
                   : t.sessionStateCancelled,
-              style: textStyles.headline3),
+              style: textStyles.displaySmall),
           const SizedBox(height: 20),
           ThemedRaisedButton(
             label: t.leaveSession,
@@ -255,7 +255,7 @@ class _CircleSnapSessionContentState
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text(t.sessionUserRemoved, style: textStyles.headline3),
+        Text(t.sessionUserRemoved, style: textStyles.displaySmall),
         const SizedBox(height: 20),
         ThemedRaisedButton(
           label: t.leaveSession,
@@ -280,7 +280,7 @@ class _CircleSnapSessionContentState
           children: [
             Text(
               t.errorJoinSession,
-              style: textStyles.headline3,
+              style: textStyles.displaySmall,
             ),
             const SizedBox(
               height: 20,
@@ -333,7 +333,7 @@ class _CircleSnapSessionContentState
         children: [
           Text(
             t.joiningCircle,
-            style: textStyles.headline3,
+            style: textStyles.displaySmall,
           ),
           const SizedBox(
             height: 20,
@@ -419,7 +419,7 @@ class _CircleSnapSessionContentState
       children: [
         Text(
           t.errorSessionInvalid,
-          style: textStyles.headline3,
+          style: textStyles.displaySmall,
         ),
         const SizedBox(height: 20),
       ],

@@ -55,7 +55,7 @@ class CircleParticipant extends StatelessWidget {
                           const EdgeInsets.only(left: 12, right: 12, bottom: 8),
                       child: Text(
                         name,
-                        style: textStyles.headline5,
+                        style: textStyles.headlineSmall,
                       ),
                     ),
                   ),
@@ -90,7 +90,7 @@ class CircleParticipant extends StatelessWidget {
                 children: [
                   Text(
                     t.me,
-                    style: textStyles.headline5!.merge(
+                    style: textStyles.headlineSmall!.merge(
                       TextStyle(
                         color: themeColors.primaryText,
                       ),
@@ -130,7 +130,7 @@ class CircleParticipant extends StatelessWidget {
                   const SizedBox(
                     width: 4,
                   ),
-                  Text(t.keeper, style: textStyles.headline5),
+                  Text(t.keeper, style: textStyles.headlineSmall),
                 ],
               ),
             ),

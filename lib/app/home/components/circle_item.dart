@@ -70,7 +70,7 @@ class CircleItem extends ConsumerWidget {
                                 const SizedBox(height: 2),
                                 Text(
                                   circle.name,
-                                  style: textStyles.headline3,
+                                  style: textStyles.displaySmall,
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                 ),

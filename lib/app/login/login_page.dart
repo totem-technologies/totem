@@ -49,7 +49,7 @@ class _LoginPanel extends StatelessWidget {
                   children: [
                     Text(
                       t.welcome,
-                      style: theme.textStyles.headline1,
+                      style: theme.textStyles.displayLarge,
                       textAlign: TextAlign.center,
                     ),
                     const Center(

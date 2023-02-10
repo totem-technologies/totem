@@ -58,7 +58,7 @@ class CircleSessionEndedPage extends StatelessWidget {
           Expanded(
             child: Text(
               circle?.name ?? t.circle,
-              style: textStyles.headline2,
+              style: textStyles.displayMedium,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
@@ -76,7 +76,7 @@ class CircleSessionEndedPage extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Text(t.sessionUserRemoved, style: textStyles.headline3),
+        Text(t.sessionUserRemoved, style: textStyles.displaySmall),
         const SizedBox(height: 20),
         ThemedRaisedButton(
           child: Row(
@@ -110,7 +110,7 @@ class CircleSessionEndedPage extends StatelessWidget {
               sessionState == SessionState.complete
                   ? t.sessionStateComplete
                   : t.sessionStateCancelled,
-              style: textStyles.headline3),
+              style: textStyles.displaySmall),
           const SizedBox(height: 20),
           ThemedRaisedButton(
             label: t.returnHome,

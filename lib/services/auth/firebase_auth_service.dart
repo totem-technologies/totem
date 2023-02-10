@@ -179,6 +179,7 @@ class FirebaseAuthService implements AuthService {
           },
           verificationFailed: (FirebaseAuthException e) {
             debugPrint('verificationFailed');
+            debugPrint(e.toString());
             _lastRegisterError = "code: ${e.code}"; //e.message;
             _authRequestStateStreamController!.add(AuthRequestState.failed);
           },

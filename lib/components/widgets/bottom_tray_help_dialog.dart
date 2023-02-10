@@ -47,14 +47,14 @@ class BottomTrayHelpDialog extends StatelessWidget {
                     const SizedBox(height: 10),
                     Text(
                       title,
-                      style: textStyles.headline4!
+                      style: textStyles.headlineMedium!
                           .merge(const TextStyle(fontWeight: FontWeight.w600)),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 8),
                     Text(
                       detail,
-                      style: textStyles.headline4!
+                      style: textStyles.headlineMedium!
                           .merge(const TextStyle(fontWeight: FontWeight.w400)),
                       textAlign: TextAlign.center,
                     ),

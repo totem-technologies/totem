@@ -9,8 +9,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl_phone_number_input/intl_phone_number_input.dart';
-import 'package:libphonenumber_plugin/libphonenumber_plugin.dart';
+// import 'package:intl_phone_number_input/intl_phone_number_input.dart';
+import 'package:phone_form_field/phone_form_field.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:totem/components/index.dart';
 import 'package:totem/models/index.dart';
@@ -135,7 +135,7 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage>
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(t.addProfilePicture, style: textStyles.headline3),
+                      Text(t.addProfilePicture, style: textStyles.displaySmall),
                       const SizedBox(width: 6),
                       InkWell(
                         onTap: () {
@@ -222,7 +222,7 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage>
         SizedBox(height: Theme.of(context).titleTopPadding),
         Text(
           t.aboutYou,
-          style: textTheme.headline1,
+          style: textTheme.displayLarge,
         ),
         const Center(
           child: ContentDivider(),
@@ -287,7 +287,7 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage>
                 children: [
                   Text(
                     t.errorNoProfile,
-                    style: textStyles.headline3,
+                    style: textStyles.displaySmall,
                   )
                 ],
               ),
@@ -346,12 +346,7 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage>
                 Text(t.phoneNumber, style: textStyles.inputLabel),
                 const SizedBox(height: 4),
                 (user != null
-                    ? FutureBuilder<String>(
-                        future: _formatPhoneNumber(user.phoneNumber),
-                        builder: (context, asyncSnapshot) {
-                          return Text(asyncSnapshot.data ?? user.phoneNumber);
-                        },
-                      )
+                    ? Text(_formatPhoneNumber(user.phoneNumber))
                     : const Text("")),
                 const SizedBox(height: 24),
                 Text(t.name, style: textStyles.inputLabel),
@@ -458,7 +453,7 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage>
     List<String> parts2 = parts[1].split(t.termsOfService);
     return TextSpan(
         text: parts[0],
-        style: textStyles.bodyText1!
+        style: textStyles.bodyLarge!
             .merge(const TextStyle(height: 1.3, fontWeight: FontWeight.bold)),
         children: [
           TextSpan(
@@ -606,11 +601,7 @@ class OnboardingProfilePageState extends ConsumerState<OnboardingProfilePage>
     }
   }
 
-  Future<String> _formatPhoneNumber(String phoneNumber) async {
-    PhoneNumber num =
-        await PhoneNumber.getRegionInfoFromPhoneNumber(phoneNumber);
-    String? formattedNumber =
-        await PhoneNumberUtil.formatAsYouType(num.phoneNumber!, num.isoCode!);
-    return formattedNumber ?? "";
+  String _formatPhoneNumber(String phoneNumber) {
+    return PhoneNumber.parse(phoneNumber).getFormattedNsn();
   }
 }

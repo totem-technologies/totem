@@ -130,7 +130,7 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
                                       children: [
                                         Text(
                                           widget.circle.name,
-                                          style: textStyles.headline1!.merge(
+                                          style: textStyles.displayLarge!.merge(
                                               const TextStyle(
                                                   fontWeight: FontWeight.w400)),
                                           textAlign: TextAlign.center,
@@ -182,7 +182,7 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
                               Expanded(
                                 child: Text(
                                   widget.circle.name,
-                                  style: textStyles.headline1!.merge(
+                                  style: textStyles.displayLarge!.merge(
                                       const TextStyle(
                                           fontWeight: FontWeight.w400)),
                                   //textAlign: TextAlign.center,

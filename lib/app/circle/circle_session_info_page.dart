@@ -147,7 +147,7 @@ class CircleSessionInfoPageState extends ConsumerState<CircleSessionInfoPage> {
                           const SizedBox(height: 8),
                           Text(
                             t.circleWeeksSession,
-                            style: textStyles.headline3,
+                            style: textStyles.displaySmall,
                           ),
                           const SizedBox(height: 4),
                           Text(_activeSession.topic),
@@ -157,7 +157,7 @@ class CircleSessionInfoPageState extends ConsumerState<CircleSessionInfoPage> {
                           const SizedBox(height: 24),
                           Text(
                             t.circleDescription,
-                            style: textStyles.headline3,
+                            style: textStyles.displaySmall,
                           ),
                           const SizedBox(height: 4),
                           Text(_activeSession.circle.description!),

@@ -28,7 +28,7 @@ class SubPageHeader extends StatelessWidget {
           Expanded(
             child: Text(
               title,
-              style: textStyles.headline2,
+              style: textStyles.displayMedium,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
