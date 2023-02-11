@@ -9,7 +9,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-// import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:phone_form_field/phone_form_field.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:totem/components/index.dart';

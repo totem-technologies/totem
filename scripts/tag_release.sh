@@ -12,14 +12,11 @@ if [[ "$BRANCH" != "main" ]]; then
   exit 1
 fi
 
-if [[ $(git diff --stat) != '' ]]; then
-  log 'Repo is dirty. Please commit first.'
-  exit 1
-fi
-
 RELEASE=`grep 'version:' pubspec.yaml | sed 's/version: //'`
 TAG=v$RELEASE
-log "Tagging version $TAG..."
+log "Comitting version $TAG..."
+git commit -am "$TAG"
+log "Tagging..."
 git tag $TAG
 git push origin
 git push origin $TAG
