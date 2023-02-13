@@ -144,7 +144,7 @@ class PhoneRegisterNumberEntryState
   void onSubmit() async {
     var auth = ref.read(authServiceProvider);
     // Validate returns true if the form is valid, or false otherwise.
-    if (phoneKey.currentState!.validate()) {
+    if (phoneKey.currentState != null && phoneKey.currentState!.validate()) {
       Timer(const Duration(seconds: 5), () {
         setState(() => _busy = false);
       });
