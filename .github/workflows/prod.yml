@@ -22,7 +22,7 @@ jobs:
       - name: Install Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.3.x'
+          flutter-version: '3.7.x'
           cache: true
       - run: make build-web
       - run: zip -r web build/web
@@ -61,7 +61,7 @@ jobs:
       - name: Install Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.3.x'
+          flutter-version: '3.7.x'
           cache: true
       - uses: webfactory/ssh-agent@v0.7.0
         with:
@@ -85,7 +85,7 @@ jobs:
       - name: Install Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.3.x'
+          flutter-version: '3.7.x'
           cache: true
       - name: Setup secrets
         run: |
