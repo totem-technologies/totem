@@ -525,6 +525,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
       StreamPublishState oldState, StreamPublishState newState, int elapsed) {
     debugPrint('audio state changed: $oldState > $newState');
     bool mute = newState == StreamPublishState.NoPublished;
+    _engine!.setEnableSpeakerphone(true);
     if (muted != mute) {
       muted = mute;
       sessionProvider.activeSession?.updateMutedStateForUser(
@@ -550,6 +551,7 @@ class AgoraCommunicationProvider extends CommunicationProvider {
 
   void _handleLocalAudioStateChanged(
       AudioLocalState state, AudioLocalError error) async {
+    await _engine!.setEnableSpeakerphone(true);
     // handles local changes to audio
     debugPrint('local audio state changes: $state');
     if (error != AudioLocalError.Ok) {
