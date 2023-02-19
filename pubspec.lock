@@ -158,10 +158,10 @@ packages:
     dependency: "direct main"
     description:
       name: circle_flags
-      sha256: "96ab4c2cb3ef7a76c57d998a3a3d4db5d994ff29ec10fbbb7bc1da694dc079f2"
+      sha256: "87102c61b777dcae56d29c6f1d2b2126d98dd09dd904618ccc04a0943ac95924"
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.3"
+    version: "1.0.4"
   clipboard:
     dependency: "direct main"
     description:
@@ -617,18 +617,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_svg
-      sha256: "6ff9fa12892ae074092de2fa6a9938fb21dbabfdaa2ff57dc697ff912fc8d4b2"
+      sha256: b9be7260c1fdbe0090a11d9d356fc2c88e14cf33407fc0c1829d76ab13808035
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.6"
-  flutter_svg_provider:
-    dependency: transitive
-    description:
-      name: flutter_svg_provider
-      sha256: cbb2d02fd9feb70fc30221fc36a7ee5347f1cceae6b0c99ab4fa011bbd9f1f7f
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.3"
+    version: "2.0.1"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -895,14 +887,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.8.2"
-  path_drawing:
-    dependency: transitive
-    description:
-      name: path_drawing
-      sha256: bbb1934c0cbb03091af082a6389ca2080345291ef07a5fa6d6e078ba8682f977
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.1"
   path_parsing:
     dependency: transitive
     description:
@@ -1019,10 +1003,10 @@ packages:
     dependency: "direct main"
     description:
       name: phone_form_field
-      sha256: f39c036be37bcc3a292a85cbca7e4c64e5ecb889508e2595f1ba7d233d225faf
+      sha256: "3f550a87f63705412409290c19e3f32c0eff742869f63bf5670810502587d41c"
       url: "https://pub.dev"
     source: hosted
-    version: "7.0.5"
+    version: "7.0.6"
   phone_number_metadata:
     dependency: transitive
     description:
@@ -1035,10 +1019,10 @@ packages:
     dependency: transitive
     description:
       name: phone_numbers_parser
-      sha256: "77f2ee1741c346f137001c10e43c70924251332ef2773c823fcd3c21bc40a1d9"
+      sha256: a3659911edc70e13da02a4d4374e4600b0862f8a56b94ba6a9d67afa9aba830d
       url: "https://pub.dev"
     source: hosted
-    version: "7.0.0+1"
+    version: "7.0.2"
   pin_code_fields:
     dependency: "direct main"
     description:
@@ -1404,6 +1388,30 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.7"
+  vector_graphics:
+    dependency: transitive
+    description:
+      name: vector_graphics
+      sha256: "09562ef5f47aa84f6567495adb6b9cb2a3192b82c352623b8bd00b300d62603b"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.1"
+  vector_graphics_codec:
+    dependency: transitive
+    description:
+      name: vector_graphics_codec
+      sha256: "886e57742644ebed024dc3ade29712e37eea1b03d294fb314c0a3386243fe5a6"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.1"
+  vector_graphics_compiler:
+    dependency: transitive
+    description:
+      name: vector_graphics_compiler
+      sha256: "5d9010c4a292766c55395b2288532579a85673f8148460d1e233d98ffe10d24e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.1"
   vector_math:
     dependency: transitive
     description:
@@ -1485,5 +1493,5 @@ packages:
     source: hosted
     version: "6.2.2"
 sdks:
-  dart: ">=2.18.0 <3.0.0"
-  flutter: ">=3.3.0"
+  dart: ">=2.19.0-0 <3.0.0"
+  flutter: ">=3.7.0-0"
