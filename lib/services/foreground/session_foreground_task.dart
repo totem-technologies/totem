@@ -69,7 +69,7 @@ class SessionForeground {
     }
 
     if (reqResult) {
-      _receivePort = await FlutterForegroundTask.receivePort;
+      _receivePort = FlutterForegroundTask.receivePort;
       _receivePort?.listen((message) {
         if (message is DateTime) {
           debugPrint('receive timestamp: $message');
