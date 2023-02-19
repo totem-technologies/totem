@@ -188,7 +188,8 @@ class WaitAnimationState extends State<WaitAnimation>
                   widget.size - (widget.size * 0.16) - 5,
                   SvgPicture.asset(
                     'assets/totem_icon.svg',
-                    color: widget.imageColor,
+                    colorFilter:
+                        ColorFilter.mode(widget.imageColor, BlendMode.srcIn),
                   ))
             ],
           );

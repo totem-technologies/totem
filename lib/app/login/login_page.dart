@@ -63,7 +63,8 @@ class _LoginPanel extends StatelessWidget {
               ),
               SvgPicture.asset(
                 'assets/totem_icon.svg',
-                color: theme.themeColors.primaryText,
+                colorFilter: ColorFilter.mode(
+                    theme.themeColors.primaryText, BlendMode.srcIn),
                 height: 200,
               ),
               Container(
