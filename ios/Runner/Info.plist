@@ -125,6 +125,8 @@
 		<string>stage.totem.org</string>
 		<key>CFBundleURLSchemes</key>
 		<array>
+		<string>totem</string>
+		<string>app-1-35349008308-ios-bd903a0a3c9a995b206ce1</string>
 		<string>totemdev</string>
 		<string>app-1-818015549149-ios-03f63a8e2314ad6a0ecd34</string>
 		</array>

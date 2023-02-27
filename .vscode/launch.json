@@ -23,7 +23,11 @@
       "name": "totem (release mode)",
       "request": "launch",
       "type": "dart",
-      "flutterMode": "release"
+      "flutterMode": "release",
+      "args": [
+        "--flavor",
+        "prod" //dev or prod
+    ]
     },
     {
       "name": "totem (firebase emulator)",

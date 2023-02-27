@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, TargetPlatform;
+import 'package:flutter/material.dart';
 
 import './firebase_options_dev.dart' as dev;
 import './firebase_options_prod.dart' as prod;
@@ -17,11 +18,21 @@ class AppConfig {
 }
 
 Future<void> initConfig() async {
+  debugPrint('Initializing Firebase for ${AppConfig.environment}...');
+  if (Firebase.apps.isNotEmpty) {
+    debugPrint('Firebase already initialized');
+    return;
+  }
   var environments = {
     'dev': dev.DefaultFirebaseOptions.currentPlatform,
     'prod': prod.DefaultFirebaseOptions.currentPlatform
   };
-  await Firebase.initializeApp(options: environments[AppConfig.environment]);
+
+  try {
+    await Firebase.initializeApp(options: environments[AppConfig.environment]);
+  } catch (e) {
+    debugPrint('Error initializing Firebase: $e');
+  }
 
   if (AppConfig.useEmulator) {
     await _connectToFirebaseEmulator();
