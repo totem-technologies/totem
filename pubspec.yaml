@@ -1,7 +1,7 @@
 name: totem
 description: Be known.
 publish_to: "none"
-version: 0.4.50+92
+version: 0.4.51+93
 
 environment:
   sdk: ">=2.17.0 <3.0.0"
