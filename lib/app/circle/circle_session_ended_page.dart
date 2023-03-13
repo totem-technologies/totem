@@ -130,8 +130,8 @@ class CircleSessionEndedPage extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(top: 60),
       child: Row(mainAxisAlignment: MainAxisAlignment.center, children: const [
-        DonateButton(),
-        SizedBox(width: 60),
+        // DonateButton(),
+        // SizedBox(width: 60),
         UserFeedbackButton(),
       ]),
     );

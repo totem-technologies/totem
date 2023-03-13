@@ -69,13 +69,13 @@ class TotemDrawer extends ConsumerWidget {
                 Navigator.pop(context);
                 DataUrls.launch(DataUrls.docs);
               }),
-          DrawerItem(
-              text: t.donate,
-              icon: LucideIcons.coins,
-              onTap: () {
-                Navigator.pop(context);
-                DataUrls.launch(DataUrls.donate);
-              }),
+          // DrawerItem(
+          //     text: t.donate,
+          //     icon: LucideIcons.coins,
+          //     onTap: () {
+          //       Navigator.pop(context);
+          //       DataUrls.launch(DataUrls.donate);
+          //     }),
           DrawerItem(
               text: t.feedback,
               icon: LucideIcons.messageSquare,
