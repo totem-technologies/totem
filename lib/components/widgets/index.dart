@@ -8,7 +8,7 @@ export 'countdown_timer.dart';
 export 'day_of_week_form_field.dart';
 export 'dialog_bottomsheet.dart';
 export 'dialog_container.dart';
-export 'donate_button.dart';
+// export 'donate_button.dart';
 export 'error_info_block.dart';
 export 'file_prompt_save.dart';
 export 'file_uploader.dart';

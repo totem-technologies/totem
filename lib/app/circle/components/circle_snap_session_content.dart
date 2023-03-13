@@ -238,8 +238,8 @@ class _CircleSnapSessionContentState
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: const [
-                    DonateButton(),
-                    SizedBox(width: 60),
+                    // DonateButton(),
+                    // SizedBox(width: 60),
                     UserFeedbackButton(),
                   ]),
             )

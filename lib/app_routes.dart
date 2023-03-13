@@ -221,6 +221,7 @@ class AppRoutes {
         return null;
       },
       refreshListenable:
+          // ignore: deprecated_member_use
           GoRouterRefreshStreams([ref.read(userAccountStateProvider.stream)]),
     );
   }
