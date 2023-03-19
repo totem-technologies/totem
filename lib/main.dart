@@ -1,6 +1,5 @@
 import 'package:firebase_app_check/firebase_app_check.dart';
 
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -25,15 +24,6 @@ Future<void> main() async {
     await FirebaseAppCheck.instance.setTokenAutoRefreshEnabled(true);
   }
 
-  if (!kIsWeb) {
-    if (kDebugMode) {
-      // Force disable Crashlytics collection while doing every day development.
-      // Temporarily toggle this to true if you want to test crash reporting in your app.
-      await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(false);
-    } else {
-      FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
-    }
-  }
   var release = await PackageInfo.fromPlatform();
   await SentryFlutter.init(
     (options) {
@@ -41,7 +31,7 @@ Future<void> main() async {
           'https://66cc97ae272344978f48840710f857a0@o1324443.ingest.sentry.io/6582849';
       // Set tracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
       // We recommend adjusting this value in production.
-      options.tracesSampleRate = 1.0;
+      options.tracesSampleRate = 0.1;
       options.release = '${release.version} (${release.buildNumber})';
       if (kDebugMode) {
         options.environment = 'debug';

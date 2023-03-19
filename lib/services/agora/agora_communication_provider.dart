@@ -4,7 +4,6 @@ import 'dart:math';
 
 import 'package:agora_rtc_engine/rtc_engine.dart';
 import 'package:collection/collection.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -482,10 +481,6 @@ class AgoraCommunicationProvider extends CommunicationProvider {
           break;
         default:
           // all other errors are fatal for now
-          if (!kIsWeb) {
-            FirebaseCrashlytics.instance.recordError(error.name, null,
-                reason: 'error from agora session');
-          }
           _updateState(CommunicationState.failed);
           break;
       }
