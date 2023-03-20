@@ -4,12 +4,15 @@ on:
   push:
     # Sequence of patterns matched against refs/tags
     tags:
-      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+      - "v*" # Push events to matching v*, i.e. v1.0, v20.15.10
 
 jobs:
   build_web:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: ./app
     env:
       ENVIRONMENT: prod
     steps:
@@ -17,12 +20,12 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16
-          cache: 'npm'
+          cache: "npm"
           cache-dependency-path: server/functions/package-lock.json
       - name: Install Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.7.x'
+          flutter-version: "3.7.x"
           cache: true
       - run: make build-web
       - run: zip -r web build/web
@@ -33,12 +36,15 @@ jobs:
           body: Produciton release
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
-          repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_TOTEM_26659 }}'
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_TOTEM_26659 }}"
           channelId: live
           projectId: totem-26659
   build_and_deploy_server:
     timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: ./server
     environment: dev
     env:
       FIREBASE_TOKEN: "${{ secrets.FIREBASE_TOKEN }}"
@@ -49,19 +55,22 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16
-          cache: 'npm'
+          cache: "npm"
           cache-dependency-path: server/functions/package-lock.json
       - run: npm -g install firebase-tools
-      - run: cd server && make deploy
+      - run: make deploy
   build_ios:
     runs-on: macos-12
     timeout-minutes: 120
+    defaults:
+      run:
+        working-directory: ./app
     steps:
       - uses: actions/checkout@v3
       - name: Install Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.7.x'
+          flutter-version: "3.7.x"
           cache: true
       - uses: webfactory/ssh-agent@v0.7.0
         with:
@@ -80,12 +89,15 @@ jobs:
   build_android:
     runs-on: ubuntu-latest
     timeout-minutes: 60
+    defaults:
+      run:
+        working-directory: ./app
     steps:
       - uses: actions/checkout@v3
       - name: Install Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.7.x'
+          flutter-version: "3.7.x"
           cache: true
       - name: Setup secrets
         run: |

@@ -8,7 +8,7 @@ useDefault = true
 [allowlist]
 paths = [
   '.gitleaks\.toml',
-  'ios/Podfile.lock',
-  'macos/Podfile.lock',
-  'android/app/google-services.json',
+  'app/ios/Podfile.lock',
+  'app/macos/Podfile.lock',
+  'app/android/app/google-services.json',
 ]
