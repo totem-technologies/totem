@@ -7,6 +7,7 @@
     {
       "name": "totem",
       "request": "launch",
+      "cwd": "app",
       "type": "dart",
       "args": [
         "--flavor",
@@ -16,12 +17,14 @@
     {
       "name": "totem (profile mode)",
       "request": "launch",
+      "cwd": "app",
       "type": "dart",
       "flutterMode": "profile"
     },
     {
       "name": "totem (release mode)",
       "request": "launch",
+      "cwd": "app",
       "type": "dart",
       "flutterMode": "release",
       "args": [
@@ -32,6 +35,7 @@
     {
       "name": "totem (firebase emulator)",
       "request": "launch",
+      "cwd": "app",
       "type": "dart",
       "args": ["--dart-define=USE_EMULATOR=true"]
     }
