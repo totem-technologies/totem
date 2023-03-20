@@ -19,10 +19,14 @@ class AppConfig {
 
 Future<void> initConfig() async {
   debugPrint('Initializing Firebase for ${AppConfig.environment}...');
-  if (Firebase.apps.isNotEmpty) {
-    debugPrint('Firebase already initialized');
-    return;
-  }
+
+  try {
+    if (Firebase.apps.isNotEmpty) {
+      debugPrint('Firebase already initialized');
+      return;
+    }
+  } catch (e) {}
+
   var environments = {
     'dev': dev.DefaultFirebaseOptions.currentPlatform,
     'prod': prod.DefaultFirebaseOptions.currentPlatform
