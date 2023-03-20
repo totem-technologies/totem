@@ -25,7 +25,7 @@ Future<void> initConfig() async {
       debugPrint('Firebase already initialized');
       return;
     }
-  } catch (e) {}
+  } catch (_) {}
 
   var environments = {
     'dev': dev.DefaultFirebaseOptions.currentPlatform,
