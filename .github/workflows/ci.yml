@@ -4,12 +4,15 @@ jobs:
   flutter-test:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: ./app
     steps:
       - uses: actions/checkout@v3
       - name: Install Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.7.x'
+          flutter-version: "3.7.x"
           cache: true
       - run: flutter analyze
       - run: flutter test
@@ -24,7 +27,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16
-          cache: 'npm'
+          cache: "npm"
           cache-dependency-path: server/functions/package-lock.json
       - run: npm install
       - run: npm run lint
