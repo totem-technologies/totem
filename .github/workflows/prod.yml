@@ -27,8 +27,8 @@ jobs:
         with:
           flutter-version: "3.7.x"
           cache: true
-      - run: make build-web
-      - run: zip -r web build/web
+      - run: cd app && make build-web
+      - run: zip -r web app/build/web
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
