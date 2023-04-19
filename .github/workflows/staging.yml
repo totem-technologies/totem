@@ -15,19 +15,19 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16
-          cache: 'npm'
+          cache: "npm"
           cache-dependency-path: server/functions/package-lock.json
       - name: Install Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.7.x'
+          flutter-version: "3.7.x"
           cache: true
-      - run: make build-web
-      - run: zip -r web build/web
+      - run: cd app && make build-web
+      - run: zip -r web app/build/web
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
-          repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_TOTEM_DEV_184F1 }}'
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_TOTEM_DEV_184F1 }}"
           channelId: live
           projectId: totem-dev-184f1
   build_and_deploy_server:
@@ -41,7 +41,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16
-          cache: 'npm'
+          cache: "npm"
           cache-dependency-path: server/functions/package-lock.json
       - run: npm -g install firebase-tools
       - run: cd server && make deploy
