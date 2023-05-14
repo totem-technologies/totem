@@ -81,8 +81,8 @@ class AppRoutes {
               name: circle,
               path: 'circle/:id',
               pageBuilder: (context, state) {
-                final id = state.params['id'] ?? '';
-                state.params['id'];
+                final id = state.pathParameters['id'] ?? '';
+                state.pathParameters['id'];
                 return _fadeTransitionPage(
                     state: state,
                     child: WithForegroundTask(
@@ -155,7 +155,7 @@ class AppRoutes {
       ],
       redirect: (context, state) async {
         debugPrint(
-            'Router redirect: ${state.location}, query: ${state.queryParams}');
+            'Router redirect: ${state.location}, query: ${state.queryParameters}');
         // Is there a logged in user?
         UserAuthAccountState? user =
             ref.read(userAccountStateProvider).asData?.value;
@@ -163,7 +163,7 @@ class AppRoutes {
 
         // Authenticated user should not be hitting the login page,
         // so redirect to the home page if this is the case.
-        if (loggedIn && state.subloc.contains('/login')) {
+        if (loggedIn && state.matchedLocation.contains('/login')) {
           // Auth completed here, check for any pending links to circle
           // if there is, redirect to that
           if (_pendingRoute != null) {
@@ -177,7 +177,7 @@ class AppRoutes {
 
         // Check if the route is public (non-login)?
         final publicPrefixes = ['/login', '/dev'];
-        final isPublic = publicPrefixes.any((e) => state.subloc.startsWith(e));
+        final isPublic = publicPrefixes.any((e) => state.matchedLocation.startsWith(e));
         if (isPublic) return null;
 
         // Any other route that isn't public should require the user
@@ -192,7 +192,7 @@ class AppRoutes {
         // Check for authenticated events
         final accountEventsMgr = ref.read(accountStateEventManager);
         if (accountEventsMgr.shouldShowEvents(AccountStateEventType.startup)) {
-          if (state.subloc == '/startup') {
+          if (state.matchedLocation == '/startup') {
             return null;
           }
           _pendingRoute = state.location;
@@ -207,13 +207,13 @@ class AppRoutes {
         }
 
         // if this is a snap circle link, redirect to the circle page
-        if (state.subloc == '/' && state.queryParams.containsKey('snap')) {
-          return '/circle/${state.queryParams['snap']}';
+        if (state.matchedLocation == '/' && state.queryParameters.containsKey('snap')) {
+          return '/circle/${state.queryParameters['snap']}';
         }
 
         // the ended path can only be accessed if the extra data is
         // provided, otherwise redirect to the home page
-        if (state.subloc == '/ended' && state.extra == null) {
+        if (state.matchedLocation == '/ended' && state.extra == null) {
           return null; // '/';
         }
 

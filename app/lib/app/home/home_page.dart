@@ -170,7 +170,7 @@ class HomePageState extends ConsumerState<HomePage> {
           await CircleCreateNonKeeper.showNonKeeperCreateDialog(context);
       if (mounted && createdCircle != null) {
         context.goNamed(AppRoutes.circle,
-            params: {'id': createdCircle.session.id});
+            pathParameters: {'id': createdCircle.session.id});
       }
     }
     if (mounted) {

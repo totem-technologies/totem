@@ -83,6 +83,7 @@ class NamedCircleList extends ConsumerWidget {
   }
 
   void _handleShowCircle(BuildContext context, Circle circle) {
-    context.goNamed(AppRoutes.circle, params: {'id': circle.session.id});
+    context
+        .goNamed(AppRoutes.circle, pathParameters: {'id': circle.session.id});
   }
 }

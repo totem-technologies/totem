@@ -4,8 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:keybinder/keybinder.dart';
-import 'package:lucide_icons/lucide_icons.dart';
-import 'package:slide_to_act/slide_to_act.dart';
 import 'package:totem/app/circle/components/circle_session_timer.dart';
 import 'package:totem/app/circle/index.dart';
 import 'package:totem/components/widgets/index.dart';
@@ -13,6 +11,7 @@ import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
 import 'package:totem/services/utils/device_type.dart';
 import 'package:totem/theme/index.dart';
+import 'package:totem/components/widgets/slider_button.dart';
 
 import 'layouts.dart';
 
@@ -226,84 +225,36 @@ class _CircleLiveVideoSessionState
     final participant = activeSession.totemParticipant;
     if (participant != null && participant.me) {
       final themeColors = Theme.of(context).themeColors;
-      final textStyles = Theme.of(context).textStyles;
       final t = AppLocalizations.of(context)!;
       bool isMobile = DeviceType.isMobile();
       {
         return Center(
-            child: !isMobile
-                ? TotemActionButton(
-                    busy: _processingRequest,
-                    label: t.pass,
-                    onPressed: !_processingRequest
-                        ? () {
-                            _endTurn(context, participant);
-                          }
-                        : null,
-                  )
-                : SizedBox(
-                    key: _sliderPass,
-                    width: 250,
-                    height: 60,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(30),
-                        border:
-                            Border.all(width: 1, color: themeColors.primary),
-                      ),
-                      child: SlideAction(
-                        borderRadius: 30,
-                        elevation: 0,
-                        height: 60,
-                        sliderRotate: false,
-                        innerColor: themeColors.profileBackground,
-                        outerColor: Colors.transparent,
-                        sliderButtonIconPadding: 0,
-                        sliderButtonIcon: Container(
-                          width: 48,
-                          height: 48,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: themeColors.primary,
-                          ),
-                          child: Center(
-                            child: Icon(LucideIcons.checkCircle2,
-                                size: 24, color: themeColors.primaryText),
-                          ),
-                        ),
-                        submittedIcon: const SizedBox(height: 48, width: 48),
-                        onSubmit: !_processingRequest
-                            ? () {
-                                // delay to allow for animation to complete
-                                Future.delayed(
-                                    const Duration(milliseconds: 300), () {
-                                  _endTurn(context, participant);
-                                });
-                              }
-                            : null,
-                        child: Padding(
-                          padding: const EdgeInsets.all(1),
-                          child: Container(
-                            decoration: BoxDecoration(
-                                color:
-                                    themeColors.sliderBackground.withAlpha(120),
-                                borderRadius: BorderRadius.circular(30)),
-                            child: Center(
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 40,
-                                ),
-                                child: Text(
-                                  t.slideToPass,
-                                  style: textStyles.displaySmall,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
+          child: !isMobile
+              ? TotemActionButton(
+                  busy: _processingRequest,
+                  label: t.pass,
+                  onPressed: !_processingRequest
+                      ? () {
+                          _endTurn(context, participant);
+                        }
+                      : null,
+                )
+              : SizedBox(
+                  key: _sliderPass,
+                  width: 250,
+                  height: 60,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                      border: Border.all(width: 1, color: themeColors.primary),
                     ),
-                  ));
+                    child: SliderButton(
+                      action: (controller) async {
+                        await _endTurn(context, participant);
+                      },
+                    ),
+                  )),
+        );
       }
     }
     return null;

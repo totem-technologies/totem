@@ -92,6 +92,6 @@ class CirclesListState extends ConsumerState<CirclesList> {
   Future<void> _handleShowCircle(BuildContext context, Circle circle) async {
     if (!mounted) return;
     Map<String, String> params = {'id': circle.session.id};
-    context.goNamed(AppRoutes.circle, params: params);
+    context.goNamed(AppRoutes.circle, pathParameters: params);
   }
 }
