@@ -19,7 +19,7 @@ jobs:
       - name: Install Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.7.x"
+          flutter-version: "3.10.x"
           cache: true
       - run: cd app && make build-web
       - uses: FirebaseExtended/action-hosting-deploy@v0
