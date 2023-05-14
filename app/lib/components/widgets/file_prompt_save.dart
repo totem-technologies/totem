@@ -103,9 +103,9 @@ class FilePromptSaveState extends ConsumerState<FilePromptSave> {
                       height: 22,
                     ),
                     if (_uploading)
-                      Row(
+                      const Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: const [SizedBox(height: 30)]),
+                          children: [SizedBox(height: 30)]),
                     if (!_uploading)
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,

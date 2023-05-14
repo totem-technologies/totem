@@ -24,10 +24,10 @@ class CircleNetworkConnectivityLayer extends ConsumerWidget {
               filter: ImageFilter.blur(sigmaX: 40.0, sigmaY: 40.0),
               child: Container(
                 color: Colors.black.withOpacity(0.50),
-                child: Column(
+                child: const Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
-                  children: const [
+                  children: [
                     Text("You are experiencing network connectivity issues.")
                   ],
                 ),

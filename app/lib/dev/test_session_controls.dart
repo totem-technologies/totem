@@ -86,8 +86,8 @@ class TestSessionControlsState extends ConsumerState<TestSessionControls> {
   }
 
   Widget emptyControls(BuildContext context) {
-    return Row(
-      children: const [
+    return const Row(
+      children: [
         Expanded(
           child: SizedBox(height: 40),
         ),

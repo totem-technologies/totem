@@ -127,9 +127,9 @@ class CircleSessionEndedPage extends StatelessWidget {
   }
 
   Widget _donateAndFeedbackButtons() {
-    return Padding(
-      padding: const EdgeInsets.only(top: 60),
-      child: Row(mainAxisAlignment: MainAxisAlignment.center, children: const [
+    return const Padding(
+      padding: EdgeInsets.only(top: 60),
+      child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
         // DonateButton(),
         // SizedBox(width: 60),
         UserFeedbackButton(),

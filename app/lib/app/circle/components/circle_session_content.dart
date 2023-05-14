@@ -7,8 +7,8 @@ class CircleSessionContent extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Stack(
-      children: const [
+    return const Stack(
+      children: [
         CirclePendingSessionUsers(),
         /*Align(
             alignment: Alignment.bottomCenter,

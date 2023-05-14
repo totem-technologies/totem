@@ -90,8 +90,8 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
   }
 
   Widget emptyControls(BuildContext context) {
-    return Row(
-      children: const [
+    return const Row(
+      children: [
         Expanded(
           child: SizedBox(height: 40),
         ),

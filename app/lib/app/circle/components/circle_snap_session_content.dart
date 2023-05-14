@@ -233,11 +233,11 @@ class _CircleSnapSessionContentState
             },
           ),
           if (sessionProvider.state == SessionState.complete)
-            Padding(
-              padding: const EdgeInsets.only(top: 60),
+            const Padding(
+              padding: EdgeInsets.only(top: 60),
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
+                  children: [
                     // DonateButton(),
                     // SizedBox(width: 60),
                     UserFeedbackButton(),
