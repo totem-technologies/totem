@@ -468,6 +468,11 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
             ],
           );
         }
+        if (asyncSnapshot.hasError) {
+          return Container(
+            child: Text(asyncSnapshot.error.toString()),
+          );
+        }
         return Container();
       },
     );

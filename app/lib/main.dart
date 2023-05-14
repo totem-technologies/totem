@@ -1,5 +1,3 @@
-import 'package:firebase_app_check/firebase_app_check.dart';
-
 import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -19,10 +17,10 @@ Future<void> main() async {
   // Initialize the App Check interface which allows access
   // to firebase
   // TODO - need to initialize web with recaptcha, for now disabled
-  if (!kIsWeb) {
-    await FirebaseAppCheck.instance.activate();
-    await FirebaseAppCheck.instance.setTokenAutoRefreshEnabled(true);
-  }
+  // if (!kIsWeb) {
+  //   await FirebaseAppCheck.instance.activate();
+  //   await FirebaseAppCheck.instance.setTokenAutoRefreshEnabled(true);
+  // }
 
   var release = await PackageInfo.fromPlatform();
   await SentryFlutter.init(

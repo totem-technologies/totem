@@ -242,17 +242,11 @@ class _CircleLiveVideoSessionState
               : SizedBox(
                   key: _sliderPass,
                   width: 250,
-                  height: 60,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(30),
-                      border: Border.all(width: 1, color: themeColors.primary),
-                    ),
-                    child: SliderButton(
-                      action: (controller) async {
-                        await _endTurn(context, participant);
-                      },
-                    ),
+                  // height: 60,
+                  child: SliderButton(
+                    action: (controller) async {
+                      await _endTurn(context, participant);
+                    },
                   )),
         );
       }
