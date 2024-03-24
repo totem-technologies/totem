@@ -13,11 +13,11 @@ class WaitAnimation extends StatefulWidget {
   final Color color;
   final Color imageColor;
   const WaitAnimation({
-    Key? key,
+    super.key,
     required this.color,
     required this.imageColor,
     required this.size,
-  }) : super(key: key);
+  });
 
   @override
   State<WaitAnimation> createState() => WaitAnimationState();

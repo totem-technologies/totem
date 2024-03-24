@@ -6,7 +6,7 @@ import 'package:totem/models/index.dart';
 import 'package:totem/theme/app_theme_styles.dart';
 
 class DonateButton extends StatelessWidget {
-  const DonateButton({Key? key}) : super(key: key);
+  const DonateButton({super.key});
 
   @override
   Widget build(BuildContext context) {

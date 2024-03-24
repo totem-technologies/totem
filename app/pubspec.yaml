@@ -11,6 +11,8 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
+  flutter_web_plugins:
+    sdk: flutter
   action_slider: ^0.6.1
   after_layout: ^1.1.0
   agora_rtc_engine:
@@ -73,7 +75,7 @@ dependencies:
   uuid: ^4.0.6
   wakelock: ^0.6.1+2
   web_browser_detect: ^2.0.2
-
+  flutter_gen: any
 dev_dependencies:
   custom_lint:
   riverpod_lint: ^2.3.7

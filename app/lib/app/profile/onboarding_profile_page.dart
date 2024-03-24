@@ -17,8 +17,7 @@ import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
 
 class OnboardingProfilePage extends ConsumerStatefulWidget {
-  const OnboardingProfilePage({Key? key, this.onProfileUpdated, this.profile})
-      : super(key: key);
+  const OnboardingProfilePage({super.key, this.onProfileUpdated, this.profile});
   final Function(UserProfile)? onProfileUpdated;
   final UserProfile? profile;
 

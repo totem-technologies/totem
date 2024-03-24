@@ -5,7 +5,7 @@ import 'package:totem/services/index.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class TopicsList extends ConsumerStatefulWidget {
-  const TopicsList({Key? key}) : super(key: key);
+  const TopicsList({super.key});
 
   @override
   TopicsListState createState() => TopicsListState();

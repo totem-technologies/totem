@@ -4,7 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:totem/theme/index.dart';
 
 class NoCircles extends StatelessWidget {
-  const NoCircles({Key? key}) : super(key: key);
+  const NoCircles({super.key});
 
   @override
   Widget build(BuildContext context) {

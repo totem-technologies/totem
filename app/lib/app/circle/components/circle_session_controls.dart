@@ -17,7 +17,7 @@ import 'package:totem/theme/index.dart';
 import 'package:universal_html/html.dart' show document;
 
 class CircleSessionControls extends ConsumerStatefulWidget {
-  const CircleSessionControls({Key? key}) : super(key: key);
+  const CircleSessionControls({super.key});
 
   @override
   CircleSessionControlsState createState() => CircleSessionControlsState();
@@ -556,7 +556,7 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
     if (participants.length > 1) {
       participants = [
         activeSession.speakOrderParticipants.first,
-        ...participants.reversed.toList(growable: false)
+        ...participants.reversed
       ];
       await repo.updateActiveSession(repo.activeSession!.reorderParticipants(
           participants

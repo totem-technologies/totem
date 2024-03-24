@@ -9,7 +9,7 @@ import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
 
 class GuidelineScreen extends ConsumerWidget {
-  const GuidelineScreen({Key? key}) : super(key: key);
+  const GuidelineScreen({super.key});
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final t = AppLocalizations.of(context)!;

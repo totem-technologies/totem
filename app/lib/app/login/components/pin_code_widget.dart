@@ -7,8 +7,7 @@ class PinCodeWidget extends StatelessWidget {
   final Function(String value) onComplete;
 
   const PinCodeWidget(
-      {required this.onChanged, required this.onComplete, Key? key})
-      : super(key: key);
+      {required this.onChanged, required this.onComplete, super.key});
 
   @override
   Widget build(BuildContext context) {

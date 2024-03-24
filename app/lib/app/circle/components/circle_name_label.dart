@@ -7,8 +7,7 @@ import 'package:totem/theme/index.dart';
 
 class CircleNameLabel extends StatelessWidget {
   const CircleNameLabel(
-      {Key? key, required this.name, this.fontSize = 13, required this.role})
-      : super(key: key);
+      {super.key, required this.name, this.fontSize = 13, required this.role});
   final String name;
   final double fontSize;
   final Role role;

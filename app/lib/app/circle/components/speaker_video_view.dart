@@ -9,8 +9,7 @@ import 'package:totem/models/index.dart';
 
 class SpeakerVideoView extends ConsumerStatefulWidget {
   const SpeakerVideoView(
-      {Key? key, required this.onReceive, required this.onSettings})
-      : super(key: key);
+      {super.key, required this.onReceive, required this.onSettings});
   final void Function() onReceive;
   final void Function() onSettings;
 

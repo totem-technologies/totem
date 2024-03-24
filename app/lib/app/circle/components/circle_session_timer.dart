@@ -11,7 +11,7 @@ import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
 
 class CircleSessionTimer extends ConsumerWidget {
-  const CircleSessionTimer({Key? key}) : super(key: key);
+  const CircleSessionTimer({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -176,8 +176,7 @@ class CircleSessionTimer extends ConsumerWidget {
 }
 
 class AddTimeDialog extends ConsumerStatefulWidget {
-  const AddTimeDialog({Key? key, required this.min, required this.max})
-      : super(key: key);
+  const AddTimeDialog({super.key, required this.min, required this.max});
   final double min, max;
 
   @override

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:totem/theme/index.dart';
 
 class ListItemContainer extends StatelessWidget {
-  const ListItemContainer({Key? key, this.child}) : super(key: key);
+  const ListItemContainer({super.key, this.child});
   final Widget? child;
 
   @override

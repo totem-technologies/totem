@@ -4,7 +4,7 @@ import 'package:totem/components/index.dart';
 import 'package:totem/theme/app_theme_styles.dart';
 
 class WaitingForTotemUser extends StatelessWidget {
-  const WaitingForTotemUser({Key? key}) : super(key: key);
+  const WaitingForTotemUser({super.key});
   @override
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context)!;

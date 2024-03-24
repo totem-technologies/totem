@@ -8,12 +8,11 @@ import 'package:totem/theme/index.dart';
 
 class CirclesList extends ConsumerStatefulWidget {
   const CirclesList(
-      {Key? key,
+      {super.key,
       required this.provider,
       required this.title,
       required this.description,
-      this.noCircles})
-      : super(key: key);
+      this.noCircles});
   final AutoDisposeStreamProvider<List<Circle>> provider;
   final String title;
   final String description;

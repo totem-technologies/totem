@@ -9,8 +9,8 @@ import 'package:totem/theme/index.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 
 class OnboardingCircleEvent extends AccountStateEvent {
-  OnboardingCircleEvent({bool testOnly = false})
-      : super(testOnly: testOnly, stateKey: 'onboarded');
+  OnboardingCircleEvent({super.testOnly})
+      : super(stateKey: 'onboarded');
 
   @override
   Widget eventContent(BuildContext context, WidgetRef ref) {

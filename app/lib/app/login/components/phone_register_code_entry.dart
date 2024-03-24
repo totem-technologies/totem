@@ -8,7 +8,7 @@ import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
 
 class PhoneRegisterCodeEntry extends ConsumerStatefulWidget {
-  const PhoneRegisterCodeEntry({Key? key}) : super(key: key);
+  const PhoneRegisterCodeEntry({super.key});
 
   @override
   PhoneRegisterCodeEntryState createState() => PhoneRegisterCodeEntryState();

@@ -4,8 +4,7 @@ import 'package:totem/theme/index.dart';
 
 class SubPageHeader extends StatelessWidget {
   const SubPageHeader(
-      {Key? key, required this.title, this.onClose, this.leading})
-      : super(key: key);
+      {super.key, required this.title, this.onClose, this.leading});
   final String title;
   final VoidCallback? onClose;
   final Widget? leading;

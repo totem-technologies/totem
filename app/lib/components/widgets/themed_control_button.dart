@@ -3,7 +3,7 @@ import 'package:totem/theme/index.dart';
 
 class ThemedControlButton extends StatelessWidget {
   const ThemedControlButton({
-    Key? key,
+    super.key,
     required this.label,
     this.icon,
     this.child,
@@ -15,7 +15,7 @@ class ThemedControlButton extends StatelessWidget {
     this.size = 40,
     this.iconPadding = const EdgeInsets.all(0),
     this.iconHeight,
-  }) : super(key: key);
+  });
   final String label;
   final IconData? icon;
   final Widget? child;

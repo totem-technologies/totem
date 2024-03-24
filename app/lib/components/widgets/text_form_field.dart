@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 
 class TotemTextFormField extends StatelessWidget {
   const TotemTextFormField(
-      {Key? key,
+      {super.key,
       required this.controller,
       required this.validator,
-      this.hintText = ''})
-      : super(key: key);
+      this.hintText = ''});
   final String hintText;
   final TextEditingController controller;
   final String? Function(String?)? validator;

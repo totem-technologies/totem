@@ -3,8 +3,7 @@ import 'package:totem/components/widgets/content_divider.dart';
 import 'package:totem/theme/index.dart';
 
 class TotemHeader extends StatelessWidget {
-  const TotemHeader({Key? key, required this.text, this.padding, this.trailing})
-      : super(key: key);
+  const TotemHeader({super.key, required this.text, this.padding, this.trailing});
   final String text;
   final EdgeInsets? padding;
   final Widget? trailing;

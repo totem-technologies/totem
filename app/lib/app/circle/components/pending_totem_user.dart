@@ -8,11 +8,11 @@ import 'package:totem/theme/app_theme_styles.dart';
 
 class PendingTotemUser extends ConsumerStatefulWidget {
   const PendingTotemUser({
-    Key? key,
+    super.key,
     this.userVideo,
     this.onReceive,
     this.onSettings,
-  }) : super(key: key);
+  });
   final Widget? userVideo;
   final Function()? onReceive;
   final Function()? onSettings;

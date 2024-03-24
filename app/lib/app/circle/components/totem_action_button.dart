@@ -4,13 +4,12 @@ import 'package:totem/theme/app_theme_styles.dart';
 
 class TotemActionButton extends StatefulWidget {
   const TotemActionButton(
-      {Key? key,
+      {super.key,
       this.image,
       this.cta = false,
       required this.label,
       this.busy = false,
-      this.onPressed})
-      : super(key: key);
+      this.onPressed});
   final Widget? image;
   final String label;
   final bool busy;

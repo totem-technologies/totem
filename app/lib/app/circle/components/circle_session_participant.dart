@@ -8,13 +8,12 @@ import 'package:totem/theme/index.dart';
 
 class CircleSessionParticipant extends ConsumerWidget {
   const CircleSessionParticipant(
-      {Key? key,
+      {super.key,
       required this.participant,
       required this.dimension,
       this.hasTotem = false,
       this.annotate = true,
-      this.next = false})
-      : super(key: key);
+      this.next = false});
   final SessionParticipant participant;
   final double dimension;
   final bool hasTotem;

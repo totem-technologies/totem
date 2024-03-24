@@ -7,9 +7,9 @@ import 'package:totem/services/communication_provider.dart';
 
 class CircleNetworkConnectivityLayer extends ConsumerWidget {
   const CircleNetworkConnectivityLayer({
-    Key? key,
+    super.key,
     required this.child,
-  }) : super(key: key);
+  });
   final Widget child;
 
   @override

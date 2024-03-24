@@ -4,7 +4,7 @@ import 'package:totem/theme/index.dart';
 
 class ThemedTextField extends StatelessWidget {
   const ThemedTextField({
-    Key? key,
+    super.key,
     this.labelText,
     this.labelStyle,
     this.controller,
@@ -18,7 +18,7 @@ class ThemedTextField extends StatelessWidget {
     this.autocorrect = false,
     this.obscureText = false,
     this.maxLength,
-  }) : super(key: key);
+  });
   final String? labelText;
   final TextEditingController? controller;
   final TextStyle? labelStyle;

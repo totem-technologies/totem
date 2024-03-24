@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:totem/app/circle/components/circle_muted_indicator.dart';
 
 class AudioLevelTest extends StatefulWidget {
-  const AudioLevelTest({Key? key}) : super(key: key);
+  const AudioLevelTest({super.key});
 
   @override
   State<StatefulWidget> createState() => AudioLevelTestState();

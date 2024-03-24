@@ -38,7 +38,7 @@ Widget getParticipant(int i, double d) {
 }
 
 class WaitingRoomDevLayout extends StatefulWidget {
-  const WaitingRoomDevLayout({Key? key}) : super(key: key);
+  const WaitingRoomDevLayout({super.key});
 
   @override
   State<WaitingRoomDevLayout> createState() => _WaitingRoomDevLayoutState();
@@ -103,7 +103,7 @@ class _WaitingRoomDevLayoutState extends State<WaitingRoomDevLayout> {
 }
 
 class ListenLiveLayoutTest extends StatefulWidget {
-  const ListenLiveLayoutTest({Key? key}) : super(key: key);
+  const ListenLiveLayoutTest({super.key});
 
   @override
   State<StatefulWidget> createState() => ListenLiveLayoutState();
@@ -195,7 +195,7 @@ class ListenLiveLayoutState extends State<ListenLiveLayoutTest>
 }
 
 class OnboardingDialogTest extends StatefulWidget {
-  const OnboardingDialogTest({Key? key}) : super(key: key);
+  const OnboardingDialogTest({super.key});
 
   @override
   State<StatefulWidget> createState() => OnboardingDialogTestState();
@@ -238,7 +238,7 @@ class OnboardingDialogTestState extends State<OnboardingDialogTest>
 }
 
 class CircleUserProfileTest extends StatefulWidget {
-  const CircleUserProfileTest({Key? key}) : super(key: key);
+  const CircleUserProfileTest({super.key});
 
   @override
   State<StatefulWidget> createState() => CircleUserProfileTestState();
@@ -318,7 +318,7 @@ class CircleUserProfileTestState extends State<CircleUserProfileTest> {
 }
 
 class OnboardingProfilePageTest extends StatefulWidget {
-  const OnboardingProfilePageTest({Key? key}) : super(key: key);
+  const OnboardingProfilePageTest({super.key});
 
   @override
   State<StatefulWidget> createState() => OnboardingProfilePageTestState();

@@ -14,12 +14,12 @@ import 'package:uuid/uuid.dart';
 
 class FileUploader extends ConsumerStatefulWidget {
   const FileUploader({
-    Key? key,
+    super.key,
     this.onComplete,
     this.clearFile = false,
     this.assignProfile = true,
     this.showBusy = true,
-  }) : super(key: key);
+  });
   final Function({String? url, String? path, String? error})? onComplete;
   final bool clearFile;
   final bool assignProfile;

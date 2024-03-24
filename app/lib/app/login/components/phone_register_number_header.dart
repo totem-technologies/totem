@@ -4,7 +4,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:totem/theme/index.dart';
 
 class PhoneRegisterNumberHeader extends StatelessWidget {
-  const PhoneRegisterNumberHeader({Key? key}) : super(key: key);
+  const PhoneRegisterNumberHeader({super.key});
 
   @override
   Widget build(BuildContext context) {

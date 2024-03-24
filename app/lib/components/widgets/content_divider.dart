@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:totem/theme/index.dart';
 
 class ContentDivider extends StatelessWidget {
-  const ContentDivider({Key? key}) : super(key: key);
+  const ContentDivider({super.key});
 
   @override
   Widget build(BuildContext context) {

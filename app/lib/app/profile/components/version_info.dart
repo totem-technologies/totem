@@ -3,7 +3,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 class VersionInfo extends StatelessWidget {
-  const VersionInfo({Key? key}) : super(key: key);
+  const VersionInfo({super.key});
 
   @override
   Widget build(BuildContext context) {

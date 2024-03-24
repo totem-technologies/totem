@@ -12,7 +12,7 @@ import 'package:totem/theme/index.dart';
 import 'package:web_browser_detect/web_browser_detect.dart';
 
 class _LoginPanel extends StatelessWidget {
-  const _LoginPanel({Key? key}) : super(key: key);
+  const _LoginPanel();
 
   @override
   Widget build(BuildContext context) {
@@ -124,7 +124,7 @@ class _LoginPanel extends StatelessWidget {
 }
 
 class WelcomePage extends ConsumerWidget {
-  const WelcomePage({Key? key}) : super(key: key);
+  const WelcomePage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

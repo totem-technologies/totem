@@ -13,7 +13,7 @@ final rejoinableCircles = StreamProvider.autoDispose<List<Circle>>((ref) {
 });
 
 class CirclesRejoinable extends ConsumerStatefulWidget {
-  const CirclesRejoinable({Key? key, this.topPadding = 140}) : super(key: key);
+  const CirclesRejoinable({super.key, this.topPadding = 140});
   final double topPadding;
 
   @override

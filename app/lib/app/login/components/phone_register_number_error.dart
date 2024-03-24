@@ -7,7 +7,7 @@ import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
 
 class PhoneRegisterNumberError extends ConsumerWidget {
-  const PhoneRegisterNumberError({Key? key}) : super(key: key);
+  const PhoneRegisterNumberError({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

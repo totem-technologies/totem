@@ -60,7 +60,7 @@ class CountdownState {
 /// minutes. It will then  counts up for overTimeMinutes.
 class CountdownTimer extends ConsumerStatefulWidget {
   const CountdownTimer({
-    Key? key,
+    super.key,
     required this.startTime,
     required this.endTime,
     this.overtimeMinutes = 30,
@@ -90,7 +90,7 @@ class CountdownTimer extends ConsumerStatefulWidget {
           color: Colors.red,
           valueLabel: 'overtime'),
     ],
-  }) : super(key: key);
+  });
 
   // Time when the countdown starts
   final DateTime startTime;

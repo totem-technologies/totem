@@ -7,14 +7,14 @@ import 'package:totem/theme/index.dart';
 
 class ParticipantListLayout extends StatelessWidget {
   const ParticipantListLayout({
-    Key? key,
+    super.key,
     required this.generate,
     required this.count,
     this.maxAllowedDimension = 2,
     this.maxChildSize = 150,
     this.minChildSize = 100,
     this.direction = Axis.vertical,
-  }) : super(key: key);
+  });
   final double maxChildSize;
   final double minChildSize;
   final int maxAllowedDimension;
@@ -112,12 +112,12 @@ class ParticipantListLayout extends StatelessWidget {
 
 class WaitingRoomListLayout extends StatelessWidget {
   const WaitingRoomListLayout({
-    Key? key,
+    super.key,
     required this.generate,
     required this.count,
     this.minChildSize = 100,
     this.live = false,
-  }) : super(key: key);
+  });
   final double maxChildSize = 600;
   final double minChildSize;
   final bool live;

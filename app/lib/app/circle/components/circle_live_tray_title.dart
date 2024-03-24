@@ -4,10 +4,10 @@ import 'package:totem/theme/index.dart';
 
 class CircleLiveTrayTitle extends StatelessWidget {
   const CircleLiveTrayTitle({
-    Key? key,
+    super.key,
     required this.title,
     required this.maxWidth,
-  }) : super(key: key);
+  });
   final String title;
   final double maxWidth;
 

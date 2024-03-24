@@ -9,12 +9,11 @@ import 'package:totem/theme/index.dart';
 
 class CircleSessionParticipantListItem extends ConsumerWidget {
   const CircleSessionParticipantListItem(
-      {Key? key,
+      {super.key,
       required this.participant,
       this.reorder = false,
       this.horizontalPadding,
-      this.onRemove})
-      : super(key: key);
+      this.onRemove});
   final SessionParticipant participant;
   final bool reorder;
   final double? horizontalPadding;

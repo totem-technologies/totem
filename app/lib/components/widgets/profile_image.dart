@@ -11,7 +11,7 @@ import 'package:totem/theme/index.dart';
 
 class ProfileImage extends ConsumerWidget {
   const ProfileImage({
-    Key? key,
+    super.key,
     this.size = 64,
     this.fillColor,
     this.textColor,
@@ -22,7 +22,7 @@ class ProfileImage extends ConsumerWidget {
     this.shape = BoxShape.rectangle,
     this.profile,
     this.borderRadius,
-  }) : super(key: key);
+  });
   final double size;
   final Color? fillColor;
   final Color? textColor;

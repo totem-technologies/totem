@@ -3,8 +3,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:totem/theme/index.dart';
 
 class CameraMuted extends StatelessWidget {
-  const CameraMuted({Key? key, this.userImage, this.imageSize = 40, this.color})
-      : super(key: key);
+  const CameraMuted({super.key, this.userImage, this.imageSize = 40, this.color});
   final String? userImage;
   final double imageSize;
   final Color? color;

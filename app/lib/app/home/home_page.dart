@@ -35,7 +35,7 @@ final ownerCirclesProvider = StreamProvider.autoDispose<List<Circle>>((ref) {
 });
 
 class HomePage extends ConsumerStatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({super.key});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => HomePageState();

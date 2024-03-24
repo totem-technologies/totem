@@ -10,7 +10,7 @@ import '../components/animation/reveal_animation_container.dart';
 import '../services/utils/device_type.dart';
 
 class ActiveSessionLayoutTest extends StatefulWidget {
-  const ActiveSessionLayoutTest({Key? key}) : super(key: key);
+  const ActiveSessionLayoutTest({super.key});
 
   @override
   State<StatefulWidget> createState() => ActiveSessionLayoutTestState();

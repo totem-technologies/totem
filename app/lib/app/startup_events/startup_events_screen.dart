@@ -7,7 +7,7 @@ import 'package:totem/services/account_state/index.dart';
 import 'package:totem/services/index.dart';
 
 class StartupEventsScreen extends ConsumerStatefulWidget {
-  const StartupEventsScreen({Key? key}) : super(key: key);
+  const StartupEventsScreen({super.key});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>

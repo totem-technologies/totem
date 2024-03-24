@@ -4,8 +4,7 @@ import 'dart:ui';
 class FrostedPanelWidget extends StatelessWidget {
   final bool full;
   final Widget child;
-  const FrostedPanelWidget({required this.child, this.full = true, Key? key})
-      : super(key: key);
+  const FrostedPanelWidget({required this.child, this.full = true, super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -3,8 +3,7 @@ import 'package:totem/theme/index.dart';
 import 'dart:math' as math;
 
 class GradientBackground extends StatelessWidget {
-  const GradientBackground({Key? key, this.gradient, this.child, this.rotation})
-      : super(key: key);
+  const GradientBackground({super.key, this.gradient, this.child, this.rotation});
   final List<Color>? gradient;
   final Widget? child;
   final double? rotation;

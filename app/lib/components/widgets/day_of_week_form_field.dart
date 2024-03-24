@@ -5,17 +5,12 @@ import 'package:totem/theme/index.dart';
 
 class DayOfWeekFormField extends FormField<List<int>> {
   DayOfWeekFormField({
-    required List<int> initialValue,
-    FormFieldSetter<List<int>>? onSaved,
-    FormFieldValidator<List<int>>? validator,
-    AutovalidateMode? autovalidateMode,
-    Key? key,
+    required List<int> super.initialValue,
+    super.onSaved,
+    super.validator,
+    super.autovalidateMode,
+    super.key,
   }) : super(
-            key: key,
-            autovalidateMode: autovalidateMode,
-            initialValue: initialValue,
-            validator: validator,
-            onSaved: onSaved,
             builder: (FormFieldState<List<int>> state) {
               final themeColors = Theme.of(state.context).themeColors;
               final textStyles = Theme.of(state.context).textStyles;

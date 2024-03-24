@@ -13,8 +13,7 @@ import 'package:totem/models/index.dart';
 import 'package:totem/theme/index.dart';
 
 class ProfileImageDialog extends ConsumerStatefulWidget {
-  const ProfileImageDialog({Key? key, required this.userProfile})
-      : super(key: key);
+  const ProfileImageDialog({super.key, required this.userProfile});
   final UserProfile userProfile;
 
   static Future<XFile?> showDialog(BuildContext context,

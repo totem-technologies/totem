@@ -10,7 +10,7 @@ import 'package:totem/services/utils/device_type.dart';
 import 'package:totem/theme/index.dart';
 
 class AccountStateDialog extends ConsumerStatefulWidget {
-  const AccountStateDialog({Key? key, required this.event}) : super(key: key);
+  const AccountStateDialog({super.key, required this.event});
   final AccountStateEvent event;
 
   static Future<void> showEvent(BuildContext context,

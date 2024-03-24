@@ -3,7 +3,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:totem/components/index.dart';
 
 class CircleLoading extends StatelessWidget {
-  const CircleLoading({Key? key}) : super(key: key);
+  const CircleLoading({super.key});
 
   @override
   Widget build(BuildContext context) {

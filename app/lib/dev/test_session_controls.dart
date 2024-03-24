@@ -12,11 +12,10 @@ import 'package:totem/theme/index.dart';
 
 class TestSessionControls extends ConsumerStatefulWidget {
   const TestSessionControls(
-      {Key? key,
+      {super.key,
       required this.sessionState,
       required this.role,
-      this.circleName = "This is a sample circle"})
-      : super(key: key);
+      this.circleName = "This is a sample circle"});
   final SessionState sessionState;
   final Role role;
   final String circleName;

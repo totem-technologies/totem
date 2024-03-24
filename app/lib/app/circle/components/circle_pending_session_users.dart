@@ -8,7 +8,7 @@ import 'layouts.dart';
 import 'package:totem/theme/index.dart';
 
 class CirclePendingSessionUsers extends ConsumerWidget {
-  const CirclePendingSessionUsers({Key? key}) : super(key: key);
+  const CirclePendingSessionUsers({super.key});
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class GradientButton extends StatefulWidget {
-  const GradientButton({Key? key}) : super(key: key);
+  const GradientButton({super.key});
 
   @override
   State<StatefulWidget> createState() => _GradientButtonState();

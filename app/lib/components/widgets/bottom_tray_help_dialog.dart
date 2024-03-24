@@ -20,8 +20,7 @@ class BottomTrayHelpDialog extends StatelessWidget {
   }
 
   const BottomTrayHelpDialog(
-      {Key? key, required this.title, required this.detail})
-      : super(key: key);
+      {super.key, required this.title, required this.detail});
   final String title;
   final String detail;
 

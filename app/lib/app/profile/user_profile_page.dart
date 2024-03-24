@@ -18,7 +18,7 @@ import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
 
 class UserProfilePage extends ConsumerStatefulWidget {
-  const UserProfilePage({Key? key}) : super(key: key);
+  const UserProfilePage({super.key});
 
   @override
   UserProfilePageState createState() => UserProfilePageState();

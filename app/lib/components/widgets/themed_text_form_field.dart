@@ -5,7 +5,7 @@ import 'package:totem/theme/index.dart';
 
 class ThemedTextFormField extends StatelessWidget {
   const ThemedTextFormField({
-    Key? key,
+    super.key,
     this.hintText,
     this.hintStyle,
     this.labelText,
@@ -35,7 +35,7 @@ class ThemedTextFormField extends StatelessWidget {
     this.onFieldSubmitted,
     this.inputFormatters,
     this.showCounter = true,
-  }) : super(key: key);
+  });
   final String? labelText;
   final TextEditingController? controller;
   final TextStyle? labelStyle;

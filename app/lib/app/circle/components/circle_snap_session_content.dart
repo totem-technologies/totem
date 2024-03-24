@@ -20,10 +20,10 @@ final audioLevelStream = StreamProvider.autoDispose<AudioLevelData>((ref) {
 
 class CircleSnapSessionContent extends ConsumerStatefulWidget {
   const CircleSnapSessionContent({
-    Key? key,
+    super.key,
     required this.circle,
     required this.userProfile,
-  }) : super(key: key);
+  });
   final Circle circle;
   final UserProfile userProfile;
 

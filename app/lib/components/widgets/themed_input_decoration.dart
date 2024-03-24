@@ -5,24 +5,20 @@ class ThemedInputDecoration extends InputDecoration {
   ThemedInputDecoration({
     required AppThemeColors themeColors,
     required AppTextStyles textStyles,
-    String? labelText,
-    String? hintText,
+    super.labelText,
+    super.hintText,
     TextStyle? hintStyle,
     TextStyle? labelStyle,
     Color? enabledBorderColor,
     Color? errorBorderColor,
     Color? focusedBorderColor,
-    Widget? suffixIcon,
-    Widget? suffix,
-    EdgeInsetsGeometry? contentPadding,
-    bool isDense = false,
+    super.suffixIcon,
+    super.suffix,
+    super.contentPadding,
+    bool super.isDense = false,
   }) : super(
-          isDense: isDense,
-          contentPadding: contentPadding,
-          hintText: hintText,
           hintStyle: hintStyle ?? textStyles.hintInputLabel,
           counterText: '',
-          labelText: labelText,
           labelStyle: labelStyle ?? textStyles.inputLabel,
           enabledBorder: UnderlineInputBorder(
             borderSide:
@@ -40,7 +36,5 @@ class ThemedInputDecoration extends InputDecoration {
             borderSide:
                 BorderSide(color: enabledBorderColor ?? themeColors.error),
           ),
-          suffixIcon: suffixIcon,
-          suffix: suffix,
         );
 }

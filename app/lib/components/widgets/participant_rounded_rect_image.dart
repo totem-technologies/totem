@@ -6,12 +6,12 @@ import 'package:totem/theme/index.dart';
 
 class ParticipantRoundedRectImage extends StatelessWidget {
   const ParticipantRoundedRectImage({
-    Key? key,
+    super.key,
     this.userProfile,
     required this.participant,
     this.size = 64,
     this.borderRadius = 12,
-  }) : super(key: key);
+  });
   final UserProfile? userProfile;
   final SessionParticipant participant;
   final double size;

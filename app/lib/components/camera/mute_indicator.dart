@@ -5,8 +5,7 @@ import 'package:totem/theme/index.dart';
 
 class MuteIndicator extends StatelessWidget {
   const MuteIndicator(
-      {Key? key, this.size = 32, this.color, this.shadow = true})
-      : super(key: key);
+      {super.key, this.size = 32, this.color, this.shadow = true});
   final double size;
   final Color? color;
   final bool shadow;

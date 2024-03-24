@@ -5,12 +5,11 @@ import 'package:totem/theme/index.dart';
 
 class DialogContainer extends StatelessWidget {
   const DialogContainer(
-      {Key? key,
+      {super.key,
       required this.child,
       this.padding,
       this.fullScreen = false,
-      this.backgroundColor})
-      : super(key: key);
+      this.backgroundColor});
   final Widget child;
   final double borderRadius = 30;
   final EdgeInsets? padding;

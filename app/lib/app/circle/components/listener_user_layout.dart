@@ -5,13 +5,13 @@ import 'package:totem/theme/index.dart';
 
 class ListenerUserLayout extends StatelessWidget {
   const ListenerUserLayout({
-    Key? key,
+    super.key,
     required this.speaker,
     required this.userList,
     required this.isPhoneLayout,
     this.minUserImageSize = 135,
     this.constrainSpeaker = true,
-  }) : super(key: key);
+  });
 
   static const double verticalDivider = 34;
   static const double horizontalDivider = 66;

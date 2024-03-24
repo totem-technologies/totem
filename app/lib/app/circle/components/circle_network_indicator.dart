@@ -6,12 +6,11 @@ import 'package:totem/theme/index.dart';
 
 class CircleNetworkUnstable extends StatelessWidget {
   const CircleNetworkUnstable(
-      {Key? key,
+      {super.key,
       this.participant,
       this.size = 32,
       this.color,
-      this.shadow = true})
-      : super(key: key);
+      this.shadow = true});
   final SessionParticipant? participant;
   final double size;
   final Color? color;

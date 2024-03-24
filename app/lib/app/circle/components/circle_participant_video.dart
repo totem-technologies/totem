@@ -13,13 +13,13 @@ import 'package:totem/theme/index.dart';
 
 class CircleParticipantVideo extends StatelessWidget {
   const CircleParticipantVideo({
-    Key? key,
+    super.key,
     required this.participant,
     this.hasTotem = false,
     this.annotate = true,
     this.next = false,
     required this.channelId,
-  }) : super(key: key);
+  });
   final SessionParticipant participant;
   final bool hasTotem;
   final bool annotate;

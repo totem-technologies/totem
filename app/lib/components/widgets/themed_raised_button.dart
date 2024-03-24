@@ -4,7 +4,7 @@ import 'package:totem/theme/index.dart';
 
 class ThemedRaisedButton extends StatelessWidget {
   const ThemedRaisedButton(
-      {Key? key,
+      {super.key,
       this.child,
       this.disabledColor,
       this.width,
@@ -18,8 +18,7 @@ class ThemedRaisedButton extends StatelessWidget {
       this.textAlign = TextAlign.center,
       this.horzPadding = 15,
       this.backgroundColor,
-      this.cta = false})
-      : super(key: key);
+      this.cta = false});
   final Widget? child;
   final Color? disabledColor;
   final double height;

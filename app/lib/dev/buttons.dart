@@ -4,7 +4,7 @@ import 'package:totem/components/widgets/slider_button.dart';
 import '../components/widgets/themed_raised_button.dart';
 
 class ButtonsScreen extends StatelessWidget {
-  const ButtonsScreen({Key? key}) : super(key: key);
+  const ButtonsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

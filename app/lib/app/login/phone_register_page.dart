@@ -10,7 +10,7 @@ import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
 
 class RegisterPage extends ConsumerStatefulWidget {
-  const RegisterPage({Key? key}) : super(key: key);
+  const RegisterPage({super.key});
 
   @override
   RegisterPageState createState() => RegisterPageState();

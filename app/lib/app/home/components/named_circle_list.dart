@@ -13,7 +13,7 @@ final userPrivateCircles = StreamProvider.autoDispose<List<Circle>>((ref) {
 });
 
 class NamedCircleList extends ConsumerWidget {
-  const NamedCircleList({Key? key, required this.name}) : super(key: key);
+  const NamedCircleList({super.key, required this.name});
   final String name;
 
   @override

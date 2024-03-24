@@ -15,9 +15,9 @@ class FilePromptSave extends ConsumerStatefulWidget {
   final XFile uploadTarget;
 
   const FilePromptSave({
-    Key? key,
+    super.key,
     required this.uploadTarget,
-  }) : super(key: key);
+  });
 
   @override
   FilePromptSaveState createState() => FilePromptSaveState();

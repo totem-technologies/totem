@@ -23,7 +23,7 @@ final widgetList = <String, Function>{
 };
 
 class DevPage extends StatefulWidget {
-  const DevPage({Key? key}) : super(key: key);
+  const DevPage({super.key});
 
   @override
   State<DevPage> createState() => _DevPageState();
@@ -77,8 +77,7 @@ class _DevPageState extends State<DevPage> {
 }
 
 class WidgetContainer extends StatelessWidget {
-  const WidgetContainer({Key? key, required this.child, required this.reset})
-      : super(key: key);
+  const WidgetContainer({super.key, required this.child, required this.reset});
   final Function reset;
   final Widget child;
   @override
@@ -105,7 +104,7 @@ class WidgetContainer extends StatelessWidget {
 }
 
 class WidgetList extends StatelessWidget {
-  const WidgetList(this.changeWidget, {Key? key}) : super(key: key);
+  const WidgetList(this.changeWidget, {super.key});
   final Function(String) changeWidget;
   @override
   Widget build(BuildContext context) {

@@ -5,8 +5,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:totem/theme/index.dart';
 
 class CircleNextLabel extends StatelessWidget {
-  const CircleNextLabel({Key? key, this.fontSize = 13, this.reversed = false})
-      : super(key: key);
+  const CircleNextLabel({super.key, this.fontSize = 13, this.reversed = false});
   final double fontSize;
   final bool reversed;
 

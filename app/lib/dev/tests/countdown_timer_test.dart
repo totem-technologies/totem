@@ -4,7 +4,7 @@ import 'package:totem/components/index.dart';
 import 'package:totem/theme/index.dart';
 
 class CountdownTimerTest extends StatefulWidget {
-  const CountdownTimerTest({Key? key}) : super(key: key);
+  const CountdownTimerTest({super.key});
 
   @override
   State<StatefulWidget> createState() => CountdownTimerTestState();

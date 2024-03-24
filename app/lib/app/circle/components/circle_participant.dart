@@ -7,13 +7,12 @@ import 'package:totem/theme/index.dart';
 
 class CircleParticipant extends StatelessWidget {
   const CircleParticipant(
-      {Key? key,
+      {super.key,
       required this.name,
       required this.role,
       this.image,
       this.showMe = false,
-      this.me = false})
-      : super(key: key);
+      this.me = false});
   final String? image;
   final String name;
   final bool me;

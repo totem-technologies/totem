@@ -3,19 +3,16 @@ import 'package:totem/theme/app_theme_styles.dart';
 
 class CheckboxFormField extends FormField<bool> {
   CheckboxFormField({
-    Key? key,
+    super.key,
     required BuildContext context,
     Widget? child,
     required bool value,
     FormFieldSetter<bool>? onSaved,
-    FormFieldValidator<bool>? validator,
+    super.validator,
     CrossAxisAlignment alignment = CrossAxisAlignment.center,
     required Function(bool?) onChanged,
-    bool initialValue = false,
+    bool super.initialValue = false,
   }) : super(
-          key: key,
-          validator: validator,
-          initialValue: initialValue,
           builder: (FormFieldState<bool> state) {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,

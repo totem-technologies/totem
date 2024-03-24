@@ -7,7 +7,7 @@ import 'package:totem/theme/app_theme_styles.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class UserFeedbackButton extends StatelessWidget {
-  const UserFeedbackButton({Key? key}) : super(key: key);
+  const UserFeedbackButton({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -19,12 +19,12 @@ enum CaptureMode { videoAndPhoto, videoOnly, photoOnly, preview }
 
 class CameraCapture extends StatefulWidget {
   const CameraCapture({
-    Key? key,
+    super.key,
     this.captureMode = CaptureMode.videoAndPhoto,
     this.mirrorFrontImage = true,
     this.cropImage = true,
     this.onImageTaken,
-  }) : super(key: key);
+  });
   final CaptureMode captureMode;
   final bool mirrorFrontImage;
   final bool cropImage;

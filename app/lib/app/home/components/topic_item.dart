@@ -4,8 +4,7 @@ import 'package:totem/models/index.dart';
 import 'package:totem/theme/index.dart';
 
 class TopicItem extends StatelessWidget {
-  const TopicItem({Key? key, required this.topic, required this.onPressed})
-      : super(key: key);
+  const TopicItem({super.key, required this.topic, required this.onPressed});
   final Topic topic;
   final Function onPressed;
 

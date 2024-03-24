@@ -12,10 +12,10 @@ import 'package:totem/theme/index.dart';
 class CircleItem extends ConsumerWidget {
   static const double maxFullInfoWidth = 250;
   const CircleItem({
-    Key? key,
+    super.key,
     required this.circle,
     required this.onPressed,
-  }) : super(key: key);
+  });
   final Circle circle;
   final Function onPressed;
 

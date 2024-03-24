@@ -10,7 +10,7 @@ enum TrimMode {
 class TrimmedText extends StatefulWidget {
   const TrimmedText(
     this.text, {
-    Key? key,
+    super.key,
     required this.more,
     this.trimLines = 2,
     this.trimLength = 240,
@@ -20,7 +20,7 @@ class TrimmedText extends StatefulWidget {
     this.textDirection,
     this.locale,
     this.delimiter = '$_kEllipsis ',
-  }) : super(key: key);
+  });
 
   /// Used on TrimMode.Length
   final int trimLength;
@@ -155,9 +155,7 @@ class _TrimmedTextState extends State<TrimmedText> {
           softWrap: true,
           //softWrap,
           overflow: TextOverflow.clip,
-          //overflow,
-          textScaleFactor: textScaleFactor,
-          text: textSpan,
+          text: textSpan, textScaler: TextScaler.linear(textScaleFactor),
         );
         if (_readMore) {
           return Column(

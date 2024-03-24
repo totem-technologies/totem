@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:totem/app/circle/index.dart';
 
 class CircleSessionContent extends ConsumerWidget {
-  const CircleSessionContent({Key? key}) : super(key: key);
+  const CircleSessionContent({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

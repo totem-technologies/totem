@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:totem/theme/index.dart';
 
 class ErrorInfoBlock extends StatelessWidget {
-  const ErrorInfoBlock({Key? key, required this.errorContent})
-      : super(key: key);
+  const ErrorInfoBlock({super.key, required this.errorContent});
   final Widget errorContent;
 
   @override
