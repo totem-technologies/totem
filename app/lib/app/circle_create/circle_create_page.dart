@@ -847,8 +847,11 @@ class CircleCreatePageState extends ConsumerState<CircleCreatePage>
             autovalidateMode: AutovalidateMode.onUserInteraction,
             firstDate: DateTime.now(),
             initialValue: _selectedStartDate,
-            onDateSelected: ((value) =>
-                setState(() => _selectedStartDate = setDateAndTime(value))),
+            onChanged: ((value) {
+              if (value != null) {
+                setState(() => _selectedStartDate = setDateAndTime(value));
+              }
+            }),
             validator: (value) {
               if (_selectedRecurring.type == RecurringType.none) return null;
               if (value == null) {
@@ -880,12 +883,14 @@ class CircleCreatePageState extends ConsumerState<CircleCreatePage>
             suffixIcon: Icon(LucideIcons.clock),
             isDense: true,
           ),
-          initialTimePickerEntryMode:
-              !kIsWeb ? TimePickerEntryMode.dial : TimePickerEntryMode.input,
+          materialTimePickerOptions: const MaterialTimePickerOptions(
+            initialEntryMode:
+                !kIsWeb ? TimePickerEntryMode.dial : TimePickerEntryMode.input,
+          ),
           mode: DateTimeFieldPickerMode.time,
           autovalidateMode: AutovalidateMode.onUserInteraction,
           initialValue: _selectedStartDate,
-          onDateSelected: ((value) => setState(() {
+          onChanged: ((value) => setState(() {
                 _selectedStartTime = value;
                 _selectedStartDate =
                     setDateAndTime(_selectedStartDate ?? DateTime.now());
@@ -977,8 +982,11 @@ class CircleCreatePageState extends ConsumerState<CircleCreatePage>
             autovalidateMode: AutovalidateMode.onUserInteraction,
             firstDate: DateTime.now(),
             initialValue: _selectedEndDate,
-            onDateSelected: ((value) =>
-                setState(() => _selectedEndDate = setDateAndTime(value))),
+            onChanged: ((value) {
+              if (value != null) {
+                setState(() => _selectedEndDate = setDateAndTime(value));
+              }
+            }),
             validator: (value) {
               if (_selectedRecurring.type == RecurringType.none ||
                   _selectedRepeatEnd.value != 'endDate') return null;

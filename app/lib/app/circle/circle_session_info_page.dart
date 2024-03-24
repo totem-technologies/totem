@@ -218,7 +218,7 @@ class CircleSessionInfoPageState extends ConsumerState<CircleSessionInfoPage> {
             draggingIndex, newPositionIndex, draggedItem);
       }); */
         debugPrint(
-            'item: ${(item as ValueKey).value} newpos: $newPositionIndex Index: $draggingIndex');
+            'item: ${(item as ValueKey).value} new_pos: $newPositionIndex Index: $draggingIndex');
         return true;
       },
       onReorderDone: (Key item) async {

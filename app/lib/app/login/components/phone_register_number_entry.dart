@@ -1,13 +1,9 @@
 import 'dart:async';
 
-// import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-// import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-// import 'package:flutter_sim_country_code/flutter_sim_country_code.dart';
 import 'package:phone_form_field/phone_form_field.dart';
-// import 'package:shared_preferences/shared_preferences.dart';
 import 'package:totem/app/login/components/phone_register_number_header.dart';
 import 'package:totem/components/widgets/index.dart';
 import 'package:totem/services/index.dart';
@@ -26,7 +22,7 @@ class PhoneRegisterNumberEntryState
   final formKey = GlobalKey<FormState>();
   final phoneKey = GlobalKey<FormFieldState<PhoneNumber>>();
   final TextEditingController _phoneNumberController = TextEditingController();
-  PhoneController numberController = PhoneController(null);
+  PhoneController numberController = PhoneController();
   bool _busy = false;
   CountrySelectorNavigator selectorNavigator =
       const CountrySelectorNavigator.bottomSheet();
@@ -93,7 +89,7 @@ class PhoneRegisterNumberEntryState
                       cursorColor: Theme.of(context).colorScheme.primary,
                       onSaved: (p) => debugPrint('saved $p'),
                       onChanged: (p) => debugPrint('changed $p'),
-                      isCountryChipPersistent: true,
+                      isCountryButtonPersistent: true,
                       onSubmitted: (p) => onSubmit(),
                     ),
                   ),
@@ -153,7 +149,7 @@ class PhoneRegisterNumberEntryState
 
       // Number will have been validated by this point
       // and the phoneNumber member formats with iso code
-      String number = numberController.value!.international;
+      String number = numberController.value.international;
       debugPrint(number);
       try {
         await auth.signInWithPhoneNumber(number);

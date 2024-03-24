@@ -11,7 +11,7 @@ import 'package:totem/components/widgets/index.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/account_state/account_state_event_manager.dart';
 import 'package:totem/services/index.dart';
-import 'package:wakelock/wakelock.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 final activeSessionProvider =
     ChangeNotifierProvider.autoDispose<ActiveSession>((ref) {
@@ -169,7 +169,7 @@ class CircleSessionLivePageState extends ConsumerState<CircleSessionLivePage> {
   void initState() {
     ref.read(activeSessionProvider).addListener(_handleActiveSessionChange);
     // Prevent device from going to sleep while the session is active
-    unawaited(Wakelock.enable());
+    unawaited(WakelockPlus.enable());
     // for android, start a foreground service to keep the process running
     // to prevent drops in connection
     if (!kIsWeb && Platform.isAndroid) {
@@ -181,7 +181,7 @@ class CircleSessionLivePageState extends ConsumerState<CircleSessionLivePage> {
   @override
   void dispose() {
     // disable wakelock
-    unawaited(Wakelock.disable());
+    unawaited(WakelockPlus.disable());
     // for android, stop the foreground service to keep the process running
     // to prevent drops in connection
     if (!kIsWeb && Platform.isAndroid) {
