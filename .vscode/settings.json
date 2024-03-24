@@ -1,19 +1,31 @@
 {
     "cSpell.words": [
+        "autocorrect",
+        "autofocus",
+        "autovalidate",
         "cupertino",
         "diffutil",
         "firestore",
+        "fullscreen",
         "keybinder",
         "lucide",
+        "mipmap",
         "MMMMEEE",
         "nullsafety",
+        "Overscroll",
         "Raleway",
+        "readmore",
         "recaptcha",
         "Recoleta",
+        "rejoinable",
         "reorderable",
         "riverpod",
         "rxdart",
+        "scheduledcreate",
         "spinbox",
+        "Transions",
+        "unawaited",
+        "unfocus",
         "wakelock"
     ]
 }

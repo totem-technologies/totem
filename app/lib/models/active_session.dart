@@ -296,7 +296,7 @@ class ActiveSession extends ChangeNotifier {
           .firstWhereOrNull(
               (element) => element.sessionUserId == sessionUserId);
       if (participant != null) {
-        _activeParticipants.remove(participant);
+        _activeParticipants.remove(participant.uid);
       }
     }
     notifyListeners();

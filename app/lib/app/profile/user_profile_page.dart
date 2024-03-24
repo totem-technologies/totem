@@ -8,8 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:phone_form_field/phone_form_field.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:phone_form_field/phone_form_field.dart';
 import 'package:totem/app/profile/components/index.dart';
 import 'package:totem/components/camera/index.dart';
 import 'package:totem/components/widgets/index.dart';
@@ -104,7 +104,7 @@ class UserProfilePageState extends ConsumerState<UserProfilePage> {
                                 onPressed: !_busy && hasChanged
                                     ? () async {
                                         await _saveForm();
-                                        if (!mounted) return;
+                                        if (!context.mounted) return;
                                         await Navigator.maybePop(context);
                                       }
                                     : null,
@@ -207,11 +207,13 @@ class UserProfilePageState extends ConsumerState<UserProfilePage> {
                                                                           .helpPublicInformation);
                                                             },
                                                             child: Padding(
-                                                              padding: const EdgeInsets
+                                                              padding:
+                                                                  const EdgeInsets
                                                                       .symmetric(
-                                                                  horizontal:
-                                                                      15,
-                                                                  vertical: 5),
+                                                                      horizontal:
+                                                                          15,
+                                                                      vertical:
+                                                                          5),
                                                               child: Icon(
                                                                   LucideIcons
                                                                       .helpCircle,
@@ -229,7 +231,7 @@ class UserProfilePageState extends ConsumerState<UserProfilePage> {
                                                                 Size.zero,
                                                             padding:
                                                                 const EdgeInsets
-                                                                        .only(
+                                                                    .only(
                                                                     top: 8,
                                                                     bottom: 8,
                                                                     right: 20),
@@ -445,7 +447,7 @@ class UserProfilePageState extends ConsumerState<UserProfilePage> {
     if (deleteAccount == true) {
       setState(() => _busy = true);
       await ref.read(authServiceProvider).deleteAccount();
-      if (!mounted) return;
+      if (!context.mounted) return;
       Navigator.of(context).pop();
     }
   }

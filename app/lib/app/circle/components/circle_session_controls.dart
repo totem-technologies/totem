@@ -530,7 +530,7 @@ class CircleSessionControlsState extends ConsumerState<CircleSessionControls> {
         await commProvider.endSession();
       } else {
         await commProvider.leaveSession();
-        if (!mounted) return;
+        if (!context.mounted) return;
         Navigator.of(context).pop();
       }
     }

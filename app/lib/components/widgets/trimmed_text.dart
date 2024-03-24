@@ -61,7 +61,7 @@ class _TrimmedTextState extends State<TrimmedText> {
     final textAlign =
         widget.textAlign ?? defaultTextStyle.textAlign ?? TextAlign.start;
     final textDirection = widget.textDirection ?? Directionality.of(context);
-    final textScaleFactor = MediaQuery.textScaleFactorOf(context);
+    final textScaleFactor = MediaQuery.textScalerOf(context);
     final overflow = defaultTextStyle.overflow;
     final locale = widget.locale ?? Localizations.maybeLocaleOf(context);
 
@@ -87,7 +87,7 @@ class _TrimmedTextState extends State<TrimmedText> {
           text: delimiter,
           textAlign: textAlign,
           textDirection: textDirection,
-          textScaleFactor: textScaleFactor,
+          textScaler: textScaleFactor,
           maxLines: widget.trimLines,
           ellipsis: overflow == TextOverflow.ellipsis ? widget.delimiter : null,
           locale: locale,
@@ -155,7 +155,7 @@ class _TrimmedTextState extends State<TrimmedText> {
           softWrap: true,
           //softWrap,
           overflow: TextOverflow.clip,
-          text: textSpan, textScaler: TextScaler.linear(textScaleFactor),
+          text: textSpan, textScaler: textScaleFactor,
         );
         if (_readMore) {
           return Column(
