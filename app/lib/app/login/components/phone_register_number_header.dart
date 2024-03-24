@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:totem/components/widgets/index.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:totem/components/widgets/index.dart';
 import 'package:totem/theme/index.dart';
 
 class PhoneRegisterNumberHeader extends StatelessWidget {

@@ -76,7 +76,7 @@ class _AppState extends ConsumerState<App> {
       ),
       primaryColor: themeColors.primary,
       scaffoldBackgroundColor: themeColors.screenBackground,
-      fontFamily: 'Raleway',
+      fontFamily: 'Montserrat',
       dialogTheme: DialogTheme(
         backgroundColor: themeColors.dialogBackground,
         contentTextStyle: textStyles.dialogContent,
