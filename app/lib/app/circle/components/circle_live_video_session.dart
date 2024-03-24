@@ -7,16 +7,16 @@ import 'package:keybinder/keybinder.dart';
 import 'package:totem/app/circle/components/circle_session_timer.dart';
 import 'package:totem/app/circle/index.dart';
 import 'package:totem/components/widgets/index.dart';
+import 'package:totem/components/widgets/slider_button.dart';
 import 'package:totem/models/index.dart';
 import 'package:totem/services/index.dart';
 import 'package:totem/services/utils/device_type.dart';
 import 'package:totem/theme/index.dart';
-import 'package:totem/components/widgets/slider_button.dart';
 
 import 'layouts.dart';
 
 class CircleLiveVideoSession extends ConsumerStatefulWidget {
-  const CircleLiveVideoSession({Key? key}) : super(key: key);
+  const CircleLiveVideoSession({super.key});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
