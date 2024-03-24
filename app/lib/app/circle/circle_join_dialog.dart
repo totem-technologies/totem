@@ -18,8 +18,7 @@ import 'package:totem/theme/index.dart';
 
 class CircleJoinDialog extends ConsumerStatefulWidget {
   const CircleJoinDialog(
-      {Key? key, required this.circle, this.cropEnabled = false})
-      : super(key: key);
+      {super.key, required this.circle, this.cropEnabled = false});
   final Circle circle;
   final bool cropEnabled;
 
@@ -469,9 +468,7 @@ class _CircleJoinDialogState extends ConsumerState<CircleJoinDialog> {
           );
         }
         if (asyncSnapshot.hasError) {
-          return Container(
-            child: Text(asyncSnapshot.error.toString()),
-          );
+          return Text(asyncSnapshot.error.toString());
         }
         return Container();
       },

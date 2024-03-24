@@ -17,7 +17,7 @@ final circleTemplateProvider =
 });
 
 class CircleTemplateSelector extends ConsumerStatefulWidget {
-  const CircleTemplateSelector({Key? key}) : super(key: key);
+  const CircleTemplateSelector({super.key});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>

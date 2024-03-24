@@ -26,7 +26,7 @@ import 'package:totem/services/utils/device_type.dart';
 import 'package:totem/theme/index.dart';
 
 class CircleCreatePage extends ConsumerStatefulWidget {
-  const CircleCreatePage({Key? key, this.fromCircle}) : super(key: key);
+  const CircleCreatePage({super.key, this.fromCircle});
   final CircleTemplate? fromCircle;
 
   @override

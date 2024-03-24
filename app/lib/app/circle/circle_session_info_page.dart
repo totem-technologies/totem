@@ -15,7 +15,7 @@ import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
 
 class CircleSessionInfoPage extends ConsumerStatefulWidget {
-  const CircleSessionInfoPage({Key? key}) : super(key: key);
+  const CircleSessionInfoPage({super.key});
 
   static Future<String?> showDialog(BuildContext context) async {
     return showModalBottomSheet<String>(
@@ -338,7 +338,7 @@ class CircleSessionInfoPageState extends ConsumerState<CircleSessionInfoPage> {
           await ref.read(communicationsProvider).removeUserFromSession(
                 sessionUserId: participant.sessionUserId!,
               );
-      if (!mounted) return;
+      if (!context.mounted) return;
       if (!result) {
         await showDialog(
           context: context,

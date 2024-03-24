@@ -8,7 +8,7 @@ import 'package:totem/models/index.dart';
 import 'package:totem/theme/index.dart';
 
 class CircleDeviceSelector extends ConsumerStatefulWidget {
-  const CircleDeviceSelector({Key? key}) : super(key: key);
+  const CircleDeviceSelector({super.key});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>

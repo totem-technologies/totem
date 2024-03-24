@@ -155,7 +155,7 @@ class AppRoutes {
       ],
       redirect: (context, state) async {
         debugPrint(
-            'Router redirect: ${state.location}, query: ${state.queryParameters}');
+            'Router redirect: ${state.fullPath}, query: ${state.pathParameters}');
         // Is there a logged in user?
         UserAuthAccountState? user =
             ref.read(userAccountStateProvider).asData?.value;
@@ -177,7 +177,8 @@ class AppRoutes {
 
         // Check if the route is public (non-login)?
         final publicPrefixes = ['/login', '/dev'];
-        final isPublic = publicPrefixes.any((e) => state.matchedLocation.startsWith(e));
+        final isPublic =
+            publicPrefixes.any((e) => state.matchedLocation.startsWith(e));
         if (isPublic) return null;
 
         // Any other route that isn't public should require the user
@@ -185,7 +186,7 @@ class AppRoutes {
         // if the route is a circle, then preserve the route and redirect after
         // login
         if (!loggedIn) {
-          _pendingRoute = state.location;
+          _pendingRoute = state.uri.toString();
           return '/login';
         }
 
@@ -195,7 +196,7 @@ class AppRoutes {
           if (state.matchedLocation == '/startup') {
             return null;
           }
-          _pendingRoute = state.location;
+          _pendingRoute = state.uri.toString();
           return '/startup';
         }
 
@@ -207,8 +208,9 @@ class AppRoutes {
         }
 
         // if this is a snap circle link, redirect to the circle page
-        if (state.matchedLocation == '/' && state.queryParameters.containsKey('snap')) {
-          return '/circle/${state.queryParameters['snap']}';
+        if (state.matchedLocation == '/' &&
+            state.uri.queryParameters.containsKey('snap')) {
+          return '/circle/${state.uri.queryParameters['snap']}';
         }
 
         // the ended path can only be accessed if the extra data is

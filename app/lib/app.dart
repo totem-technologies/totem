@@ -29,7 +29,7 @@ Widget _wrapWithBanner(Widget child) {
 }
 
 class App extends ConsumerStatefulWidget {
-  const App({Key? key}) : super(key: key);
+  const App({super.key});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _AppState();

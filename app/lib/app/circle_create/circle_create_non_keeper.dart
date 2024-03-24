@@ -13,7 +13,7 @@ import 'package:totem/services/index.dart';
 import 'package:totem/theme/index.dart';
 
 class CircleCreateNonKeeper extends ConsumerStatefulWidget {
-  const CircleCreateNonKeeper({Key? key, this.fromCircle}) : super(key: key);
+  const CircleCreateNonKeeper({super.key, this.fromCircle});
   final Circle? fromCircle;
   static Future<Circle?> showNonKeeperCreateDialog(BuildContext context) async {
     return showDialog<Circle?>(

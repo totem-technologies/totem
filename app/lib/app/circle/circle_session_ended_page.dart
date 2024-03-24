@@ -9,11 +9,10 @@ import 'package:totem/theme/index.dart';
 
 class CircleSessionEndedPage extends StatelessWidget {
   const CircleSessionEndedPage(
-      {Key? key,
+      {super.key,
       this.removed = false,
       this.circle,
-      this.sessionState = SessionState.complete})
-      : super(key: key);
+      this.sessionState = SessionState.complete});
   final bool removed;
   final Circle? circle;
   final SessionState sessionState;

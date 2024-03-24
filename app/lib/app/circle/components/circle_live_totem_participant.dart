@@ -8,7 +8,7 @@ import 'package:totem/services/communication_provider.dart';
 import 'package:totem/theme/index.dart';
 
 class CircleLiveTotemParticipant extends ConsumerStatefulWidget {
-  const CircleLiveTotemParticipant({Key? key}) : super(key: key);
+  const CircleLiveTotemParticipant({super.key});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>

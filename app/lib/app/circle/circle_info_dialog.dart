@@ -19,8 +19,7 @@ import 'circle_session_page.dart';
 
 class CircleInfoDialog extends ConsumerStatefulWidget {
   const CircleInfoDialog(
-      {Key? key, required this.circleId, this.cropEnabled = false})
-      : super(key: key);
+      {super.key, required this.circleId, this.cropEnabled = false});
   final String circleId;
   final bool cropEnabled;
 

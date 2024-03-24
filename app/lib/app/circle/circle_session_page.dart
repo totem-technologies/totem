@@ -35,8 +35,7 @@ final circleProvider =
 });
 
 class CircleSessionPage extends ConsumerStatefulWidget {
-  const CircleSessionPage({Key? key, required this.sessionID})
-      : super(key: key);
+  const CircleSessionPage({super.key, required this.sessionID});
   final String sessionID;
 
   @override
@@ -156,8 +155,7 @@ class CircleSessionPageState extends ConsumerState<CircleSessionPage> {
 
 class CircleSessionLivePage extends ConsumerStatefulWidget {
   const CircleSessionLivePage(
-      {Key? key, required this.session, required this.userProfile})
-      : super(key: key);
+      {super.key, required this.session, required this.userProfile});
   final Session session;
   final UserProfile userProfile;
 

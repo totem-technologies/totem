@@ -19,7 +19,7 @@ class SessionTaskHandler extends TaskHandler {
   }
 
   @override
-  Future<void> onEvent(DateTime timestamp, SendPort? sendPort) async {
+  Future<void> onRepeatEvent(DateTime timestamp, SendPort? sendPort) async {
     // Send data to the main isolate.
     // This doesn't have to do anything for now, but just sending
     // a timestamp to see the session is still alive for testing
@@ -31,12 +31,6 @@ class SessionTaskHandler extends TaskHandler {
   Future<void> onDestroy(DateTime timestamp, SendPort? sendPort) async {
     // You can use the clearAllData function to clear all the stored data.
     await FlutterForegroundTask.clearAllData();
-  }
-
-  @override
-  void onButtonPressed(String id) {
-    // Called when the notification button on the Android platform is pressed.
-    debugPrint('onButtonPressed >> $id');
   }
 }
 

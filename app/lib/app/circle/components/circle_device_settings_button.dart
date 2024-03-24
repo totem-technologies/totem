@@ -6,7 +6,7 @@ import 'package:totem/app/circle/index.dart';
 import 'package:totem/theme/index.dart';
 
 class CircleDeviceSettingsButton extends ConsumerStatefulWidget {
-  const CircleDeviceSettingsButton({Key? key}) : super(key: key);
+  const CircleDeviceSettingsButton({super.key});
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
       CircleDeviceSettingsButtonState();

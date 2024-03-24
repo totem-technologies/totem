@@ -13,10 +13,10 @@ import 'package:totem/theme/index.dart';
 
 class CircleSessionParticipantDialog extends ConsumerStatefulWidget {
   const CircleSessionParticipantDialog({
-    Key? key,
+    super.key,
     required this.participant,
     this.overrideMe = false,
-  }) : super(key: key);
+  });
   final SessionParticipant participant;
   final bool overrideMe;
 
@@ -280,7 +280,7 @@ class CircleSessionParticipantDialogState
           await ref.read(communicationsProvider).removeUserFromSession(
                 sessionUserId: widget.participant.sessionUserId!,
               );
-      if (!mounted) {
+      if (!context.mounted) {
         return;
       }
       if (result) {

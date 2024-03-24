@@ -6,8 +6,7 @@ import 'layouts.dart';
 
 class CircleLiveSessionUsers extends ConsumerWidget {
   const CircleLiveSessionUsers(
-      {Key? key, this.speakerView = false, required this.isPhoneLayout})
-      : super(key: key);
+      {super.key, this.speakerView = false, required this.isPhoneLayout});
   final bool speakerView;
   final bool isPhoneLayout;
 

@@ -224,7 +224,6 @@ class _CircleLiveVideoSessionState
   Widget? _passControl(BuildContext context, ActiveSession activeSession) {
     final participant = activeSession.totemParticipant;
     if (participant != null && participant.me) {
-      final themeColors = Theme.of(context).themeColors;
       final t = AppLocalizations.of(context)!;
       bool isMobile = DeviceType.isMobile();
       {
